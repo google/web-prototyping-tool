@@ -1,0 +1,167 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$headerHeight: 32px;
+$colorA: #ff7f6f;
+$colorB: #44eba9;
+
+:host {
+  background: #fff;
+  color: #111;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  height: 100vh;
+  width: 100%;
+}
+
+h2 {
+  color: #111;
+}
+
+.sidebar {
+  border-right: 1px solid #ccc;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: $headerHeight 1fr;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  li {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding: 4px 8px;
+    overflow: hidden;
+
+    &:hover {
+      background: #fbfbfb;
+    }
+
+    span {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.sidebar header {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  padding: 4px 8px;
+  border-bottom: 1px solid #ccc;
+
+  span {
+    width: 12px;
+    text-align: center;
+  }
+}
+
+.dot {
+  background: #ccc;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  &.a.active,
+  &:hover.a {
+    background: $colorA;
+  }
+
+  &.b.active,
+  &:hover.b {
+    background: $colorB;
+  }
+}
+
+main {
+  display: grid;
+  grid-template-rows: $headerHeight 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-header,
+.image-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.main-header {
+  border-bottom: 1px solid #ccc;
+  display: grid;
+
+  h2 {
+    display: inline;
+    padding: 2px 18px;
+    line-height: 13px;
+    border-radius: 18px;
+  }
+}
+
+.title-a,
+.title-b {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.title-a h2 {
+  background: $colorA;
+}
+
+.title-b h2 {
+  background: $colorB;
+}
+
+.image-list {
+  overflow: hidden;
+  display: grid;
+  overflow-y: auto;
+}
+
+.title-a,
+.images-a {
+  border-right: 1px solid #ccc;
+}
+
+.images-a,
+.images-b {
+  overflow: hidden;
+  padding: 10px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  justify-content: safe center;
+}
+
+figure {
+  padding: 0;
+  margin: 0;
+}

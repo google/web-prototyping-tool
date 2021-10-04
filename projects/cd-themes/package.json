@@ -1,0 +1,15 @@
+{
+  "name": "cd-themes",
+  "version": "0.0.1",
+  "sideEffects": false,
+  "peerDependencies": {
+    "cd-interfaces": "*",
+    "cd-metadata/fonts": "*",
+    "cd-metadata/units": "*",
+    "cd-utils/color": "*",
+    "cd-utils/numeric": "*"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}

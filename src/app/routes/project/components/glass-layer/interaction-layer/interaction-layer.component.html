@@ -1,0 +1,29 @@
+<svg:rect
+  class="outlet-frame"
+  appOutletFrameMove
+  [outletFrameId]="outletFrame.id"
+  [zoom]="zoom"
+  [cdSVGRect]="outletFrame | RectToSVGStyle"
+  [attr.data-id]="outletFrame.id"
+/>
+
+<ng-container *ngIf="!onlyOutletFrameSelected">
+  <ng-container
+    *ngFor="let id of hitRegions; trackBy: trackFn"
+    [ngTemplateOutlet]="rectRef"
+    [ngTemplateOutletContext]="{
+      $implicit: renderRects.get(id),
+      clipFrame: !selectedIds.has(id) && outletFrame.frame
+    }"
+  ></ng-container>
+</ng-container>
+
+<ng-template #rectRef let-rect let-clipFrame="clipFrame">
+  <svg:rect
+    class="element"
+    *ngIf="rect && outletFrame.id === rect.rootId"
+    [appGlassRectDragItem]="rect.id"
+    [cdSVGRect]="rect | RectToSVGStyle: 0:clipFrame"
+    [attr.data-id]="rect.id"
+  />
+</ng-template>

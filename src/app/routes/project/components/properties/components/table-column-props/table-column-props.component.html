@@ -1,0 +1,8 @@
+<app-dynamic-props-list-group
+  [label]="prop?.label"
+  [data]="data"
+  [config]="optionsConfig"
+  [schema]="dynamicPropsSchema"
+  [parentMergedProps]="parentMergedProps"
+  (dataChange)="onColumnsChange($event)"
+></app-dynamic-props-list-group>

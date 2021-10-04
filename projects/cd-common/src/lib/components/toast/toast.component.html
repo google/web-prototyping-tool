@@ -1,0 +1,23 @@
+<div class="toast">
+  <cd-spinner *ngIf="showLoader" size="small"></cd-spinner>
+  <cd-icon *ngIf="iconName" [name]="iconName" size="medium"></cd-icon>
+  <p class="message">{{ message }}</p>
+  <div class="actions" *ngIf="hasActions">
+    <button
+      *ngIf="showConfirmButton"
+      cd-button
+      cd-inverted-button
+      (click)="onConfirmClick()"
+      [text]="confirmLabel"
+      [iconName]="confirmIconName"
+    ></button>
+    <button
+      *ngIf="showDismissButton"
+      cd-button
+      cd-inverted-button
+      (click)="onDismissClick()"
+      [text]="dismissLabel"
+      [iconName]="dismissIconName"
+    ></button>
+  </div>
+</div>

@@ -1,0 +1,273 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/font/font';
+
+$headerFooterHeight: 50px;
+$transition: 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+$inputHeight: 30px;
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  row-gap: var(--cd-spacing-3);
+  min-width: 400px;
+  padding: var(--cd-spacing-4) 0;
+  overflow: hidden;
+}
+
+.header,
+.footer {
+  display: grid;
+  align-items: center;
+  padding: 0 var(--cd-spacing-4);
+}
+
+.header {
+  grid-template-columns: auto 1fr auto;
+  gap: var(--cd-spacing-2);
+
+  .title {
+    @include font.cd-font-overflow-ellipsis;
+    @include font.cd-font(headline6);
+
+    max-width: 420px;
+  }
+}
+
+.share-icon {
+  color: var(--cd-header-font-color);
+}
+
+.footer {
+  // The default CD Avatar Details component has padding set on itself
+  // rather than letting the container set the padding. --cd-avatar-details-padding
+  // allows us to pierce view encapsulation to prevent padding in this instance.
+  --cd-avatar-details-padding: 0;
+
+  height: 40px;
+  padding-top: var(--cd-spacing-2);
+  grid-template-columns: 1fr auto;
+}
+
+.copied-indicator {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  line-height: 18px;
+  gap: var(--cd-spacing-1);
+  opacity: 0;
+
+  &.copied-shown {
+    animation: show-copied 200ms forwards;
+    animation-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.tab-body {
+  display: grid;
+  padding: var(--cd-spacing-4);
+  padding-bottom: 0;
+}
+
+.code-view {
+  height: 110px;
+  position: relative;
+  display: grid;
+
+  pre {
+    padding: var(--cd-spacing-4);
+    margin: 0;
+    background-color: var(--cd-input-background-color);
+    border-radius: var(--cd-border-radius-1);
+    white-space: unset;
+    word-break: break-all;
+  }
+
+  code {
+    user-select: none;
+    white-space: inherit;
+  }
+}
+
+.tab-body.embed {
+  grid-template-columns: minmax(200px, 640px) 280px;
+  display: grid;
+  gap: var(--cd-spacing-4);
+  height: 360px;
+  overflow: hidden;
+  max-width: 80vw;
+
+  aside {
+    display: grid;
+    gap: var(--cd-spacing-2);
+    align-content: start;
+  }
+}
+
+.frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--cd-border-color);
+  box-sizing: border-box;
+  grid-row-end: 3;
+  grid-row-start: 1;
+
+  iframe {
+    background-color: var(--cd-input-background-color);
+    box-sizing: border-box;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.embed-footer {
+  display: grid;
+  justify-self: end;
+  align-self: end;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-2);
+  grid-row-start: 2;
+  grid-column-start: 2;
+}
+
+.url-details {
+  padding-left: var(--cd-spacing-0);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--cd-spacing-0);
+  opacity: 0.62;
+}
+
+.preview-options-controls {
+  display: grid;
+  gap: var(--cd-spacing-3);
+  width: fit-content;
+  padding-top: var(--cd-spacing-0);
+}
+
+.options-heading {
+  @include font.cd-font(overlay-headline2);
+
+  color: var(--cd-header-font-color);
+}
+
+.preview-options {
+  display: grid;
+  gap: var(--cd-spacing-2);
+  width: fit-content;
+}
+
+.link-tab-body {
+  row-gap: var(--cd-spacing-3);
+  padding-bottom: var(--cd-spacing-3);
+}
+
+.done-button {
+  align-self: end;
+  justify-self: end;
+  width: fit-content;
+}
+
+:host.untitled-project .project-name {
+  font-style: italic;
+}
+
+.copy-input {
+  display: grid;
+  align-items: center;
+  min-height: $inputHeight;
+  grid-template-columns: 1fr auto;
+  gap: var(--cd-spacing-2);
+  border: 1px solid var(--cd-outline-color);
+  border-radius: var(--cd-border-radius-2);
+  transition: box-shadow $transition, border-color $transition, background-color $transition;
+  color: var(--cd-font-color);
+  padding-left: var(--cd-spacing-2);
+  padding-right: var(--cd-spacing-0);
+  cursor: pointer;
+
+  &:hover {
+    --cd-font-color: var(--cd-primary-color);
+
+    background-color: var(--cd-focus-fill);
+    border-color: var(--cd-active-fill);
+  }
+
+  &:focus-within {
+    --cd-font-color: initial;
+
+    background-color: initial;
+    border-color: transparent;
+    box-shadow: var(--cd-outline-focus);
+  }
+}
+
+.input {
+  @include font.cd-font-overflow-ellipsis;
+
+  font-size: 12px;
+  line-height: $inputHeight;
+  color: var(--cd-font-color);
+  border: none;
+  outline: none;
+  font-family: var(--cd-header-font);
+  -webkit-font-smoothing: antialiased;
+  background: transparent;
+
+  &::placeholder {
+    color: var(--cd-font-color);
+    transition: color $transition;
+    opacity: 0.6;
+  }
+}
+
+.right {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  grid-auto-flow: column;
+  justify-content: end;
+
+  button {
+    color: var(--cd-primary-color);
+  }
+}
+
+.select-group {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  align-items: center;
+  column-gap: var(--cd-spacing-2);
+}
+
+@keyframes show-copied {
+  0% {
+    opacity: 0;
+    transform: translate3d(40px, 0, 0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}

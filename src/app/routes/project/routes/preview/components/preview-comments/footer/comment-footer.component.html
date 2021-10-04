@@ -1,0 +1,31 @@
+<app-taggable-text-field
+  #taggableTextField
+  [editing]="editing"
+  [emptyTextField]="emptyTextField"
+  [newItem]="newItem"
+  [placeholder]="placeholder"
+  [selectionListActive]="userListActive"
+  [taggedItems]="taggedItems"
+  [textFieldHtml]="textFieldValue"
+  [textFieldData]="commentBodyData"
+  (focus)="onFocus()"
+  (queryChange)="onQuery($event)"
+  (keydown)="onKeydown($event)"
+  (textFieldChange)="onTextFieldChange($event)"
+  appUserPicker
+  [searchValue]="userSearch"
+  [excludedUsers]="filteredUsers"
+  (selectedUser)="onUserSelection($event)"
+></app-taggable-text-field>
+
+<section *ngIf="editing" class="actions">
+  <button cd-button size="medium" (click)="onCancel()">Cancel</button>
+  <button
+    cd-unelevated-button
+    size="medium"
+    (click)="onSave()"
+    [disabled]="editedCommentBodyData.length === 0"
+  >
+    Comment
+  </button>
+</section>

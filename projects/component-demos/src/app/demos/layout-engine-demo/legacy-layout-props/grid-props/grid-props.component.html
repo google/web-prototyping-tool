@@ -1,0 +1,70 @@
+<div class="wrapper" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  <cd-property-list-item
+    cdkDrag
+    *ngFor="let item of data; let i = index; trackBy: trackFn"
+    (delete)="onDelete(i)"
+    (mouseover)="onOver(i)"
+    (mouseout)="onOut(i)"
+  >
+    <cd-icon
+      cdPropertyListItemLeft
+      name="drag_indicator"
+      size="small"
+      width="12"
+      cdkDragHandle
+    ></cd-icon>
+
+    <div class="grid">
+      <cd-input
+        min="0"
+        type="number"
+        placeholder="0"
+        [value]="item.value"
+        (change)="onValueChange($event, i)"
+        [disabled]="item.units === Units.Auto"
+      ></cd-input>
+      <cd-toggle-button-group
+        showBackground
+        [value]="item.units"
+        (valueChange)="onUnitToggle($event, i)"
+      >
+        <button
+          cd-button
+          cdToggleButton
+          size="small"
+          [value]="Units.Fr"
+          cdTooltip="Fractional Units"
+          [iconName]="frIcon"
+          expand
+        ></button>
+        <button
+          cd-button
+          cdToggleButton
+          size="small"
+          [value]="Units.Auto"
+          cdTooltip="Auto"
+          iconName="/assets/icons/grid-auto.svg"
+          expand
+        ></button>
+        <button
+          cd-button
+          cdToggleButton
+          size="small"
+          [value]="Units.Percent"
+          cdTooltip="Percent"
+          iconName="/assets/icons/grid-percent.svg"
+          expand
+        ></button>
+        <button
+          cd-button
+          cdToggleButton
+          size="small"
+          [value]="Units.Pixels"
+          cdTooltip="Pixels"
+          iconName="/assets/icons/grid-px.svg"
+          expand
+        ></button>
+      </cd-toggle-button-group>
+    </div>
+  </cd-property-list-item>
+</div>

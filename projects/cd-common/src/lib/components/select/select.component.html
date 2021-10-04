@@ -1,0 +1,31 @@
+<ng-container *ngIf="!hidden">
+  <div class="wrapper" #wrapperRef [class.bottom]="alignBottom" [style.minWidth.px]="width">
+    <div class="filter" *ngIf="canShowFilter">
+      <cd-icon name="filter_list" class="filter-icon" size="small"></cd-icon>
+      <cd-search-input #searchRef autofocus (valueChange)="onFilter($event)"></cd-search-input>
+    </div>
+    <div *ngIf="!data.length" class="empty-state">No results</div>
+    <ul
+      #listRef
+      class="list"
+      (mouseover)="onHover($event)"
+      (mouseleave)="onMouseLeave()"
+      (contextmenu)="onItemClick($event)"
+      (click)="onItemClick($event)"
+      (mousedown)="onMouseDown($event)"
+    >
+      <li
+        cd-select-item
+        *ngFor="let item of data; let i = index; trackBy: trackFn"
+        [item]="item"
+        [textAlign]="textAlign"
+        [attr.data-idx]="i"
+        [active]="activeIndex === i"
+        [selected]="selectedIndex === i"
+        [attr.cd-e2e-label]="item.title"
+        [cdTooltip]="item.subtitle"
+        cdTooltipDirection="left"
+      ></li>
+    </ul>
+  </div>
+</ng-container>

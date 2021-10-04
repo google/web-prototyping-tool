@@ -1,0 +1,354 @@
+[
+  {
+    "name": "cluster-033b-m",
+    "zone": "europe-west4-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.23 (nic0)",
+    "external-IP": "35.204.229.112"
+  },
+  {
+    "name": "cluster-033b-w-0",
+    "zone": "europe-west4-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.22 (nic0)",
+    "external-IP": "35.204.247.117"
+  },
+  {
+    "name": "cluster-033b-w-1",
+    "zone": "europe-west4-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.17 (nic0)",
+    "external-IP": "34.90.207.69"
+  },
+  {
+    "name": "cluster-1-m",
+    "zone": "asia-east1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.15 (nic0)",
+    "external-IP": "35.234.51.202"
+  },
+  {
+    "name": "cluster-1-w-0",
+    "zone": "asia-east1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.16 (nic0)",
+    "external-IP": "34.80.158.54"
+  },
+  {
+    "name": "cluster-1-w-1",
+    "zone": "asia-east1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.14 (nic0)",
+    "external-IP": "34.80.14.160"
+  },
+  {
+    "name": "cluster-2346-m",
+    "zone": "asia-northeast1-b",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.36 (nic0)",
+    "external-IP": "34.84.57.132"
+  },
+  {
+    "name": "cluster-2346-w-0",
+    "zone": "asia-northeast1-b",
+    "recommendation": "Save $98 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.32 (nic0)",
+    "external-IP": "35.187.221.59"
+  },
+  {
+    "name": "cluster-2346-w-1",
+    "zone": "asia-northeast1-b",
+    "recommendation": "Save $98 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.35 (nic0)",
+    "external-IP": "35.200.94.89"
+  },
+  {
+    "name": "filter-ganza-991",
+    "zone": "asia-east1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.0.0.2 (nic0)",
+    "external-IP": "107.167.185.80"
+  },
+  {
+    "name": "instance-1",
+    "zone": "us-central1-f",
+    "recommendation": "",
+    "inUseBy": "instance-group-8",
+    "internal-IP": "10.240.0.10 (nic0)",
+    "external-IP": "None"
+  },
+  {
+    "name": "instance-10",
+    "zone": "us-central1-f",
+    "recommendation": "Increase perf.",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.33 (nic0)",
+    "external-IP": "35.226.32.161"
+  },
+  {
+    "name": "instance-11",
+    "zone": "us-central1-f",
+    "recommendation": "Increase perf.",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.34 (nic0)",
+    "external-IP": "130.211.147.141"
+  },
+  {
+    "name": "instance-12",
+    "zone": "asia-northeast1-b",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.37 (nic0)",
+    "external-IP": "35.190.230.149"
+  },
+  {
+    "name": "instance-13",
+    "zone": "europe-west2-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.38 (nic0)",
+    "external-IP": "35.234.132.195"
+  },
+  {
+    "name": "instance-14",
+    "zone": "europe-west1-b",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.39 (nic0)",
+    "external-IP": "35.233.18.85"
+  },
+  {
+    "name": "instance-15",
+    "zone": "asia-southeast1-b",
+    "recommendation": "Increase perf.",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.24 (nic0)",
+    "external-IP": "35.186.154.81"
+  },
+  {
+    "name": "instance-16",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "instance-group-10",
+    "internal-IP": "10.240.0.28 (nic0)",
+    "external-IP": "35.239.248.174"
+  },
+  {
+    "name": "instance-17",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.29 (nic0)",
+    "external-IP": "104.198.28.226"
+  },
+  {
+    "name": "instance-18",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.30 (nic0)",
+    "external-IP": "146.148.68.232"
+  },
+  {
+    "name": "instance-19",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.123 (nic0)",
+    "external-IP": "35.232.213.233"
+  },
+  {
+    "name": "instance-2",
+    "zone": "asia-east1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.13 (nic0)",
+    "external-IP": "104.199.156.150"
+  },
+  {
+    "name": "instance-20",
+    "zone": "us-central1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.46 (nic0)",
+    "external-IP": "35.223.132.134"
+  },
+  {
+    "name": "instance-21",
+    "zone": "europe-north1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.126 (nic0)",
+    "external-IP": "35.228.104.250"
+  },
+  {
+    "name": "instance-22",
+    "zone": "asia-east1-b",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.127 (nic0)",
+    "external-IP": "34.80.44.31"
+  },
+  {
+    "name": "instance-23",
+    "zone": "us-central1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.44 (nic0)",
+    "external-IP": "34.68.2.163"
+  },
+  {
+    "name": "instance-3",
+    "zone": "us-west1-a",
+    "recommendation": "Save $16 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.18 (nic0)",
+    "external-IP": "104.198.105.96"
+  },
+  {
+    "name": "instance-4",
+    "zone": "us-west1-a",
+    "recommendation": "Save $13 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.20 (nic0)",
+    "external-IP": "104.196.230.11"
+  },
+  {
+    "name": "instance-5",
+    "zone": "us-west1-a",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.0.0.3 (nic0)",
+    "external-IP": "None"
+  },
+  {
+    "name": "instance-6",
+    "zone": "europe-west1-b",
+    "recommendation": "Save $17 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.3 (nic0)",
+    "external-IP": "130.211.110.187"
+  },
+  {
+    "name": "instance-6-test",
+    "zone": "us-west1-a",
+    "recommendation": "Save $16 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.2 (nic0)",
+    "external-IP": "35.185.192.251"
+  },
+  {
+    "name": "instance-7",
+    "zone": "us-central1-a",
+    "recommendation": "Save $16 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.6 (nic0)",
+    "external-IP": "104.197.25.165"
+  },
+  {
+    "name": "instance-8",
+    "zone": "us-central1-a",
+    "recommendation": "Save $16 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.8 (nic0)",
+    "external-IP": "104.154.30.14"
+  },
+  {
+    "name": "instance-9",
+    "zone": "us-central1-f",
+    "recommendation": "Increase perf.",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.11 (nic0)",
+    "external-IP": "35.192.187.108"
+  },
+  {
+    "name": "instance-group-11-bzwx",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "instance-group-11",
+    "internal-IP": "10.240.0.31 (nic0)",
+    "external-IP": "104.154.64.149"
+  },
+  {
+    "name": "instance-group-2-zzss",
+    "zone": "us-central1-f",
+    "recommendation": "",
+    "inUseBy": "instance-group-2",
+    "internal-IP": "10.240.0.7 (nic0)",
+    "external-IP": "104.197.30.78"
+  },
+  {
+    "name": "instance-group-3-nrzg",
+    "zone": "us-central1-f",
+    "recommendation": "",
+    "inUseBy": "instance-group-3",
+    "internal-IP": "10.240.0.19 (nic0)",
+    "external-IP": "34.70.40.199"
+  },
+  {
+    "name": "instance-group-4-qjc9",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "instance-group-4",
+    "internal-IP": "10.240.0.12 (nic0)",
+    "external-IP": "35.226.105.23"
+  },
+  {
+    "name": "instance-group-5-8x8m",
+    "zone": "us-west1-a",
+    "recommendation": "",
+    "inUseBy": "instance-group-5",
+    "internal-IP": "10.240.0.25 (nic0)",
+    "external-IP": "104.199.120.214"
+  },
+  {
+    "name": "instance-group-7-wdz1",
+    "zone": "us-central1-c",
+    "recommendation": "",
+    "inUseBy": "instance-group-7",
+    "internal-IP": "10.240.0.26 (nic0)",
+    "external-IP": "35.188.54.137"
+  },
+  {
+    "name": "my-test-group-7fiv",
+    "zone": "asia-east1-a",
+    "recommendation": "Save $15 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.139.159 (nic0)",
+    "external-IP": "104.155.228.113"
+  },
+  {
+    "name": "sans-external-ip",
+    "zone": "us-central1-c",
+    "recommendation": "Save $16 / mo",
+    "inUseBy": "",
+    "internal-IP": "10.240.27.45 (nic0)",
+    "external-IP": "None"
+  },
+  {
+    "name": "third-time",
+    "zone": "us-central1-f",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.4 (nic0)",
+    "external-IP": "35.188.198.80"
+  },
+  {
+    "name": "velostrata-1-vm",
+    "zone": "us-central1-f",
+    "recommendation": "",
+    "inUseBy": "",
+    "internal-IP": "10.240.0.74 (nic0)",
+    "external-IP": "35.202.5.228"
+  }
+]

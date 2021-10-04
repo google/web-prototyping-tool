@@ -1,0 +1,9 @@
+<button
+  *ngFor="let item of data; let i = index"
+  cdToggleButton
+  cd-outlined-button
+  size="small"
+  [selected]="i === selectedIndex"
+>
+  {{ item.title }}
+</button>

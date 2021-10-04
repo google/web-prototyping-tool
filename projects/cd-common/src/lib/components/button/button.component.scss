@@ -1,0 +1,234 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$transitionSpeed: 250ms;
+
+:host.toggle-selected {
+  --cd-primary-color: var(--cd-font-color);
+  --cd-badge-display: none;
+}
+
+:host.cd-outlined-button,
+:host.cd-shaped-button,
+:host.cd-dashed-button {
+  border: 1px solid;
+  border-color: var(--cd-outline-color);
+
+  &.cd-dashed-button,
+  &.cd-shaped-button {
+    border-style: dashed;
+  }
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    border-style: solid;
+  }
+}
+
+:host {
+  text-decoration: none;
+  font-family: var(--cd-header-font);
+  font-weight: 500;
+  font-size: var(--cd-font-size-default);
+  -webkit-font-smoothing: antialiased;
+  align-items: center;
+  contain: layout;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+  display: inline-flex;
+  margin: 0;
+  cursor: pointer;
+  position: relative;
+  justify-content: center;
+  min-width: fit-content;
+  border: none;
+  user-select: none;
+  color: var(--cd-font-color);
+  @include cd-font-overflow-ellipsis;
+
+  &.ready {
+    transition: border $transitionSpeed, background-color $transitionSpeed,
+      box-shadow $transitionSpeed, color $transitionSpeed;
+    transition-timing-function: var(--cd-transition-timing);
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--cd-primary-color);
+    background-color: var(--cd-focus-fill);
+    border-color: var(--cd-active-fill);
+  }
+
+  &:active,
+  &.active {
+    color: var(--cd-primary-color);
+    border-color: var(--cd-active-fill);
+    background-color: var(--cd-active-fill);
+  }
+}
+
+:host.cd-unelevated-button {
+  color: var(--cd-inverted-font-color);
+  background-color: var(--cd-primary-color);
+  border: none !important; // < Needed for toggle button state
+
+  &::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+    top: calc(50% - 100%);
+    left: calc(50% - 100%);
+    width: 200%;
+    height: 200%;
+    background-color: rgba(255, 255, 255, 0);
+    mix-blend-mode: overlay;
+    transition: background-color $transitionSpeed;
+    transition-timing-function: var(--cd-transition-timing);
+  }
+
+  &:hover,
+  &:focus {
+    color: var(--cd-inverted-font-color);
+    background-color: var(--cd-primary-color);
+
+    &::before {
+      background-color: rgba(255, 255, 255, 0.24);
+    }
+  }
+
+  &:active,
+  &.active {
+    color: var(--cd-inverted-font-color);
+    background-color: var(--cd-primary-color);
+
+    &::before {
+      background-color: rgba(255, 255, 255, 0.54);
+    }
+  }
+}
+
+:host.cd-shaped-button:not(.icon-button) {
+  &.small {
+    padding: 0 var(--cd-spacing-3);
+  }
+
+  &.small,
+  &.medium,
+  &.large {
+    border-radius: 100px;
+  }
+}
+
+:host:not(.icon-button) {
+  &.small {
+    min-height: var(--cd-size-3);
+    padding: 0 var(--cd-spacing-2);
+    font-size: var(--cd-icon-button-font-size-small);
+    border-radius: var(--cd-border-radius-1);
+  }
+
+  &.medium {
+    min-height: var(--cd-size-4);
+    padding: 0 var(--cd-spacing-3);
+    font-size: var(--cd-icon-button-font-size-small);
+    border-radius: var(--cd-border-radius-1);
+  }
+
+  &.large {
+    min-height: var(--cd-size-6);
+    padding: 0 var(--cd-spacing-5);
+    font-size: var(--cd-icon-button-font-size-large);
+    border-radius: var(--cd-border-radius-3);
+  }
+}
+
+:host.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: initial;
+  padding: 0;
+  border-radius: 50%;
+
+  &.small {
+    width: var(--cd-size-3);
+    height: var(--cd-size-3);
+  }
+
+  &.medium {
+    width: var(--cd-size-4);
+    height: var(--cd-size-4);
+  }
+
+  &.large {
+    width: var(--cd-size-6);
+    height: var(--cd-size-6);
+  }
+}
+
+:host.has-icon:not(.icon-button) {
+  &.small .icon {
+    margin-left: -4px;
+    margin-right: 4px;
+  }
+
+  &.medium .icon {
+    margin-left: -6px;
+    margin-right: 6px;
+  }
+
+  &.large .icon {
+    margin-left: -6px;
+    margin-right: 8px;
+  }
+}
+
+:host.fab {
+  transition: box-shadow 200ms ease;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302), 0 1px 3px 1px rgba(60, 64, 67, 0.149);
+  border: none !important;
+
+  &:hover {
+    box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.302), 0 4px 8px 3px rgba(60, 64, 67, 0.149);
+  }
+}
+
+:host.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+
+  &.icon-button {
+    // Chrome BUG where opacity wasnt applied to SVG
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+:host.cd-inverted-button {
+  color: var(--cd-primary-color-light);
+
+  &:hover,
+  &:focus,
+  &.active,
+  &:active {
+    color: var(--cd-primary-color-light);
+  }
+}

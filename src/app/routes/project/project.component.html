@@ -1,0 +1,114 @@
+<app-activity-bar
+  class="activity-bar"
+  [active]="(panelState$ | async)?.leftPanel?.visible"
+  [currentActivity]="(panelState$ | async)?.currentActivity?.id"
+  (activitySelected)="onActivitySelected($event)"
+></app-activity-bar>
+
+<cd-side-panel
+  position="left"
+  showEdgeOnClose
+  class="activity-panel"
+  [visible]="(panelState$ | async)?.leftPanel?.visible"
+  [size]="(panelState$ | async)?.leftPanel?.size"
+  (sizeChange)="onLeftPanelSizeChange($event)"
+  [min]="PanelSize.MinLeft"
+  [max]="PanelSize.MaxLeft"
+  [templateRef]="panelTemplate"
+></cd-side-panel>
+
+<ng-template #panelTemplate>
+  <ng-container *ngIf="(panelState$ | async)?.currentActivity?.id; let currentActivityId">
+    <div class="panel-wrapper" [ngSwitch]="currentActivityId">
+      <app-theme-panel *ngSwitchCase="Activities.Theme"></app-theme-panel>
+      <app-data-panel *ngSwitchCase="Activities.Data"></app-data-panel>
+      <app-about-panel *ngSwitchCase="Activities.About"></app-about-panel>
+      <app-assets-panel
+        *ngSwitchCase="Activities.Assets"
+        (assetAddFired)="onAssetAction($event)"
+      ></app-assets-panel>
+      <app-settings-panel *ngSwitchCase="Activities.Settings"></app-settings-panel>
+
+      <!-- Layers Panel -->
+      <!-- Don't use ngswitch for the layers panel to maintain state -->
+      <app-components-panel
+        [isolatedSymbolId]="isolatedSymbolId"
+        [userIsAnEditor]="userIsAnEditor"
+        [class.hidden-panel]="currentActivityId !== Activities.Components"
+      ></app-components-panel>
+      <app-layers-panel
+        [homeBoardId]="projectHomeBoardId$ | async"
+        [class.hidden-panel]="currentActivityId !== Activities.Layers"
+      ></app-layers-panel>
+    </div>
+  </ng-container>
+</ng-template>
+
+<app-top-bar
+  [project]="project"
+  [initialLoad]="initialLoad$ | async"
+  [isolatedSymbolId]="isolatedSymbolId"
+  [isRecording]="(panelState$ | async)?.recordStateChanges"
+  [zoom]="zoom"
+  (addBoard)="onAddBoard()"
+  (projectNameChange)="onProjectNameChange($event)"
+></app-top-bar>
+
+<app-canvas
+  #appCanvas
+  class="app-canvas"
+  [canvas]="canvas"
+  [isRecording]="isRecording"
+  [breakGlass]="breakGlass$ | async"
+  (contextmenu)="onContextMenu($event)"
+>
+  <app-outlet-container
+    *ngIf="projectLoaded$ | async"
+    [breakGlass]="breakGlass$ | async"
+    [selection]="selectionState$ | async"
+    [commentCount]="commentCounts$ | async"
+    [homeboardId]="projectHomeBoardId$ | async"
+    [zoomLevel]="zoom"
+  ></app-outlet-container>
+</app-canvas>
+
+<app-presence-indicators class="presence-indicators"></app-presence-indicators>
+
+<cd-side-panel
+  class="properties-panel"
+  position="right"
+  [visible]="(panelState$ | async)?.rightPanel?.visible"
+  [size]="(panelState$ | async)?.rightPanel?.size"
+  (sizeChange)="onRightPanelSizeChange($event)"
+  [max]="PanelSize.MaxRight"
+  [min]="PanelSize.MinRight"
+>
+  <app-properties-panel
+    [isolatedSymbolId]="isolatedSymbolId"
+    [isRecording]="isRecording"
+  ></app-properties-panel>
+</cd-side-panel>
+
+<div class="overlays">
+  <!-- BANNER -->
+  <div class="banners">
+    <app-glass-banner [showBanner]="breakGlass$ | async"></app-glass-banner>
+    <ng-container *ngIf="project">
+      <app-fork-banner
+        *ngIf="canShowForkBanner; else statusBanner"
+        [project]="project"
+      ></app-fork-banner>
+    </ng-container>
+    <app-debug-stats></app-debug-stats>
+  </div>
+  <!-- RECORDING PANEL -->
+  <div class="record">
+    <app-recordings *ngIf="(panelState$ | async)?.recordStateChanges"></app-recordings>
+  </div>
+</div>
+
+<div class="dropzone" *ngIf="showDropZone"></div>
+
+<ng-template #statusBanner>
+  <app-status-banner></app-status-banner>
+</ng-template>

@@ -1,0 +1,23 @@
+<ng-container *ngFor="let action of actions; let i = index; trackBy: trackFn">
+  <ng-container
+    *ngIf="selectedIds.has(action.from) || selectedIds.has(action.to)"
+    [ngTemplateOutlet]="line"
+    [ngTemplateOutletContext]="{
+      $implicit: action,
+      isTo: selectedIds.has(action.to),
+      idx: i
+    }"
+  ></ng-container>
+</ng-container>
+
+<ng-template #line let-action let-isTo="isTo" let-idx="idx">
+  <svg:polyline
+    class="line active"
+    [class.active]="selectedIds.has(action.from)"
+    [attr.points]="action.path"
+    [attr.stroke-width]="strokeWidth"
+    [attr.marker-end]="isTo ? 'url(#svg-arrow)' : 'url(#svg-arrow-primary)'"
+  />
+  <svg:rect class="rect" [cdSVGRect]="action.fromRect" *ngIf="isTo" />
+  <svg:polyline class="hit-target-line" [attr.points]="action.path" [attr.data-actionidx]="idx" />
+</ng-template>

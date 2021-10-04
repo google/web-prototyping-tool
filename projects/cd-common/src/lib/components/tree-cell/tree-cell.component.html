@@ -1,0 +1,50 @@
+<!-- NOTE: class="arrow" is used to identify on event bubbling -->
+<div class="arrow">
+  <cd-icon name="arrow_right" size="medium" class="arrow-icon"></cd-icon>
+</div>
+
+<cd-icon [name]="iconName" size="small" class="icon"></cd-icon>
+
+<div class="input-mask" [class.editing]="editing">
+  <div #labelInput [class.editing]="editing" cdInputReset class="label" contenteditable="true">
+    {{ editing ? title : name }}
+  </div>
+</div>
+
+<button
+  *ngIf="canShowActionsButton"
+  cd-button
+  class="has-action"
+  size="small"
+  iconSize="small"
+  cdTooltip="Action applied"
+  iconName="bolt"
+></button>
+
+<!-- NOTE: class="vis-toggle" is used to identify on event bubbling -->
+<button
+  *ngIf="canShowVisButton"
+  class="vis-toggle"
+  cd-button
+  cdToggleButton
+  [cdTooltip]="markHidden ? 'Show' : 'Hide'"
+  cdTooltipDirection="right"
+  size="small"
+  iconSize="small"
+  [hidden]="!showHideButton"
+  [selected]="markHidden"
+  unselectedIconName="visibility"
+  selectedIconName="visibility_off"
+></button>
+
+<!-- NOTE: class="goto-board" is used to identify on event bubbling -->
+<button
+  *ngIf="isBoard"
+  class="goto-board"
+  cd-button
+  iconName="shortcut"
+  cdTooltip="Go to board"
+  cdTooltipDirection="right"
+  size="small"
+  iconSize="small"
+></button>

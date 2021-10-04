@@ -1,0 +1,231 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$transitionSpeed: 185ms;
+
+header {
+  display: none;
+  position: relative;
+  user-select: none;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  height: var(--cd-size-5);
+  padding: 0 var(--cd-spacing-3);
+  padding-right: var(--cd-spacing-2);
+  cursor: default;
+}
+
+.content-wrapper {
+  display: grid;
+  row-gap: var(--cd-spacing-2);
+  padding: var(--cd-spacing-3) 0;
+  position: relative;
+
+  &.collapsed {
+    display: none;
+  }
+}
+
+.content-wrapper:empty {
+  display: none;
+}
+
+:host.remove-padding .content-wrapper {
+  padding: 0;
+}
+
+:host.list .content-wrapper {
+  padding: 0;
+}
+
+:host.show-header {
+  header {
+    display: grid;
+  }
+
+  .content-wrapper {
+    padding-top: 0;
+  }
+}
+
+:host.no-padding {
+  header {
+    padding: 0;
+  }
+}
+
+:host.no-bottom-padding > .content > {
+  .content-wrapper {
+    padding: 0;
+  }
+}
+
+.title {
+  @include cd-font(overline);
+  @include cd-font-overflow-ellipsis;
+}
+
+:host.sub-header {
+  .title {
+    @include cd-font(body1);
+
+    color: var(--cd-font-color);
+    text-transform: capitalize;
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+
+:host.top-divider header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  height: 1px;
+  background: var(--cd-border-color-light);
+}
+
+:host.short-divider.top-divider header::before {
+  left: var(--cd-spacing-3);
+  right: var(--cd-spacing-3);
+}
+
+.enabled-switch {
+  align-self: center;
+  margin-left: var(--cd-spacing-0);
+}
+
+:host {
+  position: relative;
+  display: grid;
+
+  &:not(.top-divider)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: block;
+    height: 1px;
+    margin-top: var(--cd-spacing-3);
+    background: var(--cd-border-color-light);
+  }
+  // Don't show a border for the last property group
+  &:last-child::after {
+    content: none;
+  }
+}
+
+:host.bottom-divider::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: block;
+  height: 1px;
+  margin-top: var(--cd-spacing-3);
+  background: var(--cd-border-color-light);
+}
+
+.right,
+.left {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+  opacity: 1;
+  height: fit-content;
+
+  &:not(.enabled) {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.icon {
+  transform: rotate(180deg);
+  color: var(--cd-font-color);
+
+  &.collapsed {
+    transform: rotate(0deg);
+  }
+}
+
+.ico-btn {
+  outline: none;
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+  width: var(--cd-size-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    width: var(--cd-size-3);
+    height: var(--cd-size-3);
+    border-radius: 50%;
+    position: absolute;
+    transition: background-color 150ms ease;
+  }
+
+  &:focus {
+    &::before {
+      background: var(--cd-focus-fill);
+    }
+
+    --cd-font-color: var(--cd-primary-color);
+
+    .icon {
+      transition: transform $transitionSpeed;
+      transition-timing-function: var(--cd-transition-timing);
+    }
+  }
+}
+
+.title-help-tooltip,
+button {
+  width: var(--cd-size-2);
+
+  & + & {
+    margin-left: var(--cd-spacing-0);
+  }
+}

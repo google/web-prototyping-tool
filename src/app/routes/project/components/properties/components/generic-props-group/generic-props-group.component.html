@@ -1,0 +1,12 @@
+<cd-property-group [groupTitle]="label" type="add" (add)="onAddItem()">
+  <cd-generic-prop-list
+    #propListRef
+    [data]="data"
+    [iconClass]="iconClass"
+    [options]="options"
+    [selectedIndex]="selectedIndex"
+    (selectedIndexChange)="onSelectedIndexChange($event)"
+    (dataChange)="updateData($event)"
+    [config]="config"
+  ></cd-generic-prop-list>
+</cd-property-group>

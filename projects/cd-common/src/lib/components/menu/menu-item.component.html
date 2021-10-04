@@ -1,0 +1,23 @@
+<div class="left">
+  <cd-icon *ngIf="value.checked" name="checked" [size]="iconSize"></cd-icon>
+  <ng-container *ngIf="!indent">
+    <cd-icon *ngIf="value.icon" [name]="value.icon" [size]="iconSize"></cd-icon>
+    <cd-swatch *ngIf="value.color" [color]="value.color" size="16" borderRadius="2"></cd-swatch>
+  </ng-container>
+</div>
+
+<span class="label">
+  <div class="swatch" *ngIf="indent">
+    <cd-icon *ngIf="value.icon" [name]="value.icon" [size]="iconSize"></cd-icon>
+    <cd-swatch *ngIf="value.color" [color]="value.color" size="16" borderRadius="16"></cd-swatch>
+  </div>
+  {{ value.title }}
+</span>
+
+<div class="right">
+  <cd-icon name="arrow_right" *ngIf="value.children"></cd-icon>
+  <kbd class="shortcut" *ngIf="shortcut">{{ shortcut }}</kbd>
+</div>
+
+<ng-content></ng-content>
+<div class="divider" *ngIf="divider"></div>

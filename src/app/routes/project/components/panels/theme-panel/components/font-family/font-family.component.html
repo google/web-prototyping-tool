@@ -1,0 +1,23 @@
+<header class="title">Family</header>
+<section class="chip-set">
+  <div *ngFor="let fontFamily of families; trackBy: trackByFn" class="font-family-chip">
+    <span [cdTooltip]="fontFamily.family">{{ fontFamily.family }}</span>
+    <ng-container *ngIf="!fontFamily.locked">
+      <button class="remove-chip-btn" (click)="onRemoveChip(fontFamily)" cdTooltip="Remove font">
+        <cd-icon name="close" size="small"></cd-icon>
+      </button>
+    </ng-container>
+  </div>
+
+  <button
+    cd-dashed-button
+    cd-shaped-button
+    class="add-button"
+    size="small"
+    iconSize="small"
+    iconName="add"
+    (click)="launchFontFamilyPicker($event)"
+  >
+    Add
+  </button>
+</section>

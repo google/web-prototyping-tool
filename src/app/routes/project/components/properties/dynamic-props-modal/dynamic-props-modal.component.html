@@ -1,0 +1,15 @@
+<div class="wrapper">
+  <app-dynamic-properties
+    [boards]="boards"
+    [props]="propertyModels"
+    [properties]="properties"
+    [parentMergedProps]="parentMergedProps"
+    [designSystem]="designSystem"
+    [colorMenuData]="colorMenuData"
+    (propsChange)="onPropsChange($event)"
+  ></app-dynamic-properties>
+
+  <footer class="footer" *ngIf="add">
+    <button cd-outlined-button size="small" (click)="onAdd()">{{ addButtonLabel }}</button>
+  </footer>
+</div>

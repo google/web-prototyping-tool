@@ -1,0 +1,6 @@
+@mixin elevate() {
+  background: var(--cd-modal-background-color);
+  border-radius: var(--cd-border-radius-3);
+  box-shadow: var(--cd-depth-1);
+  display: block;
+}

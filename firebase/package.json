@@ -1,0 +1,59 @@
+{
+  "name": "functions",
+  "engines": {
+    "node": "12"
+  },
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js",
+    "build:prod": "webpack --config ./webpack.config.prod.js",
+    "build:all": "npm run build:dependencies && npm run build",
+    "build:all:prod": "npm run build:dependencies && npm run build:prod",
+    "build:dependencies": "cd ../; npm run build:interfaces && npm run build:meta && npm run build:utils:prod && npm run build:themes && npm run build:common:prod",
+    "build:watch": "webpack --config ./webpack.config.js -w",
+    "serve": "npm run build && firebase serve --only functions",
+    "shell": "npm run build && firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions -P default",
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
+    "deploy:change-requests": "firebase deploy --only functions:onChangeRequest",
+    "deploy:prod": "firebase deploy --only functions -P production",
+    "deploy:comment-count": "firebase deploy --only functions:onCommentCreateUpdateCount,functions:onCommentDeleteUpdateCount,functions:onCommentResolutionChangeUpdateCount",
+    "deploy:screenshots": "firebase deploy --only functions:onProjectContentsCreated,functions:onProjectContentsUpdated,functions:onProjectContentsDeleted,functions:onScreenshotCreated",
+    "deploy:exceptions-bot": "firebase deploy --only functions:checkExceptionsDaily",
+    "deploy:exceptions-bot:prod": "firebase deploy --only functions:checkExceptionsDaily -P production",
+    "deploy:rules": "firebase deploy --only firestore:rules -P default",
+    "deploy:rules:prod": "firebase deploy --only firestore:rules -P production",
+    "deploy:storage-rules": "firebase deploy --only storage:rules -P default",
+    "deploy:storage-rules:prod": "firebase deploy --only storage:rules -P production",
+    "logs": "firebase functions:log",
+    "emulate": "firebase emulators:start --only firestore",
+    "test": "mocha --timeout=10000"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "@firebase/util": "^1.1.0",
+    "@google-cloud/pubsub": "^2.5.0",
+    "@google-cloud/storage": "^5.2.0",
+    "child-process-promise": "^2.2.1",
+    "firebase": "^8.6.1",
+    "firebase-admin": "^9.8.0",
+    "firebase-functions": "^3.14.0",
+    "googleapis": "^59.0.0",
+    "rxjs": "^6.6.7",
+    "svgo": "^1.3.2",
+    "tslib": "^2.0.1"
+  },
+  "devDependencies": {
+    "@firebase/testing": "^0.20.11",
+    "@google-cloud/common": "^3.3.2",
+    "@types/child-process-promise": "^2.2.1",
+    "@types/svgo": "^1.3.3",
+    "firebase-tools": "^8.20.0",
+    "mocha": "^8.1.1",
+    "typescript": "^3.9.7",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-node-externals": "^2.5.1"
+  },
+  "private": true
+}

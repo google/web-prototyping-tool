@@ -1,0 +1,79 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  padding: var(--cd-spacing-0) var(--cd-spacing-3);
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(31px, 1fr));
+  gap: var(--cd-spacing-2);
+  justify-content: start;
+}
+
+.add {
+  width: var(--cd-size-5);
+  height: var(--cd-size-5);
+  border-radius: 50%;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: transparent;
+  color: var(--cd-font-color);
+  border: 1px dashed var(--cd-outline-color);
+  transition: background-color 150ms ease, border 150ms ease;
+
+  &:hover,
+  &:focus,
+  &.active,
+  &:active {
+    background: var(--cd-focus-fill);
+    color: var(--cd-primary-color);
+    border: 1px solid var(--cd-active-fill);
+  }
+
+  &.active,
+  &:focus,
+  &:active {
+    background: var(--cd-active-fill);
+  }
+
+  &:disabled,
+  &[disabled] {
+    background: var(--cd-background-color);
+    color: var(--cd-font-color);
+    border: none;
+    opacity: 0.5;
+    cursor: default;
+  }
+}
+
+.editor {
+  background: transparent;
+  outline: none;
+  border: none;
+  position: relative;
+  width: var(--cd-size-5);
+  height: var(--cd-size-5);
+  cursor: pointer;
+  border-radius: 50%;
+  overflow: hidden;
+}

@@ -1,0 +1,156 @@
+[
+  {
+    "name": "deploymentcoordinator-2db5b",
+    "zone": "us-central1-f",
+    "instances": 0,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Jul 5, 2015, 3:04:30 PM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-10",
+    "zone": "us-central1-c",
+    "instances": 1,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Nov 12, 2018, 3:43:35 PM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-11",
+    "zone": "us-central1-c",
+    "instances": 1,
+    "template": "a-template",
+    "groupType": "Managed",
+    "creationTime": "Nov 16, 2018, 2:31:11 PM",
+    "recommendation": "Save $98 / mo",
+    "autoscaling": "On: Target CPU utilization 60%",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-12",
+    "zone": "us-central1-f",
+    "instances": 0,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Nov 16, 2018, 2:34:08 PM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-2",
+    "zone": "us-central1-f",
+    "instances": 1,
+    "template": "template-f1-micro-nginx",
+    "groupType": "Managed",
+    "creationTime": "Jun 18, 2015, 11:40:35 AM",
+    "recommendation": "",
+    "autoscaling": "On: Target LB capacity fraction 80%",
+    "inUseBy": "test-project"
+  },
+  {
+    "name": "instance-group-3",
+    "zone": "us-central1-f",
+    "instances": 1,
+    "template": "template-f1-micro-nginx",
+    "groupType": "Managed",
+    "creationTime": "Jun 18, 2015, 11:41:35 AM",
+    "recommendation": "Save $16 / mo",
+    "autoscaling": "On: Target CPU utilization 10%",
+    "inUseBy": "ml-staging"
+  },
+  {
+    "name": "instance-group-4",
+    "zone": "us-central1-c",
+    "instances": 1,
+    "template": "instance-template-2",
+    "groupType": "Managed",
+    "creationTime": "Jun 25, 2015, 6:50:04 AM",
+    "recommendation": "",
+    "autoscaling": "No configuration",
+    "inUseBy": "ml-production"
+  },
+  {
+    "name": "instance-group-5",
+    "zone": "us-west1-a",
+    "instances": 1,
+    "template": "instance-template-3",
+    "groupType": "Managed",
+    "creationTime": "Oct 13, 2016, 2:03:28 PM",
+    "recommendation": "Save $16 / mo",
+    "autoscaling": "No configuration",
+    "inUseBy": "ml-development"
+  },
+  {
+    "name": "instance-group-6",
+    "zone": "us-central1-c",
+    "instances": 0,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Sep 12, 2018, 8:33:01 AM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-7",
+    "zone": "us-central1-c",
+    "instances": 1,
+    "template": "a-template",
+    "groupType": "Managed",
+    "creationTime": "Oct 24, 2018, 2:49:41 PM",
+    "recommendation": "Increase perf.",
+    "autoscaling": "On: Target CPU utilization 60%",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-8",
+    "zone": "us-central1-f",
+    "instances": 2,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Nov 12, 2018, 3:40:54 PM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "instance-group-9",
+    "zone": "us-central1-f",
+    "instances": 1,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Nov 12, 2018, 3:41:42 PM",
+    "recommendation": "Increase perf.",
+    "autoscaling": "",
+    "inUseBy": "test-project"
+  },
+  {
+    "name": "lamp-72a95",
+    "zone": "us-central1-b",
+    "instances": 0,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Jun 29, 2015, 11:46:05 AM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": ""
+  },
+  {
+    "name": "lemp-98936",
+    "zone": "us-central1-f",
+    "instances": 0,
+    "template": "—",
+    "groupType": "Unmanaged",
+    "creationTime": "Jul 5, 2015, 3:04:30 PM",
+    "recommendation": "",
+    "autoscaling": "",
+    "inUseBy": "poc-project"
+  }
+]

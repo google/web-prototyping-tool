@@ -1,0 +1,107 @@
+<cd-property-group noBottomPadding groupTitle="Border">
+  <div class="header-right" cdPropertyGroupHeader>
+    <button
+      cd-button
+      *ngIf="showDeleteAll"
+      cdTooltip="Delete All"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="delete_forever"
+      (click)="resetBorder()"
+    ></button>
+    <cd-menu-button
+      size="small"
+      iconSize="small"
+      iconName="add"
+      cdTooltip="Add"
+      cdTooltipDirection="left"
+      [data]="borderMenu"
+      (selected)="onMenuSelect($event)"
+    ></cd-menu-button>
+  </div>
+
+  <div class="border-wrapper" *ngIf="borderExists">
+    <div class="border-input all-border" *ngIf="showAllBorderInput">
+      <cd-border-input
+        [value]="border"
+        [designSystem]="designSystem"
+        [colorData]="colorMenuData"
+        (action)="onAction($event)"
+        (valueChange)="updateBorder($event)"
+      ></cd-border-input>
+      <button
+        cd-button
+        cdTooltip="Delete"
+        cdTooltipDirection="left"
+        size="small"
+        iconSize="small"
+        iconName="delete_outline"
+        (click)="resetBorder()"
+      ></button>
+    </div>
+
+    <ng-container
+      [ngTemplateOutlet]="borderEdge"
+      [ngTemplateOutletContext]="{
+        $implicit: borderTop,
+        edge: BorderEdge.Top,
+        tooltip: 'Top',
+        label: 'T'
+      }"
+    ></ng-container>
+
+    <ng-container
+      [ngTemplateOutlet]="borderEdge"
+      [ngTemplateOutletContext]="{
+        $implicit: borderRight,
+        edge: BorderEdge.Right,
+        tooltip: 'Right',
+        label: 'R'
+      }"
+    ></ng-container>
+
+    <ng-container
+      [ngTemplateOutlet]="borderEdge"
+      [ngTemplateOutletContext]="{
+        $implicit: borderBottom,
+        edge: BorderEdge.Bottom,
+        tooltip: 'Bottom',
+        label: 'B'
+      }"
+    ></ng-container>
+
+    <ng-container
+      [ngTemplateOutlet]="borderEdge"
+      [ngTemplateOutletContext]="{
+        $implicit: borderLeft,
+        edge: BorderEdge.Left,
+        tooltip: 'Left',
+        label: 'L'
+      }"
+    ></ng-container>
+  </div>
+</cd-property-group>
+
+<ng-template #borderEdge let-value let-edge="edge" let-label="label" let-tooltip="tooltip">
+  <div class="border-input" *ngIf="value">
+    <span class="edge-label" [cdTooltip]="tooltip" cdTooltipDirection="left">{{ label }}</span>
+    <cd-border-input
+      [value]="value"
+      [designSystem]="designSystem"
+      [colorData]="colorMenuData"
+      (valueChange)="updateBorder($event, edge)"
+      (action)="onAction($event)"
+    ></cd-border-input>
+    <button
+      cd-button
+      class="delete-btn"
+      cdTooltip="Delete"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="delete_outline"
+      (click)="onDeleteEdge(edge)"
+    ></button>
+  </div>
+</ng-template>

@@ -1,0 +1,202 @@
+<cd-property-group groupTitle="Content" type="collapse" bottomDivider>
+  <ng-container cdPropertyGroupHeader>
+    <button
+      *ngIf="showToggleBtn"
+      cd-outlined-button
+      class="advance-toggle"
+      cdTooltip="Toggle for more control over css properties"
+      [active]="advancedMode"
+      (click)="onAdvancedToggle()"
+    >
+      {{ advancedLabel }}
+    </button>
+  </ng-container>
+  <cd-input-group label="Layout">
+    <cd-toggle-button-group
+      showBackground
+      [value]="layoutMode"
+      (valueChange)="onLayoutModeChange($event)"
+    >
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Auto"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/auto-layout.svg"
+        [value]="LAYOUT_MODE.Auto"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Columns"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/stack-cols-layout.svg"
+        [value]="LAYOUT_MODE.Cols"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Rows"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/stack-rows-layout.svg"
+        [value]="LAYOUT_MODE.Rows"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Grid"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/grid-layout.svg"
+        [value]="LAYOUT_MODE.Grid"
+      ></button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+
+  <ng-container [ngTemplateOutlet]="showAdvanced ? advancedRef : basicRef"></ng-container>
+  <ng-container *ngIf="!isAutoMode" [ngTemplateOutlet]="gapRef"></ng-container>
+  <ng-container *ngIf="isGridMode" [ngTemplateOutlet]="gridRef"></ng-container>
+</cd-property-group>
+
+<ng-template #basicRef>
+  <cd-input-group label="Distribute" *ngIf="isRowsOrColsMode">
+    <cd-toggle-button-group
+      showBackground
+      [value]="gridAutoMode"
+      (valueChange)="onDistributionChange($event)"
+    >
+      <button
+        cd-button
+        cdToggleButton
+        size="small"
+        expand="true"
+        [value]="GRID_AUTO_MODE.MinContent"
+      >
+        Stack
+      </button>
+      <button cd-button cdToggleButton size="small" expand="true" [value]="GRID_AUTO_MODE.Auto">
+        Spread
+      </button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+
+  <cd-align-prop
+    *ngIf="!isAutoMode"
+    [value]="align"
+    (valueChange)="onAlignmentChange($event)"
+  ></cd-align-prop>
+</ng-template>
+
+<ng-template #advancedRef>
+  <cd-input-group label="Mode" *ngIf="!isGridMode">
+    <cd-toggle-button-group
+      showBackground
+      [value]="model.display | layoutDisplayModePipe"
+      (valueChange)="onDisplayModeChange($event)"
+    >
+      <button cd-button cdToggleButton size="small" expand="true" [value]="DISPLAY_MODE.Flex">
+        Flexbox
+      </button>
+      <button cd-button cdToggleButton size="small" expand="true" [value]="DISPLAY_MODE.Grid">
+        Grid
+      </button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+
+  <cd-input-group label="Distribute" *ngIf="isDisplayGrid && isRowsOrColsMode">
+    <cd-select-input
+      [data]="GRID_AUTO_MENU | MarkSelection: gridAutoMode"
+      (change)="onGridAutoModeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <cd-input-group label="Align" columns="1fr 1fr">
+    <cd-select-input
+      [data]="ALIGN_CONTENT_MENU | MarkSelection: model.alignContent"
+      (change)="onAlignContentChange($event)"
+    ></cd-select-input>
+    <cd-select-input
+      [data]="ALIGN_ITEMS_MENU | MarkSelection: model.alignItems"
+      (change)="onAlignItemsChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <cd-input-group label="Justify" columns="1fr 1fr">
+    <cd-select-input
+      [data]="JUSTIFY_CONTENT_MENU | MarkSelection: model.justifyContent"
+      (change)="onJustifyContentChange($event)"
+      bottomLabel="content"
+    ></cd-select-input>
+    <cd-select-input
+      [data]="JUSTIFY_ITEMS_MENU | MarkSelection: model.justifyItems"
+      (change)="onJustifyItemsChange($event)"
+      bottomLabel="items"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #gapRef>
+  <ng-container *ngIf="isGridMode; else basicGapRef">
+    <cd-input-group label="Row gap">
+      <cd-range-input
+        (valueChange)="onRowGapChange($event)"
+        [autocompleteMenu]="SIZE_MENU"
+        [value]="rowGapValue"
+        innerLabel="px"
+        max="100"
+        min="0"
+        type="number"
+      ></cd-range-input>
+    </cd-input-group>
+    <cd-input-group label="Col gap">
+      <cd-range-input
+        (valueChange)="onColGapChange($event)"
+        [autocompleteMenu]="SIZE_MENU"
+        [value]="colGapValue"
+        innerLabel="px"
+        max="100"
+        min="0"
+        type="number"
+      ></cd-range-input>
+    </cd-input-group>
+  </ng-container>
+</ng-template>
+
+<ng-template #basicGapRef>
+  <cd-input-group label="Gap">
+    <cd-range-input
+      (valueChange)="onGapChange($event)"
+      [autocompleteMenu]="SIZE_MENU"
+      [value]="gapValue"
+      innerLabel="px"
+      max="100"
+      min="0"
+      type="number"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #gridRef>
+  <div class="grid-layout">
+    <cd-property-group topDivider [groupTitle]="rowTitle" type="add" (add)="onRowAdd()">
+      <app-grid-props
+        (dataChange)="onRowChange($event)"
+        (hover)="onRowHover($event)"
+        (hoverOut)="onRowHoverOut($event)"
+        [data]="model?.gridTemplateRows"
+      ></app-grid-props>
+    </cd-property-group>
+
+    <cd-property-group topDivider [groupTitle]="colTitle" type="add" (add)="onColumnAdd()">
+      <app-grid-props
+        vertical
+        [data]="model?.gridTemplateColumns"
+        (dataChange)="onColumnChange($event)"
+        (hover)="onColHover($event)"
+        (hoverOut)="onColHoverOut($event)"
+      ></app-grid-props>
+    </cd-property-group>
+  </div>
+</ng-template>

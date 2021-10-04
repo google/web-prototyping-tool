@@ -1,0 +1,15 @@
+<ng-container *ngIf="active">
+  <div
+    class="wrapper"
+    [style.width.px]="active.frame.width"
+    [style.height.px]="active.frame.height"
+  >
+    <app-render-outlet-iframe
+      transparent
+      class="frame"
+      [id]="active.id"
+      [preview]="true"
+      [codeComponentOutlet]="active.isCodeComp"
+    ></app-render-outlet-iframe>
+  </div>
+</ng-container>

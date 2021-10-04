@@ -1,0 +1,65 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* stylelint-disable selector-type-no-unknown */
+.mat-stepper-horizontal,
+.mat-stepper-vertical {
+  background-color: transparent;
+
+  --palette-primary-500: var(--co-primary-rgb);
+  --palette-warn-500: var(--co-warn-rgb);
+  --palette-accent-500: var(--co-secondary-rgb);
+}
+
+.mat-step-icon:not(.mat-step-icon-selected) {
+  background-color: var(--co-text);
+}
+
+.mat-step-text-label {
+  @include applyFontVarsWithoutColor('body2');
+}
+
+.mat-step-icon-content {
+  @include applyFontVarsWithoutColor('body1');
+
+  font-weight: 500;
+  margin-top: -1px;
+}
+
+.mat-step-label-selected {
+  .mat-step-text-label {
+    font-weight: 500;
+  }
+}
+
+.mat-stepper-horizontal-line {
+  border-top-color: var(--co-border);
+}
+
+.mat-stepper-vertical-line::before {
+  border-left-color: var(--co-border);
+}
+
+.mat-horizontal-stepper-content,
+.mat-horizontal-stepper-content .cd-portal-wrapper {
+  height: 100%;
+}
+
+.mat-stepper-horizontal {
+  display: grid;
+  height: 100%;
+  grid-template-rows: auto 1fr;
+}

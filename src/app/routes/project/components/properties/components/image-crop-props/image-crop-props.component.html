@@ -1,0 +1,33 @@
+<cd-input-group label="Fit">
+  <cd-select-input
+    placeholder="Auto"
+    [data]="fitMenu | MarkSelection: model?.objectFit"
+    (change)="onFitMenuChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<ng-container *ngIf="showAnchor">
+  <cd-input-group label="Vertical">
+    <cd-range-input
+      [(value)]="vertPosition"
+      min="0"
+      max="100"
+      type="percent"
+      innerLabel="%"
+      [autocompleteMenu]="rangeAutocomplete"
+      (valueChange)="onVertChange($event)"
+    ></cd-range-input>
+  </cd-input-group>
+
+  <cd-input-group label="Horizontal">
+    <cd-range-input
+      [(value)]="horzPosition"
+      min="0"
+      max="100"
+      type="percent"
+      innerLabel="%"
+      [autocompleteMenu]="rangeAutocomplete"
+      (valueChange)="onHorzChange($event)"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-container>

@@ -1,0 +1,56 @@
+<div class="left">
+  <div class="back-btn">
+    <button
+      cd-button
+      iconName="arrow_back"
+      size="medium"
+      iconSize="large"
+      (click)="onBackClicked()"
+    ></button>
+  </div>
+
+  <div class="content">
+    <h1 class="title">{{ name }}</h1>
+    <span class="details">
+      {{ desc }}
+    </span>
+    <h4>Author</h4>
+    <span [innerText]="author"></span>
+
+    <h4>Last Updated</h4>
+    <span [innerText]="updatedAt | FormatFirebaseTime"></span>
+
+    <h4>Created</h4>
+    <span [innerText]="createdAt | FormatFirebaseTime"></span>
+
+    <h4>Version</h4>
+    <span [innerText]="version"></span>
+  </div>
+
+  <div class="admin-controls" *ngIf="authService.isAdminUser$ | async">
+    <button cd-unelevated-button size="medium" (click)="onEditTemplate()">Edit template</button>
+
+    <button cd-unelevated-button size="medium" (click)="onRegenerateScreenshots()">
+      Regenerate screenshots
+    </button>
+  </div>
+</div>
+<div class="right">
+  <app-image-carousel *ngIf="images.length > 0; else noImagesView" [images]="images">
+    <ng-container [ngTemplateOutlet]="footer"></ng-container>
+  </app-image-carousel>
+</div>
+
+<ng-template #noImagesView>
+  <div class="no-images-view">
+    <img src="/assets/board-placeholder.svg" />
+    <ng-container [ngTemplateOutlet]="footer"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #footer>
+  <footer class="footer">
+    <button cd-button size="medium" (click)="onBackClicked()">Cancel</button>
+    <button cd-unelevated-button size="medium" (click)="onConfirmClicked()">Choose template</button>
+  </footer>
+</ng-template>

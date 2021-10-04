@@ -1,0 +1,14 @@
+<input
+  #inputRef
+  type="checkbox"
+  role="switch"
+  [checked]="checked"
+  (focus)="onFocus()"
+  (blur)="onBlur()"
+  (mousedown)="onMousedown($event)"
+  [attr.disabled]="disabled ? true : null"
+  tabindex="{{ tabindex }}"
+/>
+<label *ngIf="label">
+  {{ label }}
+</label>

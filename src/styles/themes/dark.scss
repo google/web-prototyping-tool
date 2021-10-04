@@ -1,0 +1,67 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/cssvars' as *;
+
+$primaryColor: #c7afff;
+$primaryColorLight: #8164c5;
+$fontColor: #bec1ca;
+$borderColor: #292c32;
+
+// This theme is auto prefixed with --cd-
+
+$theme: (
+  badge-color: #{$primaryColor},
+  action-color: #999ca1,
+  tooltip-background: rgba(255, 255, 255, 0.9),
+  primary-color: #{$primaryColor},
+  hover-fill: #494e5a,
+  glass-color: #976bff,
+  a11y-color: #58e195,
+  a11y-color-text: #73eba9,
+  ghost-fill: rgb(151 107 255 / 0.25),
+  symbol-color: #71bfff,
+  primary-color-light: #{$primaryColorLight},
+  focus-fill: #{rgba($primaryColor, 0.12)},
+  active-fill: #{rgba($primaryColor, 0.25)},
+  selected-fill: #{rgba($primaryColor, 0.5)},
+  inverted-font-color: rgb(0, 0, 0, 0.85),
+  background-color: #32363b,
+  sidebar-color: #3d414a,
+  border-color: #{$borderColor},
+  border-color-light: #{rgba($borderColor, 0.5)},
+  font-color: #{$fontColor},
+  menu-hover: #{rgba($fontColor, 0.13)},
+  header-font-color: #fff,
+  menu-color: rgba(255, 255, 255, 0.8),
+  input-selection-color: #2a2f33,
+  link-color: #84b7fb,
+  // The switch thumb fill color
+  switch-fill: #565b67,
+  modal-background-color: #454a54,
+  modal-background-color-inverted: #fff,
+  outline-color: #5a5d65,
+  board-hover-color: #8f9196,
+  outline: inset 0 0 0 1px cssvar(outline-color),
+  inset: inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+  scrollbar-thumb-color: rgba(191, 193, 202, 0.22),
+  input-background-color: #2f3439,
+  outline-focus: inset 0 0 0 2px cssvar(primary-color),
+  error-color: #f07485,
+  warning-color: #fbe646,
+  line-color: #ec3e8b,
+  grid-bkd: url('/assets/grid-dark.png') 0 0 / 8px 8px,
+);

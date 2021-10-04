@@ -1,0 +1,506 @@
+[
+  {
+    "name": "c0-common-gce-gpu-image-20200128",
+    "location": "asia, eu, us",
+    "size": "307.24 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c0-common-gce-gpu-image-20200128",
+    "family": "common-gce-gpu-image",
+    "creationTime": "Jan 27, 2020, 10:51:55 PM"
+  },
+  {
+    "name": "c1-deeplearning-common-cu100-20200602",
+    "location": "asia, eu, us",
+    "size": "363.56 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c1-deeplearning-common-cu100-20200602",
+    "family": "common-dl-gpu",
+    "creationTime": "Jun 5, 2020, 9:54:17 AM"
+  },
+  {
+    "name": "c2-deeplearning-pytorch-1-2-cu100-20191005",
+    "location": "asia, eu, us",
+    "size": "295.38 GB",
+    "diskSize": "30 GB",
+    "createdBy": "c2-deeplearning-pytorch-1-2-cu100-20191005",
+    "family": "pytorch-1-2-gpu",
+    "creationTime": "Oct 6, 2019, 1:59:30 PM"
+  },
+  {
+    "name": "c2-deeplearning-pytorch-1-3-cu100-20191219",
+    "location": "asia, eu, us",
+    "size": "338.79 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c2-deeplearning-pytorch-1-3-cu100-20191219",
+    "family": "pytorch-1-3-gpu",
+    "creationTime": "Dec 19, 2019, 4:01:28 PM"
+  },
+  {
+    "name": "c2-deeplearning-pytorch-1-4-cu101-20200605",
+    "location": "asia, eu, us",
+    "size": "611.29 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c2-deeplearning-pytorch-1-4-cu101-20200605",
+    "family": "pytorch-1-4-gpu",
+    "creationTime": "Jun 5, 2020, 9:57:35 AM"
+  },
+  {
+    "name": "c3-deeplearning-tf-ent-1-15-cu100-20200603",
+    "location": "asia, eu, us",
+    "size": "478.44 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c3-deeplearning-tf-ent-1-15-cu100-20200603",
+    "family": "tf-ent-1-15-gpu",
+    "creationTime": "Jun 5, 2020, 9:57:34 AM"
+  },
+  {
+    "name": "c3-deeplearning-tf-ent-2-1-cu100-20200131",
+    "location": "asia, eu, us",
+    "size": "315.31 GB",
+    "diskSize": "50 GB",
+    "createdBy": "c3-deeplearning-tf-ent-2-1-cu100-20200131",
+    "family": "tf-ent-2-1-gpu",
+    "creationTime": "Jan 30, 2020, 6:02:45 PM"
+  },
+  {
+    "name": "centos-6-drawfork-v20200207",
+    "location": "us",
+    "size": "931.46 MB",
+    "diskSize": "10 GB",
+    "createdBy": "CentOS",
+    "family": "centos-6-drawfork",
+    "creationTime": "Feb 7, 2020, 2:56:04 PM"
+  },
+  {
+    "name": "centos-6-v20200521",
+    "location": "asia, eu, us",
+    "size": "19.26 GB",
+    "diskSize": "20 GB",
+    "createdBy": "CentOS",
+    "family": "centos-6",
+    "creationTime": "May 21, 2020, 2:53:32 PM"
+  },
+  {
+    "name": "centos-7-drawfork-shielded-v20190717",
+    "location": "us",
+    "size": "872.72 MB",
+    "diskSize": "10 GB",
+    "createdBy": "CentOS",
+    "family": "centos-7-drawfork-shielded",
+    "creationTime": "Jul 17, 2019, 12:52:13 PM"
+  },
+  {
+    "name": "centos-7-drawfork-v20200207",
+    "location": "us",
+    "size": "934.41 MB",
+    "diskSize": "10 GB",
+    "createdBy": "CentOS",
+    "family": "centos-7-drawfork",
+    "creationTime": "Feb 7, 2020, 3:23:28 PM"
+  },
+  {
+    "name": "centos-7-v20200403",
+    "location": "asia, eu, us",
+    "size": "18.68 GB",
+    "diskSize": "20 GB",
+    "createdBy": "CentOS",
+    "family": "centos-7",
+    "creationTime": "Apr 6, 2020, 2:51:35 PM"
+  },
+  {
+    "name": "centos-7-v20200603",
+    "location": "asia, eu, us",
+    "size": "25.39 GB",
+    "diskSize": "20 GB",
+    "createdBy": "CentOS",
+    "family": "centos-7",
+    "creationTime": "Jun 3, 2020, 10:00:58 AM"
+  },
+  {
+    "name": "centos-8-v20200521",
+    "location": "asia, eu, us",
+    "size": "24.89 GB",
+    "diskSize": "20 GB",
+    "createdBy": "CentOS",
+    "family": "centos-8",
+    "creationTime": "May 21, 2020, 3:03:29 PM"
+  },
+  {
+    "name": "cos-69-10895-385-0",
+    "location": "asia, eu, us",
+    "size": "3.98 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-69-lts",
+    "creationTime": "Oct 9, 2019, 12:02:14 AM"
+  },
+  {
+    "name": "cos-69-10895-385-0",
+    "location": "asia, eu, us",
+    "size": "3.98 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-69-lts",
+    "creationTime": "Oct 8, 2019, 11:25:22 PM"
+  },
+  {
+    "name": "cos-73-11647-559-0",
+    "location": "asia, eu, us",
+    "size": "6.25 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-73-lts",
+    "creationTime": "Jun 2, 2020, 11:53:17 AM"
+  },
+  {
+    "name": "cos-73-11647-559-0",
+    "location": "asia, eu, us",
+    "size": "6.25 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-73-lts",
+    "creationTime": "Jun 2, 2020, 1:20:14 PM"
+  },
+  {
+    "name": "cos-77-12371-284-0",
+    "location": "asia, eu, us",
+    "size": "6.69 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-77-lts",
+    "creationTime": "Jun 2, 2020, 1:23:52 PM"
+  },
+  {
+    "name": "cos-77-12371-284-0",
+    "location": "asia, eu, us",
+    "size": "6.69 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-77-lts",
+    "creationTime": "Jun 2, 2020, 11:56:25 AM"
+  },
+  {
+    "name": "cos-81-12871-119-0",
+    "location": "asia, eu, us",
+    "size": "7.75 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-81-lts",
+    "creationTime": "May 28, 2020, 3:55:43 PM"
+  },
+  {
+    "name": "cos-81-12871-119-0",
+    "location": "asia, eu, us",
+    "size": "7.75 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-81-lts",
+    "creationTime": "May 28, 2020, 3:37:18 PM"
+  },
+  {
+    "name": "cos-beta-81-12871-117-0",
+    "location": "asia, eu, us",
+    "size": "7.67 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-beta",
+    "creationTime": "May 27, 2020, 11:57:45 AM"
+  },
+  {
+    "name": "cos-beta-81-12871-117-0",
+    "location": "asia, eu, us",
+    "size": "7.67 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-beta",
+    "creationTime": "May 27, 2020, 12:16:30 PM"
+  },
+  {
+    "name": "cos-dev-85-13260-0-0",
+    "location": "asia, eu, us",
+    "size": "8.08 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-dev",
+    "creationTime": "Jun 2, 2020, 11:50:11 AM"
+  },
+  {
+    "name": "cos-dev-85-13260-0-0",
+    "location": "asia, eu, us",
+    "size": "8.08 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-dev",
+    "creationTime": "Jun 2, 2020, 1:14:49 PM"
+  },
+  {
+    "name": "cos-sev-dev-85-13260-0-0",
+    "location": "asia, eu, us",
+    "size": "8.98 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-sev-dev",
+    "creationTime": "Jun 2, 2020, 12:30:36 PM"
+  },
+  {
+    "name": "cos-stable-81-12871-119-0",
+    "location": "asia, eu, us",
+    "size": "7.75 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-stable",
+    "creationTime": "May 28, 2020, 3:47:28 PM"
+  },
+  {
+    "name": "cos-stable-81-12871-119-0",
+    "location": "asia, eu, us",
+    "size": "7.75 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Google",
+    "family": "cos-stable",
+    "creationTime": "May 28, 2020, 3:33:54 PM"
+  },
+  {
+    "name": "debian-10-buster-v20200521",
+    "location": "asia, eu, us",
+    "size": "8.49 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "debian-10",
+    "creationTime": "May 21, 2020, 4:35:08 PM"
+  },
+  {
+    "name": "debian-10-drawfork-v20200207",
+    "location": "us",
+    "size": "560.95 MB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "debian-10-drawfork",
+    "creationTime": "Feb 7, 2020, 3:12:47 PM"
+  },
+  {
+    "name": "debian-10-tf-2-1-1-v20200519",
+    "location": "asia, eu, us",
+    "size": "47.18 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-2-1-1",
+    "creationTime": "May 19, 2020, 12:38:46 PM"
+  },
+  {
+    "name": "debian-10-tf-2-1-v20200316",
+    "location": "asia, eu, us",
+    "size": "44.96 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-2-1",
+    "creationTime": "Mar 16, 2020, 11:57:41 AM"
+  },
+  {
+    "name": "debian-10-tf-2-2-v20200508",
+    "location": "asia, eu, us",
+    "size": "50.79 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-2-2",
+    "creationTime": "May 8, 2020, 1:59:12 AM"
+  },
+  {
+    "name": "debian-10-tf-nightly-v20200610",
+    "location": "asia, eu, us",
+    "size": "44.15 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-nightly",
+    "creationTime": "Jun 10, 2020, 4:55:11 AM"
+  },
+  {
+    "name": "debian-9-drawfork-v20200207",
+    "location": "us",
+    "size": "698.68 MB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "debian-9-drawfork",
+    "creationTime": "Feb 7, 2020, 3:16:03 PM"
+  },
+  {
+    "name": "debian-9-stretch-v20200521",
+    "location": "asia, eu, us",
+    "size": "14.04 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "debian-9",
+    "creationTime": "May 21, 2020, 4:34:00 PM"
+  },
+  {
+    "name": "debian-9-tf-1-11-v20190812",
+    "location": "asia, eu, us",
+    "size": "31.9 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-11",
+    "creationTime": "Aug 12, 2019, 2:14:13 AM"
+  },
+  {
+    "name": "debian-9-tf-1-12-v20190816",
+    "location": "asia, eu, us",
+    "size": "48.54 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-12",
+    "creationTime": "Aug 16, 2019, 6:04:32 AM"
+  },
+  {
+    "name": "debian-9-tf-1-13-v20190816",
+    "location": "asia, eu, us",
+    "size": "51.13 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-13",
+    "creationTime": "Aug 16, 2019, 5:49:38 AM"
+  },
+  {
+    "name": "debian-9-tf-1-14-1-dev20190508-v20190816",
+    "location": "asia, eu, us",
+    "size": "53.88 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-14-1-dev20190508",
+    "creationTime": "Aug 16, 2019, 6:01:33 AM"
+  },
+  {
+    "name": "debian-9-tf-1-14-1-dev20190518-v20190816",
+    "location": "asia, eu, us",
+    "size": "52.81 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-14-1-dev20190518",
+    "creationTime": "Aug 16, 2019, 5:33:44 AM"
+  },
+  {
+    "name": "debian-9-tf-1-14-1-dev20190619-v20190816",
+    "location": "asia, eu, us",
+    "size": "53.68 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-14-1-dev20190619",
+    "creationTime": "Aug 16, 2019, 5:53:04 AM"
+  },
+  {
+    "name": "debian-9-tf-1-14-v20190910",
+    "location": "asia, eu, us",
+    "size": "54.54 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-14",
+    "creationTime": "Sep 10, 2019, 4:00:05 PM"
+  },
+  {
+    "name": "debian-9-tf-1-15-2-v20200504",
+    "location": "asia, eu, us",
+    "size": "49.2 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-15-2",
+    "creationTime": "May 4, 2020, 1:07:34 PM"
+  },
+  {
+    "name": "debian-9-tf-1-15-3-v20200527",
+    "location": "asia, eu, us",
+    "size": "40.58 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-15-3",
+    "creationTime": "May 27, 2020, 3:27:14 PM"
+  },
+  {
+    "name": "debian-9-tf-1-15-dev20190821-v20191009",
+    "location": "asia, eu, us",
+    "size": "55.1 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-15-dev20190821",
+    "creationTime": "Oct 10, 2019, 11:04:15 AM"
+  },
+  {
+    "name": "debian-9-tf-1-15-v20200218",
+    "location": "asia, eu, us",
+    "size": "89.7 GB",
+    "diskSize": "10 GB",
+    "createdBy": "Debian",
+    "family": "tf-1-15",
+    "creationTime": "Feb 18, 2020, 4:24:01 PM"
+  },
+  {
+    "name": "debian-9-torch-xla-v20200610",
+    "location": "asia, eu, us",
+    "size": "188.72 GB",
+    "diskSize": "20 GB",
+    "createdBy": "Debian",
+    "family": "torch-xla",
+    "creationTime": "Jun 10, 2020, 5:35:01 AM"
+  },
+  {
+    "name": "rhel-6-drawfork-v20200207",
+    "location": "us",
+    "size": "895.48 MB",
+    "diskSize": "10 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-6-drawfork",
+    "creationTime": "Feb 7, 2020, 2:56:23 PM"
+  },
+  {
+    "name": "rhel-6-v20200521",
+    "location": "asia, eu, us",
+    "size": "22.87 GB",
+    "diskSize": "20 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-6",
+    "creationTime": "May 21, 2020, 3:08:24 PM"
+  },
+  {
+    "name": "rhel-7-4-sap-v20200309",
+    "location": "asia, eu, us",
+    "size": "20.37 GB",
+    "diskSize": "10 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-7-4-sap",
+    "creationTime": "Mar 10, 2020, 1:17:12 PM"
+  },
+  {
+    "name": "rhel-7-6-sap-v20200603",
+    "location": "asia, eu, us",
+    "size": "27.19 GB",
+    "diskSize": "20 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-7-6-sap-ha",
+    "creationTime": "Jun 3, 2020, 10:18:19 AM"
+  },
+  {
+    "name": "rhel-7-7-sap-v20200603",
+    "location": "asia, eu, us",
+    "size": "25.79 GB",
+    "diskSize": "20 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-7-7-sap-ha",
+    "creationTime": "Jun 3, 2020, 10:23:42 AM"
+  },
+  {
+    "name": "rhel-7-drawfork-shielded-v20190717",
+    "location": "us",
+    "size": "1,020.78 MB",
+    "diskSize": "10 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-7-drawfork-shielded",
+    "creationTime": "Jul 17, 2019, 2:57:30 PM"
+  },
+  {
+    "name": "rhel-7-drawfork-v20200207",
+    "location": "us",
+    "size": "1.11 GB",
+    "diskSize": "10 GB",
+    "createdBy": "RedHat",
+    "family": "rhel-7-drawfork",
+    "creationTime": "Feb 7, 2020, 3:05:19 PM"
+  }
+]

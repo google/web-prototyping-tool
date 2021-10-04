@@ -1,0 +1,37 @@
+@import 'variables';
+
+@mixin cd-font-base {
+  @each $key, $value in $cd-font-base {
+    #{$key}: $value;
+  }
+}
+
+@mixin cd-font($style, $line-height: null) {
+  $style-props: map-get($cd-font-styles, $style);
+
+  @if not map-has-key($cd-font-styles, $style) {
+    @error "Invalid style specified: #{$style}. Choose one of #{map-keys($cd-font-styles)}";
+  }
+
+  @each $key, $value in $style-props {
+    #{$key}: $value;
+  }
+
+  @if $line-height {
+    line-height: $line-height;
+  }
+}
+
+@mixin cd-font-overflow-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@mixin cdInfoTextFont {
+  line-height: 1.5;
+  font-size: var(--cd-font-size-default);
+  color: var(--cd-font-color);
+  opacity: var(--cd-info-text-alpha);
+  text-align: left;
+}

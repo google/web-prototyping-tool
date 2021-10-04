@@ -1,0 +1,50 @@
+<cd-property-group>
+  <cd-select-grid
+    [data]="menuData | MarkSelection: variant"
+    (selectItem)="onVariantSelect($event)"
+  ></cd-select-grid>
+</cd-property-group>
+
+<!-- prettier-ignore -->
+<ng-container [ngSwitch]="variant">
+  <ng-container *ngSwitchCase="EmbedVariant.Figma" [ngTemplateOutlet]="figmaRef"></ng-container>
+  <ng-container *ngSwitchCase="EmbedVariant.YouTube" [ngTemplateOutlet]="youtubeRef"></ng-container>
+  <ng-container *ngSwitchCase="EmbedVariant.GoogleMaps" [ngTemplateOutlet]="mapsRef"></ng-container>
+  <ng-container *ngSwitchCase="EmbedVariant.GoogleDocs" [ngTemplateOutlet]="docsRef"></ng-container>
+  <ng-container *ngSwitchCase="EmbedVariant.GoogleSheets" [ngTemplateOutlet]="sheetsRef"></ng-container>
+  <ng-container *ngSwitchCase="EmbedVariant.GoogleSlides" [ngTemplateOutlet]="slidesRef"></ng-container>
+  <ng-container *ngSwitchDefault [ngTemplateOutlet]="websiteRef"></ng-container>
+</ng-container>
+
+<ng-template #websiteRef>
+  <cd-property-group removePadding>
+    <cd-input-group label="Source">
+      <cd-input [value]="src" placeholder="https://" (change)="onSourceChange($event)"></cd-input>
+    </cd-input-group>
+    <span class="helper-text">* Some websites won't work inside an iframe.</span>
+  </cd-property-group>
+</ng-template>
+
+<ng-template #youtubeRef>
+  <app-youtube-props [src]="src" (srcChange)="onSourceChange($event)"></app-youtube-props>
+</ng-template>
+
+<ng-template #mapsRef>
+  <app-map-props [src]="src" (srcChange)="onSourceChange($event)"></app-map-props>
+</ng-template>
+
+<ng-template #figmaRef>
+  <app-figma-props [src]="src" (srcChange)="onSourceChange($event)"></app-figma-props>
+</ng-template>
+
+<ng-template #docsRef>
+  <app-docs-embed-props [src]="src" (srcChange)="onSourceChange($event)"></app-docs-embed-props>
+</ng-template>
+
+<ng-template #slidesRef>
+  <app-slides-embed-props [src]="src" (srcChange)="onSourceChange($event)"></app-slides-embed-props>
+</ng-template>
+
+<ng-template #sheetsRef>
+  <app-sheets-embed-props [src]="src" (srcChange)="onSourceChange($event)"></app-sheets-embed-props>
+</ng-template>

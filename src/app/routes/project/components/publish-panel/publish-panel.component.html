@@ -1,0 +1,93 @@
+<ng-container *ngIf="publishEntry; else zeroStateRef">
+  <!-- AVATAR -->
+  <cd-property-group *ngIf="showOwner && publishEntry">
+    <app-owner-details [owner]="publishEntry?.owner"></app-owner-details>
+  </cd-property-group>
+
+  <template *ngIf="templateRef" [ngTemplateOutlet]="templateRef"></template>
+
+  <!-- DETAILS -->
+  <cd-property-group
+    type="collapse"
+    collapsed
+    groupTitle="Published details"
+    *ngIf="hasPublishDetails"
+  >
+    <ng-container>
+      <div class="publish-details">
+        <h3 class="publish-title" *ngIf="showTitle && publishEntry?.name; let entryName">
+          {{ entryName }}
+        </h3>
+        <span class="publish-desc" *ngIf="publishEntry?.desc; let entryDesc">{{ entryDesc }}</span>
+        <div class="chip-list" *ngIf="publishEntry?.tags?.length">
+          <cd-chip
+            *ngFor="let chip of publishEntry?.tags"
+            class="chip"
+            [chipTitle]="chip"
+            [removeable]="false"
+          ></cd-chip>
+        </div>
+      </div>
+    </ng-container>
+  </cd-property-group>
+
+  <cd-property-group
+    *ngIf="publishEntry"
+    [bottomDivider]="showBottomLine"
+    [groupTitle]="sectionTitle"
+    [type]="propertyGroupType"
+    (add)="onPublishClick()"
+  >
+    <button
+      cdPropertyGroupHeader
+      cd-button
+      *ngIf="isCurrentUserOwner"
+      class="unpublish"
+      cdTooltip="Unpublish all"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="medium"
+      iconName="delete_sweep"
+      (click)="onUnpublishClick()"
+    ></button>
+    <!-- VERSIONS -->
+
+    <div class="version-content">
+      <ul class="versions">
+        <li
+          class="version"
+          *ngFor="let version of publishEntry?.versions; trackBy: versionTrackBy"
+          [class.active]="version.id | activeVersionPipe: publishId"
+          (click)="onSwapToVersion(version)"
+        >
+          <cd-checkbox
+            rounded
+            large
+            [checked]="version.id | activeVersionPipe: publishId"
+            class="checkbox"
+          ></cd-checkbox>
+          <div class="right">
+            <span class="title">{{ version.name }}</span>
+            <span class="date">{{ version.createdAt | FormatFirebaseTime }}</span>
+          </div>
+        </li>
+      </ul>
+      <ng-container *ngIf="showFooterMsg">
+        <div class="divider"></div>
+        <span class="footer-msg">
+          Changes are not reflected in the marketplace until publishing a new version
+        </span>
+      </ng-container>
+    </div>
+  </cd-property-group>
+</ng-container>
+
+<ng-template #zeroStateRef>
+  <template *ngIf="templateRef" [ngTemplateOutlet]="templateRef"></template>
+  <cd-property-group [bottomDivider]="showBottomLine">
+    <div class="cta" (click)="onPublishClick()">
+      <cd-icon [name]="zeroStateIcon" size="medium"></cd-icon>
+      <span>{{ zeroStateMsg }}</span>
+    </div>
+  </cd-property-group>
+</ng-template>

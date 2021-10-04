@@ -1,0 +1,9 @@
+<cd-icon
+  *ngIf="hasIcon"
+  [name]="iconName"
+  class="icon"
+  [size]="iconSize"
+  aria-hidden="true"
+></cd-icon>
+<span #contentRef [hidden]="hideContent"><ng-content></ng-content></span>
+<span *ngIf="text">{{ text }}</span>

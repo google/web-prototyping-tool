@@ -1,0 +1,22 @@
+<li
+  cd-menu-item
+  *ngFor="let item of data; let i = index; trackBy: trackFn.bind(this)"
+  [hover]="isHovering(i)"
+  [value]="item"
+  [size]="size"
+  [attr.cd-e2e-label]="item.e2eLabel"
+  (click)="onClick($event, item)"
+  (mouseenter)="onOver($event, i)"
+>
+  <ul
+    cd-menu-group
+    *ngIf="!item.disabled && item.children; let children"
+    [data]="children"
+    [hover]="hover"
+    [size]="size"
+    [idx]="getMapping(i)"
+    [hidden]="!isHovering(i)"
+    (hovering)="onChildOver($event)"
+    (clicked)="onChildClicked($event)"
+  ></ul>
+</li>

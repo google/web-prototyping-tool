@@ -1,0 +1,12 @@
+<cd-input-group label="Align self" columns="1fr auto">
+  <cd-select-input
+    placeholder="Auto"
+    resetState="Auto"
+    [data]="menu | MarkSelection: value"
+    (change)="onMenuChange($event)"
+  ></cd-select-input>
+  <cd-dots-selector
+    [data]="menu | MarkSelection: value"
+    (selectDot)="onMenuChange($event)"
+  ></cd-dots-selector>
+</cd-input-group>

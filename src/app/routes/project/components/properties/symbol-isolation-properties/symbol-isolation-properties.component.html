@@ -1,0 +1,13 @@
+<cd-properties
+  [hideStateButtons]="true"
+  [panelTitle]="symbolProperties?.name"
+  (titleChange)="onTitleChange($event)"
+>
+  <app-publish-panel
+    [showTitle]="false"
+    [id]="symbolProperties?.id"
+    [publishId]="symbolProperties?.publishId"
+    [publishType]="PublishType.Symbol"
+    class="publish-panel"
+  ></app-publish-panel>
+</cd-properties>

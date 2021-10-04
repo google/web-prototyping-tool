@@ -1,0 +1,18 @@
+<cd-input-group label="Cursor">
+  <cd-select-input
+    [data]="cursorMenu | MarkSelection: cursor || CursorState.Default"
+    (change)="onCursorChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Z Index">
+  <cd-range-input
+    [value]="zIndex"
+    [resetNumberOnDelete]="true"
+    (valueChange)="onZIndexSliderchange($event)"
+    placeholder="Auto"
+    [min]="-1"
+    [max]="999"
+    type="number"
+  ></cd-range-input>
+</cd-input-group>

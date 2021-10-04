@@ -1,0 +1,142 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@keyframes rotate-linear {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@mixin generate-size($class, $keyframes, $radius) {
+  $math-pi: 3.141592653589793;
+  $rotationSpeed: 1.8s;
+  $lineSpeed: 6s;
+  $diameter: $radius * 2;
+  $stroke-width: $radius * 0.24;
+  $circumference: 2 * $math-pi * $radius;
+  $offset-start: 0.95 * $circumference;
+  $offset-end: 0.2 * $circumference;
+  $hostSize: ($diameter + $stroke-width * 2) + unquote('px');
+  $svgPosition: $stroke-width + unquote('px');
+  $svgSize: $diameter + unquote('px');
+
+  #{$class} {
+    width: $hostSize;
+    height: $hostSize;
+
+    --radius: #{$radius};
+
+    svg {
+      animation: rotate-linear $rotationSpeed linear infinite;
+      width: $svgSize;
+      height: $svgSize;
+      top: $svgPosition;
+      left: $svgPosition;
+    }
+
+    circle {
+      stroke-dasharray: $circumference;
+      stroke-width: $stroke-width;
+      animation: stroke-rotate-#{$keyframes} $lineSpeed linear infinite;
+    }
+  }
+
+  @keyframes stroke-rotate-#{$keyframes} {
+    0% {
+      stroke-dashoffset: $offset-start;
+      transform: rotate(0);
+    }
+
+    12.5% {
+      stroke-dashoffset: $offset-end;
+      transform: rotate(0);
+    }
+
+    12.5001% {
+      stroke-dashoffset: $offset-end;
+      transform: rotateX(180deg) rotate(72.5deg);
+    }
+
+    25% {
+      stroke-dashoffset: $offset-start;
+      transform: rotateX(180deg) rotate(72.5deg);
+    }
+
+    25.0001% {
+      stroke-dashoffset: $offset-start;
+      transform: rotate(270deg);
+    }
+
+    37.5% {
+      stroke-dashoffset: $offset-end;
+      transform: rotate(270deg);
+    }
+
+    37.5001% {
+      stroke-dashoffset: $offset-end;
+      transform: rotateX(180deg) rotate(161.5deg);
+    }
+
+    50% {
+      stroke-dashoffset: $offset-start;
+      transform: rotateX(180deg) rotate(161.5deg);
+    }
+
+    50.0001% {
+      stroke-dashoffset: $offset-start;
+      transform: rotate(180deg);
+    }
+
+    62.5% {
+      stroke-dashoffset: $offset-end;
+      transform: rotate(180deg);
+    }
+
+    62.5001% {
+      stroke-dashoffset: $offset-end;
+      transform: rotateX(180deg) rotate(251.5deg);
+    }
+
+    75% {
+      stroke-dashoffset: $offset-start;
+      transform: rotateX(180deg) rotate(251.5deg);
+    }
+
+    75.0001% {
+      stroke-dashoffset: $offset-start;
+      transform: rotate(90deg);
+    }
+
+    87.5% {
+      stroke-dashoffset: $offset-end;
+      transform: rotate(90deg);
+    }
+
+    87.5001% {
+      stroke-dashoffset: $offset-end;
+      transform: rotateX(180deg) rotate(341.5deg);
+    }
+
+    100% {
+      stroke-dashoffset: $offset-start;
+      transform: rotateX(180deg) rotate(341.5deg);
+    }
+  }
+}

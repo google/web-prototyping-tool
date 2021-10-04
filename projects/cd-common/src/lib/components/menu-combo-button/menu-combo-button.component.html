@@ -1,0 +1,12 @@
+<button class="main" (click)="onButtonClick($event)">
+  <cd-icon *ngIf="mainIconName; else titleTemplate" [name]="mainIconName" size="large"></cd-icon>
+  <ng-template #titleTemplate>
+    {{ actionTitle }}
+  </ng-template>
+</button>
+
+<div class="divider" *ngIf="actionTitle"></div>
+
+<button class="arrow" (click)="onArrowClick($event)" #arrow>
+  <cd-icon name="arrow_drop_down"></cd-icon>
+</button>

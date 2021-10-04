@@ -1,0 +1,11 @@
+<ng-container>
+  <div class="handle" (pointerdown)="onDragStart($event)"></div>
+  <div class="container">
+    <ng-content select="[cdPanelHeader]"></ng-content>
+    <div class="cd-panel-body" [style.minWidth.px]="minWidth">
+      <ng-content></ng-content>
+      <template *ngIf="templateRef" [ngTemplateOutlet]="templateRef"></template>
+    </div>
+    <ng-content select="[cdPanelFooter]"></ng-content>
+  </div>
+</ng-container>

@@ -1,0 +1,92 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$sideBarWidth: 220px;
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--cd-spacing-5);
+  height: 100%;
+}
+
+.action-bar {
+  display: grid;
+  gap: 20px;
+}
+
+.actions {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  width: $sideBarWidth;
+}
+
+.canvas-bounds {
+  position: absolute;
+  border: 3px dashed rgba(124, 124, 124, 0.45);
+  pointer-events: none;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+.board-canvas {
+  background-color: var(--cd-background-color);
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.canvas-actions {
+  position: absolute;
+  top: var(--cd-spacing-4);
+  right: var(--cd-spacing-4);
+  display: grid;
+  gap: var(--cd-spacing-3);
+  justify-items: end;
+}
+
+.board {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: white;
+  outline: var(--border-size, 1px) solid #d0d3d8;
+  display: grid;
+  gap: 10px;
+  place-items: center;
+  place-content: center;
+  z-index: 1;
+  cursor: move;
+}
+
+.board.selected {
+  background-color: var(--cd-primary-color);
+}
+
+.board-placeholder {
+  border: 4px dashed var(--cd-primary-color);
+  position: absolute;
+}
+
+h2,
+h4 {
+  color: gray;
+}
+
+h4 {
+  font-size: 13px;
+}

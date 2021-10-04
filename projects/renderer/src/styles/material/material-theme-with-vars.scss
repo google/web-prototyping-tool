@@ -1,0 +1,168 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* stylelint-disable value-keyword-case */
+@import '~angular-material-css-vars/main';
+
+// Note: Colors are often used in rgba function, so they all need to be an rgb value
+// example rgba(var(--palette-foreground-base), 0.1)
+
+/* prettier-ignore */
+$mat-css-default-light-theme: (
+  // PRIMARY
+  --palette-primary-50:               var(--co-primary-50-rgb),
+  --palette-primary-100:              var(--co-primary-100-rgb),
+  --palette-primary-200:              var(--co-primary-200-rgb),
+  --palette-primary-300:              var(--co-primary-300-rgb),
+  --palette-primary-400:              var(--co-primary-400-rgb),
+  --palette-primary-500:              var(--co-primary-500-rgb),
+  --palette-primary-600:              var(--co-primary-600-rgb),
+  --palette-primary-700:              var(--co-primary-700-rgb),
+  --palette-primary-800:              var(--co-primary-800-rgb),
+  --palette-primary-900:              var(--co-primary-900-rgb),
+  --palette-primary-A100:             var(--co-primary-A100-rgb),
+  --palette-primary-A200:             var(--co-primary-A200-rgb),
+  --palette-primary-A400:             var(--co-primary-A400-rgb),
+  --palette-primary-A700:             var(--co-primary-A700-rgb),
+  --palette-primary-contrast-50:      var(--co-text-dark-rgb),
+  --palette-primary-contrast-100:     var(--co-text-dark-rgb),
+  --palette-primary-contrast-200:     var(--co-text-dark-rgb),
+  --palette-primary-contrast-300:     var(--co-text-dark-rgb),
+  --palette-primary-contrast-400:     var(--co-text-dark-rgb),
+  --palette-primary-contrast-500:     var(--co-text-light-rgb),
+  --palette-primary-contrast-600:     var(--co-text-light-rgb),
+  --palette-primary-contrast-700:     var(--co-text-light-rgb),
+  --palette-primary-contrast-800:     var(--co-text-light-rgb),
+  --palette-primary-contrast-900:     var(--co-text-light-rgb),
+  --palette-primary-contrast-A100:    var(--co-text-light-rgb),
+  --palette-primary-contrast-A200:    var(--co-text-light-rgb),
+  --palette-primary-contrast-A400:    var(--co-text-light-rgb),
+  --palette-primary-contrast-A700:    var(--co-text-light-rgb),
+
+  // ACCENT
+  --palette-accent-50:                var(--co-secondary-50-rgb),
+  --palette-accent-100:               var(--co-secondary-100-rgb),
+  --palette-accent-200:               var(--co-secondary-200-rgb),
+  --palette-accent-300:               var(--co-secondary-300-rgb),
+  --palette-accent-400:               var(--co-secondary-400-rgb),
+  --palette-accent-500:               var(--co-secondary-500-rgb),
+  --palette-accent-600:               var(--co-secondary-600-rgb),
+  --palette-accent-700:               var(--co-secondary-700-rgb),
+  --palette-accent-800:               var(--co-secondary-800-rgb),
+  --palette-accent-900:               var(--co-secondary-900-rgb),
+  --palette-accent-A100:              var(--co-secondary-A100-rgb),
+  --palette-accent-A200:              var(--co-secondary-A200-rgb),
+  --palette-accent-A400:              var(--co-secondary-A400-rgb),
+  --palette-accent-A700:              var(--co-secondary-A700-rgb),
+  --dark-accent-text:                 var(--co-text-dark-rgb),
+  --light-accent-text:                var(--co-text-light-rgb),
+  --palette-accent-contrast-50:       var(--co-text-dark-rgb),
+  --palette-accent-contrast-100:      var(--co-text-dark-rgb),
+  --palette-accent-contrast-200:      var(--co-text-dark-rgb),
+  --palette-accent-contrast-300:      var(--co-text-dark-rgb),
+  --palette-accent-contrast-400:      var(--co-text-dark-rgb),
+  --palette-accent-contrast-500:      var(--co-text-light-rgb),
+  --palette-accent-contrast-600:      var(--co-text-light-rgb),
+  --palette-accent-contrast-700:      var(--co-text-light-rgb),
+  --palette-accent-contrast-800:      var(--co-text-light-rgb),
+  --palette-accent-contrast-900:      var(--co-text-light-rgb),
+  --palette-accent-contrast-A100:     var(--co-text-light-rgb),
+  --palette-accent-contrast-A200:     var(--co-text-light-rgb),
+  --palette-accent-contrast-A400:     var(--co-text-light-rgb),
+  --palette-accent-contrast-A700:     var(--co-text-light-rgb),
+
+  // WARN
+  --palette-warn-50:                  var(--co-warn-50-rgb),
+  --palette-warn-100:                 var(--co-warn-100-rgb),
+  --palette-warn-200:                 var(--co-warn-200-rgb),
+  --palette-warn-300:                 var(--co-warn-300-rgb),
+  --palette-warn-400:                 var(--co-warn-400-rgb),
+  --palette-warn-500:                 var(--co-warn-500-rgb),
+  --palette-warn-600:                 var(--co-warn-600-rgb),
+  --palette-warn-700:                 var(--co-warn-700-rgb),
+  --palette-warn-800:                 var(--co-warn-800-rgb),
+  --palette-warn-900:                 var(--co-warn-900-rgb),
+  --palette-warn-A100:                var(--co-warn-A100-rgb),
+  --palette-warn-A200:                var(--co-warn-A200-rgb),
+  --palette-warn-A400:                var(--co-warn-A400-rgb),
+  --palette-warn-A700:                var(--co-warn-A700-rgb),
+  --dark-warn-text:                   var(--co-text-dark-rgb),
+  --light-warn-text:                  var(--co-text-light-rgb),
+  --palette-warn-contrast-50:         var(--co-text-dark-rgb),
+  --palette-warn-contrast-100:        var(--co-text-dark-rgb),
+  --palette-warn-contrast-200:        var(--co-text-dark-rgb),
+  --palette-warn-contrast-300:        var(--co-text-dark-rgb),
+  --palette-warn-contrast-400:        var(--co-text-dark-rgb),
+  --palette-warn-contrast-500:        var(--co-text-light-rgb),
+  --palette-warn-contrast-600:        var(--co-text-light-rgb),
+  --palette-warn-contrast-700:        var(--co-text-light-rgb),
+  --palette-warn-contrast-800:        var(--co-text-light-rgb),
+  --palette-warn-contrast-900:        var(--co-text-light-rgb),
+  --palette-warn-contrast-A100:       var(--co-text-light-rgb),
+  --palette-warn-contrast-A200:       var(--co-text-light-rgb),
+  --palette-warn-contrast-A400:       var(--co-text-light-rgb),
+  --palette-warn-contrast-A700:       var(--co-text-light-rgb),
+
+  // BACKGROUND
+  // Currently replicating settings used in default Angular Material theme, but replacing $mat-grey with --co-surface vars
+  --palette-background-status-bar:                var(--co-surface-300-rgb),
+  --palette-background-app-bar:                   var(--co-surface-100-rgb),
+  --palette-background-background:                var(--co-surface-50-rgb),
+  --palette-background-hover:                     var(--co-text-dark-rgb), // use text dark when black is needed
+  --palette-background-hover-alpha:               0.04,
+  --palette-background-card:                      var(--co-elevated-surface-rgb), // use elevated surface when white is needed
+  --palette-background-dialog:                    var(--co-elevated-surface-rgb), // use elevated surface when white is needed
+  --palette-background-disabled-button:           var(--co-text-dark-rgb), // use text dark when black is needed
+  --palette-background-disabled-button-alpha:     0.12,
+  --palette-background-raised-button:             var(--co-elevated-surface-rgb), // use elevated surface when white is needed
+  --palette-background-focused-button:            var(--co-text-dark-rgb), // use text dark when black is needed
+  --palette-background-selected-button:           var(--co-surface-300-rgb),
+  --palette-background-selected-disabled-button:  var(--co-surface-400-rgb),
+  --palette-background-disabled-button-toggle:    var(--co-surface-200-rgb),
+  --palette-background-unselected-chip:           var(--co-surface-300-rgb),
+  --palette-background-disabled-list-option:      var(--co-surface-200-rgb),
+  --palette-background-tooltip:                   var(--co-surface-700-rgb),
+
+  // FOREGROUND
+  // Replacating default light theme foreground used by Angular Material with black replaced with --co-text-dark
+  --palette-foreground-base:                      var(--co-text-dark-rgb),
+  --palette-foreground-divider:                   var(--co-text-dark-rgb),
+  --palette-foreground-divider-alpha:             0.12,
+  --palette-foreground-dividers:                  var(--co-text-dark-rgb),
+  --palette-foreground-disabled:                  var(--co-text-dark-rgb),
+  --palette-foreground-disabled-alpha:            0.38,
+  --palette-foreground-disabled-button:           var(--co-text-dark-rgb),
+  --palette-foreground-disabled-button-alpha:     0.26,
+  --palette-foreground-disabled-text:             var(--co-text-dark-rgb),
+  --palette-foreground-elevation:                 var(--co-text-dark-rgb),
+  --palette-foreground-hint-text:                 var(--co-text-dark-rgb),
+  --palette-foreground-secondary-text:            var(--co-text-dark-rgb),
+  --palette-foreground-secondary-text-alpha:      0.54,
+  --palette-foreground-icon:                      var(--co-text-dark-rgb),
+  --palette-foreground-icon-alpha:                0.54,
+  --palette-foreground-icons:                     var(--co-text-dark-rgb),
+  --palette-foreground-icons-alpha:               0.54,
+  --palette-foreground-text:                      var(--co-text-dark-rgb),
+  --palette-foreground-text-alpha:                0.87,
+  --palette-foreground-slider-min:                var(--co-text-dark-rgb),
+  --palette-foreground-slider-min-alpha:          0.87,
+  --palette-foreground-slider-off:                var(--co-text-dark-rgb),
+  --palette-foreground-slider-off-alpha:          0.26,
+  --palette-foreground-slider-off-active:         var(--co-text-dark-rgb),
+  --palette-foreground-slider-off-active-alpha:   0.38
+);
+
+@include init-material-css-vars();

@@ -1,0 +1,21 @@
+<header class="header" (click)="onClick()" (dblclick)="onDoubleClick()">
+  <img
+    *ngIf="templateImageUrl"
+    loading="lazy"
+    [src]="templateImageUrl"
+    [attr.data-img]="imagePosition"
+    [style.objectPosition]="imagePosition"
+  />
+</header>
+<footer class="footer">
+  <h1 class="title" (click)="onClick()" (dblclick)="onDoubleClick()">{{ template.name }}</h1>
+  <div class="accessory" *ngIf="showDetailsButton">
+    <button
+      cd-button
+      iconName="info"
+      size="medium"
+      iconSize="medium"
+      (click)="onPreviewClicked()"
+    ></button>
+  </div>
+</footer>

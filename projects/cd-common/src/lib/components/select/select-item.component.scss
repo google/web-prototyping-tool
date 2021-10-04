@@ -1,0 +1,129 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$size: 26px;
+$imagePadding: 6;
+
+:host {
+  display: grid;
+  user-select: none;
+  cursor: pointer;
+  min-height: $size;
+  position: relative;
+  align-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: $size auto;
+  contain: content;
+
+  &::before {
+    top: 0;
+    content: '';
+    background: transparent;
+    position: absolute;
+    width: 100%;
+    height: $size;
+  }
+}
+
+:host.show-left {
+  grid-template-columns: auto 1fr;
+}
+
+:host.selected::before {
+  background: var(--cd-menu-hover);
+  opacity: 0.9;
+}
+
+:host.disabled::before {
+  background: initial;
+}
+
+:host.active {
+  color: var(--cd-primary-color);
+
+  &::before {
+    background: var(--cd-primary-color);
+    opacity: 0.12;
+  }
+}
+
+:host.selected:active:not(.active)::before {
+  background: var(--cd-font-color);
+  opacity: 0.12;
+}
+
+:host.empty {
+  opacity: 0.72;
+}
+
+:host.selected.active::before {
+  opacity: 0.1;
+}
+
+:host.selected.active:active::before {
+  opacity: 0.2;
+}
+
+:host.divider::after {
+  content: '';
+  position: relative;
+  height: 1px;
+  width: 100%;
+  background: var(--cd-outline-color);
+  opacity: 0.75;
+  margin: 4px 0;
+}
+
+:host.show-left.divider::after {
+  grid-column-start: 1;
+  grid-column-end: 3;
+}
+
+:host.disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.label {
+  padding: 0 var(--cd-spacing-2);
+  max-width: 170px;
+  z-index: 2;
+}
+
+.title,
+.subtitle {
+  display: block;
+  @include cd-font-overflow-ellipsis;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: $size;
+  padding-left: var(--cd-spacing-2);
+}
+
+.img {
+  height: $size - $imagePadding;
+  width: $size - $imagePadding;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  object-fit: cover;
+}

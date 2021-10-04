@@ -1,0 +1,54 @@
+<ng-container *ngIf="hasSelection">
+  <svg:g *ngIf="resizeRect" class="board-sizes">
+    <ng-container *ngFor="let rect of boardSizes; let i = index">
+      <svg:rect class="board-rect" [attr.width]="rect.width" [attr.height]="rect.height"></svg:rect>
+      <svg:text
+        class="board-text"
+        [style.fontSize]="fontSize"
+        [attr.x]="rect.width * 0.5"
+        [attr.y]="rect.height + 20 / zoom"
+      >
+        {{ rect.title }} ( {{ rect.width }}x{{ rect.height }} )
+      </svg:text>
+    </ng-container>
+  </svg:g>
+  <ng-container *ngIf="isSelected">
+    <!-- EDGES (lines) -->
+    <svg:line
+      *ngFor="let line of lines"
+      class="handle"
+      [attr.data-edge]="line.edge"
+      [appResizeEdge]="line.edge"
+      [cdSVGLine]="line"
+    ></svg:line>
+    <!-- ANCHORS (Corners) -->
+    <ng-container *ngFor="let anchor of anchors">
+      <svg:rect
+        class="anchor"
+        [appResizeEdge]="anchor.edge"
+        [attr.x]="anchor.x"
+        [attr.y]="anchor.y"
+        [attr.width]="edgeSize"
+        [attr.height]="edgeSize"
+      ></svg:rect>
+      <svg:rect
+        class="anchor"
+        [appResizeEdge]="anchor.edge"
+        class="hidden"
+        [attr.x]="anchor.x"
+        [attr.y]="anchor.y"
+        [attr.width]="edgeSize"
+        [attr.height]="edgeSize"
+        [attr.data-edge]="anchor.edge"
+      ></svg:rect>
+    </ng-container>
+  </ng-container>
+
+  <svg:g
+    app-info-text
+    *ngIf="resizeText"
+    [text]="resizeText"
+    [zoom]="zoom"
+    [attr.transform]="infoTextPosition"
+  ></svg:g>
+</ng-container>

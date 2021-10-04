@@ -1,0 +1,62 @@
+[
+  {
+    "id":"two-column",
+    "label":"Two Column"
+  },
+  {
+    "id":"three-column",
+    "label":"Three Column"
+  },
+  {
+    "id":"two-sidebars-main",
+    "label":"Two Sidebars"
+  },
+  {
+    "id":"sidebar-main",
+    "label":"Sidebar Main"
+  },
+  {
+    "id":"header-sidebar-main",
+    "label":"Header Sidebar Main"
+  },
+  {
+    "id":"right-sidebar",
+    "label":"Right Sidebar"
+  },
+  {
+    "id":"double-sidebar-right",
+    "label":"Double Sidebars Right"
+  },
+  {
+    "id":"double-sidebar-left",
+    "label":"Double Sidebars Left"
+  },
+  {
+    "id":"header-main",
+    "label":"Header Main"
+  },
+  {
+    "id":"main-footer",
+    "label":"Main Footer"
+  },
+  {
+    "id":"three-row",
+    "label":"Three row"
+  },
+  {
+    "id":"header-main-footer",
+    "label":"Header Main Footer"
+  },
+  {
+    "id":"two-row",
+    "label":"Two Row"
+  },
+  {
+    "id":"triple-left",
+    "label":"Triple Left"
+  },
+  {
+    "id":"triple-right",
+    "label":"Triple Right"
+  }
+]

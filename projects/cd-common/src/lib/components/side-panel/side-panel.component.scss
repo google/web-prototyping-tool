@@ -1,0 +1,135 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$handleSize: 6px;
+$transition: 0.2s;
+
+/** Add a border to class .top | .left | .bottom | .right */
+@mixin generate-edge($class, $sideB, $offset) {
+  &.#{$class} {
+    border-#{$sideB}: 1px solid var(--cd-border-color);
+
+    .handle {
+      #{$sideB}: $offset;
+    }
+  }
+}
+
+@mixin generate-sides($sideA, $sideB, $sizeProp, $cursor, $size) {
+  $offset: -$size * 0.5;
+
+  &.#{$sideA},
+  &.#{$sideB} {
+    .handle {
+      #{$sizeProp}: $size;
+      cursor: $cursor;
+    }
+  }
+
+  @include generate-edge($sideA, $sideB, $offset);
+  @include generate-edge($sideB, $sideA, $offset);
+}
+
+.container {
+  display: grid;
+  max-height: 100vh;
+  max-width: 100vw;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+
+.cd-panel-header {
+  grid-row-start: 1;
+  grid-row-end: 2;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  overflow: hidden;
+}
+
+.cd-panel-body {
+  grid-row-start: 2;
+  grid-row-end: 3;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  overflow: hidden;
+}
+
+.cd-panel-footer {
+  grid-row-start: 3;
+  grid-row-end: 4;
+  grid-column-start: 1;
+  grid-column-end: 2;
+  overflow: hidden;
+}
+
+.handle {
+  position: absolute;
+  z-index: 10;
+  background: transparent;
+  width: 100%;
+  height: 100%;
+  transform: translate3d(0, 0, 0);
+}
+
+:host {
+  contain: layout;
+  position: relative;
+  display: grid;
+  grid-template-rows: 1fr;
+  user-select: none;
+  background: var(--cd-sidebar-color);
+
+  &.top,
+  &.bottom {
+    width: 100%;
+    transition: height $transition;
+    transition-timing-function: var(--cd-transition-timing);
+  }
+
+  &.left,
+  &.right {
+    height: 100%;
+    transition: width $transition;
+  }
+
+  &.dragging {
+    transition: none;
+  }
+
+  // Generates Left and Right sides
+  @include generate-sides('left', 'right', 'width', col-resize, $handleSize);
+
+  // Generates Top and Bottom sides
+  @include generate-sides('top', 'bottom', 'height', row-resize, $handleSize);
+
+  &.hidden .handle {
+    display: none;
+  }
+
+  &.hide-border {
+    border: none;
+  }
+}
+
+:host(.hidden) {
+  pointer-events: none;
+  user-select: none;
+
+  &:not(.show-edge-on-close) {
+    border: none;
+  }
+}

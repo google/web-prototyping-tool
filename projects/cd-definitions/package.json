@@ -1,0 +1,21 @@
+{
+  "name": "cd-definitions",
+  "version": "0.0.1",
+  "sideEffects": false,
+  "peerDependencies": {
+    "cd-themes": "*",
+    "cd-common/consts": "*",
+    "cd-common/utils": "*",
+    "cd-common/models": "*",
+    "cd-common/datasets": "*",
+    "cd-metadata/units": "*",
+    "cd-metadata/fonts": "*",
+    "cd-utils/string": "*",
+    "cd-utils/object": "*",
+    "cd-interfaces": "^0.0.1",
+    "dayjs": "^1.10.4"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}

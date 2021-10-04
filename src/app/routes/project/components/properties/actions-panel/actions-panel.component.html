@@ -1,0 +1,78 @@
+<span *ngIf="selectedElements.length > 1; else actionList" class="multi-select">
+  Editing actions on multiple elements is not currently supported.
+</span>
+<ng-template #actionList>
+  <ng-container *ngIf="selectedElements.length <= 1">
+    <ul
+      app-zero-state-menu
+      *ngIf="!hasActions"
+      moreIcon="add"
+      moreLabel="More actions..."
+      [menuItems]="zeroStateMenu"
+      (moreClick)="openActionMenu()"
+      (itemClick)="onQuickAdd($event)"
+    ></ul>
+  </ng-container>
+
+  <header class="header">
+    <div class="left">
+      <span class="title">Actions</span>
+      <button
+        cd-button
+        cdTooltip="Show Docs"
+        class="help-ico"
+        size="small"
+        iconSize="small"
+        iconName="help"
+        (click)="onDocsClick()"
+      ></button>
+    </div>
+    <div class="right">
+      <button
+        cd-button
+        cdTooltip="Paste actions"
+        cdTooltipDirection="left"
+        size="small"
+        iconSize="small"
+        iconName="content_paste"
+        (click)="onPasteActions()"
+        [disabled]="!(actionClipboard$ | async)?.refId"
+      ></button>
+
+      <cd-menu-button
+        #actionMenuRef
+        size="small"
+        iconSize="small"
+        iconName="add"
+        cdTooltip="Add Action"
+        cdTooltipDirection="left"
+        [data]="menuData"
+        (selected)="onMenuSelect($event)"
+      ></cd-menu-button>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="card-grid" *ngIf="hasActions">
+      <app-actions-card
+        *ngFor="let action of actions; let i = index; trackBy: trackFn"
+        [cdAnimateIn]="!shownCards.has(action.id)"
+        [model]="action"
+        [inputs]="inputs"
+        [outputsConfig]="outputsConfig"
+        [isRecording]="isRecording"
+        [boards]="boards"
+        [colorMenuData]="colorMenuData"
+        [designSystem]="designSystem"
+        [portals]="portals"
+        [symbolChildren]="symbolChildren"
+        [currentRootId]="currentRootId"
+        (modelChange)="onChange($event, i)"
+        (storeAction)="onStoreAction($event)"
+        (remove)="onRemove(i)"
+        (record)="onRecord($event, i)"
+        (copyAction)="onCopyAction($event)"
+      ></app-actions-card>
+    </div>
+  </div>
+</ng-template>

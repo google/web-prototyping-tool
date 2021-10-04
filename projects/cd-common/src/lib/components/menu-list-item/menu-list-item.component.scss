@@ -1,0 +1,91 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+.count {
+  font-family: var(--cd-mono-font);
+  font-weight: 400;
+}
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: var(--cd-header-height);
+  padding: 0 var(--cd-spacing-5);
+  cursor: pointer;
+  position: relative;
+  border-top-right-radius: var(--cd-header-height);
+  border-bottom-right-radius: var(--cd-header-height);
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    transform-origin: left;
+    transform: translate3d(0, 0, 0) scaleX(0);
+    background-color: var(--cd-menu-hover);
+    transition: transform 150ms, background-color 150ms;
+    transition-timing-function: var(--cd-transition-timing);
+  }
+
+  &.selected {
+    color: var(--cd-primary-color);
+
+    &::after {
+      transform: translate3d(0, 0, 0) scaleX(1);
+      background-color: var(--cd-focus-fill);
+    }
+  }
+
+  &.selected {
+    .name,
+    .count {
+      color: var(--cd-primary-color);
+    }
+
+    &:hover::after {
+      background-color: var(--cd-active-fill);
+    }
+  }
+
+  &:hover,
+  &.selected {
+    &::after {
+      transform: translate3d(0, 0, 0) scaleX(1);
+    }
+  }
+}
+
+.accessory {
+  display: flex;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+h2 {
+  @include cd-font-overflow-ellipsis;
+
+  color: var(--cd-font-color);
+  z-index: 1;
+  transition: color 150ms;
+  transition-timing-function: var(--cd-transition-timing);
+}

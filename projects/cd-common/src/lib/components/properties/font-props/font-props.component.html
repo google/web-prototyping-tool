@@ -1,0 +1,69 @@
+<cd-input-group label="Name" *ngIf="editable; else selectStyle">
+  <cd-input
+    #titleInputRef
+    placeholder=""
+    [value]="value?.name"
+    (change)="onTitleChange($event)"
+  ></cd-input>
+</cd-input-group>
+
+<ng-template #selectStyle>
+  <cd-input-group label="Style">
+    <cd-select-input
+      placeholder="Custom"
+      [data]="fontStyleMenuData | MarkSelection: value?.id"
+      (change)="onFontStyleChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<cd-input-group label="Typeface">
+  <cd-select-input
+    [data]="fontMenuData | MarkSelection: value?.fontId"
+    (change)="onFontChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Size" columns="58px auto">
+  <cd-input
+    type="number"
+    min="0"
+    innerLabel="PX"
+    placeholder="Auto"
+    [value]="value?.size"
+    (change)="onSizeChange($event)"
+  ></cd-input>
+  <cd-select-input
+    [data]="weightMenuData | MarkSelection: value?.weight"
+    (change)="onWeightChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Color">
+  <cd-color-input
+    [colorData]="colorMenuData"
+    [value]="value?.color | IValueValue"
+    [binding]="value?.color | IValueLookup: designSystem.colors"
+    (colorSelect)="onColorSelect($event)"
+    (valueChange)="onColorChange($event)"
+  ></cd-color-input>
+</cd-input-group>
+
+<cd-input-group label="Spacing" columns="50%">
+  <cd-input
+    innerLabel="PX"
+    type="number"
+    bottomLabel="Character"
+    placeholder="Auto"
+    [value]="value?.letterSpacing || ''"
+    (change)="onCharChange($event)"
+  ></cd-input>
+  <cd-input
+    innerLabel="PX"
+    type="number"
+    bottomLabel="Line"
+    placeholder="Auto"
+    [value]="value?.lineHeight || ''"
+    (change)="onLineChange($event)"
+  ></cd-input>
+</cd-input-group>

@@ -1,0 +1,20 @@
+<li
+  *ngFor="let item of menuItems"
+  [attr.data-max-height]="item.maxHeight"
+  (click)="onItemClick(item)"
+>
+  <cd-icon [name]="item?.icon" size="large"></cd-icon>
+  <div class="right">
+    <h4>{{ item.title }}</h4>
+    <span>{{ item.desc }}</span>
+  </div>
+</li>
+
+<ng-container *ngIf="showMore">
+  <li (click)="onMoreClick()">
+    <cd-icon [name]="moreIcon" size="large"></cd-icon>
+    <div class="right">
+      <h4>{{ moreLabel }}</h4>
+    </div>
+  </li>
+</ng-container>

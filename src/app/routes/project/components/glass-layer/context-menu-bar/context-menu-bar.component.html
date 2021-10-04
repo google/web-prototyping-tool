@@ -1,0 +1,56 @@
+<div
+  #barWrapperRef
+  *ngIf="showMenu"
+  class="overlay-menu-wrapper"
+  [style.transform]="position"
+  (mousedown)="stopImmediateProp($event)"
+  (wheel)="onWheel($event)"
+>
+  <ng-container [ngSwitch]="currentAction">
+    <div class="overlay-menu-items" *ngSwitchDefault>
+      <button
+        *ngFor="let action of contextActions"
+        cd-button
+        class="overlay-menu-item"
+        [iconName]="action.icon"
+        iconSize="small"
+        size="small"
+        [disabled]="action.disabled"
+        [cdTooltip]="action.tooltip"
+        cdTooltipDirection="right"
+        (click)="onActionClick(action)"
+      ></button>
+    </div>
+
+    <app-add-component-context
+      *ngSwitchCase="componentAction.AddComponent"
+      [size]="actionSizes[componentAction.AddComponent]"
+      [isolatedSymbolId]="isolatedSymbolId"
+      [selectedElementId]="firstSelectedElement?.id"
+      (exit)="resetBar()"
+    ></app-add-component-context>
+
+    <app-replace-component-context
+      *ngSwitchCase="componentAction.ReplaceComponent"
+      [size]="actionSizes[componentAction.ReplaceComponent]"
+      [isolatedSymbolId]="isolatedSymbolId"
+      [selectedElementId]="firstSelectedElement?.id"
+      [selectedElementType]="firstSelectedElement?.elementType"
+      (exit)="resetBar()"
+    ></app-replace-component-context>
+
+    <app-actions-list-modal
+      *ngSwitchCase="componentAction.AddInteraction"
+      [size]="actionSizes[componentAction.AddInteraction]"
+      [selectedProperties]="selectedProperties"
+      (interactionSelected)="handleInteractionSelected($event)"
+      (exit)="resetBar()"
+    ></app-actions-list-modal>
+
+    <app-layout-picker-context
+      *ngSwitchCase="componentAction.LayoutPreset"
+      [selectedElementId]="firstSelectedElement?.id"
+      (exit)="resetBar()"
+    ></app-layout-picker-context>
+  </ng-container>
+</div>

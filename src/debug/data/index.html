@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Debug Data</title>
+    <base href="/debug/data/" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" type="module"></script>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header id="header" class="split">
+        <aside>Local</aside>
+        <button id="sync"></button>
+        <aside>Remote</aside>
+      </header>
+      <section id="project" class="divide split">
+        <aside id="project-local" class="project">
+          <!-- ENTRY POINT -->
+        </aside>
+        <aside id="project-remote" class="project">
+          <!-- ENTRY POINT -->
+        </aside>
+      </section>
+      <main id="elements" class="split">
+        <section class="divide">
+          <ul id="elements-local">
+            <!-- ENTRY POINT -->
+          </ul>
+          <ul id="elements-remote">
+            <!-- ENTRY POINT -->
+          </ul>
+        </section>
+      </main>
+    </div>
+    <div id="log">
+      <header>Log</header>
+      <div id="log-content"></div>
+    </div>
+  </body>
+</html>

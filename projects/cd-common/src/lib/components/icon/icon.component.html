@@ -1,0 +1,17 @@
+<div class="content" [style.width.px]="iconSize" [style.height.px]="iconSize">
+  <ng-container *ngIf="name">
+    <i
+      *ngIf="name | isMaterialIconPipe; else IconRef"
+      [class]="iconClass"
+      [style.font-size.%]="fontSizePercent"
+    >
+      {{ name }}
+    </i>
+  </ng-container>
+
+  <div class="svg" #contentRef></div>
+</div>
+
+<ng-template #IconRef>
+  <mat-icon [svgIcon]="name | IconConfigToSvgLookupPipe"></mat-icon>
+</ng-template>

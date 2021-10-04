@@ -1,0 +1,60 @@
+<div
+  class="wrapper"
+  cdkDropList
+  appDynamicPropsListPicker
+  (addData)="onAddData($event)"
+  (dataChange)="onDataChange($event)"
+  (clearActiveIndex)="onClearActiveIndex()"
+  (cdkDropListDropped)="onDrop($event)"
+>
+  <cd-property-list-item
+    cdkDrag
+    *ngFor="let item of data; let i = index; trackBy: trackFn"
+    class="list-item"
+    [class.dim]="activeIndex !== -1 && activeIndex !== i"
+    (delete)="onDelete(i)"
+  >
+    <cd-icon
+      cdPropertyListItemLeft
+      name="drag_indicator"
+      size="small"
+      width="12"
+      cdkDragHandle
+    ></cd-icon>
+    <div class="item">
+      <cd-checkbox
+        *ngIf="config?.supportsSelection"
+        [rounded]="!config?.multiSelect"
+        [preventUncheck]="config?.mustHaveSelection"
+        [disabled]="item?.disabled"
+        [cdTooltip]="
+          i | dynamicListItemCheckboxTooltipPipe: item:selectedIndex:selectedValue:config
+        "
+        [checked]="i | isDynamicListItemSelectedPipe: item:selectedIndex:selectedValue:config"
+        (change)="setSelected($event, i)"
+      ></cd-checkbox>
+      <div
+        class="container"
+        [class.disabled]="item?.disabled"
+        [class.has-icon]="item.icon"
+        (click)="onEdit($event, item, i)"
+      >
+        <cd-icon *ngIf="item?.icon" [name]="item?.icon" class="icon"></cd-icon>
+        <div class="text">
+          <ng-container *ngIf="item | itemLabelLookupPipe: config as itemLabel; else missingRef">
+            {{ itemLabel }}
+          </ng-container>
+          <span *ngIf="item?.disabled">(disabled)</span>
+        </div>
+        <cd-icon name="edit" class="edit" [class.show]="activeIndex === i" size="small"></cd-icon>
+      </div>
+    </div>
+  </cd-property-list-item>
+</div>
+
+<ng-template #missingRef>
+  <div class="text-missing" *ngIf="!config?.allowEmptyLabel">
+    <cd-icon name="warning" size="small"></cd-icon>
+    <i>Missing label value</i>
+  </div>
+</ng-template>

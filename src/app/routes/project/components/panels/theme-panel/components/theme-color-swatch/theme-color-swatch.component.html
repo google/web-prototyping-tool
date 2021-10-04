@@ -1,0 +1,41 @@
+<div
+  tabindex="0"
+  class="swatch"
+  cdTooltip="Edit color"
+  [class.editing]="editing"
+  (click)="onSwatchClick($event)"
+>
+  <div class="swatch-inner-container">
+    <div class="swatch-color" [style.backgroundColor]="themeColor?.value"></div>
+  </div>
+</div>
+
+<section
+  class="label-section"
+  tabindex="0"
+  [class.editing-label]="editingName"
+  (keydown)="onLabelSectionKeydown($event)"
+>
+  <cd-input
+    *ngIf="editingName; else label"
+    #inputCompRef
+    outline
+    class="label-input"
+    [value]="newThemeColorName"
+    (focused)="onInputBlur($event)"
+    (click)="onInputClick($event)"
+    (change)="onInputChange($event)"
+  ></cd-input>
+</section>
+
+<ng-template #label>
+  <div class="label" [attr.data-color]="themeColor?.value">{{ themeColor?.name }}</div>
+</ng-template>
+
+<cd-menu-button
+  class="menu-button"
+  size="small"
+  iconSize="small"
+  [data]="contextMenuData"
+  (selected)="onMenuSelect($event)"
+></cd-menu-button>

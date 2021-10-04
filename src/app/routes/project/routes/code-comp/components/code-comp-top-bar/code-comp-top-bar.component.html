@@ -1,0 +1,59 @@
+<div class="left">
+  <a
+    cd-outlined-button
+    class="finish-editing"
+    iconName="arrow_back"
+    cdTooltip="Return to project"
+    cdTooltipDirection="bottom"
+    [routerLink]="projectUrl"
+  >
+    Finish editing
+  </a>
+</div>
+
+<div class="right">
+  <cd-menu-button
+    iconName="color_lens"
+    iconSize="medium"
+    cdTooltip="Preview background color"
+    cdTooltipDirection="bottom"
+    size="medium"
+    [data]="backgroundMenuItems | MarkChecked: selectedBackground"
+    (selected)="onBackgroundColorChange($event)"
+  ></cd-menu-button>
+
+  <div class="divider"></div>
+
+  <button
+    cd-unelevated-button
+    size="small"
+    cdTooltip="Replace JS bundle with new file"
+    cdTooltipDirection="bottom"
+    (click)="onUploadBundle()"
+    [disabled]="!userCanEdit"
+  >
+    Update JS bundle
+  </button>
+  <button
+    cd-button
+    size="small"
+    iconName="publish"
+    (click)="onPublish()"
+    cdTooltip="Publish to Marketplace"
+    cdTooltipDirection="bottom"
+    [disabled]="!isUserOwner"
+  >
+    Publish
+  </button>
+
+  <button
+    cd-button
+    size="small"
+    cdTooltip="View the code component guide"
+    cdTooltipDirection="bottom"
+    iconName="help_outline"
+    (click)="onViewGuide()"
+  >
+    Guide
+  </button>
+</div>

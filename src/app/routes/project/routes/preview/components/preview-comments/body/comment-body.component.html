@@ -1,0 +1,19 @@
+<section (onKeydown)="$event.stopPropagation()">
+  <span *ngFor="let part of commentData">
+    <ng-container [ngSwitch]="part.type">
+      <br *ngSwitchCase="ElementType.Break" />
+      <span
+        *ngSwitchCase="ElementType.Chip"
+        class="chip"
+        [attr.data-item-id]="(part.content | textFieldUserContentPipe).email"
+      >
+        {{ (part.content | textFieldUserContentPipe).name }}
+      </span>
+      <span
+        *ngSwitchCase="ElementType.Link"
+        [innerHtml]="part.content | textFieldLinkContentPipe | safeHTML"
+      ></span>
+      <span *ngSwitchCase="ElementType.Text">{{ part.content | unescapeHtmlPipe }}</span>
+    </ng-container>
+  </span>
+</section>

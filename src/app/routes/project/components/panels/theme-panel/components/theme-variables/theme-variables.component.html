@@ -1,0 +1,25 @@
+<ul class="variable-list">
+  <li
+    *ngFor="let variable of variables"
+    class="variable-item"
+    (click)="onEditItem($event, variable)"
+    [class.dim]="editingVariable !== null && variable.id !== editingVariable?.id"
+  >
+    <div class="left">
+      <cd-icon name="label" size="small"></cd-icon>
+      <span class="variable-name">{{ variable.name }}</span>
+      <span class="variable-value">{{ variable.value }}{{ variable.units }}</span>
+    </div>
+    <button cd-button iconName="edit" iconSize="small" cdTooltip="Edit"></button>
+  </li>
+</ul>
+<button
+  cd-dashed-button
+  cd-shaped-button
+  size="small"
+  iconSize="small"
+  iconName="add"
+  (click)="onAddItem($event)"
+>
+  Add
+</button>

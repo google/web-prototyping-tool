@@ -1,0 +1,32 @@
+<cd-property-group
+  groupTitle="Output"
+  type="collapse"
+  [collapsed]="true"
+  class="output-property-group"
+>
+  <div cdPropertyGroupHeader class="output-toolbar">
+    <button
+      cd-button
+      class="copy-attr-btn"
+      iconName="file_copy"
+      iconSize="small"
+      (click)="onCopy()"
+      cdTooltip="Copy to clipboard"
+      cdTooltipDirection="left"
+    ></button>
+    <app-a11y-help-tooltip [helpText]="helpText"></app-a11y-help-tooltip>
+  </div>
+  <div class="container">
+    <ul class="attrs" *ngIf="visibleAttrs.length; else emptyState">
+      <ng-container *ngFor="let attr of visibleAttrs">
+        <li>
+          <span class="attr">{{ attr.name }} =</span>
+          <span class="value">"{{ attr.value }}"</span>
+        </li>
+      </ng-container>
+    </ul>
+    <ng-template #emptyState>
+      <p class="attrs-empty-state">Set accessibility properties to view HTML output</p>
+    </ng-template>
+  </div>
+</cd-property-group>

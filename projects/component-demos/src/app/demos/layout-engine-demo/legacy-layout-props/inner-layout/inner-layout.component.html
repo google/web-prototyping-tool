@@ -1,0 +1,112 @@
+<cd-input-group label="Layout">
+  <cd-toggle-button-group
+    showBackground
+    [value]="layoutMode"
+    (valueChange)="onLayoutModeChange($event)"
+  >
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Auto"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/auto-layout.svg"
+      [value]="LAYOUT_MODE.Auto"
+    ></button>
+
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Columns"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/stack-cols-layout.svg"
+      [value]="LAYOUT_MODE.Cols"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Rows"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/stack-rows-layout.svg"
+      [value]="LAYOUT_MODE.Rows"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Grid"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/grid-layout.svg"
+      [value]="LAYOUT_MODE.Grid"
+    ></button>
+  </cd-toggle-button-group>
+</cd-input-group>
+
+<cd-align-prop
+  *ngIf="isGrid"
+  [value]="align"
+  (valueChange)="onAlignmentChange($event)"
+></cd-align-prop>
+<cd-input-group label="Distribute" *ngIf="showDistribute">
+  <cd-toggle-button-group
+    showBackground
+    [value]="gridAutoMode"
+    (valueChange)="onDistributionChange($event)"
+  >
+    <button cd-button cdToggleButton size="small" expand="true" [value]="GRID_AUTO_MODE.MinContent">
+      Stack
+    </button>
+    <button cd-button cdToggleButton size="small" expand="true" [value]="GRID_AUTO_MODE.Auto">
+      Spread
+    </button>
+  </cd-toggle-button-group>
+</cd-input-group>
+
+<ng-container *ngIf="showRowGap">
+  <cd-input-group [label]="rowGapLabel">
+    <cd-range-input
+      (valueChange)="onRowGapChange($event)"
+      [autocompleteMenu]="gridAutocomplete"
+      [value]="model?.gridRowGap"
+      innerLabel="px"
+      max="100"
+      min="0"
+      type="number"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-container>
+
+<cd-input-group [label]="colGapLabel" *ngIf="showColGap">
+  <cd-range-input
+    (valueChange)="onColumnGapChange($event)"
+    [autocompleteMenu]="gridAutocomplete"
+    [value]="model?.gridColumnGap"
+    innerLabel="px"
+    max="100"
+    min="0"
+    type="number"
+  ></cd-range-input>
+</cd-input-group>
+
+<div *ngIf="gridMode" class="grid-layout">
+  <cd-property-group [groupTitle]="rowTitle" type="add" (add)="onRowAdd()" topDivider>
+    <cd-grid-props
+      (dataChange)="onRowChange($event)"
+      (hover)="onRowHover($event)"
+      (hoverOut)="onRowHoverOut($event)"
+      [data]="model?.gridTemplateRows"
+    ></cd-grid-props>
+  </cd-property-group>
+
+  <cd-property-group [groupTitle]="colTitle" type="add" (add)="onColumnAdd()" topDivider>
+    <cd-grid-props
+      vertical
+      [data]="model?.gridTemplateColumns"
+      (dataChange)="onColumnChange($event)"
+      (hover)="onColHover($event)"
+      (hoverOut)="onColHoverOut($event)"
+    ></cd-grid-props>
+  </cd-property-group>
+</div>

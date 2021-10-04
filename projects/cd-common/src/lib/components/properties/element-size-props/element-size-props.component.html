@@ -1,0 +1,65 @@
+<div class="left">
+  <cd-input-group-label>Width</cd-input-group-label>
+  <cd-input-group-label>Height</cd-input-group-label>
+</div>
+
+<div class="right">
+  <div class="box">
+    <svg width="56" height="56">
+      <line
+        *ngFor="let line of lines"
+        class="line"
+        [class.hover]="line.id === hoverLine"
+        [class.percent]="line.id | hasPercentPipe: width:height"
+        [class.pixels]="line.id | hasPixelsPipe: width:height"
+        [attr.x1]="line.x1"
+        [attr.y1]="line.y1"
+        [attr.x2]="line.x2"
+        [attr.y2]="line.y2"
+      />
+      <!-- HITBOX -->
+      <!-- Hitboxes are thicker than the lines above to make it easier to click on, hovering will reorder (there is no zIndex for svg)  -->
+      <line
+        *ngFor="let line of lines"
+        class="hitbox"
+        [attr.x1]="line.x1"
+        [attr.y1]="line.y1"
+        [attr.x2]="line.x2"
+        [attr.y2]="line.y2"
+        (mouseover)="onOver(line)"
+        (mouseout)="onOut()"
+        (click)="toggleMode($event, line)"
+      />
+    </svg>
+  </div>
+  <div class="lock">
+    <svg class="lock-accent" width="24" height="56">
+      <path class="arm" d="M1 8V1h8" transform="translate(11 7)" />
+      <path class="arm" d="M1 1v7h8" transform="translate(11 40)" />
+    </svg>
+    <button
+      cd-button
+      [cdTooltip]="frame?.locked ? 'Aspect Ratio Locked' : 'Aspect Ratio Unlocked'"
+      size="small"
+      iconSize="small"
+      [iconName]="frame?.locked ? 'lock_closed' : 'lock_open'"
+      (click)="toggleLock()"
+    ></button>
+  </div>
+  <div class="inner-right">
+    <cd-input
+      [value]="width"
+      type="units"
+      placeholder="Auto"
+      (change)="onWidthChange($event)"
+    ></cd-input>
+    <cd-input
+      [value]="height"
+      type="units"
+      placeholder="Auto"
+      (change)="onHeightChange($event)"
+    ></cd-input>
+  </div>
+</div>
+
+<!-- [iconName]="size?.locked ? 'lock_closed' : 'lock_open'" -->

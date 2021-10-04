@@ -1,0 +1,24 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Layers">
+  <button
+    cd-icon-button
+    class="collapse"
+    size="medium"
+    iconSize="medium"
+    iconName="unfold_less"
+    cdTooltip="Collapse all"
+    cdTooltipDirection="right"
+    (click)="onCollapseAll()"
+  ></button>
+</app-activity-panel-header>
+
+<app-searchbar [value]="searchValue" (valueChange)="onSearchValueChange($event)"></app-searchbar>
+
+<app-layers-tree
+  #layersTreeRef
+  [homeBoardId]="homeBoardId"
+  [showIndentLines]="showLayersIndent"
+  [selectionState]="selectionState$ | async"
+  [searchString]="searchValue"
+  (labelChange)="onLabelChange($event)"
+  (toggleHidden)="onToggleHidden($event)"
+></app-layers-tree>

@@ -1,0 +1,16 @@
+<section class="text-field-wrapper">
+  <div
+    #taggableTextField
+    contenteditable="plaintext-only"
+    spellcheck="false"
+    tabindex="0"
+    class="text-field"
+    [innerHTML]="textFieldHtml | safeHTML"
+    (focus)="onFocus($event)"
+    (keydown)="onKeydown($event)"
+    (keyup)="onKeyup($event)"
+    (paste)="onPaste($event)"
+    (cdkObserveContent)="onMutation($event)"
+  ></div>
+  <span *ngIf="emptyTextField || showPlaceholder" class="placeholder">{{ placeholder }}</span>
+</section>

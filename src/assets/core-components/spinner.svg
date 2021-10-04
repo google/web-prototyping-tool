@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="86px" height="40px" viewBox="0 0 86 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 57.1 (83088) - https://sketch.com -->
+    <title>spinner</title>
+    <desc>Created with Sketch.</desc>
+    <g id="spinner" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M43,38 C33.0588745,38 25,29.9411255 25,20 C25,10.0588745 33.0588745,2 43,2 L43,9 L43,9 C36.9248678,9 32,13.9248678 32,20 C32,26.0751322 36.9248678,31 43,31 C49.0751322,31 54,26.0751322 54,20 L61,20 L61,20 C61,29.9411255 52.9411255,38 43,38 Z" id="Combined-Shape" fill="#5F6369"></path>
+        <path d="M41.9864003,3.02968708 L41.9864865,8.04225146 C42.3222116,8.01414389 42.6602567,8 43,8 C49.627417,8 55,13.372583 55,20 C55,20.3353243 54.9862217,20.6689955 54.958838,21.000416 L59.9710822,21.0004179 C59.9903337,20.6683693 60,20.3348074 60,20 C60,10.6111593 52.3888407,3 43,3 C42.6607614,3 42.322802,3.00992384 41.9864003,3.02968708 Z" id="Combined-Shape" stroke="#5F6369" stroke-width="2"></path>
+    </g>
+</svg>

@@ -1,0 +1,48 @@
+<div class="wrapper">
+  <cd-input-group [label]="labelName">
+    <cd-input
+      #nameRef
+      placeholder=""
+      [value]="data?.name"
+      (change)="onNameChange($event)"
+    ></cd-input>
+  </cd-input-group>
+
+  <ng-container *ngIf="config?.supportsValue">
+    <cd-input-group [label]="labelValue">
+      <ng-container [ngSwitch]="config.valueType">
+        <!-- VALUE SELECT DROPDOWN -->
+        <cd-select-input
+          *ngSwitchCase="GenericListValueType.Select"
+          [placeholder]="selectInputPlaceholder"
+          [data]="selectMenu"
+          (change)="onSelectMenu($event)"
+        ></cd-select-input>
+        <!-- VALUE TEXT INPUT -->
+        <cd-input
+          *ngSwitchDefault
+          [placeholder]="config?.placeholder || ''"
+          [value]="data?.value || ''"
+          (change)="onValueChange($event)"
+        ></cd-input>
+      </ng-container>
+    </cd-input-group>
+  </ng-container>
+
+  <!-- ICON PICKER -->
+  <cd-input-group [label]="iconLabel" *ngIf="config.supportsIcons">
+    <cd-icon-input
+      [value]="data?.icon"
+      [iconClass]="iconClass"
+      [options]="config.iconInputOptions"
+      (valueChange)="onIconInputChange($event)"
+    ></cd-icon-input>
+  </cd-input-group>
+  <!-- DISABLED -->
+  <cd-input-group [label]="disabledLabel" *ngIf="config?.supportsDisabled">
+    <cd-checkbox [checked]="data?.disabled" (change)="onDisabledChange($event)"></cd-checkbox>
+  </cd-input-group>
+  <footer class="footer" *ngIf="add">
+    <button cd-outlined-button (click)="onAdd()" size="small">Add</button>
+  </footer>
+</div>

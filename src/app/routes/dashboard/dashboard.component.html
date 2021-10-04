@@ -1,0 +1,64 @@
+<cd-header>
+  <div cdHeaderLeft class="header-left">
+    <div class="logo"></div>
+    <h1>WebPrototypingTool</h1>
+  </div>
+  <div cdHeaderCenter>
+    <cd-search-box
+      placeholder="Search for projects and users..."
+      [value]="searchValue$ | async"
+      (valueChange)="onSearchValueChange($event)"
+      (change)="onSearchChange($event)"
+    ></cd-search-box>
+  </div>
+  <div cdHeaderRight>
+    <div class="header-right">
+      <button
+        *ngIf="settings$ | async as settings"
+        cdToggleButton
+        cd-button
+        size="medium"
+        iconSize="large"
+        [selected]="settings?.darkTheme"
+        [cdTooltip]="settings?.darkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+        cdTooltipDirection="bottom"
+        (click)="onThemeToggle(settings?.darkTheme)"
+        unselectedIconName="/assets/icons/dark_mode.svg"
+        selectedIconName="/assets/icons/light_mode.svg"
+      ></button>
+      <cd-menu-button
+        iconName="help_outline"
+        iconSize="large"
+        size="medium"
+        menuSize="large"
+        cdTooltip="Help center"
+        cdTooltipDirection="bottom"
+        [data]="helpMenu"
+        (selected)="onHelpMenuSelect($event)"
+      ></cd-menu-button>
+      <cd-avatar
+        *ngIf="googleUser$ | async as googleUser; else placeholderAvatar"
+        [profileImgUrl]="googleUser?.photoUrl"
+        [menuData]="avatarMenu"
+        menuSize="large"
+        cdTooltipDirection="bottom"
+        cdTooltip="Account"
+        (menuSelected)="onAvatarMenuSelect($event)"
+      ></cd-avatar>
+    </div>
+  </div>
+</cd-header>
+
+<div class="header-tab-group">
+  <app-projects-tab
+    *ngIf="showProjectsTab"
+    [user]="user$ | async"
+    [isAdminUser]="authService.isAdminUser$ | async"
+    [searchString]="searchValue$ | async"
+    (search)="onSearchUpdate($event)"
+  ></app-projects-tab>
+</div>
+
+<ng-template #placeholderAvatar>
+  <cd-avatar></cd-avatar>
+</ng-template>

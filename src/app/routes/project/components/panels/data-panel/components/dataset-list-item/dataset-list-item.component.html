@@ -1,0 +1,20 @@
+<cd-icon name="insert_chart_filled" size="medium"></cd-icon>
+
+<input
+  #nameInput
+  cdInputReset
+  cdDataPicker
+  class="item-input"
+  placeholder="Untitled"
+  [value]="dataset?.name"
+  (change)="onNameChange()"
+  (closePicker)="onClosePicker()"
+/>
+
+<cd-menu-button
+  class="menu"
+  size="small"
+  iconSize="small"
+  [data]="datasetMenuItems"
+  (selected)="onMenuItemSelect($event)"
+></cd-menu-button>

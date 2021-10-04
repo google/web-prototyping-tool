@@ -1,0 +1,29 @@
+{
+  "name": "database-migration-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:inputs": "webpack --config ./input/webpack.config.js",
+    "watch:inputs": "webpack --config ./input/webpack.config.js -w",
+    "build:symbols": "webpack --config ./symbols/webpack.config.js",
+    "watch:symbols": "webpack --config ./symbols/webpack.config.js -w",
+    "build:actions": "webpack --config ./actions/webpack.config.js",
+    "watch:actions": "webpack --config ./actions/webpack.config.js -w",
+    "build:user": "tsc --build ./user/tsconfig.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^4.1.1",
+    "firebase-admin": "^8.9.2"
+  },
+  "devDependencies": {
+    "prettier": "^1.18.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

@@ -1,0 +1,15 @@
+@mixin chip-base() {
+  align-items: center;
+  background: transparent;
+  border-radius: var(--cd-size-3);
+  border: none;
+  box-shadow: var(--cd-outline);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 1;
+  height: var(--cd-size-3);
+  outline: none;
+  text-align: left;
+  transition: box-shadow 200ms, background-color 200ms;
+  user-select: none;
+}

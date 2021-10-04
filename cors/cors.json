@@ -1,0 +1,12 @@
+[
+  {
+    "origin": [
+      "http://localhost:4200",
+      "http://localhost:4201",
+      "http://localhost:8080",
+      "http://localhost:8081",
+    ],
+    "method": ["GET", "POST", "OPTIONS"],
+    "maxAgeSeconds": 3600
+  }
+]

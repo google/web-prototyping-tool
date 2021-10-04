@@ -1,0 +1,273 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/cssvars' as *;
+@use 'sass-utils/scroll/scroll';
+
+$cellHeight: 22px;
+
+:host {
+  --indent-per-level: 8px;
+
+  display: grid;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  contain: strict;
+  box-sizing: border-box;
+  user-select: none;
+
+  @include scroll.themed-scrollbars();
+
+  &.show-filter {
+    grid-template-rows: auto 1fr;
+  }
+}
+
+.wrapper {
+  display: grid;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 0 cssvar(spacing-1);
+  box-sizing: border-box;
+}
+
+.tree {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: $cellHeight;
+  align-items: center;
+  width: fit-content;
+  padding-left: calc(var(--indent) * var(--indent-per-level));
+  contain: content;
+  font-size: 11.5px;
+  /* stylelint-disable property-no-unknown */
+  content-visibility: auto;
+  contain-intrinsic-size: 1px $cellHeight;
+  /* stylelint-enable property-no-unknown */
+
+  &.selectable,
+  &.show-arrow {
+    cursor: pointer;
+  }
+}
+
+.indent-line {
+  pointer-events: none;
+  width: 1px;
+  height: cssvar(size-3);
+  background: cssvar(font-color);
+  opacity: 0.2;
+  position: absolute;
+  left: calc(var(--level) * var(--indent-per-level));
+}
+
+.icon-font {
+  font-family: 'Google Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.cell-arrow {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  font-size: 18px;
+  width: 10px;
+  visibility: hidden;
+
+  &::after {
+    content: 'arrow_right';
+    transform: rotate(0deg);
+    transition: transform 200ms;
+  }
+
+  &.root::after {
+    content: 'fiber_manual_record';
+    font-size: 14px;
+  }
+
+  &.expanded:not(.root)::after {
+    transform: rotate(90deg);
+  }
+}
+
+.show-arrow .cell-arrow {
+  visibility: visible;
+  width: 18px;
+}
+
+.cell-title {
+  white-space: nowrap;
+  border-radius: 12px;
+  padding: 0 6px;
+  height: 18px;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: padding 100ms ease;
+}
+
+.cell.selectable:not(.selected) .cell-desc:hover,
+.cell.selectable:not(.selected).hovered .cell-desc {
+  .cell-title {
+    background: cssvar(focus-fill);
+    color: cssvar(primary-color);
+  }
+
+  .cell-value::before {
+    visibility: hidden;
+  }
+}
+
+.deselect {
+  width: 14px;
+  height: 14px;
+  position: absolute;
+  background: rgba(0, 0, 0, 0);
+  transition: background-color 100ms ease;
+  align-items: center;
+  border-radius: 50%;
+  right: 2px;
+  display: none;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  &::after {
+    content: 'close';
+    font-size: 12px;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    overflow: hidden;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.cell.selected {
+  .deselect {
+    display: block;
+  }
+
+  .cell-title {
+    background: cssvar(primary-color);
+    color: cssvar(inverted-font-color);
+    padding-right: cssvar(spacing-4);
+  }
+
+  .cell-value::before {
+    visibility: hidden;
+  }
+}
+
+.icon {
+  padding: 0 4px;
+  padding-right: 2px;
+  display: inline-block;
+  height: 11px;
+}
+
+.cell-desc {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-right: 10px;
+}
+
+.cell-value {
+  max-width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  opacity: 0.66;
+
+  &::before {
+    content: ':';
+    padding-right: cssvar(spacing-2);
+  }
+}
+
+.inputs-indicator {
+  color: cssvar(primary-color);
+  margin: #{cssvar(spacing-0)} 0 0 #{cssvar(spacing-0)};
+
+  &:empty {
+    border-radius: 50%;
+    background-color: cssvar(primary-color);
+    width: cssvar(spacing-1);
+    height: cssvar(spacing-1);
+    align-self: flex-start;
+  }
+}
+
+.a11y {
+  color: cssvar(a11y-color);
+}
+
+.empty-tree {
+  display: grid;
+  gap: cssvar(spacing-1);
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.filter {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  height: cssvar(size-4);
+  align-items: center;
+  gap: cssvar(spacing-2);
+  padding-left: cssvar(spacing-2);
+  padding-right: cssvar(spacing-1);
+  border-radius: cssvar(border-radius-5);
+  overflow: hidden;
+  background: cssvar(input-background-color);
+  margin: 0 #{cssvar(spacing-2)};
+  margin-bottom: cssvar(spacing-0);
+}
+
+.filter-ico {
+  opacity: 0.4;
+}

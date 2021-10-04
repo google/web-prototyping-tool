@@ -1,0 +1,11 @@
+<input
+  #inputRef
+  cdInputReset
+  type="search"
+  [value]="value || ''"
+  [placeholder]="placeholder"
+  (input)="onValueChange($event)"
+/>
+<button *ngIf="!!value" class="clear" (click)="onClearClick()">
+  <cd-icon name="close" size="small"></cd-icon>
+</button>

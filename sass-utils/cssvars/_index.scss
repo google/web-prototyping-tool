@@ -1,0 +1,18 @@
+$prefix: cd;
+
+// generates :root { --cd-name:value; }
+@mixin cssvar($location, $vars) {
+  #{$location} {
+    @each $name, $value in $vars {
+      --#{$prefix}-#{$name}: #{$value};
+    }
+  }
+}
+
+// generates var(--cd-name);
+@function cssvar($name, $fallback: '') {
+  @if $fallback != '' {
+    @return var(--#{$prefix}-#{$name}, #{$fallback});
+  }
+  @return var(--#{$prefix}-#{$name});
+}

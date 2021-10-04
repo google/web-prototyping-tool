@@ -1,0 +1,103 @@
+<main class="main" (click)="clearSelection()">
+  <div class="page-header">
+    <h1 class="header-text">Change log</h1>
+    <button cd-shaped-button (click)="addNews($event)" iconName="add">Add</button>
+  </div>
+  <section class="news-list">
+    <div class="news-item new active" *ngIf="isAddingNew">
+      <header>
+        <h5 class="title">{{ activeTitle }}</h5>
+        <span class="date">{{ activeDate | FormatFirebaseTime: 'ignoreTime' }}</span>
+      </header>
+      <cd-injected-content [data]="activeDetails"></cd-injected-content>
+    </div>
+
+    <ng-container *ngIf="newsFeed | async as feed">
+      <div
+        *ngFor="let item of feed"
+        class="news-item"
+        [class.active]="item.id === activeId"
+        (click)="assignActive($event, item)"
+      >
+        <header>
+          <h5 class="title">{{ item.id === activeId ? activeTitle : item.title }}</h5>
+          <span class="date">
+            {{ (item.id === activeId ? activeDate : item.date) | FormatFirebaseTime: 'ignoreTime' }}
+          </span>
+        </header>
+        <cd-injected-content
+          [data]="item.id === activeId ? activeDetails : item.details"
+        ></cd-injected-content>
+      </div>
+    </ng-container>
+  </section>
+</main>
+
+<aside>
+  <ng-container *ngIf="activeId; else emptyProps">
+    <!-- TITLE -->
+    <cd-property-group>
+      <cd-input-group label="Title">
+        <cd-input
+          [value]="activeTitle"
+          placeholder="title"
+          (input)="onTitleChange($event)"
+        ></cd-input>
+      </cd-input-group>
+    </cd-property-group>
+    <!-- DATE -->
+    <cd-property-group>
+      <cd-input-group label="Date" columns="1fr 1fr 1.5fr">
+        <cd-input
+          min="1"
+          max="12"
+          type="number"
+          bottomLabel="Month"
+          [value]="month"
+          (change)="onMonthChange($event)"
+        ></cd-input>
+        <cd-input
+          min="1"
+          max="31"
+          type="number"
+          bottomLabel="day"
+          [value]="activeDay"
+          (change)="onDayChange($event)"
+        ></cd-input>
+        <cd-input
+          min="1970"
+          max="3000"
+          type="number"
+          bottomLabel="year"
+          [value]="activeYear"
+          (change)="onYearChange($event)"
+        ></cd-input>
+      </cd-input-group>
+    </cd-property-group>
+    <!-- RICH TEXT -->
+    <cd-property-group>
+      <cd-rich-text-editor
+        onlyRichText
+        [richText]="true"
+        [value]="activeDetails"
+        (valueChange)="onTextChange($event)"
+      ></cd-rich-text-editor>
+    </cd-property-group>
+    <!-- Buttons -->
+    <cd-property-group>
+      <div class="button-wrapper">
+        <button cd-outlined-button (click)="onCancel()">Cancel</button>
+        <button cd-unelevated-button (click)="saveEdits()">
+          {{ isAddingNew ? 'Submit' : 'Save' }}
+        </button>
+      </div>
+    </cd-property-group>
+    <cd-property-group *ngIf="!isAddingNew">
+      <button cd-outlined-button (click)="deleteNews()" class="delete">Delete</button>
+    </cd-property-group>
+  </ng-container>
+</aside>
+
+<ng-template #emptyProps>
+  <span class="empty-state">Make a selection</span>
+</ng-template>

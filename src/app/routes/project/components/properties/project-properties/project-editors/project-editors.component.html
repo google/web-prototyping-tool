@@ -1,0 +1,23 @@
+<div class="wrapper">
+  <cd-avatar
+    *ngFor="let editor of editorDetails; trackBy: trackByFn"
+    [menuData]="editorMenu"
+    (menuSelected)="onMenuSelect($event, editor)"
+    [profileImgUrl]="editor?.photoUrl"
+    [cdTooltip]="editor?.email"
+  ></cd-avatar>
+  <button
+    appUserPicker
+    class="add"
+    [cdTooltip]="addEditorTooltip"
+    [showSearch]="true"
+    [disabled]="!canEdit"
+    [excludedUsers]="editors"
+    [ownerEmail]="ownerEmail"
+    [class.active]="userPicker?.active"
+    (click)="onOpenEditorPicker()"
+    (selectedUser)="onAddEditor($event)"
+  >
+    <cd-icon name="add"></cd-icon>
+  </button>
+</div>

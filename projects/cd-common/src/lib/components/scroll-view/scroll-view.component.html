@@ -1,0 +1,10 @@
+<header class="header"><ng-content select="[cdScrollHeader]"></ng-content></header>
+<div
+  #bodyRef
+  class="body"
+  (cdkObserveContent)="onContentChange()"
+  [cdkObserveContentDisabled]="!shaded"
+>
+  <ng-content></ng-content>
+</div>
+<footer class="footer"><ng-content select="[cdScrollFooter]"></ng-content></footer>

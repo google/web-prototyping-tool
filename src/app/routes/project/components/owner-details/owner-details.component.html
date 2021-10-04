@@ -1,0 +1,13 @@
+<ng-container *ngIf="ownerDetails; let details">
+  <cd-avatar
+    class="avatar"
+    [profileImgUrl]="details?.photoUrl"
+    [cdTooltip]="details?.email"
+    [menuData]="ownerMenu"
+    (menuSelected)="onMenuSelect($event, details)"
+  ></cd-avatar>
+  <div class="right">
+    <span class="title">Owner</span>
+    <span class="name">{{ details?.name }}</span>
+  </div>
+</ng-container>

@@ -1,0 +1,107 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  --radio-size-outer: 20px;
+
+  $radio-size-outer: var(--radio-size-outer);
+  $radio-size-inner: calc(#{$radio-size-outer} / 2);
+  $radio-fill-offset: calc(#{$radio-size-outer} / 4);
+  $label-leading-margin: calc(#{$radio-size-outer} + var(--cd-spacing-2));
+
+  &.small {
+    --radio-size-outer: var(--cd-size-0);
+  }
+
+  &.large {
+    --radio-size-outer: var(--cd-size-3);
+  }
+
+  > .radio-label-wrapper {
+    position: relative;
+    display: inline-grid;
+    align-items: end;
+    padding-left: $label-leading-margin;
+    font-size: $radio-size-outer;
+    min-height: $radio-size-outer;
+  }
+
+  .radio-label-text {
+    font-size: 0.8em;
+    color: var(--cd-font-color);
+
+    &::before {
+      box-sizing: border-box;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: $radio-size-outer;
+      height: $radio-size-outer;
+      border: 2px solid var(--cd-font-color);
+      border-radius: 50%;
+      content: '';
+    }
+
+    &::after {
+      position: absolute;
+      top: $radio-fill-offset;
+      left: $radio-fill-offset;
+      width: $radio-size-inner;
+      height: $radio-size-inner;
+      background-color: var(--cd-font-color);
+      border-radius: 50%;
+      transition: transform 150ms var(--cd-transition-timing);
+      content: '';
+    }
+  }
+
+  input[type='radio'] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    outline: none;
+
+    &:not(:checked) + .radio-label-text::after {
+      opacity: 0;
+      transform: scale(0);
+    }
+
+    &:checked + .radio-label-text::after {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    &:focus + .radio-label-text::before {
+      background-color: var(--cd-focus-fill);
+      box-shadow: 0 0 0 3px var(--cd-focus-fill);
+    }
+
+    &:not(:disabled),
+    &:not(:disabled) + .radio-label-text {
+      cursor: pointer;
+    }
+
+    &:disabled + .radio-label-text {
+      opacity: var(--cd-disabled-opacity);
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "cd-common",
+  "version": "0.0.1",
+  "license": "MIT",
+  "sideEffects": false,
+  "peerDependencies": {
+    "@angular/common": "^11.0.0",
+    "@angular/core": "^11.0.0",
+    "cd-interfaces": "*",
+    "cd-metadata/aria": "*",
+    "cd-metadata/css": "*",
+    "cd-metadata/fonts": "*",
+    "cd-metadata/units": "*",
+    "cd-themes": "*",
+    "cd-utils": "*",
+    "cd-utils/array": "*",
+    "cd-utils/class": "*",
+    "cd-utils/clipboard": "*",
+    "cd-utils/color": "*",
+    "cd-utils/content-editable": "*",
+    "cd-utils/css": "*",
+    "cd-utils/files": "*",
+    "cd-utils/guid": "*",
+    "cd-utils/keycodes": "*",
+    "cd-utils/map": "*",
+    "cd-utils/mock-data": "*",
+    "cd-utils/numeric": "*",
+    "cd-utils/object": "*",
+    "cd-utils/selection": "*",
+    "cd-utils/string": "*",
+    "cd-utils/stylesheet": "*",
+    "cd-utils/svg": "*",
+    "cd-utils/url": "*",
+    "dayjs": "^1.10.4",
+    "prismjs": "^1.23.0",
+    "firebase": "^8.2.9",
+    "immutable": "^4.0.0-rc.12"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}

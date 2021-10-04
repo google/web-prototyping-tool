@@ -1,0 +1,48 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  right: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100%;
+}
+
+.home-icon {
+  flex-shrink: 0;
+}
+
+.mixed {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  height: var(--cd-header-height);
+  padding: 0 var(--cd-spacing-3);
+  border-bottom: 1px solid var(--cd-border-color);
+  contain: strict;
+
+  h2 {
+    font-size: 1.1em;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+.mixed-msg {
+  padding: var(--cd-spacing-3);
+  display: block;
+  line-height: 1.4;
+}

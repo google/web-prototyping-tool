@@ -1,0 +1,18 @@
+<cd-input-group label="Hyphens">
+  <cd-select-input
+    [data]="hyphensMenu | MarkSelection: hyphens"
+    (change)="onHyphensChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+<cd-input-group label="Word break">
+  <cd-select-input
+    [data]="wordBreakMenu | MarkSelection: wordBreak"
+    (change)="onWordBreakChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+<cd-input-group label="Whitespace">
+  <cd-select-input
+    [data]="whiteSpaceMenu | MarkSelection: whiteSpace"
+    (change)="onWhiteSpaceChange($event)"
+  ></cd-select-input>
+</cd-input-group>

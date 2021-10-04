@@ -1,0 +1,32 @@
+<header class="head" [class.has-backbtn]="showBackBtn">
+  <button
+    cd-button
+    *ngIf="showBackBtn"
+    class="close-icon"
+    iconName="arrow_back"
+    iconSize="medium"
+    size="medium"
+    (click)="onBackBtnClick()"
+  ></button>
+
+  <h4 class="title">Apply layout preset</h4>
+</header>
+
+<div class="loader" *ngIf="loading; else listRef">
+  <cd-spinner size="small"></cd-spinner>
+</div>
+
+<ng-template #listRef>
+  <cd-scroll-view>
+    <ul class="list">
+      <li
+        *ngFor="let layout of layouts; trackBy: trackByFn"
+        class="layout-item"
+        [cdTooltip]="layout.label"
+        (click)="onLayoutClick(layout.id)"
+      >
+        <div class="preview" [style.--url]="layout.preview"></div>
+      </li>
+    </ul>
+  </cd-scroll-view>
+</ng-template>

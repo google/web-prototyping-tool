@@ -1,0 +1,6 @@
+<iframe app-renderer-iframe></iframe>
+<router-outlet></router-outlet>
+<cd-toast-manager
+  [toasts]="toastsService.toasts$ | async"
+  (toastRemoved)="onToastDismissed($event)"
+></cd-toast-manager>

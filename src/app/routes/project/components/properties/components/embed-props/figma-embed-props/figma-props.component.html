@@ -1,0 +1,40 @@
+<cd-property-group removePadding>
+  <div class="wrapper">
+    <cd-icon name="content_paste"></cd-icon>
+    <cd-input
+      #inputRef
+      (change)="onEmbedCodeChange($event)"
+      placeholder="Paste embed code..."
+    ></cd-input>
+  </div>
+</cd-property-group>
+
+<cd-input-group label="Project Id" columns="1fr auto">
+  <cd-input [value]="projectId" (change)="onProjectIdChange($event)"></cd-input>
+  <button
+    cd-button
+    iconName="open_in_new"
+    (click)="openProject()"
+    [disabled]="!projectId"
+    cdTooltip="Open in Figma"
+  ></button>
+</cd-input-group>
+
+<cd-input-group label="Node Id">
+  <cd-input [value]="nodeId" (change)="onNodeIdChange($event)"></cd-input>
+</cd-input-group>
+
+<cd-input-group label="Scaling">
+  <cd-select-input
+    [data]="scalingMenu | MarkSelection: scaling"
+    (change)="onScalingChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Controls">
+  <cd-checkbox [checked]="!hideControls" (change)="onShowControlsChange($event)"></cd-checkbox>
+</cd-input-group>
+
+<cd-input-group label="Hotspots">
+  <cd-checkbox [checked]="showHotspots" (change)="onShowHotspotsChange($event)"></cd-checkbox>
+</cd-input-group>

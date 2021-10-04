@@ -1,0 +1,22 @@
+<app-activity-panel-header cdPanelHeader panelTitle="About"></app-activity-panel-header>
+
+<div class="buttons">
+  <button *ngFor="let item of feedbackMenu" (click)="onLinkButtonClick(item)" class="btn">
+    <cd-icon [name]="item.icon"></cd-icon>
+    <span>{{ item.title }}</span>
+  </button>
+</div>
+<ng-container *ngIf="newsFeed | async as feed">
+  <cd-scroll-view *ngIf="feed.length">
+    <h4 class="news-title" cdScrollHeader>News</h4>
+    <section>
+      <div class="news-item" *ngFor="let item of feed">
+        <header>
+          <h5 class="title">{{ item.title }}</h5>
+          <span class="date">{{ item.date | FormatFirebaseTime }}</span>
+        </header>
+        <cd-injected-content [data]="item.details"></cd-injected-content>
+      </div>
+    </section>
+  </cd-scroll-view>
+</ng-container>

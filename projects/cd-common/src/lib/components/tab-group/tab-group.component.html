@@ -1,0 +1,25 @@
+<div class="header-wrapper">
+  <div class="tabs-wrapper">
+    <ul class="tab-list" (keydown)="onTabKeydown($event)" (click)="onTabClick($event)">
+      <li
+        *ngFor="let tab of _tabContents; let i = index"
+        class="tab-item"
+        tabindex="0"
+        #tabLabel
+        [class.icon-tab]="tab.iconName"
+        [class.active]="activeTabIndex === i"
+        [class.disabled]="tab.disabled"
+        [cdTooltip]="tab.tooltip"
+        [cdTooltipDirection]="tab.tooltipDirection"
+      >
+        <span *ngIf="tab.label" class="title">{{ tab.label }}</span>
+        <cd-icon *ngIf="tab.iconName" class="icon" [name]="tab.iconName"></cd-icon>
+      </li>
+    </ul>
+    <div #inkBar class="ink-bar" [class.animated]="inkBarHasInitialized"></div>
+  </div>
+</div>
+
+<div class="container">
+  <ng-content></ng-content>
+</div>

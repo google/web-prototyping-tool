@@ -1,0 +1,45 @@
+<cd-input-group label="Frame" columns="1fr auto" gap="4px">
+  <cd-select-input
+    placeholder="Custom"
+    [data]="sizeMenuData"
+    (change)="onSizePreset($event)"
+  ></cd-select-input>
+  <button
+    cd-button
+    cdToggleButton
+    iconSize="small"
+    cdTooltip="Toggle orientation"
+    selectedIconName="stay_current_portrait"
+    unselectedIconName="stay_current_landscape"
+    [selected]="frame.width < frame.height"
+    (click)="onSizeToggle()"
+  ></button>
+</cd-input-group>
+
+<cd-input-group columns="1fr 1fr auto" gap="6px">
+  <cd-input
+    innerLabel="w"
+    type="number"
+    [min]="minBoardSize"
+    [max]="maxBoardSize"
+    [value]="frame.width"
+    (change)="onWidthChange($event)"
+  ></cd-input>
+
+  <cd-input
+    innerLabel="h"
+    type="number"
+    [min]="minBoardSize"
+    [max]="maxBoardSize"
+    [value]="frame.height"
+    (change)="onHeightChange($event)"
+  ></cd-input>
+  <button
+    cd-button
+    size="small"
+    iconSize="small"
+    [cdTooltip]="frame?.locked ? 'Unlock aspect ratio' : 'Lock aspect ratio'"
+    [iconName]="frame?.locked ? 'lock_closed' : 'lock_open'"
+    (click)="toggleLock()"
+  ></button>
+</cd-input-group>

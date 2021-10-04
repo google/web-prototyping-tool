@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.prod.json",
+  "files": ["main.ts", "polyfills.ts"],
+  "exclude": ["**/*.worker.ts"]
+}

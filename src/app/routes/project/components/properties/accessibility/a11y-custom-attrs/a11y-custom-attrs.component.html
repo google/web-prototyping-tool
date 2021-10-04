@@ -1,0 +1,25 @@
+<cd-property-group
+  groupTitle="Additional Attributes"
+  class="custom-property-group"
+  [noBottomPadding]="true"
+>
+  <span cdPropertyGroupHeader class="notes-toolbar">
+    <cd-select-button
+      #addAttrButtonRef
+      cdTooltip="Add ARIA attribute"
+      [data]="availableAttrKeys | menuForAttrKeyPipe"
+      [disabled]="!availableAttrKeys.length"
+      (selected)="onNewAttrSelect($event)"
+    ></cd-select-button>
+  </span>
+
+  <app-aria-input-list
+    *ngIf="attrs.length"
+    class="attrs-list"
+    editEnabled
+    [attrs]="attrs"
+    [availableAttrKeys]="availableAttrKeys"
+    (ariaInputChange)="onAriaAttrChange($event)"
+    (ariaInputDelete)="onAriaAttrDelete($event)"
+  ></app-aria-input-list>
+</cd-property-group>

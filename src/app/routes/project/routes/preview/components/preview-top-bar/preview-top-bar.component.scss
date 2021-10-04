@@ -1,0 +1,102 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+$transitionSpeed: 250ms;
+
+.opener {
+  position: absolute;
+  background: transparent;
+  width: 100%;
+  height: 10px;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.content {
+  height: var(--cd-header-height);
+  background: var(--cd-background-color);
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 1fr auto;
+  overflow: hidden;
+  z-index: 2;
+  position: relative;
+  align-items: center;
+  padding: 0 var(--cd-spacing-3);
+  border-bottom: 1px solid var(--cd-border-color);
+}
+
+.project-title {
+  @include cd-font-overflow-ellipsis;
+
+  font-size: var(--cd-font-size-h2);
+  color: var(--cd-header-font-color);
+  cursor: text;
+
+  &.untitled {
+    font-style: italic;
+    opacity: 0.5;
+  }
+}
+
+.left {
+  padding-right: var(--cd-spacing-4);
+}
+
+.left,
+.right {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  overflow: hidden;
+  gap: 10px;
+  width: fit-content;
+}
+
+.right {
+  justify-content: end;
+}
+
+.divider {
+  width: 1px;
+  background: var(--cd-font-color);
+  height: 20px;
+  opacity: 0.25;
+}
+
+.content.init {
+  transition: height $transitionSpeed, border-bottom-color $transitionSpeed;
+  transition-timing-function: var(--cd-transition-timing);
+}
+
+.hidden {
+  height: 0;
+  border-bottom-color: transparent;
+  border-bottom-width: 0;
+}
+
+.avatar {
+  --cd-size-5: var(--cd-size-4);
+}
+
+@media only screen and (max-width: 760px) {
+  .avatar,
+  .clone-btn {
+    display: none;
+  }
+}

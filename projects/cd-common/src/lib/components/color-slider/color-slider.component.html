@@ -1,0 +1,11 @@
+<div class="track">
+  <div
+    class="handle"
+    [style.left.%]="handlePosition"
+    [class.pressed]="pressed"
+    [class.active]="active"
+  >
+    <div class="inner-handle" [style.background]="handleColor"></div>
+  </div>
+</div>
+<div class="bar"><ng-content></ng-content></div>

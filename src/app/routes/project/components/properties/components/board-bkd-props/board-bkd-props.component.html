@@ -1,0 +1,26 @@
+<cd-input-group label="Background">
+  <cd-color-input
+    [value]="backgroundValue.value"
+    [binding]="backgroundValue | IValueLookup: designSystem?.colors"
+    [colorData]="colorMenuData"
+    (colorSelect)="onBackgroundColorSelect($event)"
+    (valueChange)="onBackgroundColorChange($event)"
+  ></cd-color-input>
+</cd-input-group>
+
+<cd-input-group label="Image">
+  <cd-select-input
+    placeholder="None"
+    [bindingId]="model.backgroundImage | IValueId"
+    [data]="assetsMenuData"
+    (change)="onBackgroundImageChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Cover" *ngIf="model.backgroundImage | IValueId">
+  <cd-select-input
+    placeholder="Tile"
+    [data]="bkdSizeMenuData"
+    (change)="onBkdSizeChange($event)"
+  ></cd-select-input>
+</cd-input-group>

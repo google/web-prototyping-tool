@@ -1,0 +1,23 @@
+<div class="container">
+  <textarea
+    class="wrapper textarea"
+    #textareaRef
+    [value]="value"
+    (change)="onChange($event)"
+    (input)="onInput($event)"
+    [attr.disabled]="disabled"
+    [placeholder]="placeholder"
+    [attr.autocorrect]="spellcheck"
+    [attr.autocomplete]="spellcheck"
+    [attr.autocapitalize]="spellcheck"
+    [attr.spellcheck]="spellcheck"
+    (keydown)="onKeydown($event)"
+    (scroll)="onScroll()"
+  ></textarea>
+  <cd-code-highlight
+    class="wrapper editor"
+    [value]="textValue"
+    [style.transform]="scrollPosition"
+  ></cd-code-highlight>
+</div>
+<div *ngIf="resizable" class="handle" cdResizer (resizeChange)="onResize($event)"></div>

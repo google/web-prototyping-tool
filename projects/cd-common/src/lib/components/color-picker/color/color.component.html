@@ -1,0 +1,99 @@
+<cd-hsv-box
+  [hsv]="hsv"
+  [rgbaString]="rgbaString"
+  [hsla]="hslStringWithHue"
+  (valueChange)="onHSVChange($event)"
+  (draggingChange)="onHSVInteracting($event)"
+></cd-hsv-box>
+
+<cd-tone-picker
+  [tonalPalette]="tonalPalette"
+  [tonalPaletteIndex]="tonalPaletteIndex"
+  (indexChange)="onTonalPaletteChange($event)"
+></cd-tone-picker>
+<footer class="footer">
+  <div class="controls">
+    <cd-swatch
+      borderRadius="36"
+      size="36"
+      [color]="rgbaString"
+      class="main-swatch"
+      (swatchClick)="onMainSwatchClick()"
+    >
+      <cd-icon name="content_copy" class="icon" size="small"></cd-icon>
+    </cd-swatch>
+    <aside class="bars">
+      <cd-color-slider
+        (change)="onHueChange($event)"
+        [value]="hue"
+        max="360"
+        [handleColor]="hslStringWithHue"
+      >
+        <div class="hue-slider"></div>
+      </cd-color-slider>
+      <cd-color-slider [value]="alphaValue" (change)="onAlphaChange($event)" max="100">
+        <div class="alpha-slider" [ngStyle]="alphaSliderStyle"></div>
+      </cd-color-slider>
+    </aside>
+  </div>
+  <div class="input-group" [ngSwitch]="colorMode" [class.rgb]="colorMode">
+    <cd-input
+      [value]="hexString"
+      *ngSwitchCase="false"
+      (change)="onHexInput($event)"
+      bottomLabel="hex"
+      outline
+      center
+    ></cd-input>
+    <div *ngSwitchCase="true" class="rgb-input">
+      <cd-input
+        [value]="rgb[0]"
+        (change)="onRedChange($event)"
+        type="number"
+        min="0"
+        max="255"
+        bottomLabel="R"
+        hideStepper
+        outline
+        center
+      ></cd-input>
+      <cd-input
+        [value]="rgb[1]"
+        (change)="onGreenChange($event)"
+        type="number"
+        min="0"
+        max="255"
+        bottomLabel="G"
+        hideStepper
+        outline
+        center
+      ></cd-input>
+      <cd-input
+        [value]="rgb[2]"
+        (change)="onBlueChange($event)"
+        type="number"
+        min="0"
+        max="255"
+        bottomLabel="B"
+        hideStepper
+        outline
+        center
+      ></cd-input>
+    </div>
+    <cd-input
+      [value]="alpha"
+      (change)="onAlphaInput($event)"
+      type="number"
+      min="0"
+      max="100"
+      [bottomLabel]="colorMode ? 'a' : 'alpha'"
+      hideStepper
+      outline
+      center
+    ></cd-input>
+    <cd-mode-toggle-button
+      (click)="toggleColorMode()"
+      [cdTooltip]="colorMode ? 'Toggle HEX' : 'Toggle RGB'"
+    ></cd-mode-toggle-button>
+  </div>
+</footer>

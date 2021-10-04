@@ -1,0 +1,126 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  display: grid;
+  width: 700px;
+  height: 312px;
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--cd-spacing-2);
+  align-items: center;
+  justify-content: center;
+  padding: var(--cd-spacing-5);
+  position: relative;
+}
+
+.left {
+  display: grid;
+  line-height: 18px;
+  padding-right: var(--cd-spacing-5);
+
+  h1 {
+    @include cd-font(headline6);
+  }
+
+  p {
+    @include cd-font(subtitle2);
+
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
+
+.right {
+  height: 100%;
+  display: grid;
+  gap: var(--cd-spacing-4);
+  grid-template-columns: 1fr;
+  grid-template-rows: min-content min-content min-content;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  padding-left: var(--cd-spacing-4);
+  position: relative;
+}
+
+.bottom-right {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: min-content min-content;
+  width: 100%;
+  grid-template-columns: 1fr;
+  height: 60px;
+  align-content: end;
+}
+
+.actions {
+  display: grid;
+  box-sizing: border-box;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-3);
+  justify-content: end;
+}
+
+.error-message {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-0);
+  justify-content: start;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--cd-error-color);
+  padding-left: var(--cd-spacing-4);
+}
+
+.divider {
+  width: 1px;
+  height: 100%;
+  background-color: var(--cd-outline-color);
+}
+
+.uploading-loader {
+  display: grid;
+  grid-auto-flow: row;
+  justify-content: center;
+  grid-auto-rows: min-content;
+  justify-items: start;
+  align-content: center;
+  align-items: center;
+}
+
+.progress-bar {
+  height: 4px;
+  width: 300px;
+  background: var(--cd-active-fill);
+  margin-top: var(--cd-spacing-2);
+}
+
+.progress {
+  height: 100%;
+  background: var(--cd-primary-color);
+  transition: width 100ms;
+}

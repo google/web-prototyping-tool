@@ -1,0 +1,46 @@
+<cd-select-wrapper
+  [data]="colorData"
+  (change)="onColorMenuSelect($event)"
+  (contentClick)="createColorPicker()"
+>
+  <cd-swatch
+    size="16"
+    cdColorPicker
+    (colorPick)="onColorPick($event)"
+    [color]="colorValue"
+    class="swatch"
+    borderRadius="2"
+  ></cd-swatch>
+</cd-select-wrapper>
+<cd-input
+  type="number"
+  placeholder="0"
+  [value]="value?.offsetX"
+  [innerLabel]="innerLabel"
+  [bottomLabel]="offsetXLabel"
+  (change)="onOffsetXChange($event)"
+></cd-input>
+<cd-input
+  type="number"
+  placeholder="0"
+  [innerLabel]="innerLabel"
+  [value]="value?.offsetY"
+  [bottomLabel]="offsetYLabel"
+  (change)="onOffsetYChange($event)"
+></cd-input>
+<cd-input
+  type="number"
+  placeholder="0"
+  [innerLabel]="innerLabel"
+  [value]="value?.blurRadius"
+  [bottomLabel]="blurLabel"
+  (change)="onBlurChange($event)"
+></cd-input>
+<cd-input
+  *ngIf="!textShadow"
+  type="number"
+  placeholder="0"
+  [value]="value?.spreadRadius"
+  [bottomLabel]="spreadLabel"
+  (change)="onSpreadChange($event)"
+></cd-input>

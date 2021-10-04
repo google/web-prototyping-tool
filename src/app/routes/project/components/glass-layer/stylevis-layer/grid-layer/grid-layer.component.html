@@ -1,0 +1,16 @@
+<svg:g *ngIf="gridRects.length">
+  <svg:rect
+    class="grid-rect"
+    *ngFor="let grid of gridRects; let i = index"
+    [class.hover]="gridHover[i] === 1"
+    [cdSVGRect]="grid | IRectToSVGStyle: bounds"
+  />
+</svg:g>
+
+<svg:g *ngIf="parentGridRects.length" class="parent">
+  <svg:rect
+    class="grid-rect"
+    *ngFor="let grid of parentGridRects"
+    [cdSVGRect]="grid | IRectToSVGStyle: parentBounds"
+  />
+</svg:g>

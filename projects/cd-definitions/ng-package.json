@@ -1,0 +1,22 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/cd-definitions",
+  "lib": {
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "cd-common/consts": "cd-common/consts",
+      "cd-common/datasets": "cd-common/datasets",
+      "cd-common/models": "cd-common/models",
+      "cd-common/utils": "cd-common/utils",
+      "cd-interfaces": "cd-interfaces",
+      "cd-metadata/currency": "cd-metadata/currency",
+      "cd-metadata/fonts": "cd-metadata/fonts",
+      "cd-metadata/units": "cd-metadata/units",
+      "cd-themes": "cd-themes",
+      "cd-utils/object": "cd-utils/object",
+      "cd-utils/string": "cd-utils/string",
+      "dayjs": "dayjs",
+      "dayjs/plugin/utc": "dayjs/plugin/utc"
+    }
+  }
+}

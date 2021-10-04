@@ -1,0 +1,17 @@
+<cd-scroll-view>
+  <app-comments-panel
+    [user]="user"
+    [taggedElementLabelMap]="taggedElementLabelMap"
+    [commentThreads]="commentThreads"
+    [resolvedThreadCount]="resolvedThreadCount"
+    [currentBoardId]="currentBoardId"
+    [selectionActive]="selectionActive"
+    [currentlySelectedElement]="currentlySelectedElement"
+    (createComment)="onCreateComment($event)"
+    (createCommentThread)="onCreateCommentThread($event)"
+    (deleteComment)="onDeleteComment($event)"
+    (reopenThread)="onReopenThread($event)"
+    (resolveThread)="onResolveThread($event)"
+    (updateComment)="onUpdateComment($event)"
+  ></app-comments-panel>
+</cd-scroll-view>

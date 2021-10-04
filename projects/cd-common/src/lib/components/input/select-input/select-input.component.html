@@ -1,0 +1,31 @@
+<cd-input
+  #inputCompRef
+  type="select"
+  placeholder="{{ placeholder }}"
+  [value]="menuData | selectedValuePipe: selectedIndex"
+  [focus]="focus"
+  [active]="active"
+  [bottomLabel]="bottomLabel"
+  [outline]="outline"
+  [showLeft]="showLeft"
+  [disabled]="disabled"
+  [helpText]="helpText"
+  [errorText]="errorText"
+  [leftTemplateRef]="leftSlotRef"
+></cd-input>
+<button
+  #btnRef
+  *ngIf="!disabled"
+  class="select-button"
+  [class.helptext]="!!helpText"
+  (click)="createSelect($event)"
+  (keydown)="createSelectOnKey($event)"
+  (blur)="onButtonBlur()"
+  (focus)="onButtonFocus()"
+></button>
+
+<ng-template #leftSlotRef>
+  <div class="thumb" *ngIf="menuData | selectedThumbnailPipe: selectedIndex; let thumb">
+    <img [src]="thumb" />
+  </div>
+</ng-template>

@@ -1,0 +1,58 @@
+<cd-input-group-label
+  *ngIf="!fullWidth"
+  [cdTooltip]="tooltip"
+  cdTooltipDirection="left"
+  [dataBindingRef]="bindingButtonRef"
+>
+  <button
+    *ngIf="labelRichTooltip; else defaultLabel"
+    class="rich-tooltip-label"
+    [cdRichTooltip]="labelRichTooltip"
+    [class.active]="labelTooltipActive"
+    (click)="onLabelTooltipClick($event)"
+  >
+    {{ label }}
+  </button>
+</cd-input-group-label>
+
+<ng-template #defaultLabel>{{ label }}</ng-template>
+
+<div
+  class="right"
+  cdDataPicker
+  [activeElementIds]="activeElementIds"
+  (selectedValueChange)="onDataBinding($event)"
+  (activeValueChange)="onElementHighlight($event)"
+>
+  <div class="content" [style.grid-template-columns]="columns" [style.gap]="gap">
+    <ng-container *ngIf="!showChipBinding; else dataChipRef">
+      <ng-content></ng-content>
+    </ng-container>
+  </div>
+</div>
+
+<ng-template #bindingButtonRef>
+  <button
+    *ngIf="showBindingButton"
+    class="data-binder"
+    cdTooltip="Add data binding"
+    tabindex="0"
+    [class.active]="dataPicker?.pickerActive"
+    (click)="onShowDataPicker()"
+  >
+    <cd-icon class="data-ico" size="small" name="add_box"></cd-icon>
+  </button>
+</ng-template>
+
+<ng-template #dataChipRef>
+  <cd-chip
+    cdTooltip="Data binding"
+    [iconName]="binding | chipIconForBindingPipe"
+    [chipTitle]="binding | inputBindingFormatterPipe"
+    (click)="onShowDataPicker()"
+    (remove)="onRemoveBinding()"
+    [active]="dataPicker?.pickerActive"
+    (mouseenter)="onChipHover($event)"
+    (mouseleave)="onChipHover($event)"
+  ></cd-chip>
+</ng-template>

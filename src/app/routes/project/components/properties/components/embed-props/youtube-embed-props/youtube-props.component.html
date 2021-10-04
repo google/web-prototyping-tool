@@ -1,0 +1,18 @@
+<cd-input-group label="Video ID" columns="1fr auto">
+  <cd-input placeholder="Video ID" [value]="videoId" (change)="onVideoIdChange($event)"></cd-input>
+  <button
+    cd-button
+    iconName="open_in_new"
+    (click)="onOpenURL()"
+    [disabled]="!videoId"
+    cdTooltip="Open on YouTube"
+  ></button>
+</cd-input-group>
+
+<cd-input-group label="Controls">
+  <cd-checkbox [checked]="showControls" (change)="onShowControlsChange($event)"></cd-checkbox>
+</cd-input-group>
+
+<cd-input-group label="Autoplay">
+  <cd-checkbox [checked]="autoPlay" (change)="onAutoplayChange($event)"></cd-checkbox>
+</cd-input-group>

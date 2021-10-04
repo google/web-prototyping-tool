@@ -1,0 +1,103 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  display: grid;
+  align-items: top;
+  grid-template-columns: var(--cd-size-3) 1fr var(--cd-size-3);
+  user-select: none;
+  position: relative;
+  margin-right: var(--cd-spacing-2);
+  contain: layout;
+
+  &:last-child {
+    margin-bottom: var(--cd-spacing-3);
+  }
+}
+
+.content {
+  padding: 0 2px;
+}
+
+.left {
+  opacity: 0.42;
+  padding-left: 8px;
+  cursor: grab;
+  contain: strict;
+}
+
+.left,
+.right {
+  height: var(--cd-size-3);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+:host:hover .left {
+  opacity: 1;
+}
+
+:host.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+:host.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging :host:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.cdk-drop-list-dragging {
+  cursor: grabbing;
+}
+
+.cdk-drop-list-dragging :host {
+  cursor: grabbing;
+
+  .left {
+    cursor: grabbing;
+  }
+
+  .content {
+    pointer-events: none;
+  }
+}
+
+:host.hide-left {
+  grid-template-columns: 1fr var(--cd-size-3);
+  padding-left: var(--cd-spacing-3);
+
+  .left {
+    display: none;
+  }
+}
+
+:host.no-padding {
+  padding: 0;
+  margin-bottom: 10px;
+  margin-right: 0;
+  margin-left: 0;
+}
+
+:host.no-bottom {
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

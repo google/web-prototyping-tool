@@ -1,0 +1,4 @@
+<div class="validator" [cdTooltip]="text" *ngIf="canShow">
+  <cd-icon [name]="icon" [class.error]="!isValid"></cd-icon>
+  <span *ngIf="showText" [innerText]="text"></span>
+</div>

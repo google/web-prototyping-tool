@@ -1,0 +1,43 @@
+<!doctype html>
+<html {% if section %} data-current="{{ section }}" {% endif %} lang="en">
+  {% include "components/head.njk" %}
+  <body class="bg-white" data-path="{{'/' | url}}">
+    <div id="app">
+      {% include "components/header.njk" %}
+      {% include "components/nav.njk" %}
+      <main class="dark:bg-gray-900 pt-16 sm:pt-18 md:pt-20 md:pl-72">
+        <div class="px-6">
+          {{ layoutContent | safe }}
+        </div>
+      </main>
+    </div>
+
+    {% set js %}
+    {% include "assets/js/inline.js" %}
+    {% endset %}
+    {% set vidjs %}
+    {% include "assets/js/components.js" %}
+    {% endset %}
+    <script>
+      {{ js | jsmin | safe }}
+    </script>
+    <script>
+      {{ vidjs | jsmin | safe }}
+    </script>
+    <script type="text/javascript" src="{{ '/_includes/assets/js/search.js' | url }}"></script>
+    <script type="text/javascript" src="{{ '/js/elasticlunr.min.js' | url }}"></script>
+
+    {% if myProject.isProd %}
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async="async" src="https://www.googletagmanager.com/gtag/js?id=UA-133650671-2"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-133650671-2');
+      </script>
+    {% endif %}
+  </body>
+</html>

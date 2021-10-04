@@ -1,0 +1,10 @@
+<button
+  #helpTextRef
+  cd-button
+  [cdRichTooltip]="helpText"
+  [class.active]="helpSlotActive"
+  [iconName]="helpSlotActive ? 'help' : 'help_outline'"
+  [iconSize]="size"
+  size="small"
+  (click)="onHelpClick($event)"
+></button>

@@ -1,0 +1,80 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/font/font';
+@use 'sass-utils/cssvars' as *;
+// Used by the dnd-ghost.service.ts for drag preview within the main app
+
+.dnd-ghost {
+  @include font.cd-font-overflow-ellipsis;
+
+  font-size: 11px;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  position: fixed;
+  contain: strict;
+  pointer-events: none;
+  box-sizing: border-box;
+  background: cssvar(ghost-fill);
+  color: cssvar(glass-color);
+  padding: cssvar(spacing-1);
+  text-transform: capitalize;
+  border-radius: 2px;
+  transition: width 150ms ease-out, height 150ms ease-out;
+  will-change: transform;
+
+  &::after {
+    content: attr(data-label);
+  }
+
+  &.tree {
+    color: cssvar(primary-color);
+    border-radius: cssvar(border-radius-5);
+    background: cssvar(focus-fill);
+    padding: 0;
+    padding-left: cssvar(spacing-4);
+    opacity: 0.8;
+
+    &::after {
+      line-height: 24px;
+    }
+  }
+
+  &.image {
+    background: transparent;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.1));
+
+    // Used by the assets panel
+    &.thumbnail {
+      margin-left: -70px;
+      margin-top: -20px;
+    }
+
+    &.symbol-thumbnail {
+      margin-left: 0;
+      margin-top: 0;
+    }
+
+    &::after {
+      content: none;
+    }
+  }
+}

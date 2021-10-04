@@ -1,0 +1,25 @@
+<header class="header">
+  <h1 class="title" [innerText]="title"></h1>
+  <span class="version">Version {{ versionNumber }}</span>
+</header>
+<app-publish-details
+  class="details"
+  [(publishEntry)]="publishEntry"
+  [(name)]="name"
+></app-publish-details>
+<footer class="footer">
+  <div class="left">
+    <span class="visibility-desc">Visible to anyone with an @google.com email</span>
+  </div>
+  <div class="right">
+    <button cd-button size="medium" (click)="onDismissClicked()">Cancel</button>
+    <button
+      cd-unelevated-button
+      size="medium"
+      cd-e2e-label="publish-component-confirm"
+      (click)="onPublishClicked()"
+    >
+      Publish
+    </button>
+  </div>
+</footer>

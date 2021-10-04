@@ -1,0 +1,61 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* stylelint-disable selector-type-no-unknown */
+@import './material-theme-with-vars.scss';
+@import './mat-button-overrides.scss';
+@import './mat-button-toggle-overrides.scss';
+@import './mat-switch-overrides.scss';
+@import './mat-menu-overrides.scss';
+@import './mat-stepper-overrides.scss';
+@import './mat-tabs-overrides.scss';
+@import './mat-form-overrides.scss';
+@import './mat-chip-overrides.scss';
+@import './mat-expansion-panel-overrides.scss';
+@import './mat-checkbox-overrides.scss';
+@import './mat-radiobutton-overrides.scss';
+@import './mat-slider-overrides.scss';
+@import './mat-progress-spinner-overrides.scss';
+
+.material-icons {
+  font-family: var(--co-icon-font-family, 'Google Material Icons');
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+mat-icon:not(.cd-rendered-element) {
+  fill: currentColor;
+  color: currentColor;
+}
+
+:root {
+  --co-icon-color-override: currentColor;
+}
+
+cd-icon-element .ace-icon {
+  color: var(--co-icon-color-override) !important;
+  margin-top: 0;
+}

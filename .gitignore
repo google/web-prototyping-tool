@@ -1,0 +1,58 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/dist
+/docs
+/out-tsc
+
+# dependencies
+*node_modules
+
+#screenshot dependencies
+backend-services/screenshot/screenshot-server/node_modules
+backend-services/screenshot/screenshot-server/web-prototyping-tool
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.cache
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# Failed image test
+-ERROR.png
+
+*firebase-adminsdk*.json
+
+# System Files
+.DS_Store
+Thumbs.db
+
+/key.json
+/key.prod.json
+
+/scripts/migration/dist
+/scripts/assets-inventory/lib
+
+co-template-tester.html

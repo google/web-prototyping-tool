@@ -1,0 +1,28 @@
+<cd-scroll-view>
+  <div class="header" tabindex="0" cdScrollHeader>
+    <button
+      cd-button
+      class="close-icon"
+      iconName="close"
+      iconSize="medium"
+      size="medium"
+      (click)="closeModal()"
+    ></button>
+    <h1 class="header-text">add action</h1>
+  </div>
+
+  <ul class="list">
+    <li
+      *ngFor="let item of actionTypes"
+      class="option"
+      [class.divider]="item.divider"
+      tabindex="0"
+      (click)="onActionTypeClick(item.value)"
+    >
+      <div class="option-content">
+        <cd-icon [name]="item.icon" size="small"></cd-icon>
+        <span>{{ item.title }}</span>
+      </div>
+    </li>
+  </ul>
+</cd-scroll-view>

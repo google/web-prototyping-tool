@@ -1,0 +1,97 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  position: relative;
+  display: grid;
+  gap: var(--cd-spacing-2);
+  overflow: hidden;
+}
+
+.actions {
+  position: relative;
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: start;
+  gap: var(--cd-spacing-0);
+  align-items: center;
+  height: 34px;
+  padding: 0 var(--cd-spacing-1);
+  border-top-left-radius: var(--cd-border-radius-1);
+  border-top-right-radius: var(--cd-border-radius-1);
+
+  button {
+    border-radius: var(--cd-border-radius-1) !important;
+  }
+
+  &::after {
+    content: '';
+    height: 1px;
+    position: absolute;
+    left: var(--cd-spacing-1);
+    right: var(--cd-spacing-1);
+    bottom: -1px;
+    background: var(--cd-font-color);
+    opacity: 0.2;
+  }
+}
+
+.body {
+  position: relative;
+  overflow-x: hidden;
+  background-color: var(--cd-input-background-color);
+  border-radius: var(--cd-border-radius-2);
+  margin: 0 var(--cd-spacing-3);
+
+  &.focused {
+    box-shadow: var(--cd-outline-focus);
+  }
+}
+
+.vert-divider {
+  background: var(--cd-font-color);
+  opacity: 0.2;
+  height: 18px;
+  width: 1px;
+}
+
+.content {
+  position: relative;
+  height: 100%;
+  min-height: 70px;
+  line-height: 16px;
+  padding: var(--cd-spacing-2);
+  max-height: 200px;
+  caret-color: var(--cd-primary-color);
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.highlight {
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  path {
+    fill: var(--cd-active-fill);
+  }
+}

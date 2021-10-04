@@ -1,0 +1,74 @@
+<ng-container *ngIf="codeComponent">
+  <app-code-comp-top-bar
+    [title]="codeComponent?.title"
+    [projectId]="codeComponent?.projectId"
+    [userCanEdit]="userCanEditProject$ | async"
+    [selectedBackground]="currOutletBackground"
+    [isUserOwner]="isUserComponentOwner$ | async"
+    (publish)="onPublish()"
+    (uploadBundle)="onUploadBundle()"
+    (backgroundChange)="onBackgroundChange($event)"
+  ></app-code-comp-top-bar>
+
+  <cd-side-panel
+    class="side-panel"
+    position="right"
+    [size]="320"
+    [max]="PanelSize.MaxRight"
+    [min]="280"
+  >
+    <app-code-comp-panel
+      [codeComponent]="codeComponent"
+      [userCanEdit]="userCanEditProject$ | async"
+      [panelState]="panelState"
+      [designSystem]="designSystem$ | async"
+      [datasetsMenuItems]="datasetsMenuItems"
+      [jsBundleMetadata]="jsBundleMetadata"
+      (panelChange)="onPanelStateChange($event)"
+      (downloadJsBundle)="onDownloadJsBundle()"
+      (updateJSBundle)="onUpdateJSBundle($event)"
+      (componentChange)="onCodeComponentChange($event)"
+      (inputDefaultValueChange)="onInputDefaultValueChange($event)"
+    ></app-code-comp-panel>
+  </cd-side-panel>
+
+  <div class="canvas">
+    <app-test-panel
+      *ngIf="showTestPanel"
+      [fileName]="configFileName"
+      [data]="configViewerData"
+      [designSystem]="designSystem$ | async"
+      [datasetsMenuItems]="datasetsMenuItems"
+      [testInstance]="testInstance"
+      [properties]="codeComponentProperties"
+      (testPropsChange)="onTestPropsChange($event)"
+      (resetProps)="onResetPreviewProps()"
+    ></app-test-panel>
+
+    <div
+      class="outlet-wrapper"
+      [style.width.px]="outletPreviewWidth"
+      [style.height.px]="outletPreviewHeight"
+    >
+      <div
+        class="outlet"
+        [style.width.px]="outletPreviewWidth"
+        [style.height.px]="outletPreviewHeight"
+      >
+        <div class="updating-new-bundle" *ngIf="updatingJSBundle; else outletFrameRef">
+          <cd-spinner></cd-spinner>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #outletFrameRef>
+  <app-render-outlet-iframe
+    #renderOutletRef
+    [class]="outletBackgroundClass"
+    [id]="codeComponent?.id"
+    [codeComponentOutlet]="true"
+    transparent="true"
+  ></app-render-outlet-iframe>
+</ng-template>

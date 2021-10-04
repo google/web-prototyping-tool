@@ -1,0 +1,37 @@
+<div class="top-bar">
+  <h2>Theme</h2>
+  <cd-select-input
+    class="theme-select"
+    placeholder="Select a theme..."
+    [data]="themeOptions | MarkSelection: currentTheme?.value"
+    (change)="onThemeChange($event)"
+  ></cd-select-input>
+  <h2>Component</h2>
+  <cd-select-input
+    class="component-select"
+    placeholder="Select a component..."
+    [data]="selectItems | MarkSelection: selectedItem?.value"
+    (change)="onComponentChange($event)"
+  ></cd-select-input>
+  <button
+    *ngIf="settings$ | async as settings"
+    cdToggleButton
+    cd-button
+    size="medium"
+    iconSize="large"
+    [selected]="settings?.darkTheme"
+    [cdTooltip]="settings?.darkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+    cdTooltipDirection="bottom"
+    (click)="onThemeToggle(settings?.darkTheme)"
+    unselectedIconName="/assets/icons/dark_mode.svg"
+    selectedIconName="/assets/icons/light_mode.svg"
+  ></button>
+</div>
+
+<div class="frame-container">
+  <app-render-outlet-iframe
+    class="outlet-frame"
+    transparent
+    [id]="selectedItem?.value"
+  ></app-render-outlet-iframe>
+</div>

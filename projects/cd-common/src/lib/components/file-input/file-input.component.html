@@ -1,0 +1,11 @@
+<label for="file-upload" class="file-input-label">
+  <button cd-unelevated-button class="visible-button">Choose file</button>
+  <span class="filename">{{ files | fileInputLabelFromFilesPipe }}</span>
+</label>
+<input
+  id="file-upload"
+  type="file"
+  [multiple]="multiple"
+  [accept]="acceptedMimeTypes"
+  (change)="onFilesSelected($event)"
+/>

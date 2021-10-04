@@ -1,0 +1,26 @@
+<ng-container *ngIf="debugStats$ | async">
+  <div class="content">
+    <span>Boards: {{ boardCount }}</span>
+    <span>Symbols: {{ symbolCount }}</span>
+    <span>Elements: {{ elementCount }}</span>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="debugCanvas$ | async">
+  <div class="content">
+    <span>Debug Canvas</span>
+    <span>Bounds: {{ canvas?.bounds }}</span>
+    <span>
+      Position: x: {{ canvas?.position?.x }}, y: {{ canvas?.position?.y }}, z:
+      {{ canvas?.position?.z }}
+    </span>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="debugDragAndDrop$ | async">
+  <div class="content">
+    <span>Debug Drag & Drop</span>
+    <span>TargetId: {{ targetDndId }}</span>
+    <span>Prev TargetId: {{ prevDndId }}</span>
+  </div>
+</ng-container>

@@ -1,0 +1,33 @@
+<cd-property-group [groupTitle]="groupTitle" type="add" (add)="onAddLine()" class="prop-group">
+  <ng-container cdPropertyGroupHeader *ngIf="removable">
+    <div class="removable">
+      <button
+        cd-button
+        cdTooltip="Delete"
+        cdTooltipDirection="left"
+        iconName="delete_outline"
+        size="small"
+        iconSize="small"
+        (click)="onDeleteGroup()"
+      ></button>
+    </div>
+  </ng-container>
+  <ul class="list">
+    <ng-container *ngFor="let item of data; let i = index; last as isLast; trackBy: trackByFn">
+      <li
+        cd-key-value-row
+        #rowRef
+        [isLast]="isLast"
+        [inputMode]="inputMode"
+        [keyMenuData]="keyMenuData"
+        [valueMenuDataMap]="valueMenuDataMap"
+        [designSystem]="designSystem"
+        [keyValue]="item"
+        (keyValueChange)="onKeyValueChange($event, i)"
+        (pasted)="onPaste($event, i)"
+        (nextLine)="onNextLine(isLast, i)"
+        (delete)="onDelete(i)"
+      ></li>
+    </ng-container>
+  </ul>
+</cd-property-group>

@@ -1,0 +1,209 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/scroll/scroll.scss';
+
+$spacing: 9px;
+
+:host {
+  --indentation: 0;
+  --indent-per-level: 12px;
+
+  display: grid;
+  position: relative;
+  overflow: hidden;
+
+  @include themed-scrollbars();
+}
+
+.wrapper {
+  box-sizing: border-box;
+  padding-bottom: $spacing;
+}
+
+.scrollview {
+  width: 100%;
+  overflow-y: scroll;
+  will-change: unset;
+  contain: unset;
+}
+
+.dragging .tree-cell {
+  // prevent hover states on tree-cell while dragging
+  pointer-events: none;
+}
+
+.indent-line {
+  pointer-events: none;
+  width: 1px;
+  height: var(--cd-size-3);
+  background: var(--cd-font-color);
+  opacity: 0.2;
+  position: absolute;
+  left: calc(var(--level) * var(--indent-per-level));
+}
+
+.tree-node {
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+  display: block;
+  height: var(--cd-size-3);
+  padding-right: var(--cd-spacing-1);
+  padding-left: calc(var(--level) * var(--indent-per-level));
+
+  &.board:not(:first-child) {
+    margin-top: $spacing;
+  }
+
+  &.board:first-child {
+    margin-top: 0;
+  }
+
+  // board line is a child hr element that is shown above boards only (except first board)
+  .board-line {
+    display: none;
+    position: absolute;
+    pointer-events: none;
+    left: 0;
+    height: $spacing;
+    width: 100%;
+    margin: 0;
+    border: none;
+    background: none;
+
+    // before element used to show the actual border line
+    &::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      height: 1px;
+      width: 100%;
+      right: var(--cd-spacing-1);
+      opacity: 0.5;
+      background: var(--cd-border-color);
+    }
+
+    // after element filled in with select color when adjacent element is also selected
+    &::after {
+      content: '';
+      position: absolute;
+      display: none;
+      top: -$spacing;
+      left: 0;
+      right: var(--cd-spacing-1);
+      height: 100%;
+      transition: border-radius 60ms;
+    }
+  }
+
+  // show line above boards except for first board
+  &.board:not(:first-child) .board-line {
+    display: block;
+  }
+
+  // before is used by selected state to show fill color in background of node
+  // dropParent state also uses before to show dashed border
+  &::before {
+    content: '';
+    box-sizing: border-box;
+    border-radius: var(--cd-border-radius-5);
+    position: absolute;
+    display: none;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: var(--cd-spacing-1);
+    height: 100%;
+    transition: border-radius 60ms;
+  }
+
+  &.highlight:not(:hover):not(.selected)::before {
+    display: block;
+    background: var(--cd-hover-fill);
+  }
+
+  // create selection bubble that is the same for every node regardless of indentation
+  &.selected::before,
+  &.selected.previous-selected .board-line::after {
+    display: block;
+    background: var(--cd-focus-fill);
+  }
+
+  &.previous-selected::before {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: var(--cd-border-radius-4);
+    border-bottom-right-radius: var(--cd-border-radius-4);
+  }
+
+  &.next-selected::before {
+    border-top-left-radius: var(--cd-border-radius-4);
+    border-top-right-radius: var(--cd-border-radius-4);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.next-selected.previous-selected::before {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.drop-above::after,
+  &.drop-below::after {
+    content: '●';
+    top: -2px;
+    font-size: 17px;
+    line-height: 0;
+    color: var(--cd-primary-color);
+
+    --left-pos: calc(var(--indentation) * var(--indent-per-level) + var(--indent-per-level));
+
+    left: var(--left-pos);
+    text-indent: -5px;
+    width: calc(100% - var(--left-pos) - var(--cd-spacing-2) - var(--cd-border-radius-5) / 2);
+    position: absolute;
+    display: block;
+    background: var(--cd-primary-color);
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  &.drop-below::after {
+    top: auto;
+    bottom: 0;
+  }
+
+  &.drop-parent::before {
+    display: block;
+    border: 2px dashed var(--cd-active-fill);
+    background: transparent !important;
+    // makes border above board line. Also has effect of hiding icons on right side
+    // which is good because we don't need to show them on drag over
+    z-index: 2;
+  }
+
+  // highlight around tree node when user is currently editing tree cell label or hover on glass
+  &.editing-label::before {
+    display: block;
+    background: none;
+    border: 2px solid var(--cd-primary-color);
+    z-index: 2;
+    pointer-events: none;
+  }
+}

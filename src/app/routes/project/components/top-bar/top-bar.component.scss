@@ -1,0 +1,134 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  position: relative;
+  height: var(--cd-header-height);
+  background: var(--cd-background-color);
+  border-bottom: 1px solid var(--cd-border-color);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  z-index: 2;
+  contain: layout;
+  overflow: hidden;
+}
+
+.title {
+  padding: 0 var(--cd-spacing-1);
+  font-weight: 500;
+  font-size: var(--cd-font-size-h2);
+  font-family: var(--cd-header-font);
+  height: var(--cd-size-3);
+  color: var(--cd-header-font-color);
+
+  &::placeholder {
+    color: inherit;
+    opacity: 0.5;
+  }
+}
+
+.finish-editing {
+  --cd-outline-color: var(--cd-active-fill);
+
+  color: var(--cd-primary-color);
+}
+
+.zoom-control {
+  margin-left: var(--cd-spacing-2);
+  width: var(--cd-size-6);
+}
+
+.start {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  padding: 0 var(--cd-spacing-3);
+  flex-direction: row;
+  overflow: hidden;
+  min-width: 20%;
+}
+
+.end {
+  display: grid;
+  align-items: center;
+  padding-right: var(--cd-spacing-3);
+  grid-auto-flow: column;
+  column-gap: var(--cd-spacing-1);
+  justify-content: right;
+}
+
+.divider {
+  width: 1px;
+  background: var(--cd-font-color);
+  height: 20px;
+  opacity: 0.25;
+}
+
+.group-btns {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: var(--cd-spacing-3);
+}
+
+.context {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-1);
+  align-items: center;
+}
+
+.share-preview {
+  display: grid;
+  grid-auto-flow: column;
+  margin-left: var(--cd-spacing-1);
+  gap: var(--cd-spacing-3);
+  height: var(--cd-size-3);
+}
+
+.loader {
+  width: 0;
+  transition: width 150ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  .spinner {
+    display: none;
+  }
+
+  &.loading {
+    width: 28px;
+
+    .spinner {
+      display: block;
+    }
+  }
+}
+
+.record-btn {
+  --cd-primary-color: var(--cd-red-color);
+
+  margin-left: var(--cd-spacing-0);
+}
+
+@media only screen and (max-width: 980px) {
+  .group-btns,
+  .context {
+    display: none;
+  }
+}
+
+.status {
+  opacity: 0.62;
+}

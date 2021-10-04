@@ -1,0 +1,182 @@
+<!-- prettier-ignore -->
+<ng-container [ngSwitch]="mode">
+  <ng-container *ngSwitchCase="IconPickerMode.AllIcons" [ngTemplateOutlet]="allIconsRef"></ng-container>
+  <ng-container *ngSwitchDefault [ngTemplateOutlet]="contentRef" ></ng-container>
+</ng-container>
+
+<!-- TAB GROUP FOR ALL ICONS -->
+<ng-template #allIconsRef>
+  <cd-tab-group fixed (tabChange)="onTabChange($event)" [activeTabIndex]="activeTab">
+    <cd-tab label="Material"></cd-tab>
+  </cd-tab-group>
+
+  <!-- TAB CONTENT -->
+  <ng-container [ngTemplateOutlet]="contentRef"></ng-container>
+</ng-template>
+
+<ng-template #contentRef>
+  <cd-scroll-view class="scroll-view" #scrollViewRef>
+    <header class="scroll-header" cdScrollHeader>
+      <div class="filter">
+        <cd-icon name="filter_list" class="filter-ico" (click)="onFilterIconClick()"></cd-icon>
+        <cd-search-input
+          #searchRef
+          autofocus
+          [value]="filter"
+          (valueChange)="onFilter($event)"
+        ></cd-search-input>
+      </div>
+      <div class="size-selection" *ngIf="!showingMaterialIcons">
+        <button
+          (click)="filterToIconSize(IconSize.Small)"
+          [class.selected]="iconSizeSmall"
+          [class.disabled]="IconSize.Small | iconSizeDisabledPipe: iconSizesAllowed"
+          cdTooltip="Small"
+        >
+          S
+        </button>
+        <button
+          (click)="filterToIconSize(IconSize.Medium)"
+          [class.selected]="iconSizeMedium"
+          [class.disabled]="IconSize.Medium | iconSizeDisabledPipe: iconSizesAllowed"
+          cdTooltip="Medium"
+        >
+          M
+        </button>
+        <button
+          (click)="filterToIconSize(IconSize.Large)"
+          [class.selected]="iconSizeLarge"
+          [class.disabled]="IconSize.Large | iconSizeDisabledPipe: iconSizesAllowed"
+          cdTooltip="Large"
+        >
+          L
+        </button>
+      </div>
+    </header>
+
+    <!-- CURRENT ICON LIST -->
+    <ng-container *ngIf="showingMaterialIcons; else SizeListsRef">
+      <ng-container *ngTemplateOutlet="materialIconsListRef"></ng-container>
+    </ng-container>
+
+    <footer cdScrollFooter class="footer">
+      <div class="selected" *ngIf="activeIcon | iconNamePipe as iconName">
+        <span
+          class="selected-id"
+          (click)="onFooterIconNameClick()"
+          [innerText]="iconName"
+          cdTooltip="Selected icon"
+        ></span>
+      </div>
+
+      <!-- Doc link for current icons -->
+      <ng-container *ngIf="showingMaterialIcons; else FooterLinkRef">
+        <ng-container *ngTemplateOutlet="materialFooterLinkRef"></ng-container>
+      </ng-container>
+    </footer>
+  </cd-scroll-view>
+</ng-template>
+
+<!-- LIST OF MATERIAL ICONS -->
+<ng-template #materialIconsListRef>
+  <ul class="container">
+    <li
+      class="category"
+      *ngFor="let category of iconPickerService.materialIconCategories | filterMatIconsPipe: filter"
+    >
+      <span class="label">{{ category.name }}</span>
+      <ul class="list">
+        <li
+          class="list-item"
+          *ngFor="let icon of category.icons; trackBy: iconTrackFn"
+          [class.active]="icon.id === activeIcon"
+          (click)="selectIcon(icon.id)"
+          tabindex="0"
+          [cdTooltip]="icon.id | iconNamePipe"
+          [attr.data-icon]="icon.id"
+        >
+          <i class="icon {{ iconClass }}">{{ icon.id }}</i>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</ng-template>
+
+<!-- LIST OF CLOUD PLATFORM ICONS FOR EACH SIZE -->
+<ng-template #SizeListsRef>
+  <ng-container [ngSwitch]="iconSizeFilter">
+    <!-- SMALL -->
+    <ng-container
+      *ngSwitchCase="IconSize.Small"
+      [ngTemplateOutlet]="IconsListRef"
+      [ngTemplateOutletContext]="{ $implicit: iconPickerService.SmallIconsets }"
+    ></ng-container>
+
+    <!-- MEDIUM -->
+    <ng-container
+      *ngSwitchCase="IconSize.Medium"
+      [ngTemplateOutlet]="IconsListRef"
+      [ngTemplateOutletContext]="{ $implicit: iconPickerService.MediumIconsets }"
+    ></ng-container>
+
+    <!-- LARGE -->
+    <ng-container
+      *ngSwitchCase="IconSize.Large"
+      [ngTemplateOutlet]="IconsListRef"
+      [ngTemplateOutletContext]="{ $implicit: iconPickerService.LargeIconsets }"
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<!-- LIST OF ICONSET LIBRARY ICONS -->
+<ng-template #IconsListRef let-iconsetList>
+  <ul class="container">
+    <li
+      class="category"
+      *ngFor="
+        let iconset of iconsetList | filterIconsPipe: filter:allowedIconSets;
+        trackBy: cloudIconsetTrackFn
+      "
+    >
+      <span class="label">{{ iconset.label }}</span>
+      <ul class="list">
+        <ng-container *ngFor="let icon of iconset.processedIcons; trackBy: cloudIconTrackFn">
+          <li
+            class="list-item"
+            tabindex="0"
+            [cdTooltip]="icon.config.name | iconNamePipe"
+            [class.active]="icon.svgLookup === activeIconSvgLookup"
+            [attr.data-icon]="icon.svgLookup"
+            (click)="selectIconsetLibraryIcon(icon.config)"
+          >
+            <mat-icon
+              [svgIcon]="icon.svgLookup"
+              [class.svg-icon-small]="iconSizeSmall"
+              [class.svg-icon-medium]="iconSizeMedium"
+              [class.svg-icon-large]="iconSizeLarge"
+            ></mat-icon>
+          </li>
+        </ng-container>
+      </ul>
+    </li>
+  </ul>
+</ng-template>
+
+<!-- FOOTER LINK FOR MATERIAL ICONS -->
+<ng-template #materialFooterLinkRef>
+  <a
+    href="https://material.io/tools/icons/?style=baseline&icon={{ activeIcon }}"
+    target="_blank"
+    class="footer-link"
+    cdTooltip="View on Material.io"
+  >
+    <cd-icon name="open_in_new" size="small"></cd-icon>
+  </a>
+</ng-template>
+
+<!-- FOOTER LINK FOR OTHER ICONS -->
+<ng-template #FooterLinkRef>
+  <a href="" target="_blank" class="footer-link" cdTooltip="Icons">
+    <cd-icon name="open_in_new" size="small"></cd-icon>
+  </a>
+</ng-template>

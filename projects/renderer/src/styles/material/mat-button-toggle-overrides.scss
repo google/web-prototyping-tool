@@ -1,0 +1,175 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// stylelint-disable selector-type-no-unknown
+
+$buttonPadding: 0 12px;
+$smallPadding: 0 8px;
+$buttonLineHeight: 36px;
+$smallLineHeight: 32px;
+$textIconGap: 8px;
+$smallTextIconGap: 4px;
+$iconButtonSize: 24px;
+$iconSmallSize: 18px;
+$iconWithTextSize: $iconSmallSize;
+
+// Layout
+// -------------------------------------------------------------------------
+
+.mat-button-toggle-group-wrapper {
+  display: inline-grid;
+  grid-auto-flow: column;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+
+  & .mat-button-toggle-button {
+    height: 100%;
+  }
+
+  .mat-button-toggle-vertical & {
+    grid-auto-flow: row;
+  }
+}
+
+// General Material theming
+// -------------------------------------------------------------------------
+
+.mat-button-toggle {
+  --matco-btn-icon-size: #{$iconButtonSize};
+  --matco-btn-padding: #{$buttonPadding};
+  --matco-btn-line-height: #{$buttonLineHeight};
+  --matco-btn-icon-text-gap: #{$textIconGap};
+  --matco-btn-icon-size-small: #{$iconSmallSize};
+  --matco-btn-padding-small: #{$smallPadding};
+  --matco-btn-line-height-small: #{$smallLineHeight};
+  --matco-btn-icon-text-gap-small: #{$smallTextIconGap};
+
+  .mat-button-toggle-label-content {
+    @include applyFontVarsWithoutColor('button');
+
+    letter-spacing: 0.0107142857em;
+    -webkit-font-smoothing: antialiased;
+
+    // Sizing
+    padding: var(--matco-btn-padding);
+    line-height: var(--matco-btn-line-height);
+  }
+
+  .cd-primitive-icon {
+    line-height: inherit;
+    font-size: var(--matco-btn-icon-size);
+  }
+
+  cd-icon-element {
+    width: var(--matco-btn-icon-size);
+    height: var(--matco-btn-icon-size);
+    font-size: var(--matco-btn-icon-size);
+    line-height: var(--matco-btn-icon-size);
+  }
+
+  &.cd-button-has-text {
+    .mat-button-toggle-label-content {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: center;
+      align-items: center;
+      gap: var(--matco-btn-icon-text-gap);
+    }
+
+    .cd-primitive-icon,
+    cd-icon-element {
+      --matco-btn-icon-size: #{$iconWithTextSize};
+    }
+  }
+
+  .mat-button-toggle-group.cd-button-toggle-group-small & {
+    --matco-btn-icon-size: var(--matco-btn-icon-size-small);
+    --matco-btn-padding: var(--matco-btn-padding-small);
+    --matco-btn-line-height: var(--matco-btn-line-height-small);
+    --matco-btn-icon-text-gap: var(--matco-btn-icon-text-gap-small);
+  }
+}
+
+// Basic variant tweaks
+.mat-button-toggle-group.cd-basic-toggle-button-group {
+  border: none;
+
+  .mat-button-toggle {
+    border: none;
+  }
+}
+
+// Colors
+.mat-button-toggle-group {
+  .mat-button-toggle-checked:not(.mat-button-toggle-disabled) {
+    --palette-background-selected-button: var(--co-surface-400-rgb);
+  }
+
+  &.cd-button-toggle-primary {
+    --palette-background-focused-button: var(--co-primary-900-rgb);
+    --palette-background-selected-disabled-button: var(--co-primary-50-rgb);
+
+    .mat-button-toggle:not(.mat-button-toggle-disabled) {
+      color: rgba(var(--co-primary-rgb), 1);
+
+      &.mat-button-toggle-checked {
+        --palette-background-selected-button: var(--co-primary-50-rgb);
+      }
+    }
+  }
+
+  &.cd-button-toggle-secondary {
+    --palette-background-focused-button: var(--co-secondary-900-rgb);
+    --palette-background-selected-disabled-button: var(--co-secondary-50-rgb);
+
+    .mat-button-toggle:not(.mat-button-toggle-disabled) {
+      color: rgba(var(--co-secondary-rgb), 1);
+
+      &.mat-button-toggle-checked {
+        --palette-background-selected-button: var(--co-secondary-50-rgb);
+      }
+    }
+  }
+
+  &.cd-button-toggle-warn {
+    --palette-background-focused-button: var(--co-warn-900-rgb);
+    --palette-background-selected-disabled-button: var(--co-warn-50-rgb);
+
+    .mat-button-toggle:not(.mat-button-toggle-disabled) {
+      color: rgba(var(--co-warn-rgb), 1);
+
+      &.mat-button-toggle-checked {
+        --palette-background-selected-button: var(--co-warn-50-rgb);
+      }
+    }
+  }
+
+  .mat-button-toggle-checked.mat-button-toggle-disabled {
+    --palette-background-disabled-button-alpha: 0.5;
+
+    color: rgba(
+      var(--palette-foreground-selected-disabled-button),
+      var(--palette-foreground-disabled-button-alpha, 1)
+    );
+    background-color: rgba(
+      var(--palette-background-selected-disabled-button),
+      var(--palette-background-disabled-button-alpha, 1)
+    );
+  }
+}
+

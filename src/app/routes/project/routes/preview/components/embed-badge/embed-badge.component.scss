@@ -1,0 +1,191 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+@mixin anchor($position: top) {
+  @if ($position==top) {
+    top: 0;
+    bottom: auto;
+  } @else if ($position==right) {
+    right: 0;
+    left: auto;
+  } @else if ($position==bottom) {
+    top: auto;
+    bottom: 0;
+  } @else if ($position==left) {
+    right: auto;
+    left: 0;
+  } @else {
+    @error "Unrecognized position: #{$position}";
+  }
+}
+
+$icon-size: 24px;
+$label-width: 102px;
+$label-padding: 6px;
+$badge-font-color: #5f6368;
+$backgound-color: #fff;
+$badge-translate: translateX(0);
+
+:host {
+  position: absolute;
+  width: $icon-size;
+  height: $icon-size;
+  z-index: 2;
+}
+
+.label {
+  color: $badge-font-color;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--cd-header-font);
+}
+
+.link-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+}
+
+.badge {
+  width: $icon-size;
+  height: $icon-size;
+
+  .icon-container {
+    position: absolute;
+    width: $icon-size;
+    height: $icon-size;
+    background-color: $backgound-color;
+    z-index: 2;
+  }
+
+  .label-container {
+    @include cd-font(body2);
+
+    position: absolute;
+    display: grid;
+    align-items: center;
+    width: $icon-size + $label-width;
+    height: $icon-size;
+    background-color: $backgound-color;
+    box-shadow: var(--cd-depth-2);
+    transition: transform 250ms;
+    transition-timing-function: var(--cd-transition-timing);
+    z-index: 1;
+  }
+}
+
+:host.right {
+  .badge {
+    @include anchor(right);
+
+    .icon-container,
+    .label-container {
+      @include anchor(right);
+    }
+
+    .icon-container {
+      padding-right: 2px;
+      padding-left: 0;
+    }
+
+    .label-container {
+      padding-right: 0;
+      padding-left: $label-padding;
+      transform: translateX($label-width);
+    }
+  }
+}
+
+:host.left {
+  .badge {
+    @include anchor(left);
+
+    .icon-container,
+    .label-container {
+      @include anchor(left);
+    }
+
+    .icon-container {
+      padding-right: 0;
+      padding-left: 2px;
+    }
+
+    .label-container {
+      padding-right: $label-padding;
+      padding-left: 0;
+      text-align: right;
+      transform: translateX(-$label-width);
+    }
+  }
+}
+
+:host(:hover) {
+  cursor: pointer;
+  width: $icon-size + $label-width;
+
+  .badge {
+    width: $icon-size + $label-width;
+
+    .label-container {
+      transform: $badge-translate;
+    }
+  }
+}
+
+:host.right.top {
+  @include anchor(top);
+  @include anchor(right);
+
+  .badge .icon-container,
+  .badge .label-container {
+    border-radius: 0 0 0 var(--cd-border-radius-2);
+  }
+}
+
+:host.right.bottom {
+  @include anchor(bottom);
+  @include anchor(right);
+
+  .badge .icon-container,
+  .badge .label-container {
+    border-radius: var(--cd-border-radius-2) 0 0 0;
+  }
+}
+
+:host.left.bottom {
+  @include anchor(bottom);
+  @include anchor(left);
+
+  .badge .icon-container,
+  .badge .label-container {
+    border-radius: 0 var(--cd-border-radius-2) 0 0;
+  }
+}
+
+:host.left.top {
+  @include anchor(top);
+  @include anchor(left);
+
+  .badge .icon-container,
+  .badge .label-container {
+    border-radius: 0 0 var(--cd-border-radius-2) 0;
+  }
+}

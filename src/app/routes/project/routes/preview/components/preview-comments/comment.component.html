@@ -1,0 +1,44 @@
+<app-comment-header
+  *ngIf="!deleteConfirmationActive"
+  [canModify]="comment?.owner?.id === user?.id"
+  [firstComment]="firstComment"
+  [resolved]="resolved"
+  [updatedAt]="comment?.updatedAt"
+  [user]="comment?.owner"
+  [commentId]="comment?.id"
+  [threadId]="comment?.threadId"
+  [highlightLabel]="highlightLabel"
+  [editing]="editingComment"
+  (deleteComment)="onDeleteComment($event)"
+  (reopenThread)="onReopenThread($event)"
+  (resolveThread)="onResolveThread($event)"
+  (setEditComment)="onSetEditComment($event)"
+></app-comment-header>
+<section
+  *ngIf="deleteConfirmationActive"
+  class="confirmation-actions"
+  [class.first-comment]="firstComment"
+>
+  <span class="prompt">
+    {{ promptText }}
+  </span>
+  <footer class="prompt-actions">
+    <button cd-button size="small" (click)="onCancelDelete()">Cancel</button>
+    <button cd-unelevated-button size="small" (click)="onConfirmDelete()">Delete</button>
+  </footer>
+</section>
+<app-comment-body
+  *ngIf="comment && !editingComment && !deleteConfirmationActive"
+  [commentData]="comment?.body"
+></app-comment-body>
+<app-comment-footer
+  *ngIf="editingComment"
+  [autoFocus]="editingComment"
+  [resolved]="resolved"
+  [taggedItems]="taggedItems"
+  [textFieldValue]="commentHtml"
+  [commentBodyData]="comment?.body"
+  (cancelEdit)="onCancelEdit()"
+  (createComment)="onEditComment($event)"
+  (taggedItemsChange)="onTaggedItemsChange($event)"
+></app-comment-footer>

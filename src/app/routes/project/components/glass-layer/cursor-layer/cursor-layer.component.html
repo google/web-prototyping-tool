@@ -1,0 +1,38 @@
+<ng-container *ngFor="let cursor of cursors; trackBy: trackByFn">
+  <svg:g [attr.transform]="cursor | cursorPositionPipe: zoom">
+    <svg:polygon
+      fill="#FFFFFF"
+      points="0 19.3103448 0 1.07193947e-15 14 14 5.79310345 14 5.31034483 14.1206897"
+    ></svg:polygon>
+    <svg:polygon
+      fill="#FFFFFF"
+      points="10.9827586 20.1551724 6.63793103 21.9655172 0.965517241 8.56896552 5.43103448 6.75862069"
+    ></svg:polygon>
+    <svg:polygon
+      [attr.fill]="cursor.sessionId | peerColorPipe: darkTheme"
+      transform="translate(6.397529, 15.320357) rotate(-22.772792) translate(-6.397529, -15.320357) "
+      points="5.19056347 10.4924935 7.60449515 10.4924935 7.60449515 20.1482202 5.19056347 20.1482202"
+    ></svg:polygon>
+    <svg:polygon
+      [attr.fill]="cursor.sessionId | peerColorPipe: darkTheme"
+      points="1.20689655 2.89655172 1.20689655 16.4137931 4.82758621 12.9137931 5.31034483 12.7931034 11.1034483 12.7931034"
+    ></svg:polygon>
+    <rect
+      x="17"
+      y="16"
+      height="18"
+      rx="4"
+      [attr.fill]="cursor.sessionId | peerColorPipe: darkTheme"
+      [attr.width]="
+        cursor.sessionId | sessionIdToNameWidthPipe: (presenceService.otherPresentUsersMap$ | async)
+      "
+    ></rect>
+    <svg:text font-family="Roboto" font-size="11" font-weight="bold" fill="#fff">
+      <svg:tspan x="22" y="29">
+        {{
+          cursor.sessionId | sessionIdToNamePipe: (presenceService.otherPresentUsersMap$ | async)
+        }}
+      </svg:tspan>
+    </svg:text>
+  </svg:g>
+</ng-container>

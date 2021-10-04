@@ -1,0 +1,85 @@
+<ng-container [ngSwitch]="currentView">
+  <ng-container *ngSwitchCase="MAIN_VIEW">
+    <div class="main">
+      <div class="search">
+        <cd-search-box
+          [(value)]="searchValue"
+          (valueChange)="onSearchValue()"
+          placeholder="Search"
+        ></cd-search-box>
+      </div>
+
+      <aside class="menu">
+        <header class="header">
+          <h1 class="title">Choose a template</h1>
+        </header>
+        <div class="menu-container">
+          <cd-scroll-view shaded="true">
+            <div class="menu-list">
+              <cd-menu-list
+                [(selectedId)]="selectedCategoryId"
+                [items]="menuListItems"
+              ></cd-menu-list>
+            </div>
+          </cd-scroll-view>
+        </div>
+      </aside>
+
+      <div class="content-wrapper">
+        <cd-scroll-view class="content" #scrollView shaded="true">
+          <div *ngIf="currentTemplates.length === 0" class="empty-state">
+            <h2>No templates found</h2>
+          </div>
+          <div class="template-list">
+            <app-template-tile
+              *ngFor="let template of currentTemplates"
+              [template]="template"
+              [selected]="selectedTemplate.id === template.id"
+              [attr.cd-e2e-label]="template.id"
+              (selectProject)="onProjectTemplateSelect(template)"
+              (selectAndOpen)="onOpenClicked(template)"
+              (preview)="onPreviewTemplateDetails(template)"
+            ></app-template-tile>
+          </div>
+        </cd-scroll-view>
+      </div>
+
+      <footer class="footer">
+        <div class="left">
+          <!-- FPO -->
+        </div>
+        <div class="right">
+          <button cd-button size="medium" (click)="onDismissClicked()">Cancel</button>
+          <button
+            cd-unelevated-button
+            size="medium"
+            (click)="onConfirmClicked()"
+            [disabled]="confirmDisabled"
+            cd-e2e-label="create-project-ok"
+          >
+            Choose template
+          </button>
+        </div>
+      </footer>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="DETAILS_VIEW">
+    <div class="details">
+      <app-template-details
+        [template]="selectedTemplate"
+        (confirm)="onConfirmClicked()"
+        (dismiss)="onDismissClicked()"
+        (back)="onDetailsBackClick()"
+        (editTemplate)="onConfirmClicked(true)"
+      ></app-template-details>
+    </div>
+  </ng-container>
+
+  <ng-container *ngSwitchCase="LOADING_VIEW">
+    <div class="loading-view">
+      <cd-spinner size="small"></cd-spinner>
+      <h1>Creating project...</h1>
+    </div>
+  </ng-container>
+</ng-container>

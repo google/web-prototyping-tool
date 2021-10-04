@@ -1,0 +1,162 @@
+<header class="header">
+  <cd-icon name="person_add" size="large" class="share-icon"></cd-icon>
+  <h2 class="title">Share: {{ projectName }}</h2>
+  <div class="copied-indicator" [class.copied-shown]="copied">
+    <cd-icon name="done" size="large"></cd-icon>
+    Copied
+  </div>
+</header>
+<div class="body">
+  <cd-tab-group fixed (tabChange)="onTabChange($event)">
+    <cd-tab label="Link">
+      <div class="tab-body link-tab-body">
+        <div class="copy-input" (click)="onCopyClick(url)">
+          <input
+            #inputRef
+            class="input"
+            autofocus="autofocus"
+            autoselect
+            disabled
+            type="text"
+            [value]="url"
+            readonly
+            (focus)="onFocus($event)"
+          />
+          <cd-icon cd-button size="medium" name="content_copy"></cd-icon>
+        </div>
+        <span class="url-details">
+          <cd-icon name="lock" size="small"></cd-icon>
+          Anyone at google.com can view and comment
+        </span>
+        <div class="preview-options-controls">
+          <h4 class="options-heading">Options</h4>
+          <cd-switch
+            label="Open in preview"
+            [checked]="openInPreview"
+            (change)="onPreviewToggle($event)"
+          ></cd-switch>
+          <div *ngIf="openInPreview" class="preview-options">
+            <cd-checkbox
+              label="Full screen"
+              cdTooltip="Enable full screen preview"
+              cdTooltipDirection="right"
+              [checked]="fullscreen"
+              (change)="onFullScreenChange($event)"
+            ></cd-checkbox>
+            <cd-checkbox
+              label="Comments"
+              cdTooltip="Show comments panel"
+              cdTooltipDirection="right"
+              [disabled]="accessibility"
+              [checked]="comments"
+              (change)="onCommentsChange($event)"
+            ></cd-checkbox>
+            <cd-checkbox
+              label="Accessibility"
+              cdTooltip="Show accessibility panel"
+              cdTooltipDirection="right"
+              [disabled]="comments"
+              [checked]="accessibility"
+              (change)="onAccessibilityChange($event)"
+            ></cd-checkbox>
+          </div>
+        </div>
+      </div>
+      <footer class="footer">
+        <cd-avatar-details *ngIf="!!owner" [user]="owner" [actionable]="false"></cd-avatar-details>
+        <button
+          cd-button
+          size="medium"
+          cd-e2e-label="share-dialog-done"
+          class="done-button"
+          (click)="onDismissClicked()"
+        >
+          Done
+        </button>
+      </footer>
+    </cd-tab>
+
+    <!-- EMBED CODE -->
+    <cd-tab label="Embed">
+      <div class="tab-body embed">
+        <div class="frame">
+          <iframe [src]="embedUrl | safeResourceURL"></iframe>
+        </div>
+        <aside>
+          <div class="code-view" (click)="onCopyClick(iFrameHtml)">
+            <pre>
+            <code>
+              {{iFrameHtml}}
+            </code>
+          </pre>
+          </div>
+          <div class="select-group" *ngIf="boardOptions.length > 0">
+            <span>Starting board</span>
+            <cd-select-input
+              outline
+              [data]="boardOptions | MarkSelection: selectedBoardId"
+              (change)="onEmbedTargetChange($event)"
+            ></cd-select-input>
+          </div>
+          <div class="select-group">
+            <span>Badge position</span>
+            <cd-select-input
+              outline
+              [disabled]="!showBadge"
+              [data]="badgePositionOptions | MarkSelection: badgePosition"
+              (change)="onBadgePositionChange($event)"
+            ></cd-select-input>
+          </div>
+          <cd-checkbox
+            label="Show badge"
+            [checked]="showBadge"
+            (change)="onShowBadgeChange($event)"
+          ></cd-checkbox>
+          <cd-checkbox
+            label="Link only"
+            [checked]="embedLinkOnly"
+            (change)="onEmbedLinkOnlyChange($event)"
+          ></cd-checkbox>
+          <cd-checkbox
+            label="Show flow greenlines"
+            [checked]="flow"
+            (change)="onEnableFlowGreenlines($event)"
+          ></cd-checkbox>
+          <cd-checkbox
+            label="Show landmark greenlines"
+            [checked]="landmarks"
+            (change)="onEnableLandmarkGreenlines($event)"
+          ></cd-checkbox>
+          <cd-checkbox
+            label="Show heading greenlines"
+            [checked]="headings"
+            (change)="onEnableHeadingGreenlines($event)"
+          ></cd-checkbox>
+        </aside>
+        <footer class="embed-footer">
+          <button
+            cd-button
+            size="medium"
+            iconSize="medium"
+            iconName="content_copy"
+            class="copy-code-button"
+            aria-label="Copy to clipboard"
+            (click)="onCopyClick(iFrameHtml)"
+          >
+            Copy
+          </button>
+          <button
+            cd-button
+            size="medium"
+            cd-e2e-label="share-dialog-done"
+            class="done-button"
+            (click)="onDismissClicked()"
+          >
+            Done
+          </button>
+        </footer>
+        <!-- </div> -->
+      </div>
+    </cd-tab>
+  </cd-tab-group>
+</div>

@@ -1,0 +1,224 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+code[class*='language-'],
+pre[class*='language-'] {
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  color: #c3cee3;
+  background: #1f2937;
+  font-family: Roboto Mono, monospace;
+  font-size: 0.94em;
+  line-height: 1.5em;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+code[class*='language-']::-moz-selection,
+pre[class*='language-']::-moz-selection,
+code[class*='language-'] ::-moz-selection,
+pre[class*='language-'] ::-moz-selection {
+  background: #1f2937;
+}
+
+code[class*='language-']::selection,
+pre[class*='language-']::selection,
+code[class*='language-'] ::selection,
+pre[class*='language-'] ::selection {
+  background: #4d489e;
+  color: #e3deff;
+}
+
+:not(pre) > code[class*='language-'] {
+  white-space: normal;
+  border-radius: 0.2em;
+  padding: 0.1em;
+}
+
+pre[class*='language-'] {
+  overflow: auto;
+  position: relative;
+  margin: 0.5em 0;
+  padding: 1.25em 1em;
+
+  --code-purple: #c2acff;
+  --code-green: #88de97;
+  --code-blue: #71caff;
+  --code-yellow: #e8d896;
+}
+
+.language-css > code,
+.language-sass > code,
+.language-scss > code {
+  color: #fd9170;
+}
+
+[class*='language-'] .namespace {
+  opacity: 0.7;
+}
+
+.token.atrule {
+  color: var(--code-purple);
+}
+
+.token.attr-name {
+  color: var(--code-yellow);
+}
+
+.token.attr-value {
+  color: var(--code-green);
+}
+
+.token.attribute {
+  color: var(--code-green);
+}
+
+.token.boolean {
+  color: var(--code-purple);
+}
+
+.token.builtin {
+  color: #efa7bf;
+}
+
+.token.cdata {
+  color: #80cbc4;
+}
+
+.token.char {
+  color: #80cbc4;
+}
+
+.token.class {
+  color: var(--code-yellow);
+}
+
+.token.class-name {
+  color: var(--code-yellow);
+}
+
+.token.color {
+  color: var(--code-yellow);
+}
+
+.token.comment {
+  color: #76919e;
+}
+
+.token.constant {
+  color: var(--code-purple);
+}
+
+.token.deleted {
+  color: #fc9ba0;
+}
+
+.token.doctype {
+  color: #76919e;
+}
+
+.token.entity {
+  color: #fc9ba0;
+}
+
+.token.function {
+  color: var(--code-blue);
+}
+
+.token.hexcode {
+  color: var(--code-yellow);
+}
+
+.token:is(.id, .important) {
+  color: var(--code-purple);
+  font-weight: bold;
+}
+
+.token.inserted {
+  color: #80cbc4;
+}
+
+.token.keyword {
+  color: var(--code-purple);
+}
+
+.token.number {
+  color: #fd9170;
+}
+
+.token.operator {
+  color: #8fc3e2;
+}
+
+.token.prolog {
+  color: #76919e;
+}
+
+.token.property {
+  color: #ead6b1;
+}
+
+.token:is(.pseudo-class, .pseudo-element) {
+  color: var(--code-green);
+}
+
+.token.punctuation {
+  color: #949eb1;
+}
+
+.token.regex {
+  color: var(--code-yellow);
+}
+
+.token.selector {
+  color: #fc9ba0;
+}
+
+.token.string {
+  color: var(--code-green);
+}
+
+.token.symbol {
+  color: var(--code-purple);
+}
+
+.token.tag {
+  color: #fc9ba0;
+}
+
+.token.unit {
+  color: #fc9ba0;
+}
+
+.token.url {
+  color: #fd9170;
+}
+
+.token.variable {
+  color: #fc9ba0;
+}

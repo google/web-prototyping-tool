@@ -1,0 +1,29 @@
+<cd-color-input
+  hideOpacity
+  showBottomLabel
+  disableGradient
+  class="color-input"
+  [bottomLabel]="showBottomLabel && 'color'"
+  [value]="value.borderColor | IValueValue"
+  [binding]="value.borderColor | IValueLookup: designSystem?.colors"
+  [colorData]="colorData"
+  (colorSelect)="onColorMenuSelect($event)"
+  (valueChange)="onColorPickerSelect($event)"
+></cd-color-input>
+
+<cd-input
+  min="0"
+  max="100"
+  type="number"
+  placeholder="0"
+  [value]="value?.borderWidth"
+  [innerLabel]="value?.units"
+  [bottomLabel]="showBottomLabel && 'width'"
+  (change)="onLineWidthChange($event)"
+></cd-input>
+
+<cd-select-input
+  [data]="borderStyles | MarkSelection: value.lineStyle"
+  [bottomLabel]="showBottomLabel && 'style'"
+  (change)="onLineStyleChange($event)"
+></cd-select-input>

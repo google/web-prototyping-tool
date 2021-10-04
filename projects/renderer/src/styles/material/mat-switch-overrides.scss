@@ -1,0 +1,88 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* stylelint-disable selector-type-no-unknown */
+
+@mixin switchOverrides() {
+  $toggleBarMargin: 8px;
+  $hintMarginLabelAfter: 0.25em 0.5em 0 0;
+  $hintMarginLabelBefore: 0.25em 0 0 0.5em;
+  $hintTextFontSize: 12px;
+  $hintTextLineHeight: 16px;
+
+  .mat-slide-toggle-label,
+  .mat-slide-toggle-content {
+    @include applyFontVars('body1');
+
+    color: rgba(var(--palette-foreground-divider), 0.87);
+  }
+
+  .mat-slide-toggle-bar {
+    background-color: rgba(var(--co-text-500-rgb), 0.84);
+    margin: auto;
+    margin-right: $toggleBarMargin;
+  }
+
+  .mat-slide-toggle-label-before .mat-slide-toggle-bar {
+    margin: auto;
+    margin-left: $toggleBarMargin;
+  }
+
+  .mat-slide-toggle {
+    --palette-primary-500: var(--co-primary-rgb);
+    --palette-warn-500: var(--co-warn-rgb);
+    --palette-accent-500: var(--co-secondary-rgb);
+  }
+
+  // Material hint overrides
+  .mat-slide-toggle.mat-has-hint {
+    // By default, it has a set height of 24px, but more height is needed for hint
+    height: auto;
+
+    // By default, the switch is centered, but needs to be top aligned to match spec
+    .mat-slide-toggle-label {
+      align-items: start;
+    }
+
+    mat-hint {
+      display: block;
+      font-size: $hintTextFontSize;
+      line-height: $hintTextLineHeight;
+    }
+
+    // Since it's now top aligned via flexbox, the margin needs to be re-adjusted
+    // so that it aligns vertically/horizontally with the label
+    .mat-slide-toggle-bar {
+      margin: $hintMarginLabelAfter;
+    }
+
+    &.mat-slide-toggle-label-before {
+      // Horizontal opposite of above
+      .mat-slide-toggle-bar {
+        margin: $hintMarginLabelBefore;
+      }
+
+      // Right align both label and hint
+      mat-label,
+      mat-hint {
+        display: block;
+        text-align: right;
+      }
+    }
+  }
+}
+
+@include switchOverrides();

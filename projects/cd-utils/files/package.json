@@ -1,0 +1,9 @@
+{
+  "ngPackage": {
+    "lib": {
+      "umdModuleIds": {
+        "cd-interfaces": "cd-interfaces"
+      }
+    }
+  }
+}

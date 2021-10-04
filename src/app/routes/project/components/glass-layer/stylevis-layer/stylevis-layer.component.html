@@ -1,0 +1,20 @@
+<ng-container *ngIf="active">
+  <svg:g
+    app-padding-layer
+    [props]="props"
+    [renderRects]="renderRects"
+    [rootId]="rootId"
+    [outletFrame]="outletFrame"
+  ></svg:g>
+
+  <svg:g
+    app-grid-layer
+    [outletFrame]="outletFrame"
+    [zoom]="zoom"
+    [props]="props"
+    [renderRects]="renderRects"
+    [interacting]="interacting"
+  ></svg:g>
+
+  <!-- <svg:g app-pos-layer [zoom]="zoom" [props]="props" [renderRects]="renderRects"></svg:g> -->
+</ng-container>

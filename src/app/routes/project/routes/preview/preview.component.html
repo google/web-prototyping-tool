@@ -1,0 +1,165 @@
+<!-- TOP BAR -->
+<app-preview-top-bar
+  *ngIf="!isEmbedMode"
+  [boards]="boards"
+  [commentCounts]="commentCounts$ | async"
+  [isProjectOwner]="isProjectOwner"
+  [previewParams]="previewParams"
+  [project]="project"
+  [projectName]="project?.name"
+  [viewingComponent]="viewingComponent"
+  (paramChange)="onParamChange($event)"
+  (exit)="exitPreview()"
+  (fork)="onProjectFork()"
+></app-preview-top-bar>
+
+<div class="container">
+  <!-- LEFT PANEL - LIST OF BOARDS -->
+  <cd-side-panel
+    class="board-list"
+    hideBorder
+    [templateRef]="boardListRef"
+    [visible]="canShowBoardList"
+    [size]="200"
+    max="350"
+    min="200"
+    position="left"
+  ></cd-side-panel>
+
+  <div class="side-panel-gap" [style.width.px]="leftPanelGapWidth">
+    <button
+      cd-button
+      [class.hidden]="previewParams.showLeftPanel"
+      class="open-button"
+      cdTooltip="Show boards"
+      cdTooltipDirection="right"
+      iconName="list_alt"
+      iconSize="medium"
+      size="medium"
+      (click)="onOpenLeftPanel()"
+    ></button>
+  </div>
+
+  <!-- CURRENT OUTLET FRAME (board or symbol) -->
+  <div class="preview">
+    <app-preview-canvas
+      #previewCanvas
+      [width]="boardWidth"
+      [height]="boardHeight"
+      [boardId]="previewParams?.id"
+      [commentState]="commentState"
+      [currentSelectedElementId]="currentSelectedElementId"
+      [embedMode]="previewParams?.embedMode"
+      [fitToScreen]="isFitToScreen"
+      [flowEnabled]="previewParams?.flow"
+      [fullscreen]="isFullscreen"
+      [glassLayerMode]="glassLayerMode"
+      [headingsEnabled]="previewParams?.headings"
+      [isComponent]="viewingComponent"
+      [isEmbedMode]="isEmbedMode"
+      [landmarksEnabled]="previewParams?.landmarks"
+      [projectUrl]="projectUrl"
+      [props]="elementProperties"
+      [rotation]="previewParams?.rotate"
+      [scale]="zoomScale"
+      [scaleToFit]="isScaleToFit"
+      [showBadge]="previewParams?.showBadge"
+      [showPreviewGlassLayer]="showPreviewGlassLayer"
+    >
+      <ng-container *ngIf="previewParams.id; let id">
+        <!-- 
+          Init process is different for code component render outlet, 
+          so when chaning between normal outlet and code component outlet, this ngSwitch
+          this will completely recreate iframe so that it gets initialized correctly 
+          TODO - perform this logic inside app-render-outlet-iframe component
+        -->
+        <ng-container [ngSwitch]="id | isCodeComponentPipe: codeComponents">
+          <ng-container
+            *ngSwitchCase="true"
+            [ngTemplateOutlet]="renderOutlet"
+            [ngTemplateOutletContext]="{ $implicit: id, code: true }"
+          ></ng-container>
+          <ng-container
+            *ngSwitchCase="false"
+            [ngTemplateOutlet]="renderOutlet"
+            [ngTemplateOutletContext]="{ $implicit: id, code: false }"
+          ></ng-container>
+        </ng-container>
+      </ng-container>
+    </app-preview-canvas>
+  </div>
+
+  <!-- Right Side Panel (comments & a11y) -->
+  <cd-side-panel
+    class="right-panel"
+    position="right"
+    max="350"
+    min="250"
+    [visible]="canShowRightPanel"
+    [templateRef]="showAccessibilityPanel ? accessibilityRef : commentsContainerRef"
+    [size]="300"
+  ></cd-side-panel>
+</div>
+
+<ng-template #accessibilityRef>
+  <app-accessibility-report
+    [props]="elementProperties"
+    [previewParams]="previewParams"
+    [homeBoardId]="homeBoardId"
+    (paramChange)="onParamChange($event)"
+  ></app-accessibility-report>
+</ng-template>
+
+<ng-template #commentsContainerRef>
+  <app-preview-comments
+    class="comments"
+    *ngIf="showCommentsPanel"
+    [commentState]="commentState"
+    [currentlySelectedElement]="currentSelectedElementId"
+    [currentBoardId]="previewParams?.id"
+    [user]="user"
+  ></app-preview-comments>
+</ng-template>
+
+<ng-template #boardListRef>
+  <div class="board-list-header" cdPanelHeader>
+    <button
+      cd-button
+      size="small"
+      iconName="clear"
+      iconSize="small"
+      class="close-button"
+      cdTooltip="Close"
+      cdTooltipDirection="right"
+      (click)="onCloseLeftPanel()"
+    ></button>
+  </div>
+  <app-preview-leftbar
+    [activeOutletId]="previewParams?.id"
+    [boards]="boards"
+    [codeComponents]="codeComponents"
+    [commentCounts]="commentCounts$ | async"
+    [elementProperties]="elementProperties"
+    [homeBoardId]="homeBoardId"
+    [symbols]="symbols"
+    (paramChange)="onParamChange($event)"
+    (jumpToBoard)="jumpToBoard($event)"
+  ></app-preview-leftbar>
+</ng-template>
+
+<ng-template #renderOutlet let-id let-code="code">
+  <app-render-outlet-iframe
+    transparent
+    [id]="id"
+    [preview]="true"
+    [codeComponentOutlet]="code"
+    [class.deuteranomaly]="isDeuteranomaly"
+    [class.grayscale]="isGrayscale"
+    [class.protanopiam]="isProtanopiam"
+  ></app-render-outlet-iframe>
+</ng-template>
+
+<app-a11y-inspector-overlay
+  *ngIf="showAccessibilityPanel"
+  [elementProperties]="elementProperties"
+></app-a11y-inspector-overlay>

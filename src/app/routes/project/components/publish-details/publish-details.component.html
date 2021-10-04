@@ -1,0 +1,10 @@
+<h2 class="section-header">Title</h2>
+<cd-input #nameInputRef large [value]="name" (change)="onNameChange($event)"></cd-input>
+<h2 class="section-header">Description</h2>
+<cd-textarea
+  class="description"
+  [value]="description"
+  (change)="onDescriptionChange($event)"
+></cd-textarea>
+<h2 class="section-header">Tags</h2>
+<cd-chip-input [chips]="tags" (chipsChange)="onTagsChange($event)"></cd-chip-input>

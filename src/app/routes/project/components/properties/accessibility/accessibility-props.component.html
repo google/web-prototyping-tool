@@ -1,0 +1,29 @@
+<cd-property-group groupTitle="Accessibility (ARIA)">
+  <app-aria-input-list
+    [attrs]="globalAriaAttrs"
+    (ariaInputChange)="onAriaAttrChange($event)"
+  ></app-aria-input-list>
+</cd-property-group>
+<cd-property-group [groupTitle]="selectedRole" *ngIf="roleDefaultAttrs.length">
+  <span cdPropertyGroupHeader>
+    <app-a11y-help-tooltip
+      size="small"
+      [helpText]="selectedRole | defaultsHelpTooltipPipe"
+    ></app-a11y-help-tooltip>
+  </span>
+  <app-aria-input-list
+    [attrs]="roleDefaultAttrs"
+    (ariaInputChange)="onAriaAttrChange($event)"
+  ></app-aria-input-list>
+</cd-property-group>
+
+<app-a11y-custom-attrs
+  [attrs]="additionalAriaAttrs"
+  [keyMenuData]="allAdditionalAriaKeys"
+  (ariaAttrChange)="onAriaAttrChange($event)"
+  (ariaAttrDelete)="onAriaAttrChange($event, true)"
+></app-a11y-custom-attrs>
+
+<app-aria-output [attrs]="a11yInputs.ariaAttrs"></app-aria-output>
+
+<cd-editable-notes [notes]="a11yNotes" (notesChange)="onNotesChange($event)"></cd-editable-notes>

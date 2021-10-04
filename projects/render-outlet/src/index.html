@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_parent" />
+    <link rel="preconnect" href="//fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="//firebasestorage.googleapis.com" crossorigin />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: 'Roboto', sans-serif;
+      }
+    </style>
+  </head>
+  <body></body>
+  <script>
+    // Angular hashes .js files for new builds, this ensures that updates reload this iframe
+    const main = [...document.querySelectorAll('script')].find((s) => s.src.includes('main'));
+    main.onerror = () => window.location.reload();
+    main.onload = () => {
+      main.onload = null;
+      main.onerror = null;
+    };
+  </script>
+</html>

@@ -1,0 +1,48 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$bkdColor: #fff;
+
+:host {
+  display: contents;
+}
+
+.board {
+  position: fixed;
+  background: $bkdColor;
+  z-index: 1;
+  // b/185484352
+  // will-change is causing the app to run out of GPU memory
+  // when the user has large boards
+  // will-change: transform;
+  outline: var(--border-size, 1px) solid #d0d3d8;
+  // This is needed to prevent drag and droping images
+  // from getting intercepted by the iframe
+  pointer-events: none;
+
+  &.symbol {
+    background: url('/assets/grid-light.png') 0 0 / 8px 8px;
+    background-color: $bkdColor;
+  }
+}
+
+:host.break-glass .board {
+  pointer-events: all;
+}
+
+:host-context(.dark-theme) .board {
+  outline-color: #1a1c1d;
+}

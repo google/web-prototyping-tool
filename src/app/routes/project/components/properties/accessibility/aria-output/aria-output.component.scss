@@ -1,0 +1,60 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font';
+
+.output-property-group {
+  border-bottom: 1px solid var(--cd-border-color-light);
+}
+
+.container {
+  padding: 0 var(--cd-spacing-3);
+  padding-right: var(--cd-spacing-1);
+}
+
+.output-toolbar {
+  display: flex;
+  align-items: center;
+}
+
+.attrs {
+  user-select: text;
+  word-break: break-all;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    font-family: var(--cd-mono-font);
+    font-size: 11px;
+    line-height: 1.6em;
+  }
+}
+
+.attr {
+  font-weight: 500;
+  color: var(--cd-a11y-color-text);
+}
+
+.value::before {
+  content: '\00a0';
+}
+
+.attrs-empty-state {
+  font-style: italic;
+  line-height: 1.5;
+  margin: var(--cd-spacing-1) 0 0;
+}

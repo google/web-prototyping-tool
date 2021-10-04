@@ -1,0 +1,61 @@
+<ng-container *ngIf="hasLoadedMaps">
+  <div class="toggle-wrapper">
+    <cd-toggle-button-group
+      showBackground
+      [value]="isPlace"
+      (valueChange)="onModeChange($event)"
+      class="toggle"
+    >
+      <button cd-button cdToggleButton expand="true" [value]="true" [selected]="isPlace">
+        Place
+      </button>
+      <button cd-button cdToggleButton expand="true" [value]="false" [selected]="!isPlace">
+        Coordinates
+      </button>
+    </cd-toggle-button-group>
+  </div>
+
+  <ng-container *ngIf="isPlace; else areaProps">
+    <div class="input-wrapper">
+      <cd-input
+        [value]="query"
+        placeholder="Enter a location"
+        [data]="(placeSuggestions$ | async) || []"
+        (input)="onQueryInputChange($event)"
+        (change)="onQueryChange($event)"
+      ></cd-input>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #areaProps>
+  <cd-input-group label="Latitude">
+    <cd-input
+      type="number"
+      [value]="latitude"
+      (change)="onLatitudeChange($event)"
+      [min]="-90"
+      [max]="90"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Longitude">
+    <cd-input
+      type="number"
+      [value]="longitude"
+      (change)="onLongitudeChange($event)"
+      [min]="-180"
+      [max]="180"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Zoom">
+    <cd-input
+      type="number"
+      [value]="zoom"
+      (change)="onZoomChange($event)"
+      [min]="2"
+      [max]="21"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>

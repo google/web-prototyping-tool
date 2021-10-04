@@ -1,0 +1,37 @@
+<app-render-outlet-iframe
+  *ngFor="let board of boards; trackBy: trackByFn"
+  #boardRef
+  [lazyLoad]="true"
+  class="board"
+  [id]="board.id"
+  [frame]="board.frame"
+  [class.symbol]="board.symbol"
+  [transparent]="board.symbol"
+  [style.zIndex]="board.zOrder"
+  [style.transform]="board.position"
+  [style.width.px]="board.frame.width"
+  [style.height.px]="board.frame.height"
+></app-render-outlet-iframe>
+
+<ng-container *ngFor="let board of boards; trackBy: trackByFn">
+  <app-outlet-label
+    #labelRef
+    appOutletFrameMove
+    draggable="false"
+    [id]="board.id"
+    [name]="board.name"
+    [outletFrameId]="board.id"
+    [homeBoardId]="homeboardId"
+    [commentCount]="commentCount.get(board.id)"
+    [debug]="showBoardIds"
+    [elementType]="board.elementType"
+    [iconScale]="iconScale"
+    [zoom]="zoomLevel"
+    [selection]="selection"
+    [style.transform]="board.position"
+    [style.width.px]="board.frame.width"
+    [style.zIndex]="board.zOrder + boards.length"
+    (commentClick)="onOpenPreview($event)"
+    (nameChanged)="onOutletFrameNameChanged($event, board)"
+  ></app-outlet-label>
+</ng-container>

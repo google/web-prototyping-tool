@@ -1,0 +1,33 @@
+<cd-scroll-view class="scrollview" nativeScrollbars>
+  <header cdScrollHeader class="header" (click)="onCollapseClick()">
+    <h2 class="title">Recording...</h2>
+    <button
+      class="ico-btn"
+      [cdTooltip]="collapsed ? 'Expand' : 'Collapse'"
+      cdTooltipDirection="left"
+    >
+      <cd-icon
+        #arrow
+        name="keyboard_arrow_down"
+        class="icon"
+        [class.collapsed]="collapsed"
+      ></cd-icon>
+    </button>
+  </header>
+  <div class="zero-state" *ngIf="!stateChanges.length; else list">
+    <span>Recorded changes will appear here.</span>
+  </div>
+</cd-scroll-view>
+
+<ng-template #list>
+  <ul
+    app-record-list
+    [boards]="boards"
+    [showPin]="true"
+    [stateChanges]="stateChanges"
+    [designSystem]="designSystem$ | async"
+    (deleteRecord)="onDeleteRecord($event)"
+    (deleteMultipleIndexes)="onDeleteMultipleRecords($event)"
+    (updateRecord)="onUpdateRecord($event)"
+  ></ul>
+</ng-template>

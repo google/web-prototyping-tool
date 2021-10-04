@@ -1,0 +1,223 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$timelineOffsetLeft: 70px;
+$timelineGap: 8px;
+$lineHeight: 6px;
+$trackWidth: 10px;
+
+:host {
+  list-style: none;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--cd-spacing-0);
+}
+
+.desc {
+  font-size: 11px;
+  font-family: var(--cd-body-font);
+  font-weight: 400;
+  display: block;
+  line-height: 1;
+  @include cd-font-overflow-ellipsis;
+
+  padding-left: var(--cd-spacing-0);
+
+  .value {
+    opacity: 0.75;
+    color: var(--cd-primary-color);
+
+    &::before {
+      content: '→';
+      padding: 0 2px;
+    }
+  }
+}
+
+.edit-btn,
+.delete-all-btn,
+.delete-btn {
+  display: none;
+}
+
+.group-item {
+  cursor: pointer;
+  overflow: hidden;
+  display: grid;
+  align-items: center;
+  position: relative;
+}
+
+.change-item-list {
+  display: grid;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.change-item {
+  padding: 0 var(--cd-spacing-3);
+  padding-right: var(--cd-spacing-1);
+  height: var(--cd-size-3);
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+
+  &.active {
+    transition: background-color 200ms;
+    background: var(--cd-focus-fill);
+    color: var(--cd-primary-color);
+
+    .edit-btn,
+    .delete-btn {
+      color: var(--cd-primary-color);
+      display: block;
+    }
+  }
+
+  &:hover {
+    .edit-btn,
+    .delete-btn {
+      display: block;
+    }
+  }
+
+  .left {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .right {
+    display: grid;
+    grid-auto-flow: column;
+  }
+}
+
+.group-item-header {
+  padding-left: var(--cd-spacing-3);
+  padding-bottom: 0;
+  padding-right: var(--cd-spacing-1);
+  height: var(--cd-size-3);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  position: relative;
+
+  &:hover .delete-all-btn {
+    display: block;
+  }
+}
+
+.group-title {
+  font-family: var(--cd-body-font);
+  font-size: 12.5px;
+  font-weight: 500;
+  text-transform: capitalize;
+  -webkit-font-smoothing: antialiased;
+
+  @include cd-font-overflow-ellipsis;
+}
+
+.line-item {
+  grid-template-columns: $timelineOffsetLeft 1fr;
+  gap: $timelineGap;
+  position: relative;
+
+  &:hover:not(.active) {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  .right {
+    position: relative;
+    width: 100%;
+    grid-template-columns: auto 7px;
+    overflow: hidden;
+    box-sizing: border-box;
+    height: var(--cd-size-3);
+    display: grid;
+    align-items: center;
+  }
+}
+
+.line {
+  height: $lineHeight;
+  min-width: $lineHeight;
+  background: var(--cd-primary-color);
+  border-radius: $lineHeight * 0.5;
+  position: relative;
+  width: calc(var(--duration) + #{$lineHeight});
+  left: var(--delay);
+}
+
+:host-context(.dark-theme) {
+  .line-item:hover:not(.active) {
+    background: var(--cd-menu-hover);
+  }
+}
+
+// Start & End lines on the timeline
+
+.track-start,
+.track-end {
+  position: absolute;
+  display: grid;
+  justify-content: center;
+  width: $trackWidth;
+  height: 100%;
+
+  &::after {
+    content: '0';
+    position: absolute;
+    font-size: 10px;
+    color: rgba(136, 136, 136, 0.7);
+    height: var(--cd-size-3);
+    font-family: var(--cd-mono-font);
+    background: var(--cd-sidebar-color);
+    white-space: nowrap;
+    right: 1px;
+    margin: auto;
+    text-align: right;
+    display: grid;
+    align-items: center;
+  }
+
+  &::before {
+    content: '';
+    width: 1px;
+    opacity: 0.9;
+    background: var(--cd-outline-color);
+    height: 100%;
+  }
+}
+
+.track-start {
+  left: $timelineOffsetLeft + $timelineGap + $trackWidth;
+}
+
+.track-end {
+  right: $trackWidth;
+
+  &::after {
+    content: attr(data-time) ' ms';
+  }
+}

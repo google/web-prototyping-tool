@@ -1,0 +1,131 @@
+<cd-input-group label="Position">
+  <cd-toggle-button-group
+    showBackground
+    [(value)]="positionMode"
+    (valueChange)="onPositionModeChange($event)"
+  >
+    <button cd-button cdToggleButton expand="true" [value]="PositionType.Relative">Relative</button>
+    <button cd-button cdToggleButton expand="true" [value]="PositionType.Absolute">Absolute</button>
+  </cd-toggle-button-group>
+</cd-input-group>
+
+<ng-container *ngIf="position !== PositionType.Relative; else relative">
+  <cd-input-group columns="auto 1fr">
+    <div class="box">
+      <svg width="56" height="56">
+        <ng-container *ngFor="let line of lines">
+          <g class="group">
+            <line
+              class="line"
+              [class.active]="line.id | lineCheck: model"
+              [attr.x1]="line.x1"
+              [attr.y1]="line.y1"
+              [attr.x2]="line.x2"
+              [attr.y2]="line.y2"
+            />
+            <line
+              class="line hitbox"
+              [attr.x1]="line.x1"
+              [attr.y1]="line.y1"
+              [attr.x2]="line.x2"
+              [attr.y2]="line.y2"
+              (click)="onLineClick(line.id)"
+            />
+          </g>
+        </ng-container>
+        <rect class="hidden-rect" x="22" y="22" (click)="centerClick()"></rect>
+        <rect class="hidden-rect edge" x="0" y="0" (click)="topLeftClick()"></rect>
+        <rect class="hidden-rect edge" x="36" y="0" (click)="topRightClick()"></rect>
+        <rect class="hidden-rect edge" x="0" y="36" (click)="bottomLeftClick()"></rect>
+        <rect class="hidden-rect edge" x="36" y="36" (click)="bottomRightClick()"></rect>
+      </svg>
+    </div>
+    <div class="pins">
+      <cd-input
+        resetNumberOnDelete
+        innerLabel="T"
+        type="number"
+        [value]="model?.top?.value"
+        (change)="onTopChange($event)"
+      ></cd-input>
+      <cd-input
+        resetNumberOnDelete
+        innerLabel="L"
+        type="number"
+        [value]="model?.left?.value"
+        (change)="onLeftChange($event)"
+      ></cd-input>
+      <cd-input
+        resetNumberOnDelete
+        innerLabel="B"
+        type="number"
+        [value]="model?.bottom?.value"
+        (change)="onBottomChange($event)"
+      ></cd-input>
+      <cd-input
+        resetNumberOnDelete
+        innerLabel="R"
+        type="number"
+        [value]="model?.right?.value"
+        (change)="onRightChange($event)"
+      ></cd-input>
+    </div>
+  </cd-input-group>
+
+  <cd-input-group label="Fixed" columns="auto 1fr">
+    <cd-checkbox [checked]="isFixedPosition" (change)="onToggleFixed($event)"></cd-checkbox>
+    <span>Prevent scroll</span>
+  </cd-input-group>
+</ng-container>
+
+<ng-template #relative>
+  <cd-input-group *ngIf="hideDisplay === false">
+    <cd-toggle-button-group
+      showBackground
+      [(value)]="activeDisplayMode"
+      (valueChange)="onModeChange($event)"
+    >
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Block (Auto)"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/block.svg"
+        [value]="DisplayMode.Block"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Inline"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/inline.svg"
+        [value]="DisplayMode.Inline"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Float Left"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/float-left.svg"
+        [value]="DisplayMode.FloatLeft"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Float Right"
+        size="small"
+        expand="true"
+        iconName="/assets/icons/float-right.svg"
+        [value]="DisplayMode.FloatRight"
+      ></button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+  <app-align-self-prop
+    *ngIf="isParentAGrid"
+    [model]="model"
+    (modelChange)="onModelChange($event)"
+  ></app-align-self-prop>
+</ng-template>

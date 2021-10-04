@@ -1,0 +1,95 @@
+<!-- HAS OVERRIDES BADGE -->
+<div *ngIf="showOverridesBadge" class="badge overrides"></div>
+<div *ngIf="showActionsBadge" class="badge actions" [class.recording]="isRecording"></div>
+<div *ngIf="showA11yBadge" class="badge a11y"></div>
+<cd-scroll-view>
+  <div cdScrollHeader class="properties-header">
+    <div class="left">
+      <ng-content select="[cdPropertiesHeaderLeft]"></ng-content>
+      <input
+        cd-measured-input
+        cdInputReset
+        useDefaultFontStyle
+        placeholder="Undefined"
+        class="title-input"
+        id="element-title"
+        [readonly]="readonlyTitle"
+        [class.readonly]="readonlyTitle"
+        [value]="panelTitle"
+        (change)="onTitleChange($event)"
+      />
+    </div>
+    <aside *ngIf="showStateButtons">
+      <cd-tab-group (tabChange)="onStateChange($event)" [activeTabIndex]="state">
+        <cd-tab iconName="drive_form" tooltip="Properties" tooltipDirection="bottom"></cd-tab>
+        <cd-tab
+          iconName="bolt"
+          tooltip="Actions"
+          tooltipDirection="bottom"
+          [disabled]="isRecording"
+        ></cd-tab>
+        <cd-tab
+          iconName="accessibility"
+          tooltip="Accessibility"
+          tooltipDirection="bottom"
+          [disabled]="isRecording"
+        ></cd-tab>
+        <cd-tab iconName="code" tooltip="Code" tooltipDirection="bottom"></cd-tab>
+      </cd-tab-group>
+    </aside>
+    <aside>
+      <cd-menu-button
+        *ngIf="hasEllipsisMenuItems"
+        size="small"
+        iconSize="small"
+        [data]="ellipsisMenuItems"
+        (selected)="onEllipsisMenuSelected($event)"
+      ></cd-menu-button>
+    </aside>
+  </div>
+
+  <ng-container [ngSwitch]="state" *ngIf="showStateButtons; else defaultProps">
+    <ng-container
+      *ngSwitchCase="PropertiesState.Code"
+      [ngTemplateOutlet]="codeProps"
+    ></ng-container>
+    <ng-container
+      *ngSwitchCase="PropertiesState.Actions"
+      [ngTemplateOutlet]="actionProps"
+    ></ng-container>
+    <ng-container
+      *ngSwitchCase="PropertiesState.Accessibility"
+      [ngTemplateOutlet]="a11yProps"
+    ></ng-container>
+    <ng-container *ngSwitchDefault [ngTemplateOutlet]="defaultProps"></ng-container>
+  </ng-container>
+</cd-scroll-view>
+
+<!-- DEFAULT PROPS -->
+<ng-template #defaultProps>
+  <ng-content></ng-content>
+</ng-template>
+
+<!-- ACTION PROPS -->
+<ng-template #actionProps>
+  <ng-content select="[cdPropertiesActionsSlot]"></ng-content>
+</ng-template>
+
+<!-- ACCESSIBILITY PROPS -->
+<ng-template #a11yProps>
+  <ng-content select="[cdPropertiesA11ySlot]"></ng-content>
+</ng-template>
+
+<!-- CODE PROPS -->
+<ng-template #codeProps>
+  <ng-content select="[cdPropertiesCodeSlot]"></ng-content>
+  <cd-advanced-props
+    [designSystem]="designSystem"
+    [projectAssets]="projectAssets"
+    [styles]="styles"
+    [attr]="attr"
+    [hideAdvancedAttrs]="hideAdvancedAttrs"
+    (attrChange)="onAttributesUpdate($event)"
+    (stylesChange)="onStyleOverride($event)"
+  ></cd-advanced-props>
+</ng-template>

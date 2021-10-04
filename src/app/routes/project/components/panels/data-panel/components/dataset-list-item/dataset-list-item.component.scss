@@ -1,0 +1,62 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+.menu {
+  visibility: hidden;
+
+  &.active {
+    visibility: visible;
+  }
+}
+
+:host {
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  height: var(--cd-size-3);
+  align-items: center;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover .menu {
+    visibility: visible;
+  }
+}
+
+.item-input {
+  @include cd-font-overflow-ellipsis;
+
+  background: transparent;
+  box-sizing: border-box;
+  border-radius: var(--cd-border-radius-1);
+  height: var(--cd-size-3);
+  padding: 2px 4px;
+  pointer-events: none;
+  border: none;
+  outline: none;
+  -webkit-font-smoothing: antialiased;
+  color: var(--cd-font-color);
+  font-weight: 500;
+  font-family: var(--cd-body-font);
+
+  &:focus {
+    pointer-events: initial;
+    box-shadow: var(--cd-outline-focus);
+  }
+}

@@ -1,0 +1,165 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$searchHeaderHeight: 36px;
+
+:host {
+  position: absolute;
+  display: flex;
+  width: 430px;
+  height: 215px;
+  margin: 0;
+  background-color: var(--cd-modal-background-color);
+  box-shadow: var(--cd-depth-6);
+  border-radius: 7px;
+}
+
+.master {
+  width: 160px;
+  border-right: 1px solid var(--cd-border-color);
+}
+
+.header-wrapper {
+  display: grid;
+  grid-template-columns: 130px 18px;
+  align-items: center;
+  border-bottom: 1px solid var(--cd-border-color);
+  height: $searchHeaderHeight;
+  padding: 0 var(--cd-spacing-1);
+}
+
+.list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.list-item {
+  height: 26px;
+  user-select: none;
+}
+
+.list-item-button {
+  display: block;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  padding: 0 15px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--cd-body-font);
+  font-size: 1rem;
+  color: var(--cd-font-color);
+  text-align: left;
+  @include cd-font-overflow-ellipsis;
+
+  &:hover {
+    background-color: var(--cd-menu-hover);
+  }
+
+  &:focus {
+    outline: none;
+    background-color: var(--cd-focus-fill);
+  }
+}
+
+.list-item--selected .list-item-button {
+  outline: none;
+  background-color: var(--cd-focus-fill);
+  color: var(--cd-primary-color);
+}
+
+.detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 15px;
+  padding-top: 4px;
+
+  header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--cd-spacing-2);
+    align-items: center;
+    height: 36px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 0;
+  }
+}
+
+.fonts-link {
+  text-decoration: none;
+  color: var(--cd-font-color);
+  transition: color 150ms;
+
+  &:hover {
+    color: var(--cd-primary-color);
+  }
+}
+
+.preview-title {
+  flex: 1;
+  font-family: var(--cd-header-font);
+  font-size: 1.5rem;
+  @include cd-font-overflow-ellipsis;
+}
+
+.preview {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--cd-spacing-2) 0 0;
+  position: relative;
+  height: 112px;
+  min-height: 112px;
+}
+
+.preview-subtitle {
+  margin-bottom: 6px;
+  font-family: var(--cd-body-font);
+  font-size: 1rem;
+  color: var(--cd-font-color);
+}
+
+.preview-text {
+  flex: 1;
+  font-size: 1.67rem;
+  line-height: 2.167rem;
+  overflow: auto;
+  animation: cd-fadein 300ms;
+}
+
+.cover {
+  position: absolute;
+  background: linear-gradient(
+    to top,
+    var(--cd-modal-background-color) 0%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--cd-size-3);
+}

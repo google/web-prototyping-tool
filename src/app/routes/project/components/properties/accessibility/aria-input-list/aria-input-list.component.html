@@ -1,0 +1,100 @@
+<div *ngFor="let attr of attrs; trackBy: trackByFn" [class.disabled]="attr.disabled">
+  <cd-input-group
+    columns="1fr auto"
+    class="aria-input-list-item"
+    [class.default-number]="attr.name | isNumberTypeInputPipe"
+    [label]="attr.name | attrNameLabelPipe"
+    [labelRichTooltip]="attr | attrHelpTooltipPipe"
+    labelTooltip="More info"
+  >
+    <ng-container [ngSwitch]="attr | attrValueTypePipe">
+      <cd-select-input
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.Select"
+        [data]="attr | attrMenuDataPipe | MarkSelection: attr.value"
+        [resetState]="attr | getSelectResetState"
+        [disabled]="attr.disabled"
+        [placeholder]="'Select ' + attr.name"
+        (change)="onAriaInputValueSelect(attr, $event)"
+      ></cd-select-input>
+      <cd-toggle-button-group
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.Toggle"
+        showBackground
+        [value]="attr.value"
+        (valueChange)="onAriaInputValueChange(attr, $event)"
+      >
+        <button
+          *ngFor="let item of attr | attrMenuDataPipe"
+          cd-button
+          cdToggleButton
+          [selected]="item.value === attr.value"
+          [value]="item.value"
+          [disabled]="attr.disabled"
+        >
+          {{ item.value | sentenceCase }}
+        </button>
+      </cd-toggle-button-group>
+      <cd-checkbox
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.Checkbox"
+        [checked]="attr.value"
+        [disabled]="attr.disabled"
+        (change)="onAriaInputCheckedChange(attr, $event)"
+      ></cd-checkbox>
+      <!-- TODO: disabled support -->
+      <cd-select-grid
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.SelectGrid"
+        class="list-grid"
+        [data]="attr | attrMenuDataPipe | MarkSelection: attr.value"
+        (selectItem)="onAriaInputValueSelect(attr, $event)"
+      ></cd-select-grid>
+      <cd-input
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.Number"
+        type="number"
+        [value]="attr.value"
+        placeholder="Enter value (e.g. 100)"
+        [disabled]="attr.disabled"
+        (change)="onAriaInputValueChange(attr, $event)"
+      ></cd-input>
+      <cd-input
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.Integer"
+        type="number"
+        [value]="attr.value"
+        placeholder="Enter value (e.g. 5)"
+        [disabled]="attr.disabled"
+        (change)="onAriaInputValueChange(attr, $event)"
+      ></cd-input>
+      <cd-input
+        #attrInputRef
+        *ngSwitchCase="attributeTypes.ElementPicker"
+        [value]="attr.value"
+        placeholder="Enter element id"
+        [disabled]="attr.disabled"
+        [helpText]="elementPickerHelp"
+        (change)="onAriaInputValueChange(attr, $event)"
+      ></cd-input>
+      <cd-input
+        #attrInputRef
+        *ngSwitchDefault
+        [value]="attr.value"
+        placeholder="Enter text"
+        [disabled]="attr.disabled"
+        (change)="onAriaInputValueChange(attr, $event)"
+      ></cd-input>
+    </ng-container>
+    <button
+      *ngIf="editEnabled"
+      #deleteButtonRef
+      cd-button
+      [attr.aria-label]="'remove ' + attr.name | attrNameLabelPipe"
+      size="small"
+      iconSize="small"
+      iconName="delete_outline"
+      (click)="onAttrDelete(attr)"
+    ></button>
+  </cd-input-group>
+</div>

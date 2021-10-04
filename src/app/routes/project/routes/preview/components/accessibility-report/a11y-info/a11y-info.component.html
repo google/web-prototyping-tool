@@ -1,0 +1,76 @@
+<header class="header">
+  <button
+    *ngIf="!overlay"
+    cd-icon-button
+    class="back-btn"
+    iconName="arrow_back"
+    cdTooltip="Return to accessibility tree"
+    (click)="onElementIdSelection()"
+  ></button>
+  <h3 class="title">
+    <cd-icon
+      *ngIf="activeElement && !overlay"
+      [name]="activeElement | elementIconPipe: activeElement?.rootId"
+      size="medium"
+    ></cd-icon>
+    {{ activeElement?.name }}
+  </h3>
+  <nav
+    class="breadcrumbs"
+    aria-label="Parent elements"
+    *ngIf="!overlay && activeElementBreadcrumbs.length"
+  >
+    <ul>
+      <li *ngFor="let crumb of activeElementBreadcrumbs">
+        <button class="breadcrumb-btn" (click)="onElementIdSelection(crumb.id)">
+          {{ crumb.name }}
+        </button>
+      </li>
+    </ul>
+  </nav>
+</header>
+<div class="content">
+  <ng-container *ngIf="activeElementAttrs.length; else noAttrs">
+    <h4 class="subtitle" *ngIf="!overlay">
+      Aria Attributes
+      <span class="copy-button">
+        <button
+          cd-icon-button
+          iconName="copy"
+          iconSize="small"
+          cdTooltip="Copy ARIA attributes"
+          (click)="onCopyAttrsClick()"
+        ></button>
+      </span>
+    </h4>
+    <ul class="attrs">
+      <li *ngFor="let attr of activeElementAttrs">
+        <ng-container
+          *ngTemplateOutlet="overlay ? overlayAttr : panelAttr; context: { $implicit: attr }"
+        ></ng-container>
+      </li>
+    </ul>
+  </ng-container>
+
+  <ng-container *ngIf="elementNotes">
+    <div *ngIf="!overlay" class="notes-container">
+      <h4 class="subtitle">Notes</h4>
+      <div class="notes" [innerHTML]="elementNotes | safeHTML"></div>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #panelAttr let-attr>
+  <span class="attr-name">{{ attr.name }}</span>
+  =
+  <span class="attr-value">"{{ attr.value }}"</span>
+</ng-template>
+
+<ng-template #overlayAttr let-attr>
+  <span class="attr-name">{{ attr.name }}:</span>
+  <span class="attr-value">{{ attr.value }}</span>
+</ng-template>
+
+<ng-template #noAttrs>
+  <div class="empty-state">No ARIA attributes are set on this element</div>
+</ng-template>

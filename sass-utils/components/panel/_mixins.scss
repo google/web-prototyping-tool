@@ -1,0 +1,27 @@
+@mixin survey-link-footer() {
+  .survey-link {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-row-gap: var(--cd-spacing-1);
+    grid-column-gap: var(--cd-spacing-3);
+    border-top: 1px solid var(--cd-border-color-light);
+    margin: 0 var(--cd-spacing-3);
+    padding: var(--cd-spacing-3) 0 var(--cd-spacing-4);
+
+    .survey-icon {
+      grid-row: 1/3;
+    }
+
+    .survey-title {
+      font-size: var(--cd-font-size-h2);
+      font-family: var(--cd-header-font);
+    }
+
+    a::after {
+      font-family: 'Google Material Icons', sans-serif;
+      content: 'launch';
+      position: absolute;
+      margin-left: var(--cd-spacing-0);
+    }
+  }
+}

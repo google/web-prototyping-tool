@@ -1,0 +1,12 @@
+{
+  "name": "cd-metadata",
+  "version": "0.0.1",
+  "sideEffects": false,
+  "license": "MIT",
+  "peerDependencies": {
+    "cd-interfaces": "*"
+  },
+  "dependencies": {
+    "tslib": "^2.0.0"
+  }
+}

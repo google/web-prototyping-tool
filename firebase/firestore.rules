@@ -1,0 +1,166 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isScreenshotService() {
+      return false;
+    }
+
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    
+    function isVerified() {
+      return request.auth.uid != null && request.auth.token.email_verified == true;
+    }
+
+    function getProject(){
+      return get(/databases/$(database)/documents/projects/$(string(resource.data.projectId))).data;
+    }
+
+    function isProjectOwner() {
+      return  getProject().owner.id == request.auth.uid;
+    }
+
+    function getProjectRequest(){
+      return get(/databases/$(database)/documents/projects/$(string(request.resource.data.projectId))).data;
+    }
+    
+    function isRequestedProjectOwner() {
+      return getProjectRequest().owner.id == request.auth.uid;
+    }
+
+    function isRequestedProjectEditor() {
+      return request.auth.token.email in getProjectRequest().editors;
+    }
+
+    function isRequestedProjectOwnerOrEditor(){
+      return isRequestedProjectOwner() || isRequestedProjectEditor();
+    }
+
+    function isProjectEditor() {
+      return request.auth.token.email in getProject().editors;
+    }
+
+    function isProjectOwnerOrEditor(){
+      return isProjectOwner() || isProjectEditor();
+    }
+
+    function isResourceOwner(){
+      return resource.data.owner.id == request.auth.uid;
+    }
+
+    function isProjectResourceAnEditor(){
+      return request.auth.token.email in resource.data.editors;
+    }
+    
+    match /component_libraries/{project} {
+      allow create: if isVerified();
+      // allow read: if isVerified() || isScreenshotService();
+      allow read: if true; // TEMP, allow read globally until we figure out embed mode
+    }
+
+    match /project_contents/{contents} {
+      // allow read: if isVerified() || isScreenshotService();
+      allow read: if true; // TEMP, allow read globally until we figure out embed mode
+      allow create, update: if isRequestedProjectOwnerOrEditor();
+      allow delete: if resource == null || isProjectOwnerOrEditor();
+    }
+
+    match /projects/{project} {
+      // allow read: if isVerified() || isScreenshotService();
+      allow read: if true; // TEMP, allow read globally until we figure out embed mode
+      allow create: if isVerified();
+      allow update: if isResourceOwner() || isProjectResourceAnEditor();
+      allow delete: if isResourceOwner();
+    }
+
+    match /exceptions/{contents} {
+      allow read, write: if true;
+    }
+
+    match /maintenance_mode/{contents} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /user_settings/{userId} {
+      allow read: if isVerified() || isScreenshotService();
+      allow write: if isVerified() && userId == request.auth.uid;
+    }
+
+    match /comments/{contents} {
+      // allow read: if isVerified() || isScreenshotService();
+      allow read: if true;
+      allow create: if isVerified();
+      allow update: if isVerified() && resource.data.type == 'Comment Thread' || isResourceOwner();
+      allow delete: if isResourceOwner();
+    }
+
+    match /publish_entries/{contents} {
+      // allow read: if isVerified() || isScreenshotService();
+      allow read: if true; // TEMP, allow read globally until we figure out embed mode
+      allow create: if isVerified();
+      allow update, delete: if isVerified() && (isResourceOwner() || isAdmin());
+    }
+
+    match /news_updates/{contents} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admins/{contents} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /status_message/{contents} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /screenshot_queue/{contents} {
+      allow read: if true;
+      allow write: if isVerified();
+    }
+
+    // Users can create new change requests, but they cannot be modified after the fact
+    // Our Firebase functions (which has admin permissions) will handle removing change requests
+    // after they have been processed
+    match /change_requests/{contents} {
+      allow read: if true;
+      allow write: if isVerified();
+    }
+
+     match /change_requests/{contents}/payload/{payloadContents} {
+      allow read: if true;
+      allow write: if isVerified();
+    }
+
+    match /change_requests/{contents}/payload/{payloadContents}/sets/{setContents} {
+      allow read: if true;
+      allow write: if isVerified();
+    }
+
+    match /change_requests/{contents}/payload/{payloadContents}/updates/{updateContents} {
+      allow read: if true;
+      allow write: if isVerified();
+    }
+
+    match /user_presence/{contents} {
+      allow read, write: if isVerified() || isScreenshotService();
+    }
+
+    match /rtc_connections/{contents} {
+      allow read, write: if isVerified();
+    }
+
+    match /rtc_connections/{contents}/fromUserIceCandidates/{fromContents} {
+      allow read, write: if isVerified();
+    }
+
+    match /rtc_connections/{contents}/toUserIceCandidates/{toContents} {
+      allow read, write: if isVerified();
+    }
+  }
+}

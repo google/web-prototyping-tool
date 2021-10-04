@@ -1,0 +1,26 @@
+<div class="container">
+  <header>
+    <h3>{{ title }}</h3>
+    <div class="right">
+      <cd-valid-icon
+        class="validator"
+        [isValid]="isValid"
+        invalidText="Invalid code will not be saved"
+        validText="Valid code"
+        [showText]="false"
+      ></cd-valid-icon>
+      <cd-fullscreen-button
+        [fullscreen]="true"
+        (fullscreenChange)="onClose()"
+      ></cd-fullscreen-button>
+    </div>
+  </header>
+  <cd-code-editor
+    [autofocus]="true"
+    [placeholder]="placeholder"
+    [spellcheck]="false"
+    [value]="value"
+    (valueChange)="onValueChange($event)"
+    (change)="onChange($event)"
+  ></cd-code-editor>
+</div>

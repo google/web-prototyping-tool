@@ -1,0 +1,16 @@
+<cd-property-group
+  #propGroupRef
+  type="add"
+  bottomDivider
+  groupTitle="Fonts"
+  groupHelpTooltip="Attach Google fonts to your component"
+  (add)="onAddItem()"
+>
+  <cd-property-list-item
+    hideLeft
+    *ngFor="let font of fontList; let i = index; trackBy: trackFn"
+    (delete)="onDelete(i)"
+  >
+    <span class="font">{{ font.family }}</span>
+  </cd-property-list-item>
+</cd-property-group>

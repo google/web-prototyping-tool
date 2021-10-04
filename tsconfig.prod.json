@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "es2020",
+    "paths": {
+      "cd-interfaces": ["dist/cd-interfaces"],
+      "cd-definitions": ["dist/cd-definitions"],
+      "cd-definitions/*": ["dist/cd-definitions/*"],
+      "cd-common": ["dist/cd-common"],
+      "cd-common/*": ["dist/cd-common/*"],
+      "cd-metadata": ["dist/cd-metadata"],
+      "cd-metadata/*": ["dist/cd-metadata/*"],
+      "cd-themes": ["dist/cd-themes"],
+      "cd-themes/*": ["dist/cd-themes/*"],
+      "cd-utils": ["dist/cd-utils"],
+      "cd-utils/*": ["dist/cd-utils/*"]
+    }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictAttributeTypes": true,
+    "strictContextGenerics": true,
+    "strictDomEventTypes": true,
+    "strictDomLocalRefTypes": true,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictInputTypes": false,
+    "strictLiteralTypes": true,
+    "strictNullInputTypes": true,
+    "strictOutputEventTypes": false,
+    "strictSafeNavigationTypes": true
+  },
+  "exclude": ["lib/**", "projects/*", "firebase/**"]
+}

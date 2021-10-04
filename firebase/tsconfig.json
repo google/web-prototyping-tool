@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "baseUrl": "../",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "outDir": "lib",
+    "sourceMap": false,
+    "strict": true,
+    "target": "es2019",
+    "typeRoots": ["./types"],
+    "types": ["node"],
+    "lib": ["es2019", "dom"],
+    "paths": {
+      "cd-interfaces": ["dist/cd-interfaces"],
+      "cd-common/*": ["dist/cd-common/*"],
+      "cd-metadata": ["dist/cd-metadata"],
+      "cd-metadata/*": ["dist/cd-metadata/*"],
+      "cd-themes": ["dist/cd-themes"],
+      "cd-themes/*": ["dist/cd-themes/*"],
+      "cd-utils": ["dist/cd-utils"],
+      "cd-utils/*": ["dist/cd-utils/*"]
+    }
+  },
+  "include": ["**/*.ts", "dist/**/*"],
+  "exclude": ["node_modules"]
+}

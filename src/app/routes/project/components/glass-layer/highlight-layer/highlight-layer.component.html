@@ -1,0 +1,18 @@
+<svg:rect *ngIf="showBounds" class="outlet-frame" [cdSVGRect]="scrollRect" />
+
+<ng-container *ngFor="let highlight of highlights; trackBy: trackFn">
+  <ng-container *ngIf="highlight | RectToSVGStyle: borderSize; let rect">
+    <svg:rect class="hover" [cdSVGRect]="rect" />
+
+    <svg:g
+      *ngIf="showLabel"
+      app-info-text
+      labelStyle
+      [text]="highlight.label"
+      [zoom]="zoom"
+      [attr.x]="rect?.x"
+      [attr.y]=""
+      [attr.transform]="rect | highlightLabelTransform: zoom | TranslateSVGFrame"
+    ></svg:g>
+  </ng-container>
+</ng-container>

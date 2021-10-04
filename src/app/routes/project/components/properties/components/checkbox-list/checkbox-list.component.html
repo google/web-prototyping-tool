@@ -1,0 +1,20 @@
+<cd-property-group
+  [groupTitle]="prop?.label"
+  type="add"
+  groupHelpTooltip="Children will determine state: indeterminate or checked"
+  (add)="onAddItem()"
+  (mouseleave)="clearHoverValue()"
+>
+  <cd-property-list-item
+    hideLeft
+    *ngFor="let checkbox of activeCheckboxes; let i = index; trackBy: trackFn"
+    (delete)="onDelete(i)"
+  >
+    <cd-select-input
+      (mouseenter)="onHover(i)"
+      [data]="options | MarkSelection: checkbox:data"
+      (change)="onCheckboxSelected($event, i)"
+      (activeValue)="onActiveValue($event)"
+    ></cd-select-input>
+  </cd-property-list-item>
+</cd-property-group>

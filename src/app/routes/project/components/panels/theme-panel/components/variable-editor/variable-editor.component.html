@@ -1,0 +1,53 @@
+<div class="container">
+  <cd-input-group label="Name">
+    <cd-input #nameRef [value]="value?.name" (change)="onNameChange($event)"></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Type">
+    <cd-select-input
+      placeholder="Type"
+      [data]="variableTypeData"
+      (change)="onVariableTypeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <cd-input-group label="Value" [ngSwitch]="value.type">
+    <ng-container *ngSwitchCase="DesignVariableType.Opacity">
+      <cd-range-input
+        [value]="rangeValue | number: '1.0-0'"
+        (valueChange)="onOpacityChange($event)"
+        min="0"
+        max="100"
+        innerLabel="%"
+        type="percent"
+      ></cd-range-input>
+    </ng-container>
+    <ng-container *ngSwitchDefault>
+      <cd-input [value]="value?.value" (change)="onValueChange($event)" type="number"></cd-input>
+      <cd-select-input
+        placeholder="Units"
+        [data]="unitTypeData"
+        (change)="onUnitSelect($event)"
+      ></cd-select-input>
+    </ng-container>
+  </cd-input-group>
+</div>
+
+<footer [class.add]="addVariable">
+  <button
+    *ngIf="addVariable; else removeVariable"
+    cd-outlined-button
+    (click)="onAddVariable()"
+    size="small"
+  >
+    Insert
+  </button>
+</footer>
+
+<ng-template #removeVariable>
+  <button class="delete-btn" (click)="onRemoveVariable()">
+    <cd-icon name="delete"></cd-icon>
+    <span>Delete</span>
+  </button>
+  <button cd-outlined-button (click)="onCommitUpdate()" size="small">Update</button>
+</ng-template>

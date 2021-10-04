@@ -1,0 +1,17 @@
+<fieldset class="cd-radio-group-wrapper">
+  <legend class="cd-radio-group-label">{{ label }}</legend>
+  <div class="cd-radios">
+    <cd-radio
+      *ngFor="let radio of radioData; trackBy: trackByFn"
+      [name]="name"
+      [value]="radio.value"
+      [size]="size"
+      [selected]="selectedValue === radio.value"
+      [disabled]="radio.disabled || disabled"
+      (selectedChange)="onSelectedValueChange($event)"
+    >
+      {{ radio.title }}
+    </cd-radio>
+    <ng-content></ng-content>
+  </div>
+</fieldset>

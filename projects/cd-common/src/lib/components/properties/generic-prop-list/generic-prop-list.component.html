@@ -1,0 +1,40 @@
+<div class="wrapper" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  <cd-property-list-item
+    cdkDrag
+    *ngFor="let item of data; let i = index; trackBy: trackFn"
+    class="list-item"
+    [class.dim]="activeIndex !== -1 && activeIndex !== i"
+    (delete)="onDelete(i)"
+  >
+    <cd-icon
+      cdPropertyListItemLeft
+      name="drag_indicator"
+      size="small"
+      width="12"
+      cdkDragHandle
+    ></cd-icon>
+    <div class="item">
+      <cd-checkbox
+        [rounded]="!config.multiSelect"
+        *ngIf="config?.supportsSelection"
+        [preventUncheck]="config?.mustHaveSelection"
+        [cdTooltip]="i | genericListItemCheckboxTooltipPipe: item:selectedIndex:config?.multiSelect"
+        [checked]="i | isGenericListItemSelectedPipe: item:selectedIndex:config?.multiSelect"
+        (change)="setSelected($event, i)"
+      ></cd-checkbox>
+      <div
+        class="container"
+        [class.disabled]="item?.disabled"
+        [class.has-icon]="item.icon"
+        (click)="onEdit($event, item, i)"
+      >
+        <cd-icon *ngIf="item?.icon" [name]="item?.icon" class="icon"></cd-icon>
+        <div class="text">
+          {{ item.name }}
+          <span *ngIf="item?.disabled">(disabled)</span>
+        </div>
+        <cd-icon name="edit" class="edit" [class.show]="activeIndex === i" size="small"></cd-icon>
+      </div>
+    </div>
+  </cd-property-list-item>
+</div>

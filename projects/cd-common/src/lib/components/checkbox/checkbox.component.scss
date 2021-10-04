@@ -1,0 +1,130 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$innerSize: 20px;
+$outterSize: 24px;
+$offset: -2px;
+
+.checkbox-and-label-wrapper {
+  display: grid;
+  gap: var(--cd-spacing-3);
+  justify-content: start;
+  align-items: center;
+  height: $innerSize;
+}
+
+:host {
+  display: grid;
+  position: relative;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-1);
+  justify-content: start;
+  align-items: center;
+
+  &.disabled {
+    opacity: 0.38;
+    pointer-events: none;
+  }
+
+  // TODO: Remove after getting OKAY on new gap
+  // &.has-label {
+  //   gap: var(--cd-spacing-3);
+  // }
+
+  &.has-label .checkbox-and-label-wrapper {
+    grid-template-columns: $innerSize auto;
+    width: unset;
+  }
+}
+
+.container {
+  position: relative;
+  user-select: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  margin-left: $offset;
+  width: $innerSize;
+  height: $innerSize;
+  color: var(--cd-font-color);
+  display: grid;
+
+  &::before {
+    position: absolute;
+    content: '';
+    width: $outterSize;
+    height: $outterSize;
+    left: $offset;
+    top: $offset;
+    transition: opacity 150ms, color 150ms, transform 150ms;
+    transition-timing-function: var(--cd-transition-timing);
+    background: var(--cd-active-fill);
+    transform: scale(0.2);
+    opacity: 0;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &:hover {
+    color: var(--cd-primary-color);
+  }
+
+  &.focused {
+    color: var(--cd-primary-color);
+
+    &::before {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+  }
+
+  &.rounded::before {
+    left: 0;
+    top: 0;
+    width: $innerSize;
+    height: $innerSize;
+  }
+
+  &:active::before {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}
+
+.container.hide-ripple::before {
+  content: none;
+}
+
+.checkbox-and-label-wrapper:hover .container {
+  color: var(--cd-primary-color);
+}
+
+:host.large {
+  height: $outterSize;
+  width: $outterSize;
+
+  --size: calc(var(--cd-size-3) + 2px);
+
+  .container.rounded::before {
+    width: var(--size);
+    height: var(--size);
+    top: $offset;
+    left: $offset;
+  }
+}

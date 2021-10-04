@@ -1,0 +1,14 @@
+
+<svg:g (mousedown)="onIncrement($event)">
+  <ng-container [ngTemplateOutlet]="arrowRef"></ng-container>
+</svg:g>
+
+<svg:g class="bottom" (mousedown)="onDecrement($event)" >
+  <ng-container [ngTemplateOutlet]="arrowRef"></ng-container>
+</svg:g>
+
+<ng-template #arrowRef>
+  <svg:rect width="12" height="12" class="hitbox"></svg:rect>
+  <svg:path d="M6 4l3 4H3z" class="arrow" />
+</ng-template>
+

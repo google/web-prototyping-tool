@@ -1,0 +1,102 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+@import '../shared.scss';
+
+$filterBarBackgroundTiming: 100ms;
+
+:host {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  justify-content: start;
+  align-items: center;
+  border-bottom: 1px solid var(--cd-border-color);
+  color: var(--cd-font-color);
+  overflow: hidden;
+  white-space: nowrap;
+  padding-right: var(--cd-spacing-1);
+  gap: var(--cd-spacing-0);
+}
+
+.section-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  position: sticky;
+  align-items: center;
+  top: 0;
+  z-index: 1;
+  padding: 0 var(--cd-spacing-3);
+  height: var(--cd-size-4);
+  background-color: var(--cd-modal-background-color);
+}
+
+.section-header-text {
+  @include cd-font(overline);
+  @include cd-font-overflow-ellipsis;
+}
+
+.section-count {
+  opacity: 0.5;
+  font-size: 12px;
+}
+
+.components-list {
+  padding-bottom: var(--cd-spacing-2);
+}
+
+.component-item-wrapper {
+  padding: 0 var(--cd-spacing-2);
+  outline: none;
+
+  &:hover {
+    background: var(--cd-menu-hover);
+  }
+
+  &:focus {
+    color: var(--cd-primary-color);
+    background-color: var(--cd-focus-fill);
+  }
+}
+
+.component-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--cd-spacing-2);
+  align-items: center;
+  border-radius: var(--cd-border-radius-1);
+  cursor: pointer;
+  overflow: hidden;
+  height: var(--cd-size-4);
+  padding-left: var(--cd-spacing-0);
+}
+
+.img {
+  width: var(--cd-size-0);
+  height: var(--cd-size-0);
+  object-fit: contain;
+}
+
+.component-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}

@@ -1,0 +1,86 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/scroll/scroll.scss';
+
+$shadowHeight: 6px;
+
+:host {
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+:host.shaded {
+  .header,
+  .footer {
+    position: relative;
+
+    &::after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: $shadowHeight;
+      transition: opacity 150ms;
+      transition-timing-function: var(--cd-transition-timing);
+      z-index: 2;
+    }
+  }
+
+  .header::after {
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    bottom: -$shadowHeight;
+  }
+
+  .footer::after {
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+    top: -$shadowHeight;
+  }
+
+  &.at-top .header::after {
+    opacity: 0;
+  }
+
+  &.at-bottom .footer::after {
+    opacity: 0;
+  }
+}
+
+:host:not(.native-scrollbars) {
+  @include themed-scrollbars();
+}
+
+.header,
+.footer {
+  display: grid;
+}
+
+.body {
+  overflow: hidden;
+  overflow-y: scroll;
+  overflow-y: overlay;
+  padding: 0;
+  display: block;
+  contain: layout;
+
+  :host.horizontal-scroll & {
+    overflow-x: overlay;
+  }
+}

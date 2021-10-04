@@ -1,0 +1,147 @@
+<svg preserveAspectRatio="none" [class.hide]="hideGlass" *ngIf="!breakGlass">
+  <defs app-glass-defs></defs>
+  <g [attr.transform]="canvasPos">
+    <!-- Action navigation lines -->
+    <g
+      *ngIf="!dragging"
+      app-action-layer
+      [zoom]="zoom"
+      [selection]="selectionState"
+      [renderRects]="renderRects"
+      [outletFrames]="outletFrames"
+    ></g>
+
+    <!-- outletFrames are grouped for sorting since z-index doesn't exist in SVG -->
+    <ng-container
+      *ngFor="let outletFrame of outletFrames; trackBy: trackFn"
+      [ngTemplateOutlet]="contentRef"
+      [ngTemplateOutletContext]="{
+        $implicit: outletFrame,
+        highlight: highlight.get(outletFrame.id),
+        selection: selectionState.get(outletFrame.id),
+        scrollRect: outletFrameScrollRect.get(outletFrame.id),
+        boardElements: elements.get(outletFrame.id),
+        peerSelectionRects: peerRectsPerOutlet[outletFrame.id]
+      }"
+    ></ng-container>
+    <!-- Overlays -->
+    <g app-line-layer></g>
+    <g app-drag-layer *ngIf="dragging" [renderRects]="renderRects"></g>
+    <g app-debug-canvas-layer *ngIf="debugCanvas"></g>
+
+    <!-- Multi-editor: Other users cursors -->
+    <g
+      app-cursor-layer
+      *ngIf="peerCursors.length"
+      [cursors]="peerCursors"
+      [zoom]="zoom"
+      [darkTheme]="darkTheme"
+    ></g>
+  </g>
+
+  <g
+    app-marquee-layer
+    *ngIf="showMarquee || peerCursorsWithMarquee.length"
+    [zoom]="zoom"
+    [canvas]="canvas"
+    [marqueeRect]="marqueeRect"
+    [createBoard]="createBoard"
+    [peerMarqueeCursors]="peerCursorsWithMarquee"
+  ></g>
+</svg>
+
+<ng-template
+  #contentRef
+  let-outletFrame
+  let-selection="selection"
+  let-highlight="highlight"
+  let-scrollRect="scrollRect"
+  let-boardElements="boardElements"
+  let-peerSelectionRects="peerSelectionRects"
+>
+  <svg:g [attr.transform]="outletFrame?.frame | TranslateSVGFrame" cd-e2e-label="outlet-frame">
+    <!-- Layer for capturing mouse events -->
+    <g
+      app-interaction-layer
+      [dragging]="dragging || showMarquee"
+      [outletFrame]="outletFrame"
+      [debug]="debugGlass"
+      [zoom]="zoom"
+      [selection]="selectionState"
+      [elements]="boardElements"
+      [renderRects]="renderRects"
+      [selectAnyElement]="canSelectAnyElement"
+    ></g>
+    <!-- Layer for rendering grid & padding -->
+    <g
+      app-stylevis-layer
+      *ngIf="canShowStyleVisLayer"
+      [rootId]="outletFrame.id"
+      [outletFrame]="outletFrame"
+      [debug]="debugGlass"
+      [zoom]="zoom"
+      [props]="selectedProperties"
+      [interacting]="interacting"
+      [renderRects]="renderRects"
+      [highlight]="highlight"
+      [selection]="selection"
+    ></g>
+
+    <ng-container *ngIf="!dragging">
+      <!-- Layer for showing Selection -->
+      <g
+        app-selection-layer
+        [rootId]="outletFrame.id"
+        [renderRects]="renderRects"
+        [outletFrame]="outletFrame"
+        [values]="selection"
+        [peerSelectionRects]="peerSelectionRects"
+      ></g>
+
+      <!-- Layer for showing Highlight -->
+      <g
+        app-highlight-layer
+        [renderRects]="renderRects"
+        [outletFrame]="outletFrame"
+        [rootId]="outletFrame.id"
+        [showLabel]="showLabel"
+        [scrollRect]="scrollRect"
+        [selection]="selection"
+        [values]="highlight"
+        [zoom]="zoom"
+      ></g>
+    </ng-container>
+
+    <!-- Layers for showing resize handles -->
+    <ng-container *ngIf="canShowResizeHandles">
+      <g
+        app-resize-board-layer
+        [outletFrame]="outletFrame"
+        [debug]="debugGlass"
+        [rootId]="outletFrame.id"
+        [selection]="selection"
+        [zoom]="zoom"
+      ></g>
+      <g
+        app-resize-layer
+        [rootId]="outletFrame.id"
+        [debug]="debugGlass"
+        [renderRects]="renderRects"
+        [values]="selection"
+        [zoom]="zoom"
+      ></g>
+    </ng-container>
+  </svg:g>
+</ng-template>
+
+<app-context-menu-bar
+  *ngIf="showContextOverlay"
+  [class.hide]="hideGlass"
+  [outletFrames]="outletFrames"
+  [moving]="moving"
+  [canvas]="canvas"
+  [canvasPos]="canvasPos"
+  [renderRects]="renderRects"
+  [selectionMap]="selectionState"
+  [selectedProperties]="selectedProperties"
+></app-context-menu-bar>

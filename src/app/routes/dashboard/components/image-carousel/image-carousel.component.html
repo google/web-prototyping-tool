@@ -1,0 +1,22 @@
+<div class="images-list" #imageList>
+  <div
+    #imageEl
+    class="image-container"
+    *ngFor="let img of images; let i = index"
+    [attr.data-index]="i"
+  >
+    <img [src]="img" />
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="dots-list" *ngIf="hasImages">
+    <div
+      class="dot"
+      *ngFor="let image of images; let i = index"
+      [class.active]="selectedIndex === i"
+      (click)="onDotClicked(i)"
+    ></div>
+  </div>
+  <ng-content></ng-content>
+</div>

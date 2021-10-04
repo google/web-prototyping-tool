@@ -1,0 +1,53 @@
+<div class="wrapper">
+  <div class="source-list" *ngIf="!expanded; else viewData">
+    <cd-data-header label="Data Source" [rightTemplate]="rightHeaderRef"></cd-data-header>
+    <!-- <div class="scroll-view"> -->
+    <cd-scroll-view>
+      <ul class="sources">
+        <li
+          *ngFor="let source of sourceList; trackBy: trackByFn"
+          class="item"
+          [class.active]="source.id | activeDataSourcePipe: selectedValue"
+          (click)="onSourceSelect(source.id)"
+        >
+          <div class="label">
+            <span>{{ source.name }}</span>
+            <div class="alert"></div>
+          </div>
+          <cd-icon class="ico" name="keyboard_arrow_right" size="small"></cd-icon>
+        </li>
+      </ul>
+    </cd-scroll-view>
+    <!-- </div> -->
+  </div>
+</div>
+
+<ng-template #viewData>
+  <cd-data-viewer
+    #dataViewer
+    class="data-viewer"
+    [(fullscreen)]="fullscreen"
+    (fullscreenChange)="onFullscreenChange($event)"
+    [filterElementIds]="filterElementIds"
+    [data]="currentDataSource"
+    [selection]="selectedValue"
+    [showBackButton]="!singleDataSource"
+    [editing]="editing"
+    (back)="onBack()"
+    (hoveredIdChange)="onHoverId($event)"
+    (selectedLookupPathChange)="onSelectedLookupPathChange($event)"
+    (dataChange)="onDataSourceUpdate($event)"
+  ></cd-data-viewer>
+</ng-template>
+
+<ng-template #rightHeaderRef>
+  <button
+    cd-button
+    cdToggleButton
+    iconName="add"
+    iconSize="small"
+    size="small"
+    cdTooltip="Add or upload data source"
+    (click)="onAddDataset()"
+  ></button>
+</ng-template>

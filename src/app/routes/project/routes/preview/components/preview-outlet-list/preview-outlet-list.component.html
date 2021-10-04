@@ -1,0 +1,44 @@
+<ul class="outlets">
+  <li
+    *ngFor="let outlet of outlets"
+    [cdTooltip]="outlet.name || 'undefined'"
+    [class.active]="outlet.id === activeOutletId"
+    (click)="onOutletClick(outlet)"
+  >
+    <div class="title">
+      <cd-icon
+        [name]="outlet.id | outletIconPipe: outlet.elementType:homeBoardId:outlet.type"
+        size="small"
+      ></cd-icon>
+      <span>{{ outlet.name || 'undefined' }}</span>
+    </div>
+
+    <div class="right">
+      <ng-container *ngIf="outlet.commentCount > 0">
+        <div class="comments">
+          <span>
+            {{ outlet.commentCount }}
+          </span>
+          <button
+            cd-button
+            iconSize="small"
+            size="medium"
+            cdTooltip="Comments"
+            iconName="chat_bubble_outline"
+            (click)="onCommentClick($event, outlet)"
+          ></button>
+        </div>
+      </ng-container>
+      <button
+        *ngIf="navigateToBoard"
+        cd-button
+        class="shortcut"
+        iconSize="small"
+        size="medium"
+        cdTooltip="Go to board"
+        iconName="shortcut"
+        (click)="onShortcutClick($event, outlet)"
+      ></button>
+    </div>
+  </li>
+</ul>

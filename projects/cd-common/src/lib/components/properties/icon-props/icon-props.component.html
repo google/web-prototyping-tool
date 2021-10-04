@@ -1,0 +1,30 @@
+<cd-input-group label="Icon">
+  <cd-icon-input
+    [value]="iconName"
+    [iconClass]="iconClass"
+    (valueChange)="onIconNameChange($event)"
+  ></cd-icon-input>
+</cd-input-group>
+
+<cd-input-group label="Color">
+  <cd-color-input
+    [colorData]="colorMenuData"
+    [value]="color | IValueValue"
+    [binding]="color | IValueLookup: designSystem.colors"
+    [disableGradient]="true"
+    (colorSelect)="onColorSelect($event)"
+    (valueChange)="onColorChange($event)"
+  ></cd-color-input>
+</cd-input-group>
+
+<cd-input-group label="Size" *ngIf="size">
+  <cd-range-input
+    [value]="size | IValueValue | number"
+    (valueChange)="onSizeChange($event)"
+    [autocompleteMenu]="iconSizeMenu"
+    min="0"
+    [max]="300"
+    innerLabel="PX"
+    type="number"
+  ></cd-range-input>
+</cd-input-group>

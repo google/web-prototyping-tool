@@ -1,0 +1,9 @@
+<ng-container *ngIf="user$ | async as user">
+  <ng-container *ngIf="showBanner">
+    <div class="left">
+      <cd-icon name="visibility"></cd-icon>
+      <span>View only</span>
+    </div>
+    <button cd-unelevated-button size="small" (click)="onFork(user)">Clone</button>
+  </ng-container>
+</ng-container>

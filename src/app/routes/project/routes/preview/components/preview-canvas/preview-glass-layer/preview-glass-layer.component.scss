@@ -1,0 +1,191 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/states/states.scss';
+
+$transitionSpeed: 250ms;
+$fillTransitionSpeed: 200ms;
+
+$highlight-stroke-width: 2px;
+$selected-stroke-width: 1px;
+$comments-stroke-width: 4px;
+$greenline-stroke-width: 3px;
+$bubble-size: 20px;
+$bubble-center-offset: $bubble-size * 0.5 * -1;
+$label-text-vert-offset: 4px;
+$label-char-offset: -3px;
+
+:host,
+.rect-layer {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+:host {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 1;
+  grid-row-end: 1;
+}
+
+.greenline,
+.selecting {
+  pointer-events: fill;
+  overflow: visible;
+}
+
+.greenline[mask],
+.element[mask] {
+  pointer-events: none;
+}
+
+.outline {
+  buffered-rendering: dynamic;
+  text-rendering: optimizeSpeed;
+  fill: transparent;
+  stroke: transparent;
+  stroke: var(--cd-glass-color);
+  stroke-width: $highlight-stroke-width;
+  vector-effect: non-scaling-stroke;
+  visibility: hidden;
+  transition: fill $fillTransitionSpeed;
+  transition-timing-function: var(--cd-transition-timing);
+
+  @include for-desktop-hidpi {
+    shape-rendering: optimizeSpeed;
+  }
+
+  .selected &,
+  .hovered &,
+  .highlighted &,
+  .greenline & {
+    visibility: visible;
+  }
+
+  .greenline &,
+  .selecting & {
+    cursor: pointer;
+  }
+
+  .comments-mode & {
+    stroke-width: $comments-stroke-width;
+  }
+
+  .greenline & {
+    stroke-width: $greenline-stroke-width;
+  }
+
+  .greenline:hover &,
+  .greenline.selected &,
+  .greenline.highlighted & {
+    fill: var(--cd-greenline-hover-fill, transparent);
+  }
+
+  .greenline.muted & {
+    fill: rgba(255, 255, 255, 0.75);
+  }
+
+  .tabgroup.greenline & {
+    stroke-width: $highlight-stroke-width;
+    stroke-dasharray: 2;
+  }
+
+  .element.greenline &,
+  .group-child.greenline & {
+    stroke-width: $highlight-stroke-width;
+  }
+
+  .focus.greenline & {
+    stroke-width: 0;
+    outline: 4px double var(--cd-glass-color);
+  }
+
+  .comments-mode.hovered & {
+    stroke-dasharray: 4 4;
+    opacity: 0.8;
+  }
+
+  .a11y-mode.selected & {
+    stroke-width: $selected-stroke-width;
+  }
+}
+
+.thread-hovered {
+  fill: var(--cd-active-fill);
+}
+
+.id-bubble {
+  fill: var(--cd-glass-color);
+  transform: translate($bubble-center-offset, $bubble-center-offset);
+  transition: fill $fillTransitionSpeed;
+  transition-timing-function: var(--cd-transition-timing);
+}
+
+.label-bubble {
+  fill: var(--cd-glass-color);
+  transform: translate($bubble-center-offset, $bubble-center-offset);
+}
+
+.id-text {
+  fill: white;
+  line-height: 20px;
+  font-size: 10px;
+  font-family: var(--cd-mono-font);
+  transition: fill $fillTransitionSpeed;
+  transition-timing-function: var(--cd-transition-timing);
+  transform: translate($label-char-offset, $label-text-vert-offset);
+}
+
+.double-digit {
+  transform: translate($label-char-offset * 2, $label-text-vert-offset);
+}
+
+.triple-digit {
+  transform: translate($label-char-offset * 3, $label-text-vert-offset);
+}
+
+.a11y-mode.has-a11y {
+  --cd-glass-color: var(--cd-a11y-color);
+}
+
+.landmark {
+  --cd-glass-color: var(--cd-a11y-landmark-color);
+  --cd-inverted-font-color: var(--cd-header-font-color);
+  --cd-greenline-hover-fill: rgba(251, 188, 4, 0.2);
+}
+
+.heading {
+  --cd-glass-color: var(--cd-a11y-heading-color);
+  --cd-greenline-hover-fill: rgba(74, 144, 226, 0.2);
+}
+
+.flow {
+  --cd-glass-color: var(--cd-a11y-flow-color);
+  --cd-greenline-hover-fill: rgba(24, 128, 56, 0.2);
+}
+
+.group-child {
+  --cd-greenline-hover-fill: rgba(124, 77, 255, 0.2);
+}
+
+.greenline-label {
+  fill: var(--cd-glass-color);
+}

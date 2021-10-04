@@ -1,0 +1,68 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 192px;
+  background: var(--cd-modal-background-color);
+  border-radius: var(--cd-border-radius-3);
+  box-shadow: var(--cd-depth-6);
+}
+
+.header {
+  padding: var(--cd-spacing-3);
+  gap: var(--cd-spacing-0);
+  display: grid;
+}
+
+.title {
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--cd-font-size-h3);
+
+  @include cd-font-overflow-ellipsis;
+}
+
+.desc {
+  font-size: 11px;
+  font-family: var(--cd-body-font);
+  font-weight: 400;
+  opacity: 0.8;
+  display: block;
+
+  .value {
+    opacity: 0.8;
+
+    &::before {
+      content: '→';
+      padding: 0 2px;
+    }
+  }
+}
+
+.content {
+  display: grid;
+  gap: var(--cd-spacing-2);
+  padding-bottom: var(--cd-spacing-3);
+
+  // Overrides cd-input-group label color
+  --cd-input-group-left: 50px;
+  // Overrides cd-input-group left grid column
+  --cd-sidebar-color: transparent;
+}

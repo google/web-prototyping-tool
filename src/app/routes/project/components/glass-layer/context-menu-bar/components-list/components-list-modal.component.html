@@ -1,0 +1,74 @@
+<div class="header">
+  <button
+    cd-button
+    class="close-icon"
+    iconName="arrow_back"
+    iconSize="medium"
+    size="medium"
+    (click)="closeModal()"
+  ></button>
+  <cd-search-input #searchRef (valueChange)="onFilterChange($event)"></cd-search-input>
+</div>
+<cd-scroll-view>
+  <div class="components-list">
+    <ng-container
+      [ngTemplateOutlet]="componentSection"
+      [ngTemplateOutletContext]="{
+        $implicit: primitiveComponents,
+        header: 'Default'
+      }"
+    ></ng-container>
+    <ng-container
+      [ngTemplateOutlet]="componentSection"
+      [ngTemplateOutletContext]="{
+        $implicit: materialComponents,
+        header: 'Material'
+      }"
+    ></ng-container>
+    <ng-container
+      [ngTemplateOutlet]="componentSection"
+      [ngTemplateOutletContext]="{
+        $implicit: customComponents,
+        header: 'Custom'
+      }"
+    ></ng-container>
+  </div>
+</cd-scroll-view>
+
+<ng-template #componentSection let-items let-header="header">
+  <ng-container *ngIf="items | filterBy: ['title']:filterValue as filteredItems">
+    <div *ngIf="filteredItems.length > 0" class="section-header">
+      <h2 class="section-header-text">{{ header }}</h2>
+      <span class="section-count">{{ filteredItems.length }}</span>
+    </div>
+    <div
+      *ngFor="let item of filteredItems; trackBy: trackByFn"
+      class="component-item-wrapper"
+      tabindex="0"
+      (click)="addComponent(item)"
+      (keydown.enter)="addComponent(item)"
+    >
+      <div class="component-item">
+        <ng-container
+          [ngTemplateOutlet]="
+            item?.componentProps?.id && componentScreenshots.get(item?.componentProps?.id)
+              ? componentImage
+              : componentIcon
+          "
+          [ngTemplateOutletContext]="{ $implicit: item }"
+        ></ng-container>
+        <span class="component-title">{{ item.title }}</span>
+      </div>
+    </div>
+  </ng-container>
+</ng-template>
+
+<ng-template #componentIcon let-item>
+  <cd-icon [name]="item.icon" size="small"></cd-icon>
+</ng-template>
+
+<ng-template #componentImage let-item>
+  <ng-container *ngIf="componentScreenshots.get(item?.componentProps?.id) as screenshot">
+    <img [src]="screenshot | safeURL" class="img" loading="lazy" />
+  </ng-container>
+</ng-template>

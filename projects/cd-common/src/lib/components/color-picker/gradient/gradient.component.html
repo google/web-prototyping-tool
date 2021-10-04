@@ -1,0 +1,34 @@
+<header class="grad-header">
+  <cd-gradient-select
+    [mode]="mode"
+    [angle]="angle"
+    (angleChange)="onAngleChange($event)"
+    (selectGradient)="onGradientMenuChange($event)"
+  ></cd-gradient-select>
+
+  <div class="track">
+    <div class="button-track" #btnTrackRef>
+      <button
+        class="color-stop"
+        *ngFor="let color of stops; let i = index"
+        [style.left.%]="color.stop"
+        [class.active]="i === selectedStop"
+        [class.delete]="i === selectedStop && passedDeleteThreshold"
+        [style.transform]="activeScale(i)"
+        (click)="onSelectStop(i)"
+        (pointerdown)="onStopDown($event, i)"
+        (keydown)="onKeydown($event, i)"
+      >
+        <ng-container *ngIf="i === selectedStop && passedDeleteThreshold">
+          <div class="ico"></div>
+        </ng-container>
+        <div class="inner" [style.background]="color.color"></div>
+      </button>
+    </div>
+    <div class="track-bkd" (click)="onTrackClick($event)">
+      <div #trackRef class="gradient"></div>
+    </div>
+  </div>
+</header>
+
+<cd-color [color]="activeColor" (colorChange)="onColorChange($event)"></cd-color>

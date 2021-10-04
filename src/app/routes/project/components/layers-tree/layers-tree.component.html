@@ -1,0 +1,95 @@
+<cdk-virtual-scroll-viewport
+  class="scrollview"
+  [itemSize]="CELL_SIZE"
+  [minBufferPx]="minScrollBuffer"
+  [maxBufferPx]="maxScrollBuffer"
+>
+  <div
+    class="wrapper"
+    #wrapperRef
+    (click)="onClick($event)"
+    (contextmenu)="onContextMenu($event)"
+    [class.dragging]="isDragging"
+    [style.--indent-per-level.px]="INDENT_PER_LEVEL"
+    [style.--indentation]="indentValue"
+  >
+    <ng-container
+      *cdkVirtualFor="
+        let node of controller.visibleData;
+        template: treeCell;
+        trackBy: trackByFn;
+        templateCacheSize: 0
+      "
+    ></ng-container>
+  </div>
+</cdk-virtual-scroll-viewport>
+
+<ng-template #treeCell let-node>
+  <ng-container
+    [ngTemplateOutlet]="treeNode"
+    [ngTemplateOutletContext]="{
+      $implicit: node,
+      expanded: controller.isExpanded(node),
+      isBoard: node | nodeIsBoard,
+      selected: node | nodeInMapOrSet: controller.selectionIds
+    }"
+  ></ng-container>
+</ng-template>
+
+<ng-template
+  #treeNode
+  let-node
+  let-expanded="expanded"
+  let-selected="selected"
+  let-isBoard="isBoard"
+>
+  <div
+    class="tree-node"
+    [appTreeDragItem]="node"
+    [appTreeDropZone]="node"
+    [expanded]="expanded"
+    [style.--level]="node.level"
+    [class.selected]="selected"
+    [class.previous-selected]="node | nodeInMapOrSet: controller.previousSelectedIds"
+    [class.next-selected]="node | nodeInMapOrSet: controller.nextSelectedIds"
+    [class.board]="isBoard"
+    [class.drop-above]="node.dropAbove"
+    [class.drop-below]="node.dropBelow"
+    [class.drop-parent]="node.dropParent"
+    [class.editing-label]="node.editingLabel"
+    [class.highlight]="!isDragging && node | nodeInArray: controller.highlighted"
+    [attr.data-id]="node.id"
+    [attr.data-rootid]="node.rootId"
+  >
+    <hr class="board-line" *ngIf="isBoard" />
+
+    <ng-container *ngIf="showIndentLines && node.ancestors?.length">
+      <div
+        *ngFor="let item of node.ancestors; let i = index"
+        class="indent-line"
+        [style.--level]="i + 1"
+      ></div>
+    </ng-container>
+
+    <cd-tree-cell
+      #cell
+      class="tree-cell"
+      [id]="node.id"
+      [debug]="debugIds"
+      [icon]="node?.icon"
+      [label]="node?.label"
+      [hasActionBehaviors]="node?.actions"
+      [isSymbol]="node | nodeIsSymbol"
+      [isBoard]="isBoard"
+      [hoverBoard]="isBoard && (hoverBoardId === node.id || selected)"
+      [markHidden]="node?.hidden"
+      [showHighlight]="node.dropParent || selected"
+      [showExpander]="node.expandable"
+      [showHideButton]="!isBoard"
+      [showActionsOnHover]="!node.dropAbove && !node.dropBelow"
+      [expanded]="isSearching || expanded"
+      (editingLabel)="onEditingLabel($event, node)"
+      (labelChange)="onLabelChange($event, node)"
+    ></cd-tree-cell>
+  </div>
+</ng-template>

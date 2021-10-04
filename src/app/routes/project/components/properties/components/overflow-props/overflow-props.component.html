@@ -1,0 +1,71 @@
+<cd-input-group label="Overflow">
+  <ng-container *ngIf="isBoard; else compRef">
+    <cd-toggle-button-group
+      showBackground
+      [value]="state"
+      (valueChange)="onOverflowStateChange($event)"
+    >
+      <button
+        cd-button
+        cdToggleButton
+        expand="true"
+        [value]="OverflowState.Hidden"
+        cdTooltip="Hide outside the bounds of this container"
+      >
+        Clip
+      </button>
+      <button
+        cd-button
+        cdToggleButton
+        expand="true"
+        [value]="OverflowState.Scroll"
+        cdTooltip="Hide and make the contents scrollable"
+      >
+        Scroll
+      </button>
+    </cd-toggle-button-group>
+  </ng-container>
+</cd-input-group>
+
+<cd-input-group label="Direction" *ngIf="isScrollState">
+  <cd-select-input
+    [data]="scrollDirectionMenu | MarkSelection: scrollDirection"
+    (change)="onScrollDirectionChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<ng-template #compRef>
+  <cd-toggle-button-group
+    showBackground
+    [value]="state"
+    (valueChange)="onOverflowStateChange($event)"
+  >
+    <button
+      cd-button
+      cdToggleButton
+      expand="true"
+      [value]="OverflowState.Visible"
+      cdTooltip="Show outside the bounds of this container"
+    >
+      Show
+    </button>
+    <button
+      cd-button
+      cdToggleButton
+      expand="true"
+      [value]="OverflowState.Hidden"
+      cdTooltip="Hide outside the bounds of this container"
+    >
+      Hide
+    </button>
+    <button
+      cd-button
+      cdToggleButton
+      expand="true"
+      [value]="OverflowState.Scroll"
+      cdTooltip="Hide and make the contents scrollable"
+    >
+      Scroll
+    </button>
+  </cd-toggle-button-group>
+</ng-template>

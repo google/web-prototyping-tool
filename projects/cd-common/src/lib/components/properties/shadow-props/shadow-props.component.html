@@ -1,0 +1,28 @@
+<div class="wrapper" cdkDropList (cdkDropListDropped)="onDrop($event)">
+  <cd-property-list-item
+    cdkDrag
+    *ngFor="let shadow of data; let i = index; trackBy: trackFn"
+    (delete)="onDelete(i)"
+  >
+    <cd-icon
+      cdPropertyListItemLeft
+      name="drag_indicator"
+      size="small"
+      width="12"
+      cdkDragHandle
+    ></cd-icon>
+    <cd-shadow-input
+      [value]="shadow"
+      [textShadow]="isTextShadow"
+      (valueChange)="onChange($event, i)"
+      (action)="onAction($event)"
+      [colorData]="colorMenuData"
+    ></cd-shadow-input>
+  </cd-property-list-item>
+  <ul class="footer" *ngIf="data.length" [class.text-shadow]="isTextShadow">
+    <li>X</li>
+    <li>Y</li>
+    <li>{{ isTextShadow ? 'Blur' : 'B' }}</li>
+    <li *ngIf="!isTextShadow">S</li>
+  </ul>
+</div>

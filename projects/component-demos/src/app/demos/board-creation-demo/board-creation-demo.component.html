@@ -1,0 +1,60 @@
+<div class="board-canvas" #canvasRef (contextmenu)="onRightClick($event)">
+  <ng-container *ngIf="boards$ | async as boards">
+    <ng-container *ngFor="let board of boards; let i = index">
+      <div
+        class="board"
+        cdkDrag
+        cdkDragBoundary=".board-canvas"
+        [class.selected]="lastSelectedBoardId === i"
+        [style.width.px]="board.width"
+        [style.height.px]="board.height"
+        [cdkDragFreeDragPosition]="boards[i]"
+        (cdkDragEnded)="onDragEnded($event, i)"
+        (click)="onBoardClick($event, i)"
+        (contextmenu)="onBoardRightClick($event, i)"
+      >
+        <h2>Board {{ i + 1 }}</h2>
+        <h4>{{ board.x }}, {{ board.y }}</h4>
+      </div>
+    </ng-container>
+  </ng-container>
+  <div
+    *ngIf="newBoardPlaceholderFrame as newBoard"
+    class="board-placeholder"
+    [style.width.px]="newBoard?.width"
+    [style.height.px]="newBoard?.height"
+    [style.top.px]="newBoard?.y"
+    [style.left.px]="newBoard?.x"
+  ></div>
+  <div
+    *ngIf="showCanvasBounds"
+    class="canvas-bounds"
+    [style.width.px]="canvas?.width"
+    [style.height.px]="canvas?.height"
+    [style.top.px]="canvas?.y"
+    [style.left.px]="canvas?.x"
+  ></div>
+  <div class="canvas-actions">
+    <h4>(Right click canvas to create a new board)</h4>
+    <button cd-unelevated-button (click)="clearSelected()">Clear selected</button>
+    <button cd-unelevated-button (click)="clearNextBoard()">Clear next board</button>
+    <button cd-unelevated-button (click)="onFindNextBoard()">Find next</button>
+  </div>
+</div>
+<div class="action-bar">
+  <div class="actions">
+    <h1>Options</h1>
+    <cd-input-group label="Method">
+      <cd-select-input
+        class="method-select"
+        [showLeft]="false"
+        [value]="selectedMethod"
+        [data]="methodOptions"
+        (change)="onMethodChange($event)"
+      ></cd-select-input>
+    </cd-input-group>
+    <cd-input-group label="Canvas">
+      <cd-checkbox [checked]="showCanvasBounds" (change)="onShowBoundsChange($event)"></cd-checkbox>
+    </cd-input-group>
+  </div>
+</div>

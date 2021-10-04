@@ -1,0 +1,127 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$transitionSpeed: 185ms;
+
+:host {
+  border-radius: var(--cd-border-radius-3);
+  box-shadow: var(--cd-outline);
+  user-select: none;
+  display: grid;
+  contain: layout;
+  background-color: var(--cd-sidebar-color);
+  overflow: hidden;
+}
+
+.icon {
+  transform: rotate(180deg);
+  color: var(--cd-font-color);
+
+  &.collapsed {
+    transform: rotate(0deg);
+  }
+}
+
+.ico-btn {
+  outline: none;
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: var(--cd-size-3);
+  height: var(--cd-size-3);
+
+  &::before {
+    content: '';
+    background: var(--cd-primary-color);
+    opacity: 0;
+    width: var(--cd-size-2);
+    height: var(--cd-size-2);
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  &:focus {
+    &::before {
+      opacity: 0.1;
+    }
+
+    --cd-font-color: var(--cd-primary-color);
+
+    .icon {
+      transition: transform $transitionSpeed;
+      transition-timing-function: var(--cd-transition-timing);
+    }
+  }
+}
+
+:host.cdk-drag-preview {
+  width: 238px;
+  color: var(--cd-font-color);
+  transform-origin: left center;
+}
+
+.header-line {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: var(--cd-spacing-0);
+  align-items: center;
+  padding: var(--cd-spacing-1) var(--cd-spacing-2);
+}
+
+.header-text {
+  font-family: var(--cd-header-font);
+  font-weight: 500;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+
+  @include cd-font-overflow-ellipsis;
+}
+
+.unlabeled {
+  opacity: 0.5;
+  font-style: italic;
+}
+
+.cdk-drop-list-dragging :host {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+:host.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+:host.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.cdk-drop-list-dragging :host:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.dynamic-fields {
+  display: grid;
+  gap: var(--cd-spacing-1);
+  padding-bottom: var(--cd-spacing-3);
+}

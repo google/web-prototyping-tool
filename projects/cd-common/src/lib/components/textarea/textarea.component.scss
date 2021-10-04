@@ -1,0 +1,72 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/scroll/scroll.scss';
+
+:host {
+  display: grid;
+  grid-auto-flow: row;
+  gap: var(--cd-spacing-0);
+
+  @include themed-scrollbars();
+}
+
+.label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+textarea {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--cd-input-background-color);
+  border-radius: var(--cd-border-radius-1);
+  color: var(--cd-font-color);
+  padding: var(--cd-spacing-2);
+  contain: strict;
+  resize: none;
+  outline: none;
+  border: none;
+  margin: 0;
+}
+
+textarea::placeholder {
+  opacity: 0.76;
+}
+
+textarea:focus {
+  box-shadow: var(--cd-outline-focus);
+}
+
+textarea::selection {
+  background-color: var(--cd-primary-color);
+  color: var(--cd-inverted-font-color);
+}
+
+textarea:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+:host.code textarea {
+  font-family: var(--cd-mono-font);
+  font-size: 11px;
+  line-height: 16.5px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}

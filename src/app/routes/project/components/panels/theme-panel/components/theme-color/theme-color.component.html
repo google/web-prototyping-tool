@@ -1,0 +1,28 @@
+<ul class="color-list">
+  <li
+    *ngFor="let themeColor of themeColors; trackBy: trackByFn"
+    class="color-item"
+    [attr.cd-e2e-label]="themeColor.name"
+  >
+    <app-theme-color-swatch
+      class="color-swatch"
+      [editing]="currentlyEditingId === themeColor.id"
+      [class.dim]="currentlyEditingId && currentlyEditingId !== themeColor.id"
+      [themeColor]="themeColor"
+      (nameChanged)="onSwatchNameChange($event)"
+      (editSwatchIdChanged)="onEditSwatchIdChanged($event, themeColor)"
+      (removeSwatch)="removeColor($event)"
+    ></app-theme-color-swatch>
+  </li>
+</ul>
+<button
+  cd-dashed-button
+  cd-shaped-button
+  class="add-button"
+  size="small"
+  iconSize="small"
+  iconName="add"
+  (click)="onAddSwatch($event)"
+>
+  Add
+</button>

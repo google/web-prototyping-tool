@@ -1,0 +1,23 @@
+<cd-property-group groupTitle="CSS Output" type="collapse">
+  <ng-container *ngFor="let item of computed">
+    <div class="container" *ngIf="item.props.length">
+      <header>
+        <h5 class="prop-title">{{ item.name }}</h5>
+        <button
+          cd-button
+          iconName="file_copy"
+          iconSize="small"
+          (click)="onCopy(item)"
+          cdTooltip="Copy to clipboard"
+          cdTooltipDirection="left"
+        ></button>
+      </header>
+      <ul class="props">
+        <li *ngFor="let prop of item.props">
+          <span class="prop">{{ prop[0] }}:</span>
+          <span class="value">{{ prop[1] }};</span>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+</cd-property-group>

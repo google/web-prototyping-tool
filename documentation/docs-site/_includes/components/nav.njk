@@ -1,0 +1,36 @@
+{% set navPages = collections.all | eleventyNavigation %}
+{% macro renderNavListItem(entry) -%}
+
+  {% set isActive = " active" if entry.url == page.url else 
+    "" %}
+  {% set isHidden = " nav-btn" if entry.hidden else ""%}
+
+  <li class="{{'item ' + isActive }}">
+    {% set cls = "item " + isActive +  isHidden%}
+    <a href="{{ entry.url | url }}" class="{{cls}}">{{ entry.title }}</a>
+    {%- if entry.children.length -%}
+      <button class="nested-arrow nav-btn"></button>
+      <ul style="--count:{{entry.children.length}}">
+        {%- for child in entry.children %}{{ renderNavListItem(child) }}
+        {% endfor -%}
+    </ul>
+  {%- endif -%}
+</li>
+{%- endmacro %}
+
+<nav id="main-navigation" class="fixed inset-y-0 overflow-x-hidden overflow-y-auto  hidden w:64 lg:w-72 mt-20 md:block  dark:bg-gray-900  flex-none top-0  p-4 pl-0 w-64 ">
+<button name="Close navigation" onclick="closeNavigation()" class="float-right justify-end block md:hidden -mr-4 p-6">
+  <i class="ico">close</i>
+</button>
+<div class=" clear-right">
+  <a href="/">
+    <div class="block md:hidden pt-4 font-semibold text-gray-500">{{ site.name }}</div>
+    <div class="block md:hidden text-sm text-gray-500 mb-4">{{ site.subtitle }}</div>
+  </a>
+  {# This is where nested ul / li navigation is generated #}
+  <ul class="nav">
+    {%- for entry in navPages %}{{ renderNavListItem(entry) }}
+    {%- endfor -%}
+  </ul>
+</div>
+</nav>

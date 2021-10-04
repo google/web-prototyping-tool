@@ -1,0 +1,115 @@
+<!-- PROJECT PROPERTIES -->
+<ng-template #project>
+  <app-project-properties [projectData]="projectData"></app-project-properties>
+</ng-template>
+
+<ng-container [ngSwitch]="selectedEntityType">
+  <ng-container *ngSwitchCase="EntityType.Project">
+    <!-- SYMBOL ISOLATION MODE -->
+    <app-symbol-isolation-properties
+      *ngIf="isolatedSymbolId; else project"
+      [projectData]="projectData"
+      [symbolId]="isolatedSymbolId"
+    ></app-symbol-isolation-properties>
+  </ng-container>
+  <!-- ELEMENT PROPERTIES -->
+  <ng-container *ngSwitchCase="EntityType.Element">
+    <cd-properties
+      *ngIf="!isMixedMultiSelect; else mixedMultiSelectRef"
+      [id]="mergedProps?.id"
+      [hasActions]="hasActions"
+      [hasA11y]="hasA11y"
+      [hideAdvancedAttrs]="isBoard"
+      [attr]="mergedProps?.attrs"
+      [designSystem]="designSystem"
+      [projectAssets]="projectAssets"
+      [styles]="mergedProps?.styles"
+      [readonlyTitle]="multiSelect"
+      [panelTitle]="panelTitle"
+      [state]="projPanelState"
+      [isRecording]="isRecording"
+      (attrChange)="onAttributesUpdate($event)"
+      (stylesChange)="onStyleOverride($event)"
+      (titleChange)="onTitleChange($event)"
+      (stateChange)="onPropertyStateChange($event)"
+      (analyticsEvent)="onAnalyticsEvent($event)"
+    >
+      <!-- BOARD HOME TOGGLE BUTTON -->
+      <button
+        *ngIf="showHomeBoardButton"
+        cdPropertiesHeaderLeft
+        cd-button
+        cdToggleButton
+        size="medium"
+        iconSize="medium"
+        unselectedIconName="home"
+        selectedIconName="home_filled"
+        cdTooltip="Assign start board"
+        cdTooltipDirection="right"
+        canDeselect="false"
+        [selected]="isStartBoard"
+        (click)="onStartBoardToggle()"
+        class="home-icon"
+      ></button>
+      <!-- ACTIONS PANEL -->
+      <app-actions-panel
+        cdPropertiesActionsSlot
+        *ngIf="isShowingActions"
+        [actions]="mergedProps?.actions"
+        [boards]="boards"
+        [outputsConfig]="outputsConfig"
+        [colorMenuData]="colorMenuData"
+        [currentRootId]="mergedProps?.rootId"
+        [designSystem]="designSystem"
+        [disabled]="shouldDisableActionsTab"
+        [elementId]="mergedProps.id"
+        [inputs]="mergedProps.inputs"
+        [isRecording]="isRecording"
+        [portals]="portalsInRoot"
+        [selectedElements]="elementProps"
+        [symbolChildren]="symbolChildren"
+        (actionsChange)="onActionsChange($event)"
+        (storeAction)="onAction($event)"
+      ></app-actions-panel>
+
+      <app-accessibility-props
+        cdPropertiesA11ySlot
+        *ngIf="isShowingA11y"
+        [a11yInputs]="mergedProps?.a11yInputs"
+        (a11yInputsChange)="onA11yInputsUpdate($event)"
+        (analyticsEvent)="onAnalyticsEvent($event)"
+      ></app-accessibility-props>
+
+      <cd-property-group cdPropertiesCodeSlot *ngIf="showDebugIds$ | async">
+        <cd-input-group label="ID">
+          <cd-input [value]="mergedProps?.id"></cd-input>
+        </cd-input-group>
+      </cd-property-group>
+      <!-- DYNAMIC PROPS -->
+      <app-dynamic-properties
+        *ngIf="component && designSystem"
+        [isolatedSymbol]="activeSymbol"
+        [boards]="boards"
+        [portals]="portalsInRoot"
+        [designSystem]="designSystem"
+        [props]="elementProps"
+        [parentProps]="parentProps"
+        [datasetsMenuData]="datasetsMenuData"
+        [assetsMenuData]="assetsMenuData"
+        [colorMenuData]="colorMenuData"
+        [symbolInputs]="symbolInputs"
+        [properties]="component?.properties"
+        (action)="onAction($event)"
+        (propsChange)="onPropsChange($event)"
+        (siblingUpdate)="onSiblingsUpdate($event)"
+      ></app-dynamic-properties>
+    </cd-properties>
+  </ng-container>
+</ng-container>
+
+<ng-template #mixedMultiSelectRef>
+  <header class="mixed">
+    <h2>Mixed selection</h2>
+  </header>
+  <span class="mixed-msg">Properties can only be updated when the components are the same.</span>
+</ng-template>

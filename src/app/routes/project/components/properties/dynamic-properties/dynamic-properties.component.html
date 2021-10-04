@@ -1,0 +1,902 @@
+<!-- EXPOSE COMPOSE COMPONENT INPUTS FOR THIS ELEMENT -->
+<ng-container *ngIf="canShowExposedSymbolProps">
+  <cd-property-group
+    type="switch"
+    groupTitle="Expose Inputs"
+    groupHelpTooltip="Configure outside this component"
+    [enabled]="exposedSymbolInputs"
+    (disabled)="onToggleExposedSymbolProps($event)"
+  >
+    <!-- TODO: in the future we will let users choose which inputs to expose -->
+  </cd-property-group>
+</ng-container>
+
+<!-- ENTRY POINT -->
+<ng-container
+  *ngFor="let prop of properties"
+  [ngTemplateOutlet]="prop?.standalone ? contentsRef : groupContentsRef"
+  [ngTemplateOutletContext]="{ $implicit: prop }"
+>
+  <!-- PROPERTIES ARE INSERTED HERE -->
+</ng-container>
+
+<ng-template #groupContentsRef let-prop>
+  <cd-property-group
+    *ngIf="prop?.conditions | meetsConditions: mergedProps:parentMergedProps"
+    [groupTitle]="prop?.label"
+    [type]="prop?.groupType"
+    [removePadding]="prop?.removePadding"
+    [appDynamicGroupCollapsed]="prop"
+    [props]="mergedProps"
+  >
+    <ng-container
+      [ngTemplateOutlet]="contentsRef"
+      [ngTemplateOutletContext]="{ $implicit: prop }"
+    ></ng-container>
+
+    <ng-container
+      *ngIf="prop?.children; let children"
+      [ngTemplateOutlet]="childrenRef"
+      [ngTemplateOutletContext]="{ $implicit: children }"
+    ></ng-container>
+  </cd-property-group>
+</ng-template>
+
+<!-- ADD NESTED CHILDREN -->
+
+<ng-template #childrenRef let-children>
+  <ng-container
+    *ngFor="let child of children; trackBy: trackByFn"
+    [ngTemplateOutlet]="contentsRef"
+    [ngTemplateOutletContext]="{ $implicit: child }"
+  ></ng-container>
+</ng-template>
+
+<ng-template #contentsRef let-prop>
+  <!-- prettier-ignore -->
+  <ng-container *ngIf="prop?.conditions | meetsConditions: mergedProps:parentMergedProps" [ngSwitch]="prop.type">
+    <ng-container *ngSwitchCase="PropertyType.AttributeGeneric"       [ngTemplateOutlet]="attrGenericRef"             [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.BoardSize"              [ngTemplateOutlet]="boardSizeRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.InitialSize"            [ngTemplateOutlet]="initialSizeRef"             [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.AutoNavItemDestination" [ngTemplateOutlet]="autoNavItemDestinationRef"  [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.BoardPortal"            [ngTemplateOutlet]="boardPortalRef"             [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.BoardBackground"        [ngTemplateOutlet]="boardBackgroundRef"         [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.IconInput"              [ngTemplateOutlet]="iconInputRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.ImageSize"              [ngTemplateOutlet]="imageSizeRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.ImageSource"            [ngTemplateOutlet]="imageSrcRef"                [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.ImageCrop"              [ngTemplateOutlet]="imageCropRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleBackground"        [ngTemplateOutlet]="backgroundRef"              [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleBorder"            [ngTemplateOutlet]="borderRef"                  [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleBoxShadow"         [ngTemplateOutlet]="shadowRef"                  [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleFilter"            [ngTemplateOutlet]="filtersRef"                 [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleInnerLayout"       [ngTemplateOutlet]="innerLayoutRef"             [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleAdvanced"          [ngTemplateOutlet]="advancedRef"                [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleOpacity"           [ngTemplateOutlet]="opacityRef"                 [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleOverflow"          [ngTemplateOutlet]="overflowRef"                [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StylePadding"           [ngTemplateOutlet]="paddingRef"                 [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StylePosition"          [ngTemplateOutlet]="positionRef"                [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleRadius"            [ngTemplateOutlet]="radiusRef"                  [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleSize"              [ngTemplateOutlet]="sizeRef"                    [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleTextShadow"        [ngTemplateOutlet]="textShadowRef"              [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleTypography"        [ngTemplateOutlet]="typographyRef"              [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.TextInput"              [ngTemplateOutlet]="textInputRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.TextAdvanced"           [ngTemplateOutlet]="textAdvancedRef"            [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleText"              [ngTemplateOutlet]="styleTextRef"               [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.PortalList"             [ngTemplateOutlet]="portalListRef"              [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.CheckboxChildren"       [ngTemplateOutlet]="checkboxChildrenRef"        [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.SymbolOverrides"        [ngTemplateOutlet]="symbolOverridesRef"         [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.StyleGeneric"           [ngTemplateOutlet]="styleGenericRef"            [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.TableColumns"           [ngTemplateOutlet]="tableColumnsRef"            [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.EmbedAttributes"        [ngTemplateOutlet]="embedAttrsRef"              [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyType.BoardPreviewVisibility" [ngTemplateOutlet]="boardPreviewVisRef"         [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchDefault                                    [ngTemplateOutlet]="defaultRef"                 [ngTemplateOutletContext]="prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+  </ng-container>
+</ng-template>
+
+<!-- DEFAULT -->
+
+<ng-template #defaultRef let-value>
+  <ng-container
+    *ngIf="value.prop?.children; let children"
+    [ngTemplateOutlet]="contentsRef"
+    [ngTemplateOutletContext]="{ $implicit: children }"
+  ></ng-container>
+</ng-template>
+
+<!-- BOARD PREVIEW VISIBILITY -->
+
+<ng-template #boardPreviewVisRef let-value>
+  <div class="input-wrapper" cdTooltip="Excluded from the board list within preview">
+    <cd-checkbox
+      [checked]="value.target.inputs?.exclude"
+      label="Hide board in preview list"
+      (change)="onExcludeBoardFromPreview($event, value.prop)"
+    ></cd-checkbox>
+  </div>
+</ng-template>
+
+<!-- SIZE-->
+
+<ng-template #sizeRef let-value>
+  <cd-element-size-props
+    *ngIf="value.target | styleBinding; let style"
+    [width]="style?.width"
+    [height]="style?.height"
+    [frame]="frame"
+    (lockChange)="onLockChange($event, value.prop)"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></cd-element-size-props>
+</ng-template>
+
+<!-- POSITION -->
+
+<ng-template #positionRef let-value>
+  <app-position-props
+    [model]="value.target | styleBinding"
+    [parentModel]="parentStyles"
+    [id]="mergedProps?.id"
+    [parentId]="mergedParentProps?.id"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-position-props>
+</ng-template>
+
+<!-- OPACITY -->
+
+<ng-template #opacityRef let-value>
+  <cd-input-group label="Opacity" *ngIf="value.target | styleBinding; let style">
+    <cd-range-input
+      (valueChange)="onOpacityChange($event, value.prop)"
+      [value]="style.opacity | IValuePercent"
+      [autocompleteMenu]="opacityAutocomplete"
+      innerLabel="%"
+      max="100"
+      min="0"
+      type="percent"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- INNER LAYOUT -->
+
+<ng-template #innerLayoutRef let-value>
+  <app-layout-props
+    [model]="value.target | styleBinding"
+    [childCount]="value.target?.childIds?.length"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-layout-props>
+</ng-template>
+
+<!-- BACKGROUND -->
+
+<ng-template #backgroundRef let-value>
+  <cd-property-group
+    *ngIf="value.target | styleBinding; let style"
+    groupTitle="Background"
+    type="add"
+    [disable]="style?.background?.length"
+    (add)="onBackgroundAdd(value)"
+  >
+    <cd-background-props
+      [data]="style?.background"
+      [designSystem]="designSystem"
+      [colorMenuData]="colorMenuData"
+      (action)="onStoreAction($event)"
+      (change)="onBackgroundChange($event, value.prop)"
+    ></cd-background-props>
+  </cd-property-group>
+</ng-template>
+
+<!-- RICH TEXT INPUT -->
+<!-- TODO: CONSOLIDATE - CURRENLY USED BY SYMBOLS, THIS IS PROBABLY NOT THE ONE YOU'RE LOOKING FOR  -->
+<ng-template #textInputRef let-value>
+  <cd-rich-text-editor
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    [richText]="value.target?.inputs?.richText"
+    [textAlign]="(value.target | styleBinding)?.textAlign"
+    [value]="value.target?.inputs?.innerHTML"
+    [bindable]="value.prop?.dataBindable"
+    (valueChange)="writeInputsValue($event, value.prop)"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+    (activeValue)="onActiveValue($event)"
+  ></cd-rich-text-editor>
+</ng-template>
+
+<!-- TEXT TYPOGRAPHY -->
+
+<ng-template #typographyRef let-value>
+  <cd-font-props
+    [designSystem]="designSystem"
+    [colorMenuData]="colorMenuData"
+    [value]="(value.target | styleBinding)?.font"
+    (action)="onStoreAction($event)"
+    (valueChange)="onTypographyChange($event, value.prop)"
+  ></cd-font-props>
+</ng-template>
+
+<!-- IMAGE SIZE -->
+
+<ng-template #imageSizeRef let-value>
+  <app-image-size-props
+    [model]="value.target | styleBinding"
+    [asset]="asset"
+    (resetImageSize)="onResetImage()"
+  ></app-image-size-props>
+</ng-template>
+
+<!-- ELEMENT PADDING -->
+
+<ng-template #paddingRef let-value>
+  <app-padding-props
+    [id]="uid"
+    [max]="maxPadding"
+    [model]="(value.target | styleBinding)?.padding"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-padding-props>
+</ng-template>
+
+<!-- BORDER RADIUS -->
+
+<ng-template #radiusRef let-value>
+  <app-border-radius-props
+    [id]="uid"
+    [max]="maxRadiusWidth"
+    [model]="(value.target | styleBinding)?.borderRadius"
+    [autocompleteMenu]="radiusAutocomplete"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-border-radius-props>
+</ng-template>
+
+<!-- OVERFLOW -->
+
+<ng-template #overflowRef let-value>
+  <app-overflow-props
+    [isBoard]="isBoard"
+    [value]="(value.target | styleBinding)?.overflow"
+    (styleChange)="writeActiveStyle($event, value.prop)"
+  ></app-overflow-props>
+</ng-template>
+
+<!-- ADVANCED ELEM PROPS -->
+
+<ng-template #advancedRef let-value>
+  <cd-advanced-element-props
+    *ngIf="value.target | styleBinding; let style"
+    [zIndex]="style?.zIndex"
+    [cursor]="style?.cursor"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></cd-advanced-element-props>
+</ng-template>
+
+<!-- TEXT STYLE -->
+
+<ng-template #styleTextRef let-value>
+  <cd-text-style-props
+    *ngIf="value.target | styleBinding; let style"
+    [textTransform]="style?.textTransform"
+    [textOverflow]="style?.textOverflow"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></cd-text-style-props>
+</ng-template>
+
+<!-- ADVANCED TEXT PROPS -->
+
+<ng-template #textAdvancedRef let-value>
+  <cd-advanced-text-props
+    *ngIf="value.target | styleBinding; let style"
+    [wordBreak]="style?.wordBreak"
+    [hyphens]="style?.hyphens"
+    [whiteSpace]="style?.whiteSpace"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></cd-advanced-text-props>
+</ng-template>
+
+<!-- BORDER -->
+
+<ng-template #borderRef let-value>
+  <app-border-group
+    [model]="value.target | styleBinding"
+    [designSystem]="designSystem"
+    [colorMenuData]="colorMenuData"
+    (action)="onStoreAction($event)"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-border-group>
+</ng-template>
+
+<!-- SHADOW -->
+
+<ng-template #shadowRef let-value>
+  <app-shadow-group
+    [hideInnerShadow]="value.target?.elementType === ElementEntitySubType.Image"
+    [data]="(value.target | styleBinding)?.boxShadow"
+    [colorMenuData]="colorMenuData"
+    (action)="onStoreAction($event)"
+    (dataChange)="onShadowUpdate($event, value.prop)"
+  ></app-shadow-group>
+</ng-template>
+
+<!-- TEXT SHADOW -->
+
+<ng-template #textShadowRef let-value>
+  <cd-property-group
+    [groupTitle]="value.prop?.label"
+    type="add"
+    (add)="onTextShadowAdd(value.target, value.prop)"
+  >
+    <cd-shadow-props
+      textShadow
+      [data]="(value.target | styleBinding)?.textShadow"
+      [colorMenuData]="colorMenuData"
+      (action)="onStoreAction($event)"
+      (change)="onTextShadowUpdate($event, value.prop)"
+    ></cd-shadow-props>
+  </cd-property-group>
+</ng-template>
+
+<!-- IMAGE CROP -->
+
+<ng-template #imageCropRef let-value>
+  <app-image-crop-props
+    [model]="value.target | styleBinding"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-image-crop-props>
+</ng-template>
+
+<!-- IMAGE SOURCE -->
+
+<ng-template #imageSrcRef let-value>
+  <app-image-source-props
+    *ngIf="value.target | styleBinding; let style"
+    [src]="value.target?.inputs?.src"
+    [elementId]="value | propsTargetIdPipe"
+    [allowSizeUpdateToast]="!!!value.prop?.targetId"
+    [width]="style?.width"
+    [height]="style?.height"
+    [assetsMenu]="assetsMenuData"
+    (action)="onStoreAction($event)"
+    (sourceChange)="writeInputsValue($event, value.prop)"
+    (resetImageSize)="onResetImage()"
+  ></app-image-source-props>
+</ng-template>
+
+<!-- IMAGE FILTERS -->
+
+<ng-template #filtersRef let-value>
+  <app-image-filter-props
+    [model]="value.target | styleBinding"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+  ></app-image-filter-props>
+</ng-template>
+
+<!-- ICON PROPS -->
+
+<ng-template #iconInputRef let-value>
+  <cd-icon-props
+    *ngIf="value.target | styleBinding; let style"
+    [iconName]="value.target?.inputs?.iconName"
+    [size]="style?.fontSize"
+    [color]="style?.color"
+    [iconClass]="designSystem | matIconClassNamePipe"
+    [designSystem]="designSystem"
+    [colorMenuData]="colorMenuData"
+    (valueChange)="writeInputsValue($event, value.prop)"
+    (styleChange)="writeActiveStyle($event, value.prop)"
+    (action)="onStoreAction($event)"
+  ></cd-icon-props>
+</ng-template>
+
+<!-- BOARD SIZE -->
+
+<ng-template #boardSizeRef>
+  <cd-board-size-props
+    [size]="mergedProps.frame"
+    [sizeConfig]="sizeConfig"
+    [minBoardSize]="minBoardSize"
+    [maxBoardSize]="maxBoardSize"
+    (sizeChange)="onSizeChange($event)"
+  ></cd-board-size-props>
+</ng-template>
+
+<!-- INITIAL SIZE (Symbols & Code Components)-->
+
+<ng-template #initialSizeRef>
+  <cd-initial-size-props
+    [size]="mergedProps.frame"
+    [minBoardSize]="minBoardSize"
+    [maxBoardSize]="maxBoardSize"
+    (sizeChange)="onSizeChange($event)"
+  ></cd-initial-size-props>
+</ng-template>
+
+<!-- BOARD BACKGROUND -->
+
+<ng-template #boardBackgroundRef>
+  <app-board-bkd-props
+    [model]="styles"
+    [designSystem]="designSystem"
+    [bkdSizeMenuData]="bkdSizeMenuData | MarkSelection: styles?.backgroundSize"
+    [assetsMenuData]="assetsMenuData"
+    [colorMenuData]="colorMenuData"
+    (modelChange)="writeActiveStyle($event)"
+    (action)="onStoreAction($event)"
+  ></app-board-bkd-props>
+</ng-template>
+
+<!-- PORTAL -->
+
+<ng-template #boardPortalRef let-value>
+  <cd-input-group [label]="value.prop?.label || 'Portal to'">
+    <cd-select-input
+      placeholder="Select a board..."
+      resetState="None"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      [data]="value.target.inputs?.referenceId | portalPipe: boards:props"
+      (change)="onBoardPortalChange($event, value.prop)"
+      (activeValue)="onActiveValue($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- AUTO NAV ITEM DESTINATION -->
+
+<ng-template #autoNavItemDestinationRef let-value>
+  <app-auto-nav-item-destination-prop
+    [label]="value.prop?.label"
+    [inputs]="value.target.inputs"
+    [helpText]="value.prop?.help"
+    [parentInputs]="parentMergedProps?.inputs"
+    [boards]="boards"
+    [props]="props"
+    (selectItem)="onBoardPortalChange($event, value.prop)"
+    (activeValue)="onActiveValue($event)"
+  ></app-auto-nav-item-destination-prop>
+</ng-template>
+
+<!-- SYMBOL INSTANCE -->
+
+<ng-template #symbolOverridesRef>
+  <cd-property-group
+    *ngFor="let input of symbolInputs; trackBy: trackSymbolByFn"
+    type="switch"
+    [groupTitle]="input?.label"
+    [enabled]="input?.enabled"
+    (disabled)="onSymbolOverrideDisabled(input, $event)"
+  >
+    <ng-container
+      *ngIf="input?.children; let childItems"
+      [ngTemplateOutlet]="childrenRef"
+      [ngTemplateOutletContext]="{ $implicit: childItems }"
+    ></ng-container>
+  </cd-property-group>
+</ng-template>
+
+<!-- ////////////////// -->
+<!-- GENERIC STYLES -->
+<!-- ////////////////// -->
+
+<ng-template #styleGenericRef let-prop>
+  <!-- TODO: Not currently wired up -->
+</ng-template>
+
+<!-- ////////////////// -->
+<!-- GENERIC ATTRIBUTES -->
+<!-- ////////////////// -->
+
+<ng-template #attrGenericRef let-value>
+  <!-- prettier-ignore -->
+  <ng-container *ngIf="value.prop?.conditions | meetsConditions: mergedProps:parentMergedProps" [ngSwitch]="value.prop.inputType">
+    <ng-container *ngSwitchCase="PropertyInput.Select"        [ngTemplateOutlet]="selectInputRef"       [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Text"          [ngTemplateOutlet]="textInputValueRef"    [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.TextArea"      [ngTemplateOutlet]="textAreaValueRef"     [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Number"        [ngTemplateOutlet]="numberInputValueRef"  [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Icon"          [ngTemplateOutlet]="iconInputValueRef"    [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Checkbox"      [ngTemplateOutlet]="checkboxValueRef"     [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.SelectGrid"    [ngTemplateOutlet]="selectGridRef"        [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.List"          [ngTemplateOutlet]="genericListPropsRef"  [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.DynamicList"   [ngTemplateOutlet]="dynamicPropsListRef"  [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Date"          [ngTemplateOutlet]="datePropsRef"         [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Toggle"        [ngTemplateOutlet]="toggleBtnRef"         [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Range"         [ngTemplateOutlet]="rangeInputRef"        [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.PercentRange"  [ngTemplateOutlet]="percentRangeRef"      [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Group"         [ngTemplateOutlet]="inputGroupRef"        [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Color"         [ngTemplateOutlet]="colorValueRef"        [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.RichText"      [ngTemplateOutlet]="richTextRef"          [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.DatasetSelect" [ngTemplateOutlet]="datasetSelectRef"     [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.PortalSlot"    [ngTemplateOutlet]="portalSlotRef"        [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.PortalSelect"  [ngTemplateOutlet]="portalSelectRef"      [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Units"         [ngTemplateOutlet]="unitsInputValueRef"      [ngTemplateOutletContext]="value.prop | contextPipe: mergedProps: symbolInstanceInputs"></ng-container>
+  </ng-container>
+</ng-template>
+
+<!--  -->
+
+<ng-template #inputGroupRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-input
+      *ngFor="let input of value.prop?.children"
+      [placeholder]="input?.placeholder"
+      [bottomLabel]="input?.bottomLabel"
+      [type]="input?.inputType"
+      [min]="input?.min"
+      [max]="input?.max"
+      [value]="value.target.inputs[input?.name]"
+      (change)="writeBinding($event, { prop: input, target: value.target })"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- RICH TEXT -->
+
+<ng-template #richTextRef let-value>
+  <cd-rich-text-editor
+    [richText]="value.target?.inputs?.richText"
+    [value]="value | richTextValuePipe: elementProps:loadedData"
+    [textAlign]="(value.target | styleBinding)?.textAlign"
+    [bindable]="value.prop?.dataBindable"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (valueChange)="writeInputsValue($event, value.prop)"
+    (modelChange)="writeActiveStyle($event, value.prop)"
+    (activeValue)="onActiveValue($event)"
+  ></cd-rich-text-editor>
+</ng-template>
+
+<!-- RANGE INPUT WRITES ATTRIBUTE  -->
+
+<ng-template #rangeInputRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (activeValue)="onActiveValue($event)"
+    (valueChange)="writeBinding($event, value)"
+  >
+    <cd-range-input
+      type="number"
+      [value]="value.target.inputs[value.prop?.name] | fallbackValuePipe: value.prop?.defaultValue"
+      [min]="value.target.inputs[value.prop?.minBinding] || value.prop?.min"
+      [max]="value.target.inputs[value.prop?.maxBinding] || value.prop?.max"
+      [step]="value.target.inputs[value.prop?.stepBinding] || value.prop?.step"
+      [innerLabel]="value.prop?.innerLabel"
+      (valueChange)="writeBinding($event, value)"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- PERCENT RANGE INPUT WRITES ATTRIBUTE  -->
+
+<ng-template #percentRangeRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (activeValue)="onActiveValue($event)"
+    (valueChange)="writeBinding($event, value)"
+  >
+    <cd-range-input
+      [value]="value.target.inputs[value.prop?.name] | IValuePercent"
+      (valueChange)="onPercentRangeChange($event, value)"
+      max="100"
+      min="0"
+      innerLabel="%"
+      type="percent"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- SELECT INPUT WRITES ATTRIBUTE -->
+
+<ng-template #selectInputRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-select-input
+      [placeholder]="value.prop?.placeholder"
+      [resetState]="value.prop?.resetState"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      [data]="
+        value.prop?.colorMenu
+          ? (value.prop?.menuData
+            | MarkSelection: (value | contextBinding)
+            | lookupColorForThemeOptions: designSystem)
+          : (value.prop?.menuData | MarkSelection: (value | contextBinding))
+      "
+      (change)="writeSelectValue($event, value)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- TEXT INPUT WRITES ATTRIBUTE -->
+<ng-template #textInputValueRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (activeValue)="onActiveValue($event)"
+    (valueChange)="writeBinding($event, value)"
+  >
+    <cd-input
+      [placeholder]="value.prop?.placeholder"
+      [value]="value | contextBinding: ''"
+      (change)="writeBinding($event, value)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- TEXT AREA WRITES ATTRIBUTE -->
+<ng-template #textAreaValueRef let-value>
+  <cd-input-group [fullWidth]="true">
+    <cd-textarea
+      [label]="value.prop?.label"
+      [value]="value | contextBinding: ''"
+      resize="vertical"
+      (change)="writeBinding($event, value)"
+    ></cd-textarea>
+  </cd-input-group>
+</ng-template>
+
+<!-- NUMBER INPUT WRITES ATTRIBUTE -->
+
+<ng-template #numberInputValueRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (valueChange)="writeBinding($event, value)"
+    (activeValue)="onActiveValue($event)"
+  >
+    <cd-input
+      type="number"
+      [placeholder]="value.prop?.placeholder"
+      [min]="value.prop?.min"
+      [max]="value.prop?.max"
+      [value]="value | contextBinding: ''"
+      (change)="writeBinding($event, value)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- UNITS INPUT WRITES ATTRIBUTE -->
+
+<ng-template #unitsInputValueRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-input
+      type="units"
+      [placeholder]="value.prop?.placeholder"
+      [value]="value | contextBinding: ''"
+      (change)="writeBinding($event, value)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- ICON INPUT WRITES ATTRIBUTE -->
+
+<ng-template #iconInputValueRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-icon-input
+      [value]="value | contextBinding"
+      [iconClass]="designSystem | matIconClassNamePipe"
+      [options]="value.prop?.iconInputOptions"
+      (valueChange)="writeBinding($event, value)"
+    ></cd-icon-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- CHECKBOX WRITES ATTRIBUTE -->
+
+<ng-template #checkboxValueRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (activeValue)="onActiveValue($event)"
+    (valueChange)="writeBinding($event, value)"
+  >
+    <cd-checkbox
+      [checked]="value | contextBinding"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      (change)="writeBinding($event, value)"
+    ></cd-checkbox>
+  </cd-input-group>
+</ng-template>
+
+<!-- SELECT GRID WRITES ATTRIBUTE -->
+
+<ng-template #selectGridRef let-value>
+  <cd-select-grid
+    [data]="value.prop?.menuData | MarkSelection: (value | contextBinding)"
+    (selectItem)="writeSelectValue($event, value)"
+  ></cd-select-grid>
+</ng-template>
+
+<!-- CHECKBOX CHILDREN -->
+<!-- Used to nest checkboxes and handle indeterminate state -->
+<ng-template #checkboxChildrenRef let-value>
+  <app-checkbox-list
+    [prop]="value.prop"
+    [data]="value.target?.inputs?._children"
+    [options]="value.target?.inputs?._children | boardCheckboxPipe: selectedIds:elementProps"
+    (dataChange)="onCheckboxListChange($event, value.prop)"
+    (activeValue)="onActiveValue($event)"
+  ></app-checkbox-list>
+</ng-template>
+
+<!-- PORTAL LIST -->
+
+<ng-template #portalListRef let-value>
+  <app-portal-list-props
+    [prop]="value.prop"
+    [iconClass]="designSystem | matIconClassNamePipe"
+    [data]="value.target?.inputs?.childPortals"
+    [options]="value.target.inputs?.referenceId | portalPipe: boards:props"
+    [selectedIndex]="selectedIndex"
+    (dataChange)="onPortalListChange($event, value.prop)"
+    (selectedIndexChange)="writeInputsValue($event, value.prop)"
+  ></app-portal-list-props>
+</ng-template>
+
+<!-- TABLE COLUMNS -->
+<!-- TODO: how to properly specify datasetId? -->
+<ng-template #tableColumnsRef let-value>
+  <app-table-column-props
+    [prop]="value.prop"
+    [data]="value | contextBinding"
+    [datasetId]="value.target.inputs?.data"
+    [parentMergedProps]="mergedProps"
+    (dataChange)="writeBinding($event, value)"
+  ></app-table-column-props>
+</ng-template>
+
+<!-- EMBED ATTRIBUTES -->
+<ng-template #embedAttrsRef let-value>
+  <!-- MAPS, WEBSITES, YOUTUBE, FIGMA -->
+  <app-embed-props
+    [variant]="value.target?.inputs.variant"
+    [src]="value.target?.inputs.src"
+    (valueChange)="writeInputsValue($event, value)"
+    (styleChange)="writeActiveStyle($event, value)"
+  ></app-embed-props>
+</ng-template>
+
+<!-- GENERIC PROPS LIST -->
+
+<ng-template #genericListPropsRef let-value>
+  <app-generic-props-group
+    [label]="value.prop?.label"
+    [data]="value | contextBinding"
+    [iconClass]="designSystem | matIconClassNamePipe"
+    [config]="value.prop?.optionsConfig"
+    [selectedIndex]="selectedIndex"
+    [selectedValue]="selectedValue"
+    (dataChange)="writeBinding($event, value)"
+    (selectedIndexChange)="onSelectedOptionChange($event, value)"
+    (selectedValueChange)="onSelectedValueChange($event, value)"
+  ></app-generic-props-group>
+</ng-template>
+
+<!-- DYNAMIC PROPS LIST -->
+
+<ng-template #dynamicPropsListRef let-value>
+  <app-dynamic-props-list-group
+    [label]="value.prop?.label"
+    [data]="value | contextBinding"
+    [config]="value.prop?.optionsConfig"
+    [schema]="value.prop?.schema"
+    [colorMenuData]="colorMenuData"
+    [boards]="boards"
+    [parentMergedProps]="mergedProps"
+    [designSystem]="designSystem"
+    [boards]="boards"
+    [selectedIndex]="selectedIndex"
+    [selectedValue]="selectedValue"
+    (dataChange)="writeBinding($event, value)"
+    (selectedIndexChange)="onSelectedOptionChange($event, value)"
+    (selectedValueChange)="onSelectedValueChange($event, value)"
+  ></app-dynamic-props-list-group>
+</ng-template>
+
+<!-- DATE PROPS -->
+
+<ng-template #datePropsRef let-value>
+  <app-date-props
+    [label]="value.prop?.label"
+    [value]="value | contextBinding"
+    (valueChange)="writeBinding($event, value)"
+  ></app-date-props>
+</ng-template>
+
+<!-- TOGGLE BUTTON PROPS -->
+
+<ng-template #toggleBtnRef let-value>
+  <cd-input-group [label]="value.prop?.label" [fullWidth]="value.prop?.fullWidth">
+    <cd-toggle-button-group
+      showBackground
+      [value]="value | contextBinding"
+      (valueChange)="writeBinding($event, value)"
+      [columns]="value.prop?.menuData.length"
+    >
+      <button
+        *ngFor="let btn of value.prop?.menuData"
+        [value]="btn.value"
+        [selected]="
+          value.target.inputs[value.prop?.name]
+            | selectedTogglePipe: btn.value:value.prop?.defaultValue
+        "
+        cd-button
+        cdToggleButton
+        expand
+      >
+        {{ btn.title }}
+      </button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+</ng-template>
+
+<!-- COLOR PROPS -->
+
+<ng-template #colorValueRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-color-input
+      [colorData]="colorMenuData"
+      [value]="value | contextBinding | IValueValue"
+      [binding]="value | contextBinding | IValueLookup: designSystem.colors"
+      (colorSelect)="onGenericColorInput($event, value)"
+      (valueChange)="onGenericColorInput($event, value)"
+    ></cd-color-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- DATASET SELECT -->
+
+<ng-template #datasetSelectRef let-value>
+  <cd-input-group
+    [label]="value.prop?.label"
+    [bindable]="value.prop?.dataBindable"
+    [value]="value | dataBoundValuePipe: elementProps:loadedData"
+    [activeElementIds]="value | selectedPropIdsPipe: selectedIds"
+    (activeValue)="onActiveValue($event)"
+    (valueChange)="onDataBoundDatasetSelect($event, value)"
+  >
+    <cd-select-input
+      placeholder="Select dataset"
+      resetState="None"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      [data]="
+        datasetsMenuData
+          | legacyDatasetPipe: (value | contextBinding):value.target
+          | MarkSelection: (value | contextBinding)
+      "
+      (change)="onDatasetSelect($event, value)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- PORTAL SLOT -->
+
+<ng-template #portalSlotRef let-value>
+  <cd-input-group [label]="value.prop?.label">
+    <cd-select-input
+      placeholder="Select a board..."
+      resetState="None"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      [data]="value | contextBinding | portalPipe: boards:props"
+      (change)="onPortalSlotChange($event, value)"
+      (activeValue)="onActiveValue($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- SWAP PORTAL -->
+
+<ng-template #portalSelectRef let-value>
+  <cd-input-group [label]="value.prop?.label || 'Portal'">
+    <cd-select-input
+      [data]="portals | MarkSelection: (value | contextBinding)"
+      resetState="None"
+      placeholder="Select a portal"
+      [helpText]="value.prop?.help | richTooltipPipe"
+      (change)="writeSelectValue($event, value)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>

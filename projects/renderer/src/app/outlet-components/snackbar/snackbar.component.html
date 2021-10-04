@@ -1,0 +1,31 @@
+<div class="bar" #barRef>
+  <div class="left">
+    <cd-icon-element
+      *ngIf="details?.icon; let icon"
+      [icon]="icon"
+      [useMatIcon]="false"
+      class="ico material-icons"
+    ></cd-icon-element>
+    <span class="message">{{ details?.message }}</span>
+  </div>
+
+  <div class="right">
+    <button
+      mat-button
+      color="primary"
+      class="action-btn"
+      *ngIf="details?.actionTitle; let actionTitle"
+    >
+      {{ actionTitle }}
+    </button>
+
+    <button
+      *ngIf="details?.showDismissBtn"
+      mat-icon-button
+      class="close-btn"
+      (click)="onActionBtnClick()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+{
+  "sideEffects": false,
+  "ngPackage": {
+    "lib": {
+      "umdModuleIds": {
+        "cd-interfaces": "cd-interfaces",
+        "cd-utils/object": "cd-utils/object",
+        "cd-utils/guid": "cd-utils/guid",
+        "cd-utils/numeric": "cd-utils/numeric",
+        "cd-utils/string": "cd-utils/string",
+        "cd-metadata/units": "cd-metadata/units",
+        "cd-utils/array": "cd-utils/array",
+        "cd-utils/class": "cd-utils/class",
+        "cd-themes": "cd-themes"
+      }
+    }
+  }
+}

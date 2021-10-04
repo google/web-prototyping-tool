@@ -1,0 +1,43 @@
+<ng-container *ngIf="canShowGradient; else solid">
+  <cd-tab-group fixed (tabChange)="onTabChange($event)" [activeTabIndex]="activeTab">
+    <cd-tab label="Solid">
+      <ng-container *ngTemplateOutlet="solid"></ng-container>
+    </cd-tab>
+    <cd-tab label="Gradient">
+      <ng-container *ngTemplateOutlet="gradient"></ng-container>
+    </cd-tab>
+  </cd-tab-group>
+</ng-container>
+
+<!-- SOLID COLOR -->
+<ng-template #solid>
+  <div class="solid-color">
+    <cd-color
+      [color]="activeGradientStop || color"
+      (colorChange)="onColorChange($event)"
+      (tonalPaletteChange)="onTonalPaletteChange($event)"
+    ></cd-color>
+    <footer class="footer">
+      <div class="swatches">
+        <cd-swatch
+          *ngFor="let swatch of swatches; trackBy: swatchTrackFn"
+          [color]="swatch.color"
+          [title]="swatch.title"
+          (swatchClick)="onSwatchClick($event)"
+        ></cd-swatch>
+      </div>
+    </footer>
+  </div>
+</ng-template>
+
+<!-- GRADIENT COLOR -->
+<ng-template #gradient>
+  <div class="gradient">
+    <cd-gradient
+      #gradRef
+      [color]="color"
+      (gradientChange)="onGradient($event)"
+      (selectedColor)="onActiveGradientStop($event)"
+    ></cd-gradient>
+  </div>
+</ng-template>

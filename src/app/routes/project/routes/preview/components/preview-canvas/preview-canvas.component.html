@@ -1,0 +1,40 @@
+<div
+  class="wrapper"
+  [style.width.px]="scaledWidth"
+  [style.height.px]="scaledHeight"
+  [style.padding.px]="paddingOffset"
+>
+  <div
+    class="board"
+    [style.width.px]="width"
+    [style.height.px]="height"
+    [style.transform]="scaleTransform"
+  >
+    <ng-content></ng-content>
+  </div>
+
+  <app-preview-glass-layer
+    *ngIf="showPreviewGlassLayer"
+    [width]="width"
+    [height]="height"
+    [scale]="scale"
+    [boardId]="boardId"
+    [paddingOffset]="paddingOffset"
+    [commentState]="commentState"
+    [props]="props"
+    [layerMode]="glassLayerMode"
+    [isEmbedMode]="isEmbedMode"
+    [currentSelectedId]="currentSelectedElementId"
+    [landmarksEnabled]="landmarksEnabled"
+    [headingsEnabled]="headingsEnabled"
+    [flowEnabled]="flowEnabled"
+  ></app-preview-glass-layer>
+
+  <div *ngIf="showOpenInBadge" class="embed-badge-container" [style.transform]="scaleTransform">
+    <app-embed-badge
+      [projectLink]="previewURL"
+      [position]="embedBadgePosition"
+      class="embed-badge"
+    ></app-embed-badge>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<ng-container *ngIf="parentRect">
+  <svg:rect [cdSVGRect]="parentRect" class="parent"></svg:rect>
+</ng-container>
+
+<svg:rect
+  *ngFor="let rect of dragRects; trackBy: trackByFn"
+  [class.hidden]="rect.hidden"
+  [cdSVGRect]="rect"
+  class="drag"
+></svg:rect>

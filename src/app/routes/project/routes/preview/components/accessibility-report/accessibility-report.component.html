@@ -1,0 +1,93 @@
+<cd-scroll-view [horizontalScroll]="true">
+  <div cdScrollHeader class="panel-header">
+    <div class="title-row">
+      <h2 class="title">Accessibility Inspector</h2>
+      <cd-switch
+        [checked]="selectionActive"
+        (change)="onInspectClick($event)"
+        cdTooltip="Inspect all elements"
+        cdTooltipDirection="bottom"
+      ></cd-switch>
+    </div>
+
+    <cd-property-group>
+      <cd-input-group label="Color blindness">
+        <cd-select-input
+          [data]="colorBlindMenu | MarkSelection: colorMode"
+          (change)="onColorModeSelect($event)"
+        ></cd-select-input>
+      </cd-input-group>
+    </cd-property-group>
+  </div>
+
+  <div class="panel-content">
+    <cd-property-group groupTitle="Greenlines">
+      <div class="checkbox-with-help flow">
+        <cd-checkbox
+          label="Tab flow"
+          [checked]="flowEnabled"
+          (change)="onFlowEnabledChange($event)"
+        ></cd-checkbox>
+        <cd-icon
+          class="checkbox-help-icon"
+          name="help"
+          size="small"
+          cdTooltip="Display tab key order"
+        ></cd-icon>
+      </div>
+      <div class="checkbox-with-help landmark">
+        <cd-checkbox
+          label="Landmarks"
+          [checked]="landmarksEnabled"
+          (change)="onLandmarksEnabledChange($event)"
+        ></cd-checkbox>
+        <cd-icon
+          class="checkbox-help-icon"
+          name="help"
+          size="small"
+          cdTooltip="Display landmark roles"
+        ></cd-icon>
+      </div>
+      <div class="checkbox-with-help heading">
+        <cd-checkbox
+          label="Headings"
+          [checked]="headingsEnabled"
+          (change)="onHeadingsEnabledChange($event)"
+        ></cd-checkbox>
+        <cd-icon
+          class="checkbox-help-icon"
+          name="help"
+          size="small"
+          cdTooltip="Display heading roles with levels"
+        ></cd-icon>
+      </div>
+    </cd-property-group>
+
+    <app-a11y-info
+      *ngIf="activeElement; else treeRef"
+      class="element-a11y-info"
+      [activeElement]="activeElement"
+      [props]="props"
+      (elementIdSelection)="onElementIdSelection($event)"
+    ></app-a11y-info>
+  </div>
+</cd-scroll-view>
+
+<ng-template #noAttrs>
+  <div class="a11y-info-empty-state">No ARIA attributes are set on this element</div>
+</ng-template>
+
+<ng-template #treeRef>
+  <cd-property-group groupTitle="Element Tree">
+    <cd-data-tree
+      class="data-tree"
+      [data]="dataSource"
+      [hideFilter]="true"
+      [selectedRootId]="currentBoardId"
+      [selectedId]="selectedElementId"
+      [hoveredId]="hoveredBoardRectId"
+      (selectedIdChange)="onElementIdSelection($event)"
+      (hoveredIdChange)="onHighlightedElementChanged($event)"
+    ></cd-data-tree>
+  </cd-property-group>
+</ng-template>

@@ -1,0 +1,20 @@
+<app-comment
+  *ngFor="let item of comments; let first = first; trackBy: trackFn"
+  [comment]="item"
+  [resolved]="resolved"
+  [user]="user"
+  [highlightLabel]="highlightLabel"
+  [firstComment]="first"
+  (deleteComment)="onDeleteComment(item.id)"
+  (editComment)="onEditComment($event)"
+  (reopenThread)="onReopenThread()"
+  (resolveThread)="onResolveThread()"
+  (updateComment)="onUpdateComment($event, item.id)"
+></app-comment>
+
+<app-comment-footer
+  newThread="false"
+  [taggedItems]="taggedItems"
+  (createComment)="onCreateComment($event)"
+  (taggedItemsChange)="onTaggedItemsChange($event)"
+></app-comment-footer>

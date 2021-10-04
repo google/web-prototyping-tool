@@ -1,0 +1,19 @@
+{
+  "name": "presence-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Package.json for node app running in App Engine container",
+  "repository": {
+    "type": "git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google-cloud/debug-agent": "^4.2.2",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.11.1"
+  },
+  "devDependencies": {}
+}

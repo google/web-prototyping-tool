@@ -1,0 +1,239 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// stylelint-disable selector-type-no-unknown
+
+// This mixin ensures CSS variables and padding are assigned properly
+// And make it easier to update in the future
+@mixin buttonOverrides(
+  $buttonPadding,
+  $lineHeight,
+  $smallLineHeight,
+  $smallPadding,
+  $iconButtonSize,
+  $textIconGap
+) {
+  // Defaults that currently don't change, but could in the future
+  $innerIconSize: 18px;
+  $fabIconSize: 24px;
+  $smallFabPadding: 0 8px;
+  $smallFabSize: 40px;
+  $defaultBorderRadius: 4px;
+
+  .mat-button,
+  .mat-icon-button,
+  .mat-stroked-button,
+  .mat-raised-button,
+  .mat-flat-button {
+    padding: 0 var(--co-button-padding, #{$buttonPadding});
+    // padding: 0 $buttonPadding;
+  }
+
+  .mat-flat-button,
+  .mat-stroked-button,
+  .mat-raised-button {
+    line-height: $lineHeight;
+    min-width: auto;
+  }
+
+  .mat-button-base {
+    // Applys the design system font to the button
+    @include applyFontVarsWithoutColor('button');
+
+    // Remove any margin applied to the button
+    margin: 0;
+
+    // Ensure height works if positioned absolute
+    min-height: fit-content;
+
+    --matco-btn-icon-size: #{$innerIconSize};
+
+    &.mat-stroked-button {
+      border-color: var(--co-border);
+    }
+
+    &.mat-fab {
+      --matco-btn-icon-size: #{$fabIconSize};
+    }
+
+    &.mat-icon-button {
+      --matco-btn-icon-size: #{$iconButtonSize};
+    }
+
+    .mat-button-wrapper {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: center;
+      align-items: center;
+      gap: $textIconGap;
+      letter-spacing: 0.0107142857em;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mat-icon,
+    .cd-primitive-icon {
+      font-size: var(--matco-btn-icon-size);
+      width: var(--matco-btn-icon-size);
+      height: var(--matco-btn-icon-size);
+      line-height: var(--matco-btn-icon-size);
+    }
+
+    cd-icon-element {
+      width: initial;
+      height: initial;
+      font-size: initial;
+
+      .ace-icon,
+      .mat-icon {
+        font-size: var(--matco-btn-icon-size) !important;
+        width: var(--matco-btn-icon-size) !important;
+        height: var(--matco-btn-icon-size) !important;
+        line-height: var(--matco-btn-icon-size) !important;
+      }
+    }
+  }
+
+  // Assign Background Colors to filled elements
+  .mat-flat-button,
+  .mat-raised-button,
+  .mat-fab {
+    // Some values in this mixin are used to reset hard-coded values in cloud's theme
+    color: rgba(var(--palette-foreground-text), var(--palette-foreground-text-alpha, 1));
+
+    &.mat-primary {
+      background-color: rgba(var(--co-primary-rgb), 1);
+      color: rgba(var(--palette-primary-contrast-500), 1);
+    }
+
+    &.mat-warn {
+      background-color: rgba(var(--co-warn-rgb), 1);
+      color: rgba(var(--palette-warn-contrast-500), 1);
+    }
+
+    &.mat-accent {
+      background-color: rgba(var(--co-secondary-rgb), 1);
+      color: rgba(var(--palette-accent-contrast-500), 1);
+    }
+  }
+
+  //  Override the text & icon color to use the active variant instead of the 500 color
+  .mat-button,
+  .mat-icon-button,
+  .mat-stroked-button {
+    // Some values in this mixin are used to reset hard-coded values in cloud's theme
+    color: rgba(var(--palette-foreground-text), var(--palette-foreground-text-alpha, 1));
+
+    &.mat-primary {
+      color: rgba(var(--co-primary-rgb), 1);
+    }
+
+    &.mat-warn {
+      color: rgba(var(--co-warn-rgb), 1);
+    }
+
+    &.mat-accent {
+      color: rgba(var(--co-secondary-rgb), 1);
+    }
+  }
+
+  // HANDLE SMALL CLASS
+  .mat-button-base.cd-small-button {
+    line-height: $smallLineHeight;
+    padding: $smallPadding;
+
+    &.mat-fab {
+      width: $smallFabSize;
+      height: $smallFabSize;
+      padding: 0;
+      flex-shrink: 0;
+
+      .mat-button-wrapper {
+        padding: $smallFabPadding;
+      }
+    }
+
+    &.mat-fab,
+    &.mat-icon-button {
+      --matco-btn-icon-size: #{$innerIconSize};
+    }
+
+    &.mat-icon-button {
+      height: $smallLineHeight;
+      line-height: $smallLineHeight;
+      width: $smallLineHeight;
+      padding: 0;
+    }
+  }
+
+  .mat-button-base.cd-right-icon {
+    direction: rtl;
+  }
+
+  .cd-mat-button-group {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    height: 100%;
+
+    // moves raised button drop shadow from individual buttons to group container,
+    &.mat-raised-button-wrapper:not(.cd-mat-button-group-disabled) {
+      border-radius: $defaultBorderRadius;
+      box-shadow: rgb(0 0 0 / 20%) 0 3px 1px -2px, rgb(0 0 0 / 14%) 0 2px 2px 0,
+        rgb(0 0 0 / 12%) 0 1px 5px 0;
+    }
+
+    .mat-button-base {
+      box-shadow: none;
+
+      &:first-of-type {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right-color: transparent;
+      }
+
+      & + .mat-button-base {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: 1px solid rgba(0, 0, 0, 0.12);
+        margin-left: -1px;
+      }
+    }
+
+    .cd-split-button-menu {
+      --menu-button-padding: #{$buttonPadding * 0.5};
+
+      padding-left: var(--menu-button-padding);
+      padding-right: var(--menu-button-padding);
+
+      &.cd-small-button {
+        --menu-button-padding: 0;
+      }
+    }
+  }
+}
+
+// DO NOT REMOVE /////////////////////////////////////////////////////////////////////////////////////////////////////
+// Angular inserts a blank empty node (instead of using ng-template) for `mat-menu` which breaks layouts
+// such as Grid which are dependant on child placement. This node is actually not used because the actual mat-menu
+// is inserted dynamically where the element (button) activates it.  So the class below exists to fix this issue
+mat-menu.ng-star-inserted {
+  display: none;
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// DEFAULT OVERRIDES
+@include buttonOverrides(16px, 36px, 32px, 0 12px, 24px, 8px);
+

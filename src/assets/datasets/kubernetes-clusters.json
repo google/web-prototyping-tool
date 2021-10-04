@@ -1,0 +1,702 @@
+[
+  {
+    "name": "cluster-1",
+    "location": "us-central1-c",
+    "clusterSize": 93,
+    "totalCores": "93 vCPUs",
+    "totalMemory": "348.75 GB"
+  },
+  {
+    "name": "cluster-2",
+    "location": "asia-east1-a",
+    "clusterSize": 57,
+    "totalCores": "57 vCPUs",
+    "totalMemory": "213.75 GB"
+  },
+  {
+    "name": "cluster-3",
+    "location": "asia-east1-b",
+    "clusterSize": 77,
+    "totalCores": "77 vCPUs",
+    "totalMemory": "288.75 GB"
+  },
+  {
+    "name": "cluster-4",
+    "location": "asia-east1-c",
+    "clusterSize": 89,
+    "totalCores": "89 vCPUs",
+    "totalMemory": "333.75 GB"
+  },
+  {
+    "name": "cluster-5",
+    "location": "asia-east2-a",
+    "clusterSize": 74,
+    "totalCores": "74 vCPUs",
+    "totalMemory": "277.5 GB"
+  },
+  {
+    "name": "cluster-6",
+    "location": "asia-east2-b",
+    "clusterSize": 19,
+    "totalCores": "19 vCPUs",
+    "totalMemory": "71.25 GB"
+  },
+  {
+    "name": "cluster-7",
+    "location": "asia-east2-c",
+    "clusterSize": 35,
+    "totalCores": "35 vCPUs",
+    "totalMemory": "131.25 GB"
+  },
+  {
+    "name": "cluster-8",
+    "location": "asia-northeast1-a",
+    "clusterSize": 101,
+    "totalCores": "101 vCPUs",
+    "totalMemory": "378.75 GB"
+  },
+  {
+    "name": "cluster-9",
+    "location": "asia-northeast1-b",
+    "clusterSize": 15,
+    "totalCores": "15 vCPUs",
+    "totalMemory": "56.25 GB"
+  },
+  {
+    "name": "cluster-10",
+    "location": "asia-northeast1-c",
+    "clusterSize": 66,
+    "totalCores": "66 vCPUs",
+    "totalMemory": "247.5 GB"
+  },
+  {
+    "name": "cluster-11",
+    "location": "asia-northeast2-a",
+    "clusterSize": 73,
+    "totalCores": "73 vCPUs",
+    "totalMemory": "273.75 GB"
+  },
+  {
+    "name": "cluster-12",
+    "location": "asia-northeast2-b",
+    "clusterSize": 30,
+    "totalCores": "30 vCPUs",
+    "totalMemory": "112.5 GB"
+  },
+  {
+    "name": "cluster-13",
+    "location": "asia-northeast2-c",
+    "clusterSize": 55,
+    "totalCores": "55 vCPUs",
+    "totalMemory": "206.25 GB"
+  },
+  {
+    "name": "cluster-14",
+    "location": "asia-northeast3-a",
+    "clusterSize": 66,
+    "totalCores": "66 vCPUs",
+    "totalMemory": "247.5 GB"
+  },
+  {
+    "name": "cluster-15",
+    "location": "asia-northeast3-b",
+    "clusterSize": 13,
+    "totalCores": "13 vCPUs",
+    "totalMemory": "48.75 GB"
+  },
+  {
+    "name": "cluster-16",
+    "location": "asia-northeast3-c",
+    "clusterSize": 52,
+    "totalCores": "52 vCPUs",
+    "totalMemory": "195 GB"
+  },
+  {
+    "name": "cluster-17",
+    "location": "asia-south1-a",
+    "clusterSize": 16,
+    "totalCores": "16 vCPUs",
+    "totalMemory": "60 GB"
+  },
+  {
+    "name": "cluster-18",
+    "location": "asia-south1-b",
+    "clusterSize": 90,
+    "totalCores": "90 vCPUs",
+    "totalMemory": "337.5 GB"
+  },
+  {
+    "name": "cluster-19",
+    "location": "asia-south1-c",
+    "clusterSize": 12,
+    "totalCores": "12 vCPUs",
+    "totalMemory": "45 GB"
+  },
+  {
+    "name": "cluster-20",
+    "location": "asia-southeast1-a",
+    "clusterSize": 59,
+    "totalCores": "59 vCPUs",
+    "totalMemory": "221.25 GB"
+  },
+  {
+    "name": "cluster-21",
+    "location": "asia-southeast1-b",
+    "clusterSize": 71,
+    "totalCores": "71 vCPUs",
+    "totalMemory": "266.25 GB"
+  },
+  {
+    "name": "cluster-22",
+    "location": "asia-southeast1-c",
+    "clusterSize": 18,
+    "totalCores": "18 vCPUs",
+    "totalMemory": "67.5 GB"
+  },
+  {
+    "name": "cluster-23",
+    "location": "asia-southeast2-a",
+    "clusterSize": 30,
+    "totalCores": "30 vCPUs",
+    "totalMemory": "112.5 GB"
+  },
+  {
+    "name": "cluster-24",
+    "location": "asia-southeast2-b",
+    "clusterSize": 26,
+    "totalCores": "26 vCPUs",
+    "totalMemory": "97.5 GB"
+  },
+  {
+    "name": "cluster-25",
+    "location": "asia-southeast2-c",
+    "clusterSize": 5,
+    "totalCores": "5 vCPUs",
+    "totalMemory": "18.75 GB"
+  },
+  {
+    "name": "cluster-26",
+    "location": "australia-southeast1-a",
+    "clusterSize": 6,
+    "totalCores": "6 vCPUs",
+    "totalMemory": "22.5 GB"
+  },
+  {
+    "name": "cluster-27",
+    "location": "australia-southeast1-b",
+    "clusterSize": 7,
+    "totalCores": "7 vCPUs",
+    "totalMemory": "26.25 GB"
+  },
+  {
+    "name": "cluster-28",
+    "location": "australia-southeast1-c",
+    "clusterSize": 99,
+    "totalCores": "99 vCPUs",
+    "totalMemory": "371.25 GB"
+  },
+  {
+    "name": "cluster-29",
+    "location": "europe-north1-a",
+    "clusterSize": 62,
+    "totalCores": "62 vCPUs",
+    "totalMemory": "232.5 GB"
+  },
+  {
+    "name": "cluster-30",
+    "location": "europe-north1-b",
+    "clusterSize": 25,
+    "totalCores": "25 vCPUs",
+    "totalMemory": "93.75 GB"
+  },
+  {
+    "name": "cluster-31",
+    "location": "europe-north1-c",
+    "clusterSize": 10,
+    "totalCores": "10 vCPUs",
+    "totalMemory": "37.5 GB"
+  },
+  {
+    "name": "cluster-32",
+    "location": "europe-west1-b",
+    "clusterSize": 17,
+    "totalCores": "17 vCPUs",
+    "totalMemory": "63.75 GB"
+  },
+  {
+    "name": "cluster-33",
+    "location": "europe-west1-c",
+    "clusterSize": 89,
+    "totalCores": "89 vCPUs",
+    "totalMemory": "333.75 GB"
+  },
+  {
+    "name": "cluster-34",
+    "location": "europe-west1-d",
+    "clusterSize": 6,
+    "totalCores": "6 vCPUs",
+    "totalMemory": "22.5 GB"
+  },
+  {
+    "name": "cluster-35",
+    "location": "europe-west2-a",
+    "clusterSize": 97,
+    "totalCores": "97 vCPUs",
+    "totalMemory": "363.75 GB"
+  },
+  {
+    "name": "cluster-36",
+    "location": "europe-west2-b",
+    "clusterSize": 86,
+    "totalCores": "86 vCPUs",
+    "totalMemory": "322.5 GB"
+  },
+  {
+    "name": "cluster-37",
+    "location": "europe-west2-c",
+    "clusterSize": 51,
+    "totalCores": "51 vCPUs",
+    "totalMemory": "191.25 GB"
+  },
+  {
+    "name": "cluster-38",
+    "location": "europe-west3-a",
+    "clusterSize": 21,
+    "totalCores": "21 vCPUs",
+    "totalMemory": "78.75 GB"
+  },
+  {
+    "name": "cluster-39",
+    "location": "europe-west3-b",
+    "clusterSize": 92,
+    "totalCores": "92 vCPUs",
+    "totalMemory": "345 GB"
+  },
+  {
+    "name": "cluster-40",
+    "location": "europe-west3-c",
+    "clusterSize": 79,
+    "totalCores": "79 vCPUs",
+    "totalMemory": "296.25 GB"
+  },
+  {
+    "name": "cluster-41",
+    "location": "europe-west4-a",
+    "clusterSize": 12,
+    "totalCores": "12 vCPUs",
+    "totalMemory": "45 GB"
+  },
+  {
+    "name": "cluster-42",
+    "location": "europe-west4-b",
+    "clusterSize": 83,
+    "totalCores": "83 vCPUs",
+    "totalMemory": "311.25 GB"
+  },
+  {
+    "name": "cluster-43",
+    "location": "europe-west4-c",
+    "clusterSize": 95,
+    "totalCores": "95 vCPUs",
+    "totalMemory": "356.25 GB"
+  },
+  {
+    "name": "cluster-44",
+    "location": "europe-west6-a",
+    "clusterSize": 47,
+    "totalCores": "47 vCPUs",
+    "totalMemory": "176.25 GB"
+  },
+  {
+    "name": "cluster-45",
+    "location": "europe-west6-b",
+    "clusterSize": 97,
+    "totalCores": "97 vCPUs",
+    "totalMemory": "363.75 GB"
+  },
+  {
+    "name": "cluster-46",
+    "location": "europe-west6-c",
+    "clusterSize": 82,
+    "totalCores": "82 vCPUs",
+    "totalMemory": "307.5 GB"
+  },
+  {
+    "name": "cluster-47",
+    "location": "northamerica-northeast1-a",
+    "clusterSize": 75,
+    "totalCores": "75 vCPUs",
+    "totalMemory": "281.25 GB"
+  },
+  {
+    "name": "cluster-48",
+    "location": "northamerica-northeast1-b",
+    "clusterSize": 66,
+    "totalCores": "66 vCPUs",
+    "totalMemory": "247.5 GB"
+  },
+  {
+    "name": "cluster-49",
+    "location": "northamerica-northeast1-c",
+    "clusterSize": 75,
+    "totalCores": "75 vCPUs",
+    "totalMemory": "281.25 GB"
+  },
+  {
+    "name": "cluster-50",
+    "location": "southamerica-east1-a",
+    "clusterSize": 39,
+    "totalCores": "39 vCPUs",
+    "totalMemory": "146.25 GB"
+  },
+  {
+    "name": "cluster-51",
+    "location": "southamerica-east1-b",
+    "clusterSize": 49,
+    "totalCores": "49 vCPUs",
+    "totalMemory": "183.75 GB"
+  },
+  {
+    "name": "cluster-52",
+    "location": "southamerica-east1-c",
+    "clusterSize": 40,
+    "totalCores": "40 vCPUs",
+    "totalMemory": "150 GB"
+  },
+  {
+    "name": "cluster-53",
+    "location": "us-central1-a",
+    "clusterSize": 94,
+    "totalCores": "94 vCPUs",
+    "totalMemory": "352.5 GB"
+  },
+  {
+    "name": "cluster-54",
+    "location": "us-central1-b",
+    "clusterSize": 48,
+    "totalCores": "48 vCPUs",
+    "totalMemory": "180 GB"
+  },
+  {
+    "name": "cluster-55",
+    "location": "us-central1-c",
+    "clusterSize": 11,
+    "totalCores": "11 vCPUs",
+    "totalMemory": "41.25 GB"
+  },
+  {
+    "name": "cluster-56",
+    "location": "us-central1-f",
+    "clusterSize": 70,
+    "totalCores": "70 vCPUs",
+    "totalMemory": "262.5 GB"
+  },
+  {
+    "name": "cluster-57",
+    "location": "us-east1-b",
+    "clusterSize": 95,
+    "totalCores": "95 vCPUs",
+    "totalMemory": "356.25 GB"
+  },
+  {
+    "name": "cluster-58",
+    "location": "us-east1-c",
+    "clusterSize": 62,
+    "totalCores": "62 vCPUs",
+    "totalMemory": "232.5 GB"
+  },
+  {
+    "name": "cluster-59",
+    "location": "us-east1-d",
+    "clusterSize": 24,
+    "totalCores": "24 vCPUs",
+    "totalMemory": "90 GB"
+  },
+  {
+    "name": "cluster-60",
+    "location": "us-east4-a",
+    "clusterSize": 35,
+    "totalCores": "35 vCPUs",
+    "totalMemory": "131.25 GB"
+  },
+  {
+    "name": "cluster-61",
+    "location": "us-east4-b",
+    "clusterSize": 35,
+    "totalCores": "35 vCPUs",
+    "totalMemory": "131.25 GB"
+  },
+  {
+    "name": "cluster-62",
+    "location": "us-east4-c",
+    "clusterSize": 92,
+    "totalCores": "92 vCPUs",
+    "totalMemory": "345 GB"
+  },
+  {
+    "name": "cluster-63",
+    "location": "us-west1-a",
+    "clusterSize": 52,
+    "totalCores": "52 vCPUs",
+    "totalMemory": "195 GB"
+  },
+  {
+    "name": "cluster-64",
+    "location": "us-west1-b",
+    "clusterSize": 17,
+    "totalCores": "17 vCPUs",
+    "totalMemory": "63.75 GB"
+  },
+  {
+    "name": "cluster-65",
+    "location": "us-west1-c",
+    "clusterSize": 85,
+    "totalCores": "85 vCPUs",
+    "totalMemory": "318.75 GB"
+  },
+  {
+    "name": "cluster-66",
+    "location": "us-west2-a",
+    "clusterSize": 24,
+    "totalCores": "24 vCPUs",
+    "totalMemory": "90 GB"
+  },
+  {
+    "name": "cluster-67",
+    "location": "us-west2-b",
+    "clusterSize": 96,
+    "totalCores": "96 vCPUs",
+    "totalMemory": "360 GB"
+  },
+  {
+    "name": "cluster-68",
+    "location": "us-west2-c",
+    "clusterSize": 28,
+    "totalCores": "28 vCPUs",
+    "totalMemory": "105 GB"
+  },
+  {
+    "name": "cluster-69",
+    "location": "us-west3-a",
+    "clusterSize": 91,
+    "totalCores": "91 vCPUs",
+    "totalMemory": "341.25 GB"
+  },
+  {
+    "name": "cluster-70",
+    "location": "us-west3-b",
+    "clusterSize": 74,
+    "totalCores": "74 vCPUs",
+    "totalMemory": "277.5 GB"
+  },
+  {
+    "name": "cluster-71",
+    "location": "us-west3-c",
+    "clusterSize": 88,
+    "totalCores": "88 vCPUs",
+    "totalMemory": "330 GB"
+  },
+  {
+    "name": "cluster-72",
+    "location": "us-west4-a",
+    "clusterSize": 52,
+    "totalCores": "52 vCPUs",
+    "totalMemory": "195 GB"
+  },
+  {
+    "name": "cluster-73",
+    "location": "us-west4-b",
+    "clusterSize": 77,
+    "totalCores": "77 vCPUs",
+    "totalMemory": "288.75 GB"
+  },
+  {
+    "name": "cluster-74",
+    "location": "us-west4-c",
+    "clusterSize": 102,
+    "totalCores": "102 vCPUs",
+    "totalMemory": "382.5 GB"
+  },
+  {
+    "name": "cluster-75",
+    "location": "us-west4-c",
+    "clusterSize": 41,
+    "totalCores": "41 vCPUs",
+    "totalMemory": "153.75 GB"
+  },
+  {
+    "name": "cluster-76",
+    "location": "us-west4-c",
+    "clusterSize": 7,
+    "totalCores": "7 vCPUs",
+    "totalMemory": "26.25 GB"
+  },
+  {
+    "name": "cluster-77",
+    "location": "us-west4-c",
+    "clusterSize": 83,
+    "totalCores": "83 vCPUs",
+    "totalMemory": "311.25 GB"
+  },
+  {
+    "name": "cluster-78",
+    "location": "us-west4-c",
+    "clusterSize": 29,
+    "totalCores": "29 vCPUs",
+    "totalMemory": "108.75 GB"
+  },
+  {
+    "name": "cluster-79",
+    "location": "us-central1-c",
+    "clusterSize": 19,
+    "totalCores": "19 vCPUs",
+    "totalMemory": "71.25 GB"
+  },
+  {
+    "name": "cluster-80",
+    "location": "us-central1-c",
+    "clusterSize": 19,
+    "totalCores": "19 vCPUs",
+    "totalMemory": "71.25 GB"
+  },
+  {
+    "name": "cluster-81",
+    "location": "us-central1-c",
+    "clusterSize": 15,
+    "totalCores": "15 vCPUs",
+    "totalMemory": "56.25 GB"
+  },
+  {
+    "name": "cluster-82",
+    "location": "us-central1-c",
+    "clusterSize": 31,
+    "totalCores": "31 vCPUs",
+    "totalMemory": "116.25 GB"
+  },
+  {
+    "name": "cluster-83",
+    "location": "europe-west2-b",
+    "clusterSize": 39,
+    "totalCores": "39 vCPUs",
+    "totalMemory": "146.25 GB"
+  },
+  {
+    "name": "cluster-84",
+    "location": "europe-west2-c",
+    "clusterSize": 11,
+    "totalCores": "11 vCPUs",
+    "totalMemory": "41.25 GB"
+  },
+  {
+    "name": "cluster-85",
+    "location": "europe-west3-a",
+    "clusterSize": 41,
+    "totalCores": "41 vCPUs",
+    "totalMemory": "153.75 GB"
+  },
+  {
+    "name": "cluster-86",
+    "location": "us-east1-b",
+    "clusterSize": 68,
+    "totalCores": "68 vCPUs",
+    "totalMemory": "255 GB"
+  },
+  {
+    "name": "cluster-87",
+    "location": "us-east1-b",
+    "clusterSize": 48,
+    "totalCores": "48 vCPUs",
+    "totalMemory": "180 GB"
+  },
+  {
+    "name": "cluster-88",
+    "location": "us-central1-f",
+    "clusterSize": 29,
+    "totalCores": "29 vCPUs",
+    "totalMemory": "108.75 GB"
+  },
+  {
+    "name": "cluster-89",
+    "location": "us-west2-a",
+    "clusterSize": 84,
+    "totalCores": "84 vCPUs",
+    "totalMemory": "315 GB"
+  },
+  {
+    "name": "cluster-90",
+    "location": "us-west1-a",
+    "clusterSize": 24,
+    "totalCores": "24 vCPUs",
+    "totalMemory": "90 GB"
+  },
+  {
+    "name": "cluster-91",
+    "location": "us-west1-b",
+    "clusterSize": 37,
+    "totalCores": "37 vCPUs",
+    "totalMemory": "138.75 GB"
+  },
+  {
+    "name": "cluster-92",
+    "location": "us-west1-c",
+    "clusterSize": 72,
+    "totalCores": "72 vCPUs",
+    "totalMemory": "270 GB"
+  },
+  {
+    "name": "cluster-93",
+    "location": "us-west2-a",
+    "clusterSize": 69,
+    "totalCores": "69 vCPUs",
+    "totalMemory": "258.75 GB"
+  },
+  {
+    "name": "cluster-94",
+    "location": "us-west2-b",
+    "clusterSize": 88,
+    "totalCores": "88 vCPUs",
+    "totalMemory": "330 GB"
+  },
+  {
+    "name": "cluster-95",
+    "location": "us-west2-c",
+    "clusterSize": 101,
+    "totalCores": "101 vCPUs",
+    "totalMemory": "378.75 GB"
+  },
+  {
+    "name": "cluster-96",
+    "location": "us-central1-a",
+    "clusterSize": 60,
+    "totalCores": "60 vCPUs",
+    "totalMemory": "225 GB"
+  },
+  {
+    "name": "cluster-97",
+    "location": "us-central1-b",
+    "clusterSize": 62,
+    "totalCores": "62 vCPUs",
+    "totalMemory": "232.5 GB"
+  },
+  {
+    "name": "cluster-98",
+    "location": "us-east1-d",
+    "clusterSize": 31,
+    "totalCores": "31 vCPUs",
+    "totalMemory": "116.25 GB"
+  },
+  {
+    "name": "cluster-99",
+    "location": "northamerica-northeast1-a",
+    "clusterSize": 27,
+    "totalCores": "27 vCPUs",
+    "totalMemory": "101.25 GB"
+  },
+  {
+    "name": "cluster-100",
+    "location": "europe-west1-b",
+    "clusterSize": 10,
+    "totalCores": "10 vCPUs",
+    "totalMemory": "37.5 GB"
+  }
+]

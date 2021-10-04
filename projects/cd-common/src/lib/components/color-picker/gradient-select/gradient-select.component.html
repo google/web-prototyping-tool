@@ -1,0 +1,25 @@
+<cd-select-input
+  [showLeft]="embed"
+  [outline]="!embed"
+  [data]="gradientMenu | MarkSelection: mode"
+  (change)="onGradientMenuChange($event)"
+></cd-select-input>
+<cd-input
+  [outline]="!embed"
+  type="number"
+  [value]="angle"
+  (change)="onAngleChange($event)"
+  [disabled]="isRadial"
+  innerLabel="deg"
+  min="0"
+  max="360"
+></cd-input>
+<!-- <div class="angle"></div> -->
+<button
+  *ngIf="!embed"
+  cd-button
+  iconName="flip"
+  (click)="onFlip()"
+  cdTooltip="Flip"
+  [disabled]="isRadial"
+></button>

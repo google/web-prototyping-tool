@@ -1,0 +1,84 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  z-index: 2;
+  display: flex;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.title {
+  font-size: 2.4rem;
+}
+
+.subtitle {
+  color: var(--cd-font-color);
+  font-size: 1.2em;
+  margin-bottom: 30px;
+}
+
+.description {
+  max-width: 380px;
+  padding-left: 85px;
+  display: block;
+
+  .title {
+    @include cd-font(headline2);
+
+    color: var(--cd-header-font-color);
+  }
+
+  .subtitle {
+    @include cd-font(body2);
+
+    display: block;
+    margin-bottom: var(--cd-spacing-5);
+    line-height: 2.334rem;
+    color: var(--cd-font-color);
+  }
+}
+
+.graphic {
+  min-width: 180px;
+}
+
+:host[type='vertical'] {
+  flex-direction: column;
+
+  .graphic {
+    min-width: 140px;
+  }
+
+  .description {
+    padding-left: 0;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .title {
+      color: var(--cd-font-color);
+    }
+  }
+}

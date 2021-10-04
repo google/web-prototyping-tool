@@ -1,0 +1,22 @@
+<cd-input-group label="Text" leftColumns="40px auto">
+  <cd-input #textInput [value]="link.text" (change)="onTextChange($event)"></cd-input>
+</cd-input-group>
+
+<cd-input-group label="Link" leftColumns="40px auto">
+  <cd-input
+    #linkInput
+    placeholder="https://cloud.google.com"
+    [value]="link.url"
+    (change)="onUrlChange($event)"
+    (keyup)="onKeyUp($event)"
+  ></cd-input>
+</cd-input-group>
+<cd-input-group columns="auto 1fr" leftColumns="40px auto">
+  <cd-checkbox [checked]="link.openInTab" (change)="onURLWindowTargetChange($event)"></cd-checkbox>
+  <span class="new-tab-label">Open a new tab</span>
+</cd-input-group>
+
+<footer>
+  <button cd-button (click)="onRemove()" *ngIf="hasLink">Remove</button>
+  <button cd-unelevated-button (click)="onApply()">Apply</button>
+</footer>

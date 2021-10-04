@@ -1,0 +1,22 @@
+<svg
+  #svgRef
+  class="cover"
+  width="100%"
+  height="100%"
+  [class.modal]="modal"
+  preserveAspectRatio="none"
+>
+  <path fill-rule="nonzero" [attr.d]="svgClippingPath" />
+</svg>
+<div
+  #contentRef
+  class="content"
+  tabindex="0"
+  [class.init]="initialized"
+  [class.modal]="modal"
+  [class.no-padding]="config?.noPadding"
+  [ngStyle]="contentStyle"
+  (keyup.esc)="onEscKeyUp()"
+>
+  <ng-content></ng-content>
+</div>

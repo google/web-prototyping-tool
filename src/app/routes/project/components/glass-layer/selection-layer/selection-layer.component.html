@@ -1,0 +1,12 @@
+<ng-container *ngFor="let value of selection; trackBy: trackFn">
+  <svg:rect class="selection" [cdSVGRect]="value | RectToSVGStyle" />
+</ng-container>
+
+<!-- Peer users selection rects -->
+<ng-container *ngFor="let rect of peerRects; trackBy: peerTrackFn">
+  <svg:rect
+    class="selection peer"
+    [cdSVGRect]="rect.renderResult | RectToSVGStyle"
+    [attr.stroke]="rect.sessionId | peerColorPipe: (darkTheme$ | async)"
+  />
+</ng-container>

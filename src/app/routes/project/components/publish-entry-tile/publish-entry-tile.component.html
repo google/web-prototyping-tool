@@ -1,0 +1,88 @@
+<div class="body">
+  <!-- Code component icon -->
+  <div *ngIf="isCodeComponent" class="code-component-icon">
+    <cd-icon name="code" cdTooltip="Code component" cdTooltipDirection="right"></cd-icon>
+  </div>
+
+  <!-- INFO -->
+  <div class="info" (click)="onShowDetails($event)">
+    <button cd-button size="medium" iconSize="medium" iconName="info"></button>
+  </div>
+
+  <img
+    *ngIf="imgSrc; else defaultIcon"
+    [attr.draggable]="false"
+    [src]="imgSrc"
+    class="img"
+    loading="lazy"
+  />
+
+  <ng-template #defaultIcon>
+    <cd-icon name="/assets/component-placeholder.svg" [scale]="4" size="medium"></cd-icon>
+  </ng-template>
+</div>
+<footer class="footer">
+  <ng-container *ngIf="userDetails$ | async as userDetails; else placeholder">
+    <cd-avatar
+      [cdTooltip]="userDetails.name | publishEntryTooltipText"
+      class="avatar"
+      [profileImgUrl]="userDetails?.photoUrl"
+      (click)="onAvatarClick(userDetails)"
+    ></cd-avatar>
+  </ng-container>
+  <div class="left">
+    <h3 class="title">{{ name }}</h3>
+    <span *ngIf="timestamp" class="timestamp">{{ timestamp | FormatFirebaseTime }}</span>
+  </div>
+  <div class="right">
+    <div class="check" *ngIf="selected || isImported; else addBtn">
+      <span *ngIf="isImported">IMPORTED</span>
+      <cd-icon name="check" size="large"></cd-icon>
+    </div>
+    <ng-template #addBtn>
+      <button *ngIf="!isImported" cd-outlined-button>Add</button>
+    </ng-template>
+  </div>
+</footer>
+
+<div class="details" *ngIf="showDetails">
+  <header class="details-header">
+    <h3 class="title">{{ name }}</h3>
+
+    <button
+      cd-button
+      class="close"
+      size="medium"
+      iconSize="large"
+      iconName="close"
+      (mousedown)="onCloseDetails($event)"
+    ></button>
+
+    <button
+      *ngIf="authService.isAdminUser$ | async"
+      cd-button
+      class="screenshot-btn"
+      size="medium"
+      iconSize="large"
+      iconName="refresh"
+      [cdTooltip]="'Regenerate screenshot'"
+      (mousedown)="onRegenerateScreenshot($event)"
+    ></button>
+  </header>
+  <span class="desc">
+    {{ desc }}
+  </span>
+  <div class="details-footer">
+    <cd-chip
+      *ngFor="let tag of tags; let idx = index"
+      class="tag"
+      [chipTitle]="tag"
+      [removeable]="false"
+      (click)="onTagClick($event, tag)"
+    ></cd-chip>
+  </div>
+</div>
+
+<ng-template #placeholder>
+  <cd-avatar></cd-avatar>
+</ng-template>

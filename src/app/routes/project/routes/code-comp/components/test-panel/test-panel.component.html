@@ -1,0 +1,43 @@
+<div class="drag-boundary">
+  <div class="test-panel" [class.collapsed]="collapsed" cdkDragBoundary=".drag-boundary" cdkDrag>
+    <cd-scroll-view>
+      <div cdScrollHeader class="header">
+        <div class="left" cdkDragHandle>
+          <h2>Test</h2>
+        </div>
+
+        <button
+          cd-button
+          cdTooltip="Reset to defaults"
+          iconName="refresh"
+          iconSize="small"
+          (click)="onResetClick()"
+        ></button>
+
+        <button
+          class="ico-btn"
+          cdTooltipDirection="left"
+          [cdTooltip]="collapsed ? 'Expand' : 'Collapse'"
+          (click)="toggleCollapsed()"
+        >
+          <cd-icon
+            #arrow
+            name="keyboard_arrow_down"
+            class="icon"
+            [class.collapsed]="collapsed"
+          ></cd-icon>
+        </button>
+      </div>
+
+      <app-dynamic-properties
+        *ngIf="showProperties"
+        [designSystem]="designSystem"
+        [colorMenuData]="colorMenuData"
+        [datasetsMenuData]="datasetsMenuItems"
+        [properties]="properties"
+        [props]="[testInstance]"
+        (propsChange)="onPropsChange($event)"
+      ></app-dynamic-properties>
+    </cd-scroll-view>
+  </div>
+</div>

@@ -1,0 +1,75 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Settings"></app-activity-panel-header>
+
+<cd-scroll-view>
+  <div class="settings">
+    <cd-checkbox
+      label="Dark theme"
+      [checked]="settings?.darkTheme"
+      (change)="onDarkThemeChange($event)"
+    ></cd-checkbox>
+    <cd-checkbox
+      label="Prefer absolute position"
+      cdTooltip="Use absolute position when dragging from the components panel"
+      [checked]="settings?.prefersAbsolute"
+      (change)="onPrefersAbsolute($event)"
+    ></cd-checkbox>
+    <cd-checkbox
+      label="Layers indent lines"
+      [checked]="settings?.showLayersIndent"
+      (change)="onShowLayersTreeIndent($event)"
+    ></cd-checkbox>
+    <cd-checkbox
+      label="Disable contextual overlay"
+      [checked]="settings?.disableContextualOverlay"
+      (change)="onDisableContextualOverlay($event)"
+    ></cd-checkbox>
+    <cd-switch label="Advanced" [checked]="advancedOpen" (change)="onSwitched($event)"></cd-switch>
+    <ng-container *ngIf="advancedOpen">
+      <cd-checkbox
+        label="Show element IDs"
+        [checked]="settings?.showingBoardIds"
+        (change)="onShowingBoardIds($event)"
+      ></cd-checkbox>
+      <cd-checkbox
+        label="Debug canvas"
+        [checked]="settings?.debugCanvas"
+        (change)="onDebugCanvasChange($event)"
+      ></cd-checkbox>
+      <cd-checkbox
+        label="Debug glass"
+        [checked]="settings?.debugGlass"
+        (change)="onDebugGlass($event)"
+      ></cd-checkbox>
+      <cd-checkbox
+        label="Break glass"
+        [checked]="settings?.breakGlass"
+        (change)="onBreakGlass($event)"
+      ></cd-checkbox>
+      <cd-checkbox
+        label="Show debug stats"
+        [checked]="settings?.showStats"
+        (change)="onStats($event)"
+      ></cd-checkbox>
+
+      <cd-checkbox
+        label="Disable IndexedDB reads"
+        [checked]="settings?.disableIdb"
+        (change)="onDisableIndexDB($event)"
+      ></cd-checkbox>
+    </ng-container>
+  </div>
+  <div class="btn-wrapper" *ngIf="advancedOpen">
+    <a *ngIf="!prodMode" href="/debug/log" target="_blank">Debug Log</a>
+    <a *ngIf="!prodMode" href="/debug/data" target="_blank">Debug Data</a>
+    <a *ngIf="!prodMode" href="http://127.0.0.1:5432/debug" target="_blank">Render Log</a>
+    <a href="/debug/graph" target="_blank">Debug Graph</a>
+    <button cd-outlined-button (click)="onResetLocalDatabase()">Reset IndexedDB</button>
+    <button cd-outlined-button (click)="onRepairProjectClick()">Repair project</button>
+    <button cd-outlined-button (click)="checkDataSync()">Check Data Sync</button>
+    <button cd-outlined-button (click)="throwTestException()">Test Exception</button>
+  </div>
+
+  <div class="btn-wrapper">
+    <button cd-outlined-button (click)="onKeyboardShortcutsClick()">Keyboard Shortcuts</button>
+  </div>
+</cd-scroll-view>

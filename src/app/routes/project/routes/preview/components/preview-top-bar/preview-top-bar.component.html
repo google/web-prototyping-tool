@@ -1,0 +1,180 @@
+<div class="opener" (mouseover)="onOpenerMouseover()"></div>
+
+<div class="content" role="banner" [class.hidden]="hidden" [class.init]="init">
+  <div class="left">
+    <button
+      cd-button
+      size="medium"
+      iconSize="medium"
+      iconName="arrow_back"
+      cdTooltip="Return to project"
+      cdTooltipDirection="bottom"
+      (click)="onClosePreview()"
+    ></button>
+    <ng-container *ngIf="!isProjectOwner && project">
+      <ng-container *ngIf="owner$ | async as owner">
+        <cd-avatar
+          class="avatar"
+          [cdTooltip]="owner?.name"
+          cdTooltipDirection="bottom"
+          [profileImgUrl]="owner?.photoUrl"
+          routerLink="/dashboard/"
+          [queryParams]="{ search: 'owner:' + owner.email }"
+        ></cd-avatar>
+      </ng-container>
+    </ng-container>
+    <h1 class="project-title" [class.untitled]="!projectName">{{ title }}</h1>
+
+    <button
+      *ngIf="!isProjectOwner && project"
+      class="clone-btn"
+      cd-button
+      iconSize="small"
+      size="medium"
+      iconName="file_copy"
+      cdTooltip="Clone this project"
+      cdTooltipDirection="bottom"
+      (click)="onForkClick()"
+    ></button>
+
+    <!-- <span *ngIf="!isProjectOwner">- {{ project?.owner.email }}</span> -->
+  </div>
+
+  <div class="right" role="menubar" aria-label="Design preview controls">
+    <button
+      cd-button
+      iconSize="medium"
+      size="small"
+      iconName="keyboard_arrow_left"
+      cdTooltip="Back"
+      cdTooltipDirection="bottom"
+      [disabled]="!historyStack.canGoBack"
+      (click)="onBackNavigation()"
+    ></button>
+
+    <button
+      cd-button
+      iconSize="small"
+      size="medium"
+      iconName="keyboard_arrow_right"
+      cdTooltip="Forward"
+      cdTooltipDirection="bottom"
+      [disabled]="!historyStack.canGoForward"
+      (click)="onForwardNavigation()"
+    ></button>
+
+    <button
+      cd-button
+      iconSize="medium"
+      size="medium"
+      iconName="refresh"
+      cdTooltip="Reset prototype"
+      cdTooltipDirection="bottom"
+      [disabled]="!project?.homeBoardId"
+      (click)="onResetPrototype()"
+    ></button>
+
+    <button
+      cd-unelevated-button
+      size="small"
+      iconName="stop"
+      cdTooltip="Exit preview - {{ previewActionTooltip }}"
+      cdTooltipDirection="bottom"
+      iconSize="medium"
+      (click)="onClosePreview()"
+    >
+      Stop
+    </button>
+
+    <button
+      cd-button
+      cdToggleButton
+      iconName="screen_rotation"
+      iconSize="medium"
+      size="medium"
+      [attr.aria-label]="
+        previewParams.rotate ? 'Rotate orientation to vertical' : 'Rotate orientation to horizontal'
+      "
+      cdTooltip="Rotate orientation"
+      cdTooltipDirection="bottom"
+      [selected]="previewParams.rotate"
+      [disabled]="disableRotation"
+      (click)="onRotateOrientationClick()"
+    ></button>
+    <cd-menu-button
+      iconName="devices"
+      iconSize="medium"
+      cdTooltip="Device size"
+      cdTooltipDirection="bottom"
+      size="medium"
+      ariaLabel="Device size"
+      [highlight]="highlightDeviceMenu"
+      [data]="deviceMenu | MarkChecked: deviceMode"
+      [disabled]="viewingComponent"
+      (selected)="onDeviceMenuChange($event)"
+    ></cd-menu-button>
+    <cd-menu-button
+      iconName="zoom_in"
+      iconSize="medium"
+      size="medium"
+      [data]="zoomMenu | MarkChecked: zoomLevel"
+      ariaLabel="Zoom"
+      cdTooltip="Zoom"
+      [disabled]="disableZoom"
+      [highlight]="highlightZoomMenu"
+      cdTooltipDirection="bottom"
+      (selected)="onZoomMenuChange($event)"
+    ></cd-menu-button>
+
+    <cd-fullscreen-button
+      inactiveTooltip="Fullscreen - F"
+      tooltipDirection="bottom"
+      expandIcon="fullscreen"
+      collapseIcon="fullscreen_exit"
+      [fullscreen]="previewParams.fullscreen"
+      (fullscreenChange)="onFullScreenToggle()"
+    ></cd-fullscreen-button>
+
+    <div class="divider"></div>
+
+    <button
+      cd-button
+      cdToggleButton
+      iconSize="medium"
+      size="medium"
+      iconName="accessibility"
+      ariaLabel="Accessibility"
+      cdTooltip="Accessibility"
+      cdTooltipDirection="bottom"
+      [selected]="previewParams.accessibility"
+      (click)="onAccessiblityToggle()"
+    ></button>
+
+    <button
+      cd-button
+      cdToggleButton
+      iconSize="medium"
+      size="medium"
+      cdTooltip="Comments - C"
+      cdTooltipDirection="bottom"
+      iconName="chat_bubble"
+      [cdIndicator]="commentCounts | selectedBoardHasCommentsPipe: previewParams.id"
+      [attr.aria-expanded]="previewParams.comments"
+      [selected]="previewParams.comments"
+      [disabled]="isCommentToggleDisabled"
+      (click)="onCommentToggle()"
+    ></button>
+
+    <button
+      cd-button
+      size="small"
+      iconName="group"
+      iconSize="medium"
+      cdTooltip="Share or Embed"
+      cdTooltipDirection="bottom"
+      (click)="onShareClick()"
+    >
+      Share
+    </button>
+  </div>
+</div>

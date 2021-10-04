@@ -1,0 +1,44 @@
+<div class="resolved-wrapper">
+  <section *ngIf="resolvedThreadCount > 0" class="switch-group">
+    <span class="switch-group-label">Show resolved</span>
+    <cd-switch [checked]="showResolved" (change)="onShowResolvedChange($event)"></cd-switch>
+  </section>
+</div>
+
+<section class="threads-grid" [class.has-resolved-threads]="resolvedThreadCount > 0">
+  <section class="new-thread-card" [class.disabled]="!currentBoardId">
+    <app-comment-header
+      [firstCommentInThreadHeader]="true"
+      [firstComment]="false"
+      [user]="user"
+      [selectionActive]="selectionActive"
+      (toggleSelectingElement)="onToggleElementSelectionMode($event)"
+    ></app-comment-header>
+    <app-comment-footer
+      newThread="true"
+      placeholder="Add comment"
+      [taggedItems]="taggedItems"
+      [editing]="!!currentlySelectedElement"
+      (createComment)="onCreateCommentThread($event)"
+      (cancelEdit)="onToggleElementSelectionMode(false)"
+      (taggedItemsChange)="onTaggedItemsChange($event)"
+    ></app-comment-footer>
+  </section>
+
+  <app-comment-thread
+    *ngFor="let thread of commentThreads | filterResolved: showResolved; trackBy: trackFn"
+    [comments]="thread.comments"
+    [resolved]="thread.resolved"
+    [threadId]="thread.id"
+    [highlightLabel]="taggedElementLabelMap.get(thread.id)"
+    [user]="user"
+    [class.resolved]="thread.resolved"
+    (click)="onToggleElementSelectionMode(false)"
+    (createComment)="onCreateComment($event)"
+    (deleteComment)="onDeleteComment($event)"
+    (reopenThread)="onReopenThread($event)"
+    (editComment)="onToggleElementSelectionMode(false)"
+    (resolveThread)="onResolveThread($event)"
+    (updateComment)="onUpdateComment($event)"
+  ></app-comment-thread>
+</section>

@@ -1,0 +1,20 @@
+<!-- OUTER SHADOW -->
+<cd-property-group groupTitle="Shadow" type="add" (add)="onShadowAdd()">
+  <cd-shadow-props
+    [data]="outerShadows"
+    [colorMenuData]="colorMenuData"
+    (change)="updateOuterShadows($event)"
+    (action)="onAction($event)"
+  ></cd-shadow-props>
+</cd-property-group>
+<!-- INNER SHADOW -->
+<ng-container *ngIf="hideInnerShadow === false">
+  <cd-property-group groupTitle="Inner Shadow" type="add" (add)="onShadowAdd(true)">
+    <cd-shadow-props
+      [data]="innerShadows"
+      [colorMenuData]="colorMenuData"
+      (change)="updateInnerShadows($event)"
+      (action)="onAction($event)"
+    ></cd-shadow-props>
+  </cd-property-group>
+</ng-container>

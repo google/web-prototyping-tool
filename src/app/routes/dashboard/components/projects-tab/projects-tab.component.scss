@@ -1,0 +1,135 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$rowHeight: 226px;
+$colWidth: 360px;
+
+:host {
+  position: relative;
+  overflow-y: scroll;
+  height: 100%;
+  background-color: var(--cd-background-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.loader {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--cd-background-color);
+  height: 100%;
+  margin-bottom: 30px;
+}
+
+.action-bar {
+  z-index: 1;
+  background-color: var(--cd-background-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 120px;
+  padding: 0 var(--cd-size-6);
+  justify-content: space-between;
+}
+
+.filter-toggles {
+  width: min-content;
+  gap: var(--cd-spacing-3);
+}
+
+.list {
+  background-color: var(--cd-background-color);
+  display: grid;
+  gap: var(--cd-spacing-5);
+}
+
+.project-list {
+  padding: 0 var(--cd-size-6) var(--cd-size-6) var(--cd-size-6);
+  grid-template-columns: repeat(auto-fill, minmax($colWidth, 1fr));
+  grid-template-rows: repeat(auto-fill, $rowHeight);
+}
+
+.action-bar,
+.project-list {
+  // compensate for custom scrollbar size
+  padding-right: calc(var(--cd-size-6) - var(--cd-scrollbar-size));
+}
+
+h3 {
+  padding: 0 var(--cd-size-6);
+  margin: var(--cd-spacing-5) 0;
+}
+
+.user-projects,
+.other-projects {
+  display: grid;
+}
+
+.no-results {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 30px;
+  line-height: 1.5;
+}
+
+.no-results-title {
+  color: var(--cd-header-font-color);
+  font-family: var(--cd-header-font);
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+.found-users {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 var(--cd-size-6) var(--cd-size-6) var(--cd-size-6);
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: start;
+    gap: var(--cd-spacing-6);
+  }
+
+  li {
+    display: grid;
+    justify-content: center;
+    justify-items: center;
+    max-width: 100px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 5;
+    grid-template-rows: auto 1fr;
+    gap: var(--cd-spacing-3);
+    line-height: 1.3;
+
+    &:hover {
+      color: var(--cd-primary-color);
+    }
+  }
+}
+
+.starred-zero {
+  z-index: 0;
+}

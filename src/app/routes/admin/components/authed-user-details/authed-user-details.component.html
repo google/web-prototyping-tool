@@ -1,0 +1,36 @@
+<div class="user-details">
+  <div class="large-avatar">
+    <img *ngIf="googleUser$ | async as googleUser" [src]="googleUser?.photoUrl" />
+  </div>
+
+  <ng-container *ngIf="user$ | async as user; else namePlaceholder">
+    <h2 class="name">{{ user?.name }}</h2>
+  </ng-container>
+</div>
+
+<div *ngIf="grantedScopes; else noScopes" class="granted-scopes-section">
+  <div class="granted-scopes-card">
+    <span class="scopes-heading">
+      <cd-icon name="security" size="large"></cd-icon>
+      Granted OAuth Scopes
+    </span>
+    <ul *ngIf="grantedScopes.length > 0; else noGrantedScopes" class="scope-list">
+      <li *ngFor="let scope of grantedScopes" class="scope-item">{{ scope }}</li>
+    </ul>
+  </div>
+  <button cd-button cd-unelevated-button size="medium" class="revoke-button" (click)="onClick()">
+    Revoke scopes and sign out
+  </button>
+</div>
+
+<ng-template #noScopes>
+  <span class="checking-scopes-text">Checking granted scopes...</span>
+</ng-template>
+
+<ng-template #namePlaceholder>
+  <h2 class="name">Admin</h2>
+</ng-template>
+
+<ng-template #noGrantedScopes>
+  <span>No granted scopes</span>
+</ng-template>

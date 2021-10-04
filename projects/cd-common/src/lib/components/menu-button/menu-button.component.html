@@ -1,0 +1,13 @@
+<button
+  #btnRef
+  cd-button
+  cdToggleButton
+  [attr.aria-label]="ariaLabel || null"
+  [size]="size"
+  [iconName]="iconName"
+  [iconSize]="iconSize"
+  [selected]="highlight"
+  [active]="active"
+  [disabled]="disabled"
+  (click)="onClick($event)"
+></button>

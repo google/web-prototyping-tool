@@ -1,0 +1,43 @@
+<header class="header">
+  <div class="left">
+    <span class="title">Events</span>
+  </div>
+  <div class="right">
+    <button
+      cd-button
+      cdTooltip="Add event"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="add"
+      (click)="onAddEvent()"
+      [disabled]="disabled"
+    ></button>
+  </div>
+</header>
+
+<div #eventListRef class="cards-wrapper">
+  <ng-container *ngIf="outputs.length > 0; else zeroState">
+    <app-event-card
+      *ngFor="let event of outputs; index as i; trackBy: trackByFn"
+      [event]="event"
+      [allEvents]="outputs"
+      [allInputs]="inputs"
+      [cdAnimateIn]="animateEnabled && i === 0"
+      (update)="onUpdate(i, $event)"
+      (delete)="onDelete(i)"
+    ></app-event-card>
+  </ng-container>
+</div>
+
+<ng-template #zeroState>
+  <div class="zero-state-container">
+    <div class="center">
+      <h3>No events defined</h3>
+      <span>Trigger actions from events that your component outputs</span>
+      <button cd-outlined-button size="medium" [disabled]="disabled" (click)="onAddEvent()">
+        Add event
+      </button>
+    </div>
+  </div>
+</ng-template>

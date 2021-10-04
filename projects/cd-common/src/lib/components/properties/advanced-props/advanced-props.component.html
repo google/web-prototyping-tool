@@ -1,0 +1,51 @@
+<cd-key-value-editor
+  *ngFor="let item of selectors; trackBy: trackByFn"
+  inputMode="css"
+  [groupTitle]="item.title"
+  [designSystem]="designSystem"
+  [autoAddWhenEmpty]="item.autoValues"
+  [keyMenuData]="styleAttributes"
+  [data]="item.selector | styleSelector: styles"
+  [removable]="item.removable"
+  (dataChange)="onStyleOverride($event, item.selector)"
+  (deleteGroup)="onDeleteGroup(item.selector)"
+></cd-key-value-editor>
+
+<div class="pseudo">
+  <button
+    cd-button
+    size="small"
+    iconName="add"
+    iconSize="small"
+    (click)="onAddPseudoClass()"
+    *ngIf="!addingPseudo; else pseudoInputRef"
+  >
+    Add pseudo class
+  </button>
+</div>
+
+<cd-key-value-editor
+  *ngIf="!hideAdvancedAttrs"
+  inputMode="attr"
+  groupTitle="Attributes"
+  [data]="attr"
+  (dataChange)="onAttributesUpdate($event)"
+></cd-key-value-editor>
+
+<cd-computed-css
+  [styles]="styles"
+  [designSystem]="designSystem"
+  [projectAssets]="projectAssets"
+></cd-computed-css>
+
+<ng-template #pseudoInputRef>
+  <cd-input
+    #pseudoInput
+    outline
+    class="input"
+    placeholder="type a :pseudo-class and press enter"
+    [showError]="!validPseudo"
+    (change)="onPseudoClassInput($event)"
+    (focused)="onPseudoClassBlur($event)"
+  ></cd-input>
+</ng-template>

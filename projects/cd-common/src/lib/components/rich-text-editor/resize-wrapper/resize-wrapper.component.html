@@ -1,0 +1,8 @@
+<div class="content"><ng-content></ng-content></div>
+<div
+  class="handle"
+  cdResizer
+  (resizeChange)="onResize($event)"
+  (resizeEnd)="onResizeEnd()"
+  (resizeStart)="onResizeStart()"
+></div>

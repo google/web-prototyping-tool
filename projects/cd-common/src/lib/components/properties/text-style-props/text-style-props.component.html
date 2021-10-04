@@ -1,0 +1,13 @@
+<cd-input-group label="Truncate">
+  <cd-select-input
+    [data]="overflowMenu | MarkSelection: textOverflow"
+    (change)="onOverflowMenuChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Transform">
+  <cd-select-input
+    [data]="textTransformMenu | MarkSelection: textTransform"
+    (change)="onTransformChange($event)"
+  ></cd-select-input>
+</cd-input-group>

@@ -1,0 +1,7 @@
+<div
+  *ngFor="let presence of presenceService.otherPresentUsers$ | async"
+  class="presence-indicator"
+  [style.borderColor]="presence.sessionId | peerColorPipe: (darkTheme$ | async)"
+>
+  <cd-avatar [profileImgUrl]="presence.user?.photoUrl"></cd-avatar>
+</div>

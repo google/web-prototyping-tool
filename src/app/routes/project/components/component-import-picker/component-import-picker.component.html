@@ -1,0 +1,106 @@
+<div class="search">
+  <cd-search-box
+    placeholder="Search"
+    [value]="searchString"
+    (change)="onSearchChange($event)"
+    (valueChange)="onSearchValueChange($event)"
+  ></cd-search-box>
+</div>
+
+<aside class="menu">
+  <header class="header">
+    <h1 class="title">Marketplace</h1>
+  </header>
+  <cd-scroll-view shaded="true">
+    <div class="menu-list">
+      <cd-menu-list
+        [items]="menuListItems"
+        [(selectedId)]="selectedMenuItemId"
+        (selectedIdChange)="onMenuItemSelected($event)"
+      ></cd-menu-list>
+    </div>
+  </cd-scroll-view>
+</aside>
+
+<div class="content-wrapper">
+  <cd-scroll-view #scrollView shaded="true" (scrollChange)="onScroll($event)">
+    <ng-container *ngIf="searchString; else default">
+      <div class="no-results" *ngIf="hasNoResults">
+        <span class="no-results-title">We couldn't find any search results for</span>
+        <span>{{ searchString }}</span>
+      </div>
+
+      <!-- User Symbols -->
+      <div class="user-symbols">
+        <h3 *ngIf="userSearchResults.length && selectedMenuItemId !== MINE_ID">Mine</h3>
+        <ng-container
+          *ngTemplateOutlet="symbolsList; context: { $implicit: userSearchResults }"
+        ></ng-container>
+      </div>
+      <!-- Others Symbols -->
+      <div class="other-projects">
+        <h3 *ngIf="otherSearchResults.length">Others</h3>
+        <ng-container
+          *ngTemplateOutlet="symbolsList; context: { $implicit: otherSearchResults }"
+        ></ng-container>
+        <ng-container
+          *ngTemplateOutlet="loader; context: { $implicit: loading || userLoading }"
+        ></ng-container>
+      </div>
+    </ng-container>
+  </cd-scroll-view>
+</div>
+
+<footer class="footer" [class.selected]="selectedEntries.size > 0">
+  <div class="left">
+    <ng-container *ngIf="selectedEntries.size; let size">
+      <button cd-button size="medium" iconName="close" (click)="onClearSelected()"></button>
+      <span class="count">{{ size }} Selected component{{ size > 1 ? 's' : '' }}</span>
+    </ng-container>
+  </div>
+  <div class="right">
+    <button cd-button size="medium" (click)="onDismissClicked()">Cancel</button>
+    <button
+      cd-unelevated-button
+      size="medium"
+      [disabled]="selectedEntries.size === 0"
+      cd-e2e-label="create-project-ok"
+      (click)="onConfirmClicked()"
+    >
+      Add selected
+    </button>
+  </div>
+</footer>
+
+<ng-template #default>
+  <ng-container *ngIf="publishedComponents.length > 0 || loading || !init">
+    <ng-container
+      *ngTemplateOutlet="symbolsList; context: { $implicit: publishedComponents }"
+    ></ng-container>
+    <ng-container
+      *ngTemplateOutlet="loader; context: { $implicit: loading || !init }"
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<!-- Symbols / Code Components list -->
+<ng-template #symbolsList let-publishedComponents>
+  <div class="component-list" *ngIf="publishedComponents.length > 0">
+    <app-publish-entry-tile
+      *ngFor="let entry of publishedComponents; trackBy: trackFn"
+      [publishEntry]="entry"
+      [isImported]="importedEntryIds.has(entry.id)"
+      [selected]="selectedEntries.has(entry.id)"
+      (selectEntry)="onEntrySelected(entry)"
+      (tagClick)="onTagClick($event)"
+      (userClick)="onUserClick($event)"
+    ></app-publish-entry-tile>
+  </div>
+</ng-template>
+
+<!-- Loader -->
+<ng-template #loader let-isLoading>
+  <div class="loader" *ngIf="isLoading">
+    <cd-spinner></cd-spinner>
+  </div>
+</ng-template>

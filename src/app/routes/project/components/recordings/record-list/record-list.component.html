@@ -1,0 +1,110 @@
+<ng-container
+  *ngIf="stateChanges.length"
+  [ngTemplateOutlet]="showTimeline ? timeline : list"
+></ng-container>
+
+<ng-template #list>
+  <li
+    class="group-item"
+    *ngFor="let change of changeListGroup; trackBy: trackByGroupFn"
+    (mouseover)="onMouseOver(change[0])"
+  >
+    <header class="group-item-header">
+      <span class="group-title">
+        {{ change[0] | recordedTitlePipe }}
+      </span>
+      <button
+        class="delete-all-btn"
+        cd-button
+        cdTooltip="Remove all element changes"
+        cdTooltipDirection="left"
+        size="small"
+        iconSize="small"
+        iconName="delete_all"
+        (click)="onDeleteAllClick(change[1].changeIndex)"
+      ></button>
+    </header>
+
+    <ul class="change-item-list">
+      <li
+        *ngFor="let child of change[1].changes; let i = index; trackBy: trackByStateFn"
+        class="change-item"
+        title=""
+        [cdTooltip]="child | recordTimingTooltip"
+        [class.active]="change[1].changeIndex[i] === activeIndex"
+        (click)="onShowTimingOverlay($event, change[1].changeIndex[i])"
+      >
+        <div class="left" [attr.data-persist]="child.persist">
+          <!-- <cd-icon
+            *ngIf="showPin"
+            size="small"
+            [name]="child.persist ? 'keep_pin' : 'keep_pin_outline'"
+            cdTooltip="Prevent removal"
+            (click)="onTogglePersist($event, change[1].changeIndex[i], child)"
+          ></cd-icon> -->
+
+          <span class="desc">
+            <span class="key">{{ child | recordedLabelPipe }}</span>
+            <span class="value">{{ child | recordedOutputPipe: designSystem }}</span>
+          </span>
+        </div>
+        <div class="right">
+          <button
+            cd-button
+            cdTooltip="Edit"
+            size="small"
+            iconSize="small"
+            iconName="edit"
+            class="edit-btn"
+          ></button>
+          <button
+            cd-button
+            cdTooltip="Delete"
+            size="small"
+            iconSize="small"
+            iconName="delete_outline"
+            class="delete-btn"
+            (click)="onDeleteClick($event, change[1].changeIndex[i])"
+          ></button>
+        </div>
+      </li>
+    </ul>
+  </li>
+</ng-template>
+
+<ng-template #timeline>
+  <div class="track-start"></div>
+  <div class="track-end" [attr.data-time]="totalTime"></div>
+  <li
+    class="group-item"
+    *ngFor="let change of changeListGroup; trackBy: trackByGroupFn"
+    (mouseover)="onMouseOver(change[0])"
+  >
+    <header class="group-item-header">
+      <span class="group-title">
+        {{ change[0] | recordedTitlePipe }}
+      </span>
+    </header>
+
+    <ul class="change-item-list">
+      <li
+        *ngFor="let child of change[1].changes; let i = index; trackBy: trackByStateFn"
+        class="change-item line-item"
+        title=""
+        [class.active]="change[1].changeIndex[i] === activeIndex"
+        (click)="onShowTimingOverlay($event, change[1].changeIndex[i])"
+      >
+        <div class="left">
+          <span class="desc">{{ child | recordedLabelPipe }}</span>
+        </div>
+        <div class="right" [cdTooltip]="child | recordTimingTooltip">
+          <div
+            class="line"
+            [style.--duration.%]="child | recordDurationPipe: totalTime"
+            [style.--delay.%]="child | recordDelayPipe: totalTime"
+          ></div>
+        </div>
+      </li>
+    </ul>
+  </li>
+</ng-template>

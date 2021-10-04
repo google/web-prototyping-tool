@@ -1,0 +1,53 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  display: grid;
+  row-gap: var(--cd-spacing-0);
+  border-top: 1px solid var(--cd-border-color);
+
+  &:first-child {
+    border-top: 0;
+  }
+}
+
+.confirmation-actions {
+  display: grid;
+  row-gap: var(--cd-spacing-3);
+  align-items: center;
+  padding: var(--cd-spacing-3);
+  background-color: var(--cd-focus-fill);
+}
+
+.first-comment {
+  border-radius: var(--cd-border-radius-3) var(--cd-border-radius-3) 0 0;
+}
+
+.prompt {
+  @include cd-font(body2);
+
+  color: var(--cd-header-font-color);
+  text-align: center;
+}
+
+.prompt-actions {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  column-gap: var(--cd-spacing-2);
+  justify-content: center;
+}

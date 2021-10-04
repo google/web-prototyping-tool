@@ -1,0 +1,86 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/states/states.scss';
+
+$strokeWidth: 8;
+
+.top,
+.bottom {
+  cursor: ns-resize;
+}
+
+.right,
+.left {
+  cursor: ew-resize;
+}
+
+.top-left,
+.bottom-right {
+  cursor: nwse-resize;
+}
+
+.top-right,
+.bottom-left {
+  cursor: nesw-resize;
+}
+
+.handle {
+  stroke: transparent;
+  stroke-width: $strokeWidth;
+  vector-effect: non-scaling-stroke;
+  text-rendering: optimizeSpeed;
+  pointer-events: stroke;
+  fill: transparent;
+  visibility: hidden;
+
+  @include for-desktop-hidpi {
+    shape-rendering: optimizeSpeed;
+  }
+}
+
+.anchor {
+  fill: #f8f9fa;
+  stroke: var(--cd-glass-color);
+  vector-effect: non-scaling-stroke;
+  text-rendering: optimizeSpeed;
+  stroke-width: 1.5px;
+
+  &.active {
+    fill: var(--cd-glass-color);
+  }
+}
+
+.hidden {
+  pointer-events: all;
+  fill: transparent;
+  visibility: hidden;
+  vector-effect: non-scaling-stroke;
+  stroke: transparent;
+  stroke-width: 8;
+
+  @include for-desktop-hidpi {
+    shape-rendering: optimizeSpeed;
+  }
+}
+
+:host.debug {
+  .handle,
+  .hidden {
+    stroke: rgba(255, 0, 0, 0.5);
+    visibility: visible;
+  }
+}

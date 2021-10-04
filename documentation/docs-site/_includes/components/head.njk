@@ -1,0 +1,27 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ renderData.title or title or site.name }}
+    | Docs</title>
+  <meta name="description" content="documentation"/>
+  <meta name="keywords" content="design,prototyping,tools,prototype">
+  <link rel="preconnect" href="//fonts.gstatic.com" crossorigin="crossorigin"/>
+  <link rel="preconnect" href="//googletagmanager.com" crossorigin="crossorigin"/>
+
+  <link rel="icon" href="{{ '/favicon.svg' | url}}"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Google+Sans:400,500|Google+Material+Icons&display=swap" rel="stylesheet"/>
+  {%- set nextPage = collections.menuItems | getNextCollectionItem(page) %}
+  {%- if nextPage %}
+    <link rel="next" href="{{ nextPage.url | url }}">
+  {% endif %}
+
+  <link rel="stylesheet" href="{{ '/style.css?v=' | url }}{% version %}"/>
+  <link rel="stylesheet" href="{{ '/static/css/prism-theme.css?v=' | url }}{% version %}"/>
+
+  {% set css %}
+  {% include "assets/css/inline.css" %}
+  {% endset %}
+
+  <style>
+    {{css | cssmin | safe}}
+  </style>

@@ -1,0 +1,13 @@
+<label class="radio-label-wrapper">
+  <input
+    type="radio"
+    [name]="name"
+    [value]="value"
+    [checked]="selected"
+    [disabled]="disabled"
+    (click)="onRadioSelected()"
+  />
+  <span class="radio-label-text">
+    <ng-content></ng-content>
+  </span>
+</label>

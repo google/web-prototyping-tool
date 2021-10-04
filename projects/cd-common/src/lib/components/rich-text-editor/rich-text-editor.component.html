@@ -1,0 +1,150 @@
+<cd-input-group [label]="label" *ngIf="!onlyRichText">
+  <cd-toggle-button-group
+    showBackground
+    [value]="textMode"
+    (valueChange)="onTextModeChange($event)"
+  >
+    <button cd-button cdToggleButton expand="true" [value]="TextModeEnum.RichText">
+      Rich Text
+    </button>
+    <button cd-button cdToggleButton expand="true" [value]="TextModeEnum.Default">
+      Plain Text
+    </button>
+  </cd-toggle-button-group>
+</cd-input-group>
+<!-- PLAIN TEXT -->
+<ng-template #plainText>
+  <cd-input-group label="Alignment">
+    <cd-text-alignment
+      [value]="textAlign"
+      (valueChange)="onPlainTextAlignment($event)"
+    ></cd-text-alignment>
+  </cd-input-group>
+  <cd-input-group
+    label="Text"
+    [bindable]="bindable"
+    [value]="plainTextValue"
+    [activeElementIds]="activeElementIds"
+    (valueChange)="onPlainTextBindingChange($event)"
+    (activeValueChange)="onElementHighlight($event)"
+  >
+    <cd-input
+      #plainTextInput
+      [value]="plainTextValue"
+      (input)="onPlainTextInput($event)"
+      (focused)="onPlainTextFocus($event)"
+      (change)="onPlainTextBindingChange($event)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-container *ngIf="richText; else plainText">
+  <cd-input-group label="Alignment" *ngIf="alignmentEnabled">
+    <cd-text-justify
+      [value]="model.textAlignment.state"
+      (valueChange)="onRichTextAlignment($event)"
+    ></cd-text-justify>
+  </cd-input-group>
+
+  <div
+    cdLinkOverlay
+    class="body"
+    [class.focused]="isFocused"
+    (linkCancel)="onLinkCancel()"
+    (removeLink)="onRemoveLink($event)"
+    (updateLink)="onLinkChange($event)"
+  >
+    <header class="actions">
+      <ng-container *ngIf="supportsDataBinding">
+        <button
+          cd-button
+          cdDataPicker
+          [activeElementIds]="activeElementIds"
+          cdTooltip="Insert data"
+          iconName="add_box"
+          (click)="onDataInsert()"
+          (selectedValueChange)="onDataBinding($event)"
+          (activeValueChange)="onElementHighlight($event)"
+          (closePicker)="onCloseDataPicker()"
+          (openPicker)="onOpenDataPicker()"
+        ></button>
+        <div class="vert-divider"></div>
+      </ng-container>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Bold"
+        iconName="format_bold"
+        (click)="onToggle(model.bold)"
+        [selected]="model.bold.state"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Italic"
+        iconName="format_italics"
+        (click)="onToggle(model.italic)"
+        [selected]="model.italic.state"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        cdTooltip="Underline"
+        iconName="format_underlined"
+        (click)="onToggle(model.underline)"
+        [selected]="model.underlineState"
+      ></button>
+      <button
+        cd-button
+        cdToggleButton
+        iconName="format_list_bulleted"
+        cdTooltip="Bulleted list"
+        (click)="onToggle(model.unorderedList)"
+        [selected]="model.unorderedList.state"
+      ></button>
+      <div class="vert-divider"></div>
+      <button
+        cd-button
+        cdToggleButton
+        iconName="insert_link"
+        cdTooltip="Hyperlink"
+        (click)="onHyperlink()"
+        [selected]="model.hyperlink"
+      ></button>
+
+      <cd-menu-button
+        *ngIf="mockTextEnabled"
+        cd-button
+        iconName="text_rotation_none"
+        cdTooltip="Create lorem ipsum text"
+        size="small"
+        (selected)="onMockTextSelect($event)"
+        [data]="mockTextMenuConfig"
+        [square]="true"
+      ></cd-menu-button>
+    </header>
+    <cd-resize-wrapper [focused]="isFocused">
+      <div
+        #textArea
+        class="content cd-rich-text"
+        contenteditable="true"
+        spellcheck="false"
+        (blur)="onRichTextBlur()"
+        (cdkObserveContent)="onContentChange($event)"
+        (change)="onChange()"
+        (click)="onTextAreaClick($event)"
+        (copy)="onCutOrCopy()"
+        (cut)="onCutOrCopy()"
+        (focus)="onRichTextFocus()"
+        (keydown)="onKeyDown($event)"
+        (keyup)="onKeyUp()"
+        (mousedown)="resetSelection()"
+        (mouseup)="computeState()"
+        (paste)="onPaste($event)"
+      ></div>
+    </cd-resize-wrapper>
+  </div>
+  <svg preserveAspectRatio="none" class="highlight">
+    <path *ngIf="highlightPath" [attr.d]="highlightPath"></path>
+  </svg>
+</ng-container>

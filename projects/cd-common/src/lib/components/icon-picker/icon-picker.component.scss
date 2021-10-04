@@ -1,0 +1,229 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/font/font';
+@use 'sass-utils/cssvars' as *;
+
+$ace-size-icon-small: 18px;
+$ace-size-icon-medium: 24px;
+$ace-size-icon-large: 28px;
+
+$icon-size: 36px;
+
+:host {
+  display: grid;
+  grid-template-rows: 1fr;
+  position: absolute;
+  overflow: hidden;
+  background: cssvar(modal-background-color);
+  border-radius: cssvar(border-radius-3);
+  box-shadow: cssvar(depth-6);
+  top: 0;
+  left: 0;
+  width: 220px;
+  height: 376px;
+
+  &.with-tabs {
+    grid-template-rows: auto 1fr;
+  }
+}
+
+.scroll-view {
+  overflow: hidden;
+}
+
+.scroll-header {
+  display: grid;
+  grid-auto-flow: column;
+  gap: cssvar(spacing-2);
+  padding: cssvar(spacing-2);
+}
+
+.filter {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  height: cssvar(size-4);
+  align-items: center;
+  gap: cssvar(spacing-2);
+  padding-left: cssvar(spacing-2);
+  padding-right: cssvar(spacing-1);
+  border-radius: cssvar(border-radius-5);
+  overflow: hidden;
+  background: cssvar(input-background-color);
+}
+
+.filter-ico {
+  opacity: 0.4;
+}
+
+.size-selection {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: cssvar(spacing-0);
+
+  button {
+    border: none;
+    background: none;
+    color: cssvar(font-color);
+    border-radius: cssvar(border-radius-4);
+    cursor: pointer;
+    width: cssvar(size-1);
+    height: cssvar(size-1);
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+    padding: 0;
+    line-height: 1;
+  }
+
+  button:hover {
+    background: cssvar(focus-fill);
+  }
+
+  button.selected {
+    background: cssvar(primary-color);
+    color: cssvar(inverted-font-color);
+  }
+
+  button.disabled {
+    pointer-events: none;
+    opacity: cssvar(disabled-opacity);
+  }
+}
+
+.container {
+  display: flex;
+  position: relative;
+  list-style: none;
+  margin: 0;
+  flex-direction: column;
+  flex: 1;
+  padding: 0 0 #{cssvar(spacing-2)} #{cssvar(spacing-2)};
+  width: 184px;
+}
+
+.footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  height: cssvar(size-5);
+  padding: 0 #{cssvar(spacing-2)};
+  border-top: 1px solid #{cssvar(border-color)};
+}
+
+.selected {
+  display: grid;
+  gap: cssvar(spacing-0);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.selected-id {
+  display: block;
+  font-size: 12px;
+  color: cssvar(primary-color);
+  font-family: cssvar(header-font);
+  font-weight: 500;
+  @include font.cd-font-overflow-ellipsis;
+}
+
+.category,
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category {
+  display: grid;
+  grid-template-rows: cssvar(size-2) 1fr;
+  align-items: center;
+}
+
+.label {
+  @include font.cd-font(overline);
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: cssvar(spacing-1);
+  justify-content: start;
+}
+
+.list-item {
+  cursor: pointer;
+  background-color: transparent;
+  border-radius: cssvar(border-radius-1);
+  width: $icon-size;
+  height: $icon-size;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 0 0 0 transparent;
+  transition: background-color 200ms, box-shadow 150ms;
+
+  &:hover {
+    color: cssvar(primary-color);
+    background-color: cssvar(focus-fill);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &.active {
+    color: cssvar(primary-color);
+    box-shadow: inset 0 0 0 1.5px #{cssvar(primary-color)};
+    background: transparent;
+  }
+}
+
+.icon {
+  user-select: none;
+  width: cssvar(size-3);
+  height: cssvar(size-3);
+}
+
+.svg-icon-small {
+  width: $ace-size-icon-small;
+  height: $ace-size-icon-small;
+}
+
+.svg-icon-medium {
+  width: $ace-size-icon-medium;
+  height: $ace-size-icon-medium;
+}
+
+.svg-icon-large {
+  width: $ace-size-icon-large;
+  height: $ace-size-icon-large;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: cssvar(font-color);
+  transition: color 150ms;
+  justify-self: end;
+
+  &:hover {
+    color: cssvar(primary-color);
+  }
+}

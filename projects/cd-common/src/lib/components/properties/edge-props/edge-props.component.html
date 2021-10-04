@@ -1,0 +1,49 @@
+<cd-input-group [label]="propTitle" columns="1fr 18px" gap="4px">
+  <cd-range-input
+    [value]="sliderValue"
+    (valueChange)="onSliderchange($event)"
+    [placeholder]="placeholderValue"
+    [min]="min"
+    [max]="max"
+    [autocompleteMenu]="autocompleteMenu"
+    [innerLabel]="allValuesEqual ? 'PX' : ''"
+    type="number"
+  ></cd-range-input>
+  <cd-mode-toggle-button
+    (click)="onModeToggle()"
+    cdTooltip="Toggle advanced"
+  ></cd-mode-toggle-button>
+</cd-input-group>
+
+<div class="advanced" *ngIf="advanced">
+  <ng-container
+    [ngTemplateOutlet]="inputRef"
+    [ngTemplateOutletContext]="{ $implicit: model.top, idx: 0 }"
+  ></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="inputRef"
+    [ngTemplateOutletContext]="{ $implicit: model.right, idx: 1 }"
+  ></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="inputRef"
+    [ngTemplateOutletContext]="{ $implicit: model.bottom, idx: 2 }"
+  ></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="inputRef"
+    [ngTemplateOutletContext]="{ $implicit: model.left, idx: 3 }"
+  ></ng-container>
+</div>
+
+<ng-template #inputRef let-value let-idx="idx">
+  <cd-input
+    type="number"
+    innerLabel="px"
+    cdTooltipDirection="bottom"
+    [data]="autocompleteMenu"
+    [bottomLabel]="idx | edgeLabelPipe: edgeLabels:hideBottomLabel"
+    [cdTooltip]="idx | edgeTooltipPipe: edgeLabels"
+    [min]="min"
+    [value]="value"
+    (change)="onValueChange($event, idx)"
+  ></cd-input>
+</ng-template>

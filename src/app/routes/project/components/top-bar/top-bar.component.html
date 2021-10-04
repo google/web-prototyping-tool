@@ -1,0 +1,197 @@
+<div class="start">
+  <div class="loader" [class.loading]="!initialLoad">
+    <cd-spinner size="small" class="spinner"></cd-spinner>
+  </div>
+  <input
+    cd-measured-input
+    cdInputReset
+    useDefaultFontStyle
+    class="title"
+    [placeholder]="UNTITLED_PROJECT_NAME"
+    [value]="projectName"
+    (change)="onProjectNameChange($event)"
+    *ngIf="!isolatedSymbolId; else isolationModeTemplate"
+  />
+  <cd-icon
+    *ngIf="saving"
+    class="status"
+    name="sync"
+    size="small"
+    cdTooltip="Saving..."
+    cdTooltipDirection="bottom"
+  ></cd-icon>
+  <ng-template #isolationModeTemplate>
+    <button
+      cd-outlined-button
+      class="finish-editing"
+      iconName="arrow_back"
+      (click)="onFinishEditingSymbol()"
+    >
+      Finish editing
+    </button>
+  </ng-template>
+</div>
+
+<div class="end ctx">
+  <ng-container *ngIf="isRecording; else defaultRight">
+    <ng-container [ngTemplateOutlet]="zoomControl"></ng-container>
+    <button
+      class="record-btn"
+      cdTooltip="Stop Recording"
+      cdTooltipDirection="bottom"
+      cd-unelevated-button
+      size="small"
+      iconName="stop"
+      (click)="onStopRecording()"
+    >
+      Stop
+    </button>
+  </ng-container>
+</div>
+
+<ng-template #defaultRight>
+  <div class="context">
+    <!-- PROPS CONTEXT -->
+    <div *ngIf="activeContext !== selectionContext.Project">
+      <button cd-outlined-button (click)="updateGridLayout()" *ngIf="showGridAdjustmentBtn">
+        Update grid to fit children
+      </button>
+    </div>
+    <ng-container [ngSwitch]="activeContext">
+      <!-- BOARD CONTEXT -->
+      <ng-container *ngSwitchCase="selectionContext.Board">
+        <ng-container *ngIf="showFitContent">
+          <button
+            cd-button
+            size="medium"
+            iconSize="large"
+            iconName="fit_screen"
+            (click)="onBoardFit()"
+            [disabled]="fitBoardBtnDisabled"
+            cdTooltip="Fit board to content"
+            cdTooltipDirection="bottom"
+          ></button>
+        </ng-container>
+        <app-layout-dropdown (selectLayout)="onSelectLayout($event)"></app-layout-dropdown>
+      </ng-container>
+      <!-- ELEMENT CONTEXT -->
+      <ng-container *ngSwitchCase="selectionContext.Element">
+        <!-- GROUP Properties -->
+        <div class="group-btns">
+          <cd-menu-combo-button
+            actionTitle="Group"
+            cdTooltip="Group selected elements"
+            cdTooltipDirection="bottom"
+            (click)="onGroup()"
+            (selected)="onGroupMenuSelect($event)"
+            [data]="groupMenuData"
+          ></cd-menu-combo-button>
+          <div class="divider"></div>
+        </div>
+
+        <!-- IMAGE PROPERTIES -->
+        <ng-container *ngIf="showImageFit">
+          <button
+            cd-button
+            iconName="photo_size_select_large"
+            iconSize="large"
+            size="medium"
+            [disabled]="imageMatchesAspectRatio"
+            cdTooltip="Fit to aspect ratio"
+            cdTooltipDirection="bottom"
+            (click)="onFitAspectRatio($event)"
+          ></button>
+        </ng-container>
+
+        <ng-container *ngIf="showCreateComponent">
+          <button
+            cd-button
+            iconSize="large"
+            size="medium"
+            cdTooltip="Create component"
+            iconName="/assets/icons/add-component.svg"
+            cdTooltipDirection="bottom"
+            (click)="onCreateComponent()"
+          ></button>
+        </ng-container>
+        <app-layout-dropdown
+          *ngIf="showLayoutDropdown"
+          (selectLayout)="onSelectLayout($event)"
+        ></app-layout-dropdown>
+      </ng-container>
+    </ng-container>
+  </div>
+  <ng-container *ngIf="!isolatedSymbolId">
+    <button
+      cd-button
+      iconName="slides_add_on"
+      iconSize="large"
+      size="medium"
+      cdTooltip="Add Board"
+      cdTooltipDirection="bottom"
+      (click)="onAddBoard($event)"
+    ></button>
+    <div class="divider"></div>
+  </ng-container>
+
+  <ng-container [ngTemplateOutlet]="zoomControl"></ng-container>
+
+  <div class="share-preview">
+    <a
+      cd-unelevated-button
+      size="small"
+      iconName="play_arrow"
+      routerLink="preview"
+      cdTooltip="Run prototype - {{ previewActionTooltip }}"
+      cdTooltipDirection="bottom"
+      [disabled]="(boardIds$ | async)?.length === 0"
+      [queryParams]="{ id: isolatedSymbolId }"
+      [fragment]="isolatedSymbolId"
+    >
+      Preview
+    </a>
+
+    <button
+      *ngIf="!isolatedSymbolId; else isolationModePublishTemplate"
+      cd-button
+      size="small"
+      cdTooltip="Share or Embed"
+      cdTooltipDirection="bottom"
+      iconName="group"
+      iconSize="medium"
+      (click)="onShare()"
+    >
+      Share
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #zoomControl>
+  <cd-input
+    class="zoom-control"
+    outline
+    innerLabel="%"
+    step="10"
+    type="percent"
+    [data]="zoomMenu"
+    [max]="maxZoom"
+    [min]="minZoom"
+    [value]="zoom"
+    (change)="onZoomChange($event)"
+  ></cd-input>
+</ng-template>
+
+<ng-template #isolationModePublishTemplate>
+  <button
+    cd-button
+    size="small"
+    iconName="publish"
+    iconSize="medium"
+    cdTooltip="Publish to the Marketplace"
+    cdTooltipDirection="bottom"
+    (click)="onPublishClick()"
+    [disabled]="(isUserOwnerOfIsolatedSymbol$ | async) === (false || null || undefined)"
+  >
+    Publish
+  </button>
+</ng-template>

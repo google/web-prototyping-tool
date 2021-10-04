@@ -1,0 +1,110 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$chip-margin: 0 var(--cd-spacing-2) var(--cd-spacing-2) 0;
+
+@mixin chip-shape {
+  display: inline-grid;
+  align-items: center;
+  height: var(--cd-size-3);
+  max-width: 120px;
+  grid-template-columns: 1fr auto;
+  box-shadow: var(--cd-outline);
+  border-radius: var(--cd-spacing-3);
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  margin-right: var(--cd-spacing-3);
+  margin-bottom: var(--cd-spacing-2);
+}
+
+header.title {
+  @include cd-font(overline);
+
+  margin-bottom: var(--cd-spacing-2);
+}
+
+.chip-set {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  & > div,
+  & > button {
+    margin: $chip-margin;
+  }
+}
+
+.font-family-chip {
+  @include chip-shape;
+
+  font-family: var(--cd-header-font);
+  flex-basis: 36%;
+  flex-grow: 1;
+  max-width: fit-content;
+
+  span {
+    padding: 0 var(--cd-spacing-2);
+    @include cd-font-overflow-ellipsis;
+  }
+}
+
+.locked {
+  cursor: not-allowed;
+  margin-left: calc(var(--cd-spacing-2) * -1);
+  width: var(--cd-size-3);
+  display: inline-grid;
+  align-items: center;
+}
+
+.remove-chip-btn {
+  outline: none;
+  position: relative;
+  cursor: pointer;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--cd-font-color);
+  font-weight: 500;
+  height: var(--cd-size-3);
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  margin-left: calc(var(--cd-spacing-2) * -1);
+  width: var(--cd-size-3);
+  display: inline-flex;
+
+  &::before {
+    content: '';
+    background: var(--cd-focus-fill);
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  &:focus {
+    color: var(--cd-primary-color);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}

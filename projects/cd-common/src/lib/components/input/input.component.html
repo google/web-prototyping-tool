@@ -1,0 +1,85 @@
+<div *ngIf="showLeft" class="show-left">
+  <ng-content select="[cdInputLeft]"></ng-content>
+</div>
+<div class="wrapper" #wrapperRef>
+  <div class="left">
+    <ng-container *ngIf="leftTemplateRef" [ngTemplateOutlet]="leftTemplateRef"></ng-container>
+  </div>
+  <input
+    class="input"
+    #inputRef
+    cdInputReset
+    cdInputAutoComplete
+    useParentBoundsForMenu
+    [data]="data"
+    placeholder="{{ placeholderValue }}"
+    type="{{ inputType }}"
+    (change)="onChange($event)"
+    (selectItem)="onSelect($event)"
+    (focus)="onInputFocus()"
+    [autofocus]="autofocus"
+    [disabled]="isDisabled"
+    [max]="max"
+    [min]="min"
+    [step]="step"
+    [type]="inputType"
+    [value]="value | inputValuePipe"
+  />
+  <div class="right">
+    <ng-container *ngIf="rightTemplateRef" [ngTemplateOutlet]="rightTemplateRef"></ng-container>
+    <ng-container
+      *ngIf="innerLabelValue; let label"
+      [ngTemplateOutlet]="isUnitType ? unitMenuRef : innerLabelRef"
+      [ngTemplateOutletContext]="{ $implicit: label }"
+    ></ng-container>
+    <cd-icon
+      *ngIf="isSelectInput"
+      name="arrow_drop_down"
+      class="select-input-arrow"
+      [class.active]="active"
+    ></cd-icon>
+    <svg
+      cd-input-stepper
+      *ngIf="showStepper"
+      class="stepper"
+      (stepChange)="onStepperChange($event)"
+    ></svg>
+    <cd-icon
+      *ngIf="errorText || helpText; let text"
+      class="help-icon"
+      [cdRichTooltip]="text"
+      [errorTooltip]="errorText"
+      [class.active]="richTooltipActive"
+      [name]="richTooltipIcon"
+      size="small"
+      (click)="onShowRichTooltip($event)"
+    ></cd-icon>
+  </div>
+</div>
+
+<span class="bottom-label" *ngIf="bottomLabel" [cdDragRange]="inputType">
+  {{ bottomLabel }}
+</span>
+
+<ng-template #innerLabelRef let-label>
+  <span class="inner-label" [cdDragRange]="inputType">
+    {{ label }}
+  </span>
+</ng-template>
+
+<ng-template #unitMenuRef let-label>
+  <div
+    class="label-menu"
+    cdMenuWrapper
+    menuSize="small"
+    iconSize="small"
+    class="label-menu"
+    [data]="acceptedUnitTypes | inputUnitPipe: iValue?.units"
+    (selected)="onUnitSelection($event)"
+  >
+    <ng-container
+      [ngTemplateOutlet]="innerLabelRef"
+      [ngTemplateOutletContext]="{ $implicit: label }"
+    ></ng-container>
+  </div>
+</ng-template>

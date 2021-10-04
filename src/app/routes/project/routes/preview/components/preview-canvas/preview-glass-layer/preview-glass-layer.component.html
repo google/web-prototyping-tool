@@ -1,0 +1,176 @@
+<svg
+  preserveAspectRatio="none"
+  class="rect-layer"
+  [class.selecting]="selectionActive"
+  (click)="onSVGClick($event)"
+  (mouseover)="onSVGMouseOver($event)"
+>
+  <g
+    [style.width.px]="scaledWidth"
+    [style.height.px]="scaledHeight"
+    [style.transform]="svgTransition"
+  >
+    <ng-container *ngIf="isSelectionMode; else highlightedLayer">
+      <ng-container *ngFor="let id of elementIds; trackBy: trackByFn">
+        <g
+          class="element"
+          [class.hovered]="hoveredTopLevelElementId === id && currentSelectedId !== id"
+          [class.highlighted]="currentHighlightedElementId === id"
+          [class.selected]="currentSelectedId === id"
+          [class.comments-mode]="layerMode === LayerMode.Comments"
+          [class.a11y-mode]="layerMode === LayerMode.A11y"
+          [class.has-a11y]="id | elementHasA11yPipe: props"
+          [attr.mask]="overlayMaskRects?.length ? 'url(#greenlinesMask)' : null"
+        >
+          <rect
+            class="outline"
+            [attr.data-id]="id"
+            [scale]="scale"
+            [cdSVGRect]="currentRenderRects.get(id) | RectToSVGStyle: rectStroke:boardFrame"
+          />
+        </g>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="showGreenlines">
+      <ng-container
+        *ngIf="focusedBoardElement && flowEnabled"
+        [ngTemplateOutlet]="greenlineTemplate"
+        [ngTemplateOutletContext]="{ $implicit: focusedBoardElement }"
+      ></ng-container>
+      <ng-container *ngFor="let greenline of greenlineRects; trackBy: trackByFn">
+        <ng-container
+          [ngTemplateOutlet]="greenlineTemplate"
+          [ngTemplateOutletContext]="{ $implicit: greenline }"
+        ></ng-container>
+      </ng-container>
+      <svg:mask id="greenlinesMask" *ngIf="overlayMaskRects?.length">
+        <svg:rect
+          [cdSVGRect]="boardFrame | overlayMaskBackgroundPipe: paddingOffset:scale"
+          fill="white"
+        ></svg:rect>
+        <svg:rect
+          *ngFor="let mask of overlayMaskRects"
+          [cdSVGRect]="mask.rect | RectToSVGStyle: 0:boardFrame"
+          [scale]="scale"
+        />
+      </svg:mask>
+    </ng-container>
+  </g>
+</svg>
+
+<ng-template #highlightedLayer>
+  <ng-container *ngIf="isCommentsMode">
+    <!-- Comment rects -->
+    <ng-container *ngFor="let rectObject of commentedThreads; trackBy: trackByFn">
+      <ng-container *ngIf="currentRenderRects.get(rectObject.elementTargetId) as rect">
+        <svg:g class="comments-mode selected">
+          <svg:rect
+            class="outline"
+            [class.thread-hovered]="rectObject.id === hoveredThreadId"
+            [attr.data-id]="rectObject.elementTargetId"
+            [cdSVGRect]="rect | RectToSVGStyle: 0:boardFrame"
+            [scale]="scale"
+          />
+        </svg:g>
+      </ng-container>
+    </ng-container>
+    <!-- Comment bubbles + numbers (in a separate loop to ensure they are always on top)-->
+    <ng-container *ngFor="let rectObject of commentedThreads; trackBy: trackByFn">
+      <ng-container *ngIf="currentRenderRects.get(rectObject.elementTargetId) as rect">
+        <svg:g class="comments-mode selected">
+          <ng-container *ngIf="commentRectLabels.get(rectObject.id) as label">
+            <svg:rect
+              class="id-bubble"
+              rx="50%"
+              ry="50%"
+              [cdSVGRect]="rect | RectToSVGStyle: 0:paddedBoardFrame"
+              [scale]="scale"
+              [style.width.px]="bubbleSize"
+              [style.height.px]="bubbleSize"
+            />
+            <svg:text
+              class="id-text"
+              [class.double-digit]="label && label > 9"
+              [cdSVGRect]="rect | RectToSVGStyle: 0:paddedBoardFrame"
+              [scale]="scale"
+            >
+              {{ label }}
+            </svg:text>
+          </ng-container>
+        </svg:g>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #greenlineTemplate let-greenline>
+  <svg:g
+    class="greenline"
+    [appPreviewGreenline]="greenline"
+    [currentSelectedId]="currentSelectedId"
+    [currentHighlightedId]="currentHighlightedElementId"
+    [currentHoveredId]="hoveredTopLevelElementId"
+    [masksActive]="!!overlayMaskRects?.length"
+  >
+    <svg:rect
+      class="outline"
+      [attr.data-id]="greenline.elementId"
+      [attr.data-rect]="greenline.id"
+      [cdSVGRect]="greenline.rect | RectToSVGStyle: 0:boardFrame"
+      [scale]="scale"
+    />
+    <ng-container *ngIf="greenline.rect | RectToSVGStyle: rectStroke:boardFrame as rect">
+      <ng-container
+        [ngTemplateOutlet]="greenline.order ? bubbleLabelRef : standardLabelRef"
+        [ngTemplateOutletContext]="{ $implicit: greenline, rect: rect }"
+      ></ng-container>
+    </ng-container>
+  </svg:g>
+</ng-template>
+
+<!-- Circular Labels used for comments and Flow -->
+<ng-template #bubbleLabelRef let-greenline let-rect="rect">
+  <svg:g
+    [attr.transform]="
+      rect | bubbleLabelOffsetPipe: scale:boardFrame:paddingOffset | TranslateSVGFrame
+    "
+  >
+    <svg:rect
+      class="label-bubble"
+      rx="50%"
+      ry="50%"
+      [attr.data-id]="greenline.elementId"
+      [attr.data-rect]="greenline.id"
+      [cdSVGRect]="rect | RectToSVGStyle: 0:paddedBoardFrame"
+      [scale]="scale"
+      [style.width.px]="bubbleSize"
+      [style.height.px]="bubbleSize"
+    />
+    <svg:text
+      class="id-text"
+      [attr.data-id]="greenline.elementId"
+      [attr.data-rect]="greenline.id"
+      [class.double-digit]="greenline.order && greenline.order > 9"
+      [class.triple-digit]="greenline.order && greenline.order > 99"
+      [cdSVGRect]="rect | RectToSVGStyle: 0:paddedBoardFrame"
+      [scale]="scale"
+    >
+      {{ greenline.order }}
+    </svg:text>
+  </svg:g>
+</ng-template>
+
+<!-- Rectangular labels used for Landmarks & Headings -->
+<ng-template #standardLabelRef let-greenline let-rect="rect">
+  <svg:g [attr.transform]="rect | elementLabelTransformPipe: scale:true | TranslateSVGFrame">
+    <svg:g
+      *ngIf="greenline.label"
+      app-info-text
+      labelStyle
+      [text]="greenline.label"
+      zoom="1"
+      class="greenline-label"
+    ></svg:g>
+  </svg:g>
+</ng-template>

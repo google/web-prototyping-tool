@@ -1,0 +1,30 @@
+<h3 class="field-header">Endpoint</h3>
+<cd-input
+  #urlInputRef
+  placeholder="https://..."
+  [value]="url"
+  (change)="onUrlChange($event)"
+></cd-input>
+<h3 class="field-header">Response</h3>
+<div class="results">
+  <ng-container [ngSwitch]="requestState">
+    <ng-container *ngSwitchCase="RequestState.Default">
+      <pre>{{ results | json }}</pre>
+    </ng-container>
+    <ng-container *ngSwitchCase="RequestState.Loading">
+      <div class="loader">
+        <cd-spinner size="medium"></cd-spinner>
+      </div>
+    </ng-container>
+    <ng-container *ngSwitchCase="RequestState.Error">
+      <div class="error-status">
+        <cd-icon name="warning" size="large"></cd-icon>
+        <h4 class="error-message">{{ errorMessage }}</h4>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+<div class="footer">
+  <button cd-outlined-button [disabled]="runDisabled" (click)="onRunClick()">Run</button>
+  <button cd-outlined-button [disabled]="!hasResults" (click)="onSaveClick()">Save</button>
+</div>

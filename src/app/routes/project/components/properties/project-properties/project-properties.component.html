@@ -1,0 +1,54 @@
+<cd-properties
+  *ngIf="projectData"
+  panelTitle="Project"
+  readonlyTitle="true"
+  [ellipsisMenuItems]="ellipsisMenuItems"
+  (ellipsisMenuItemSelected)="onEllipsisMenuSelect($event)"
+>
+  <cd-property-group>
+    <app-owner-details [owner]="projectData.owner"></app-owner-details>
+  </cd-property-group>
+
+  <cd-property-group groupTitle="details" type="collapse">
+    <div class="group">
+      <cd-icon name="date_range" size="small"></cd-icon>
+      <span *ngIf="projectData?.createdAt; let createdAt">
+        Created {{ createdAt | FormatFirebaseTime }}
+      </span>
+    </div>
+    <div class="group">
+      <cd-icon name="update" size="small"></cd-icon>
+      <span *ngIf="projectData?.updatedAt; let updatedAt">
+        Updated {{ updatedAt | FormatFirebaseTime }}
+      </span>
+    </div>
+    <div class="group comments" (click)="onCommentsClick()">
+      <cd-icon name="comment" size="small"></cd-icon>
+      <span>
+        {{ projectData?.numComments }} Comment{{ projectData?.numComments !== 1 ? 's' : '' }}
+      </span>
+    </div>
+  </cd-property-group>
+
+  <cd-property-group *ngIf="showEditors" groupTitle="Editors" type="collapse">
+    <app-project-editors
+      [currentUser]="currentUser"
+      [ownerEmail]="projectData.owner.email"
+      [editors]="projectData?.editors"
+      (update)="onEditorsUpdate($event)"
+    ></app-project-editors>
+  </cd-property-group>
+
+  <app-publish-panel
+    *ngIf="isAdmin"
+    class="publish"
+    [id]="projectData?.id"
+    [showOwner]="false"
+    [showFooterMsg]="false"
+    [publishId]="projectData?.publishId"
+    [publishType]="PublishType.Template"
+    zeroStateIcon="publish"
+    [showBottomLine]="!!projectData"
+    zeroStateMsg="Publish project as a template"
+  ></app-publish-panel>
+</cd-properties>

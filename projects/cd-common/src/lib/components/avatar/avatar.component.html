@@ -1,0 +1,23 @@
+<div
+  class="avatar"
+  [class.actionable]="actionable"
+  cdMenuWrapper
+  [menuSize]="menuSize"
+  [size]="menuSize"
+  [data]="menuData"
+  (selected)="onMenuSelected($event)"
+>
+  <img
+    *ngIf="profileImgUrl && !errorLoadingImage; else fallback"
+    [src]="profileImgUrl"
+    width="32"
+    height="32"
+    alt="profile image"
+    class="avatar-image"
+    (error)="onLoadImageError()"
+  />
+</div>
+
+<ng-template #fallback>
+  <img src="/assets/avatar.svg" width="32" height="32" alt="profile image" class="avatar-image" />
+</ng-template>

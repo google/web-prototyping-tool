@@ -1,0 +1,74 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Assets">
+  <div class="right">
+    <button
+      cd-button
+      iconName="file_upload"
+      size="medium"
+      iconSize="medium"
+      (click)="onUploadFileClick()"
+      cdTooltip="Upload asset"
+      cdTooltipDirection="bottom"
+    ></button>
+    <button
+      cd-button
+      iconName="category"
+      size="medium"
+      iconSize="medium"
+      (click)="onAssetAddClick()"
+      cdTooltip="Browse Asset Gallery"
+      cdTooltipDirection="bottom"
+    ></button>
+  </div>
+</app-activity-panel-header>
+
+<ng-container *ngIf="hasAssets; else blank">
+  <app-searchbar [(value)]="searchString" class="search"></app-searchbar>
+  <cd-scroll-view>
+    <div class="asset-grids">
+      <app-image-assets-tile
+        *ngFor="let asset of assets | filterBy: ['name']:searchString; trackBy: trackByFn"
+        [asset]="asset"
+        [uploadStatus]="uploadStatus[asset.id]"
+        [appAssetDragItem]="asset"
+        (labelChange)="onLabelChange($event, asset?.id)"
+        (deleteAsset)="onDeleteAsset($event)"
+        (replaceAsset)="onReplaceAsset($event)"
+      ></app-image-assets-tile>
+    </div>
+  </cd-scroll-view>
+</ng-container>
+
+<ng-template #blank>
+  <div class="blank-container">
+    <div class="blank">
+      <img src="/assets/placeholder.svg" />
+      <ng-container *ngIf="!uploadDragging">
+        <h3>No assets yet</h3>
+        <span class="no-assets-copy">Drag & drop an image into this window to upload</span>
+
+        <footer class="zero-state-footer">
+          <button
+            cd-outlined-button
+            size="medium"
+            iconName="category"
+            class="launch-assets-importer-button"
+            cdTooltip="Browse a catalog of Google Cloud brand assets"
+            (click)="onAssetAddClick()"
+          >
+            Browse gallery
+          </button>
+          <button
+            cd-outlined-button
+            size="medium"
+            iconName="file_upload"
+            class="upload-assets-button"
+            cdTootip="Launch file picker"
+            (click)="onUploadFileClick()"
+          >
+            Upload file...
+          </button>
+        </footer>
+      </ng-container>
+    </div>
+  </div>
+</ng-template>

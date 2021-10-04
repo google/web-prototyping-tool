@@ -1,0 +1,710 @@
+<header class="header">
+  <span class="title">{{ model.type | titleForActionPipe: config.INTERACTION_TYPE_MENU }}</span>
+  <button
+    cd-button
+    cdTooltip="Copy action"
+    size="small"
+    iconSize="small"
+    iconName="content_copy"
+    (click)="onCopyAction()"
+  ></button>
+
+  <button
+    cd-button
+    cdTooltip="Delete"
+    size="small"
+    iconSize="small"
+    [disabled]="isRecording"
+    iconName="delete"
+    (click)="onDeleteClick()"
+  ></button>
+</header>
+
+<div class="form">
+  <cd-input-group label="From" *ngIf="symbolChildren.length">
+    <cd-select-input
+      resetState="Self"
+      placeholder="Self"
+      [data]="symbolChildren | MarkSelection: model.childRef"
+      (change)="onChildRefChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <!-- TRIGGER INPUT -->
+  <cd-input-group label="Trigger">
+    <cd-select-input
+      [data]="
+        outputsConfig
+          | mergeEventsTriggers: config.INTERACTION_TRIGGER_MENU:model.type
+          | MarkSelection: model.trigger
+      "
+      (change)="onTriggerChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <!--  OUTPUT CONDITIONS -->
+  <ng-container *ngIf="model?.outputEvent?.binding | outputTypePipe: outputsConfig; let outputType">
+    <!-- prettier-ignore -->
+    <ng-container [ngSwitch]="outputType">
+      <ng-container  *ngSwitchCase="OutputPropertyType.String"        [ngTemplateOutlet]="valueOutputConditionRef"    [ngTemplateOutletContext]="{ $implicit: outputType }"></ng-container>
+      <ng-container  *ngSwitchCase="OutputPropertyType.Numeric"       [ngTemplateOutlet]="valueOutputConditionRef"    [ngTemplateOutletContext]="{ $implicit: outputType }"></ng-container>
+      <ng-container  *ngSwitchCase="OutputPropertyType.Boolean"       [ngTemplateOutlet]="booleanOutputConditionRef" ></ng-container>
+      <ng-container  *ngSwitchCase="OutputPropertyType.ListItemValue" [ngTemplateOutlet]="listOutputConditionRef" ></ng-container>
+    </ng-container>
+  </ng-container>
+
+  <!-- CARD CONTENTS INJECTED HERE -->
+  <!-- prettier-ignore -->
+  <ng-container [ngSwitch]="model.type">
+    <ng-container  *ngSwitchCase="ActionType.SwapPortal"      [ngTemplateOutlet]="swapPortalRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.Snackbar"        [ngTemplateOutlet]="snackbarRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.ScrollTo"        [ngTemplateOutlet]="scrollToRef"></ng-container>
+    <!-- NAVIGATE -->
+    <ng-container  *ngSwitchCase="ActionType.NavigateToBoard" [ngTemplateOutlet]="navToBoardRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.NavigateToUrl"   [ngTemplateOutlet]="navToUrlRef"></ng-container>
+    <!-- STATE -->
+    <ng-container  *ngSwitchCase="ActionType.RecordState"     [ngTemplateOutlet]="recordStateRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.ResetState"      [ngTemplateOutlet]="resetStateRef"></ng-container>
+    <!-- ADVANCED -->
+    <ng-container  *ngSwitchCase="ActionType.PostMessage"     [ngTemplateOutlet]="postMessageRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.RunJS"           [ngTemplateOutlet]="runJSRef"></ng-container>
+    <!-- PRESENT OVERLAYS -->
+    <ng-container  *ngSwitchCase="ActionType.PresentOverlay"  [ngTemplateOutlet]="presentOverlayRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.PresentModal"    [ngTemplateOutlet]="presentModalRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.OpenDrawer"      [ngTemplateOutlet]="openDrawerRef"></ng-container>
+    <!-- EXIT OVERLAYS -->
+    <ng-container  *ngSwitchCase="ActionType.CloseOverlay"    [ngTemplateOutlet]="closeOverlayRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.ExitModal"       [ngTemplateOutlet]="closeOverlayRef"></ng-container>
+    <ng-container  *ngSwitchCase="ActionType.CloseDrawer"     [ngTemplateOutlet]="closeOverlayRef"></ng-container>
+  </ng-container>
+</div>
+
+<!-- For showing when code is valid and toggling an expanded code editor -->
+<ng-template #codeInputRef let-label="label" let-validMsg="validMsg" let-invalidMsg="invalidMsg">
+  <cd-input-group [label]="label" columns="100%">
+    <div class="valid-fs">
+      <cd-valid-icon
+        class="validator"
+        [isValid]="codeIsValid"
+        [invalidText]="invalidMsg"
+        [validText]="validMsg"
+        [showText]="false"
+      ></cd-valid-icon>
+      <cd-fullscreen-button
+        [fullscreen]="isCodeEditorExpanded"
+        (fullscreenChange)="expandTextArea()"
+      ></cd-fullscreen-button>
+    </div>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #valueOutputConditionRef let-outputType>
+  <cd-input-group label="Condition">
+    <cd-select-input
+      [data]="model.outputEvent?.condition | menuForOutputConditionPipe"
+      (change)="onOutputConditionChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <cd-input-group
+    label="Value"
+    *ngIf="model.outputEvent?.condition | canShowOutputConditionValuePipe"
+  >
+    <cd-input
+      [type]="outputType | inputTypeForOutputTypePipe"
+      [value]="model?.outputEvent?.value"
+      (change)="onOutputEventChange($event)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #booleanOutputConditionRef>
+  <cd-input-group label="Equals">
+    <cd-toggle-button-group
+      showBackground
+      [value]="model?.outputEvent?.value"
+      (valueChange)="onOutputEventChange($event)"
+    >
+      <button value="true" cd-button cdToggleButton expand>True</button>
+      <button value="false" cd-button cdToggleButton expand>False</button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+</ng-template>
+
+<!-- List Item Value Output -->
+<ng-template #listOutputConditionRef>
+  <cd-input-group label="Equals">
+    <cd-select-input
+      [data]="
+        model.outputEvent?.binding
+          | menuForPropertyType: outputsConfig:inputs
+          | MarkSelection: model?.outputEvent?.value
+      "
+      (change)="onSelectOutputEventChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #delayRef>
+  <cd-input-group label="Delay">
+    <cd-range-input
+      resetNumberOnDelete
+      class="wide-range"
+      (valueChange)="onDelayChange($event)"
+      [value]="model?.delay"
+      [autocompleteMenu]="config.DELAY_AUTOCOMPLETE_MENU"
+      placeholder="0"
+      innerLabel="MS"
+      [max]="MAX_DELAY"
+      min="0"
+      type="percent"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- TARGET INPUT  -->
+
+<ng-template #targetDropdown let-value>
+  <cd-input-group label="Target">
+    <cd-select-input
+      resetState="None"
+      placeholder="Select a board"
+      [data]="boardMenu | MarkSelection: value || ''"
+      (change)="onTargetBoardChange($event)"
+      (activeValue)="onActiveValue($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- TARGET ELEMENT PICKER  -->
+
+<ng-template #elemTargetPickerRef let-target let-placeholder="placeholder">
+  <cd-input-group label="Target">
+    <app-element-target-prop
+      [value]="target"
+      inactiveInputLabel="{{ placeholder }}"
+      (valueChange)="onTargetChange($event)"
+      (activeValue)="onActiveValue($event)"
+    ></app-element-target-prop>
+  </cd-input-group>
+</ng-template>
+
+<!-- ///////////////////////////////////// -->
+<!-- ///// INDIVIDUAL CARD CONTENTS ////// -->
+<!-- ///////////////////////////////////// -->
+
+<!-- SCROLLTO PORTAL -->
+
+<ng-template #scrollToRef>
+  <cd-input-group label="To">
+    <cd-select-input
+      [data]="config.SCROLL_MENU_OPTIONS | MarkSelection: modelAsScrollTo.mode || ''"
+      (change)="onScrollModeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <ng-container
+    [ngTemplateOutlet]="elemTargetPickerRef"
+    [ngTemplateOutletContext]="{ $implicit: model?.target, placeholder: 'None' }"
+  ></ng-container>
+  <ng-container *ngIf="modelAsScrollTo.mode === ActionScrollMode.Element">
+    <cd-input-group label="Alignment">
+      <cd-select-input
+        bottomLabel="vert"
+        [data]="config.SCROLL_ALIGN_MENU | MarkSelection: modelAsScrollTo.block || ''"
+        (change)="onScrollVertAlignChange($event)"
+      ></cd-select-input>
+      <cd-select-input
+        bottomLabel="Horz"
+        [data]="config.SCROLL_ALIGN_MENU | MarkSelection: modelAsScrollTo.inline || ''"
+        (change)="onScrollHorzAlignChange($event)"
+      ></cd-select-input>
+    </cd-input-group>
+  </ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <cd-input-group label="Animated">
+    <cd-checkbox
+      [checked]="modelAsScrollTo.animate"
+      (change)="onScrollAnimationChange($event)"
+    ></cd-checkbox>
+  </cd-input-group>
+</ng-template>
+
+<!-- Reset State -->
+
+<ng-template #resetStateRef>
+  <cd-input-group label="For">
+    <cd-select-input
+      [data]="config.RESET_MENU_OPTIONS | MarkSelection: modelAsResetState.mode || ''"
+      (change)="onResetModeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <ng-container *ngIf="modelAsResetState.mode === ActionResetMode.Element">
+    <ng-container
+      [ngTemplateOutlet]="elemTargetPickerRef"
+      [ngTemplateOutletContext]="{ $implicit: model?.target, placeholder: 'None' }"
+    ></ng-container>
+
+    <cd-input-group label="Children">
+      <div class="checkbox-with-help">
+        <cd-checkbox
+          [checked]="modelAsResetState.targetChildren"
+          (change)="onResetTargetChildrenChange($event)"
+        ></cd-checkbox>
+        <cd-icon
+          name="help"
+          size="small"
+          cdTooltip="Reset all children inside the target element"
+        ></cd-icon>
+      </div>
+    </cd-input-group>
+  </ng-container>
+</ng-template>
+
+<!-- OPEN DRAWER -->
+
+<ng-template #openDrawerRef>
+  <ng-container
+    [ngTemplateOutlet]="targetDropdown"
+    [ngTemplateOutletContext]="{ $implicit: model?.target }"
+  ></ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <!-- Mode -->
+  <!-- FUTURE FEATURE - REQUIRES RENDERER CHANGES -->
+  <!-- <cd-input-group label="Mode">
+    <cd-toggle-button-group
+      showBackground
+      [value]="modelAsDrawerOpen.mode"
+      (valueChange)="onDrawerModeChange($event)"
+    >
+      <button [value]="DrawerMode.Overlay" cd-button cdToggleButton expand>Overlay</button>
+      <button [value]="DrawerMode.Push" cd-button cdToggleButton expand>Push</button>
+    </cd-toggle-button-group>
+  </cd-input-group> -->
+  <!-- Position -->
+  <cd-input-group label="Position">
+    <cd-toggle-button-group
+      showBackground
+      [value]="modelAsDrawerOpen.position"
+      (valueChange)="onDrawerPositionChange($event)"
+    >
+      <button [value]="DrawerPosition.Left" cd-button cdToggleButton expand>Left</button>
+      <button [value]="DrawerPosition.Right" cd-button cdToggleButton expand>Right</button>
+    </cd-toggle-button-group>
+  </cd-input-group>
+  <!-- Backdrop color -->
+  <cd-input-group label="Backdrop">
+    <cd-color-input
+      [value]="drawerBackdropColor?.value"
+      [binding]="drawerBackdropColor | IValueLookup: designSystem?.colors"
+      [colorData]="colorMenuData"
+      (colorSelect)="onDrawerBackdropColorSelect($event)"
+      (valueChange)="onDrawerBackdropColorChange($event)"
+    ></cd-color-input>
+  </cd-input-group>
+  <!-- Width (Size) -->
+  <cd-input-group label="Width" columns="83px">
+    <cd-input
+      (change)="onDrawerSizeChange($event)"
+      [max]="MAX_BOARD_SIZE"
+      [min]="0"
+      [value]="modelAsDrawerOpen?.size"
+      innerLabel="px"
+      placeholder="Auto"
+      resetNumberOnDelete
+      type="number"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<!-- EXIT OVERLAY -->
+
+<ng-template #closeOverlayRef>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+</ng-template>
+
+<!-- RECORD STATE -->
+
+<ng-template #recordStateRef>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <ng-container [ngTemplateOutlet]="toggleBtn"></ng-container>
+  <div class="divider"></div>
+  <ng-container [ngTemplateOutlet]="startRecordingBtn"></ng-container>
+  <ul
+    app-record-list
+    *ngIf="recordedStateChanges?.length"
+    [showTimeline]="showTimeline"
+    [boards]="boards"
+    [designSystem]="designSystem"
+    [stateChanges]="recordedStateChanges"
+    (deleteRecord)="onDeleteRecord($event)"
+    (deleteMultipleIndexes)="onDeleteMultipleRecord($event)"
+    (updateRecord)="onUpdateRecord($event)"
+  ></ul>
+</ng-template>
+
+<ng-template #emptyChanges>
+  <button cd-outlined-button (click)="onStartRecording()" class="wide-btn">Start Recording</button>
+</ng-template>
+
+<!-- TOGGLE -->
+<ng-template #toggleBtn>
+  <cd-input-group label="Toggle" *ngIf="model.trigger | eventSupportsTogglePipe: outputsConfig">
+    <div class="checkbox-with-help">
+      <cd-checkbox
+        [disabled]="isToggleTriggerBoardAppear"
+        [checked]="!isToggleTriggerBoardAppear && modelAsRecordStateBehavior?.toggle"
+        (change)="onToggleChange($event)"
+      ></cd-checkbox>
+      <cd-icon
+        name="help"
+        size="small"
+        cdTooltip="Remove the applied action automatically"
+      ></cd-icon>
+    </div>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #startRecordingBtn>
+  <div class="record-commands" *ngIf="recordedStateChanges?.length; else emptyChanges">
+    <div class="left">
+      <button
+        cd-button
+        [cdTooltip]="showTimeline ? 'Show list' : 'Show timeline'"
+        size="small"
+        iconSize="small"
+        [iconName]="showTimeline ? 'format_list_bulleted' : 'timer'"
+        (click)="onToggleTimeline()"
+      ></button>
+    </div>
+    <button cd-outlined-button (click)="onStartRecording()" cdTooltip="Continue recording changes">
+      Record
+    </button>
+  </div>
+</ng-template>
+
+<!-- NAVIGATE TO BOARD -->
+
+<ng-template #navToBoardRef>
+  <ng-container
+    [ngTemplateOutlet]="targetDropdown"
+    [ngTemplateOutletContext]="{ $implicit: model?.target }"
+  ></ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <cd-input-group label="Top">
+    <div class="checkbox-with-help">
+      <cd-checkbox
+        [checked]="topLevelNavigationStatus"
+        (change)="onTopLevelNavigationChange($event)"
+      ></cd-checkbox>
+      <cd-icon
+        name="help"
+        size="small"
+        cdTooltip="Navigation will occur from the parent of a portal or modal"
+      ></cd-icon>
+    </div>
+  </cd-input-group>
+</ng-template>
+
+<!-- NAVIGATE TO URL -->
+
+<ng-template #navToUrlRef>
+  <cd-input-group label="URL">
+    <cd-input
+      #urlRef
+      [value]="model?.target || ''"
+      placeholder="https://google.com"
+      (change)="onTargetChange($event)"
+    ></cd-input>
+  </cd-input-group>
+  <cd-input-group columns="auto 1fr">
+    <cd-checkbox [checked]="openUrlInATab" (change)="onURLWindowTargetChange($event)"></cd-checkbox>
+    <span class="new-tab-label">Open a new tab</span>
+  </cd-input-group>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+</ng-template>
+
+<!-- SWAP PORTAL -->
+
+<ng-template #swapPortalRef>
+  <cd-input-group label="Portal">
+    <cd-select-input
+      [data]="portals | MarkSelection: activePortalState?.elementId"
+      resetState="None"
+      placeholder="Select a portal"
+      [helpText]="config.RICH_TOOLTIPS.PortalSelect"
+      (activeValue)="onActiveValue($event)"
+      (change)="onPortalChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <ng-container
+    [ngTemplateOutlet]="targetDropdown"
+    [ngTemplateOutletContext]="{ $implicit: activePortalState?.value }"
+  ></ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+</ng-template>
+
+<!-- PRESENT OVERLAY -->
+<ng-template #presentOverlayRef>
+  <ng-container
+    [ngTemplateOutlet]="targetDropdown"
+    [ngTemplateOutletContext]="{ $implicit: model?.target }"
+  ></ng-container>
+  <!-- Size -->
+  <ng-container
+    [ngTemplateOutlet]="overlaySizeRef"
+    [ngTemplateOutletContext]="{ $implicit: config.OVERLAY_SIZE_MENU }"
+  ></ng-container>
+  <!-- Elevation -->
+  <ng-container [ngTemplateOutlet]="elevationRef"></ng-container>
+  <cd-input-group label="Anchor">
+    <app-element-target-prop
+      [value]="overlayAnchor"
+      inactiveInputLabel="Self"
+      (valueChange)="onAnchorChange($event)"
+      (activeValue)="onActiveValue($event)"
+    ></app-element-target-prop>
+  </cd-input-group>
+
+  <cd-align-prop
+    *ngIf="overlayAnchor | overlayAnchorIsBoardPipe; else overlayPosRef"
+    label="Position"
+    [value]="overlayPosition | overlayAlignPropsPipe: overlayAlign"
+    (valueChange)="onOverlayBoardChange($event)"
+  ></cd-align-prop>
+
+  <cd-input-group label="Spacing" *ngIf="canShowOverlaySpacing">
+    <cd-range-input
+      class="wide-range"
+      [value]="overlaySpacing"
+      (valueChange)="onSpacingChange($event)"
+      [autocompleteMenu]="sizeMenuConfig"
+      [min]="0"
+      [max]="MAX_PADDING"
+      innerLabel="px"
+      type="number"
+    ></cd-range-input>
+  </cd-input-group>
+  <ng-container [ngTemplateOutlet]="borderRadiusRef"></ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <cd-input-group label="Auto close" *ngIf="isTriggerClick">
+    <div class="checkbox-with-help">
+      <cd-checkbox
+        [checked]="modelAsPresentOverlayBehavior.closeOnOutsideClick"
+        (change)="onClickOutsideOverlayChange($event)"
+      ></cd-checkbox>
+      <cd-icon name="help" size="small" cdTooltip="Close on outside click"></cd-icon>
+    </div>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #overlayPosRef>
+  <cd-input-group label="Position" gap="4px">
+    <cd-select-input
+      [data]="config.POSITON_MENU_CONFIG | MarkSelection: overlayPosition"
+      (change)="onOverlayPositionChange($event)"
+    ></cd-select-input>
+    <ng-container *ngIf="overlayPosition | overlayAlignMenuPipe; let alignMenu">
+      <cd-select-input
+        *ngIf="alignMenu.length"
+        [data]="alignMenu | MarkSelection: modelAsPresentOverlayBehavior.alignment"
+        (change)="onOverlayAlignmentChange($event)"
+      ></cd-select-input>
+    </ng-container>
+  </cd-input-group>
+</ng-template>
+<!-- PRESENT MODAL -->
+
+<ng-template #presentModalRef>
+  <ng-container
+    [ngTemplateOutlet]="targetDropdown"
+    [ngTemplateOutletContext]="{ $implicit: model?.target }"
+  ></ng-container>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="overlaySizeRef"
+    [ngTemplateOutletContext]="{ $implicit: config.MODAL_SIZE_MENU }"
+  ></ng-container>
+
+  <cd-input-group label="Backdrop">
+    <cd-color-input
+      [value]="modalBackgroundColor?.value"
+      [binding]="modalBackgroundColor | IValueLookup: designSystem?.colors"
+      [colorData]="colorMenuData"
+      (colorSelect)="onModalBkdColorSelect($event)"
+      (valueChange)="onModalBkdColorChange($event)"
+    ></cd-color-input>
+  </cd-input-group>
+  <ng-container [ngTemplateOutlet]="elevationRef"></ng-container>
+  <ng-container [ngTemplateOutlet]="borderRadiusRef"></ng-container>
+</ng-template>
+
+<ng-template #borderRadiusRef>
+  <cd-input-group label="Radius">
+    <cd-range-input
+      class="wide-range"
+      [value]="overlayBorderRadius"
+      (valueChange)="onBorderRadiusChange($event)"
+      [autocompleteMenu]="sizeMenuConfig"
+      [min]="0"
+      [max]="MAX_BORDER_RADIUS"
+      innerLabel="px"
+      type="number"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #elevationRef>
+  <cd-input-group label="Elevation">
+    <cd-select-input
+      resetState="None"
+      placeholder="None"
+      [data]="config.ELEVATION_MENU_CONFIG | MarkSelection: overlayShadow"
+      (change)="onOverlayShadowChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #overlaySizeRef let-sizeMenu>
+  <cd-input-group label="Size">
+    <cd-select-input
+      [data]="sizeMenu | MarkSelection: overlaySize"
+      (change)="onOverlaySizeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+  <cd-input-group *ngIf="isCustomOverlaySize">
+    <cd-input
+      resetNumberOnDelete
+      [max]="MAX_BOARD_SIZE"
+      [min]="0"
+      [value]="overlayWidth"
+      bottomLabel="width"
+      placeholder="Auto"
+      (change)="onOverlayWidthChange($event)"
+      type="number"
+    ></cd-input>
+    <cd-input
+      resetNumberOnDelete
+      [max]="MAX_BOARD_SIZE"
+      [min]="0"
+      [value]="overlayHeight"
+      bottomLabel="height"
+      placeholder="Auto"
+      (change)="onOverlayHeightChange($event)"
+      type="number"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+<!-- POST MESSAGE -->
+
+<ng-template #postMessageRef let-value>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="codeInputRef"
+    [ngTemplateOutletContext]="config.CODE_INPUT_JSON_CONTEXT"
+  ></ng-container>
+  <cd-code-editor
+    class="textarea"
+    cdExpandedCodeEditor
+    placeholder="{{ config.POSTMESSAGE_PLACEHOLDER }}"
+    [spellcheck]="false"
+    [resizable]="true"
+    [isValid]="codeIsValid"
+    [value]="model?.target"
+    (valueChange)="onValidateJSON($event)"
+    (change)="onPostMessageTargetChange($event)"
+    (closeExpanded)="onExpandedCodeEditorClose()"
+  ></cd-code-editor>
+</ng-template>
+
+<!-- RUN JS CODE -->
+<ng-template #runJSRef>
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="elemTargetPickerRef"
+    [ngTemplateOutletContext]="{ $implicit: model?.target, placeholder: 'Self' }"
+  ></ng-container>
+  <ng-container
+    [ngTemplateOutlet]="codeInputRef"
+    [ngTemplateOutletContext]="config.CODE_INPUT_JS_CONTEXT"
+  ></ng-container>
+  <cd-code-editor
+    class="textarea"
+    cdExpandedCodeEditor
+    placeholder="{{ config.RUNJS_SCRIPT_PLACEHOLDER }}"
+    [resizable]="true"
+    [isValid]="codeIsValid"
+    [spellcheck]="false"
+    [value]="runJSScriptValue"
+    (valueChange)="onValidateJS($event)"
+    (change)="onJSScriptChange($event)"
+  ></cd-code-editor>
+</ng-template>
+
+<ng-template #snackbarRef let-value>
+  <cd-input-group label="Message">
+    <cd-input
+      [value]="modelAsSnackbarBehavior?.message"
+      (change)="onSnackbarMessageChange($event)"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Position" gap="4px">
+    <cd-select-input
+      [data]="
+        config.SNACKBAR_VERTICAL_POSITON_MENU
+          | MarkSelection: modelAsSnackbarBehavior?.verticalPosition
+      "
+      (change)="onSnackBarVertPositionChange($event)"
+    ></cd-select-input>
+    <cd-select-input
+      [data]="
+        config.SNACKBAR_HORIZONTAL_POSITON_MENU
+          | MarkSelection: modelAsSnackbarBehavior?.horizontalPosition
+      "
+      (change)="onSnackBarHorzPositionChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <cd-input-group label="Action">
+    <cd-input
+      placeholder="Button label"
+      [value]="modelAsSnackbarBehavior?.actionTitle || ''"
+      (change)="onSnackbarActionTitleChange($event)"
+      [helpText]="config.RICH_TOOLTIPS.SnackBarButton"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Icon">
+    <cd-icon-input
+      [value]="modelAsSnackbarBehavior?.icon"
+      [iconClass]="designSystem | matIconClassNamePipe"
+      (valueChange)="onSnackbarIconChange($event)"
+    ></cd-icon-input>
+  </cd-input-group>
+
+  <cd-input-group label="Dismiss">
+    <div class="checkbox-with-help">
+      <cd-checkbox
+        [checked]="modelAsSnackbarBehavior?.showDismissBtn"
+        (change)="onSnackbarDismissToggle($event)"
+      ></cd-checkbox>
+      <cd-icon name="help" size="small" cdTooltip="Shows an 'x' icon button"></cd-icon>
+    </div>
+  </cd-input-group>
+
+  <cd-input-group label="Duration">
+    <cd-range-input
+      class="wide-range"
+      resetNumberOnDelete
+      (valueChange)="onSnackbarDurationChange($event)"
+      [value]="modelAsSnackbarBehavior?.duration"
+      placeholder="~"
+      innerLabel="MS"
+      [max]="MAX_DURATION"
+      min="0"
+      type="number"
+    ></cd-range-input>
+  </cd-input-group>
+
+  <ng-container [ngTemplateOutlet]="delayRef"></ng-container>
+</ng-template>

@@ -1,0 +1,109 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  user-select: none;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: var(--cd-size-0) auto;
+  background: var(--cd-input-background-color);
+  height: var(--cd-size-3);
+  overflow: hidden;
+  position: relative;
+  border-radius: var(--cd-border-radius-1);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  gap: 6px;
+}
+
+.content,
+.arrow-button {
+  position: relative;
+  background: transparent;
+  border: transparent;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.content {
+  padding-left: 4px;
+  height: 100%;
+  width: var(--cd-size-3);
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--cd-primary-color);
+    transition: opacity 120ms ease;
+    opacity: 0;
+  }
+
+  &:focus {
+    background: transparent;
+
+    &::before {
+      opacity: 0.5;
+    }
+  }
+}
+
+.arrow-button {
+  color: var(--cd-font-color);
+  width: var(--cd-size-0);
+  height: 100%;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--cd-primary-color);
+    opacity: 0;
+  }
+
+  &:focus {
+    background: transparent;
+
+    &::before {
+      opacity: 0.2;
+    }
+  }
+}
+
+.arrow {
+  cursor: pointer;
+  user-select: none;
+  width: var(--cd-size-0);
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(0deg);
+  transition: transform 150ms;
+  margin-right: -4px;
+  transition-timing-function: var(--cd-transition-timing);
+}

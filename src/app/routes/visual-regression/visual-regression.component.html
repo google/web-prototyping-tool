@@ -1,0 +1,52 @@
+<aside class="sidebar">
+  <header>
+    <h2>Captures</h2>
+    <span>A</span>
+    <span>B</span>
+  </header>
+  <ul>
+    <li *ngFor="let folder of folders; index as i">
+      <span>
+        {{ folder }}
+      </span>
+      <button
+        class="a dot"
+        title="A"
+        [class.active]="i === activeA"
+        (click)="onSelectA(i)"
+      ></button>
+      <button
+        class="b dot"
+        title="B"
+        [class.active]="i === activeB"
+        (click)="onSelectB(i)"
+      ></button>
+    </li>
+  </ul>
+</aside>
+<main>
+  <header class="main-header">
+    <div class="title-a">
+      <h2>{{ folders[activeA] }}</h2>
+    </div>
+    <div class="title-b">
+      <h2>{{ folders[activeB] }}</h2>
+    </div>
+  </header>
+  <div class="image-list">
+    <div class="image-content">
+      <div class="images-a">
+        <figure *ngFor="let image of imagesA | async">
+          <img [src]="image.url | safeResourceURL" loading="lazy" />
+          <figcaption>{{ image.name }}</figcaption>
+        </figure>
+      </div>
+      <div class="images-b">
+        <figure *ngFor="let image of imagesB | async">
+          <img [src]="image.url | safeResourceURL" loading="lazy" />
+          <figcaption>{{ image.name }}</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</main>

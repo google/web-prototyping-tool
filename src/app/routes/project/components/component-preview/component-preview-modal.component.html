@@ -1,0 +1,108 @@
+<div class="left" [class.loaded]="isLoaded">
+  <cd-spinner class="spinner" *ngIf="!isLoaded"></cd-spinner>
+  <iframe #iframeRef allowtransparency="true" [src]="embedURL | safeResourceURL"></iframe>
+</div>
+<div class="right">
+  <ng-container
+    [ngTemplateOutlet]="showPublishDetails ? publishDetailsRef : componentDetailsRef"
+  ></ng-container>
+</div>
+
+<ng-template #componentDetailsRef>
+  <div class="comp-details">
+    <header>
+      <h1>{{ title }}</h1>
+      <div class="versions">
+        <cd-select-input
+          *ngIf="canShowVersionsSelect"
+          class="version-select"
+          outline
+          [data]="publishEntry?.versions | componentVersionPipe | MarkSelection: selectedVersionId"
+          (change)="onVersionSelect($event)"
+        ></cd-select-input>
+      </div>
+    </header>
+
+    <div class="details">
+      <!-- Author -->
+      <ng-container *ngIf="author$ | async as author">
+        <div class="author">
+          <cd-avatar [profileImgUrl]="author.photoUrl"></cd-avatar>
+          <span>{{ author.name }}</span>
+        </div>
+      </ng-container>
+
+      <!-- last updated date -->
+      <div class="date" *ngIf="published && publishLoaded; else unpublishedRef">
+        <cd-icon name="calendar_today"></cd-icon>
+        <span>Published {{ timestamp | FormatFirebaseTime }}</span>
+      </div>
+    </div>
+
+    <p class="desc">
+      {{ description }}
+    </p>
+
+    <!-- Chips -->
+    <div class="chips">
+      <cd-chip *ngFor="let tag of tags" [chipTitle]="tag" [removeable]="false"></cd-chip>
+    </div>
+
+    <!-- MESSAGE FOOTER -->
+    <ng-container *ngIf="msgConfig; let config">
+      <div class="hr"></div>
+      <footer class="msg-footer">
+        <span>
+          {{ config.msg }}
+          <a *ngIf="config.link" [href]="config.link.url" target="_blank">
+            {{ config.link.label }}
+          </a>
+        </span>
+        <div class="footer-right">
+          <button
+            cd-outlined-button
+            *ngIf="config.secondaryBtn"
+            [iconName]="config.secondaryBtn?.icon"
+            [disabled]="!userIsAnEditor"
+            (click)="onMsgAction(config.secondaryBtn?.action)"
+          >
+            {{ config.secondaryBtn.label }}
+          </button>
+          <button
+            cd-unelevated-button
+            [iconName]="config.primaryBtn?.icon"
+            [disabled]="!userIsAnEditor"
+            (click)="onMsgAction(config.primaryBtn?.action)"
+          >
+            {{ config.primaryBtn.label }}
+          </button>
+        </div>
+      </footer>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #unpublishedRef>
+  <div class="unpublished">Unpublished</div>
+</ng-template>
+
+<!-- This view allows users to enter details to publish components -->
+<ng-template #publishDetailsRef>
+  <div class="publish-flow">
+    <header>
+      <h1>Publish Component</h1>
+    </header>
+    <app-publish-details
+      class="publish-details"
+      [(publishEntry)]="publishEntryUpdate"
+      [(name)]="publishName"
+    ></app-publish-details>
+    <footer class="publish-footer">
+      <span>Visible to anyone with an @google.com email</span>
+      <div class="footer-right">
+        <button cd-button (click)="onPublishCancel()">Cancel</button>
+        <button cd-unelevated-button (click)="onPublishNewVersion()">Submit</button>
+      </div>
+    </footer>
+  </div>
+</ng-template>

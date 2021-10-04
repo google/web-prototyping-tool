@@ -1,0 +1,76 @@
+<div class="filter" *ngIf="canShowFilterBar">
+  <cd-icon name="filter_list" class="filter-ico"></cd-icon>
+  <cd-search-input [value]="filterValue" (valueChange)="onFilter($event)"></cd-search-input>
+</div>
+
+<div class="wrapper">
+  <div class="content" *ngIf="hasContent; else emptyTreeRef">
+    <ul
+      class="tree"
+      (click)="onTreeClick($event)"
+      (mouseover)="onTreeMouseOver($event)"
+      (mouseleave)="onTreeMouseLeave()"
+    >
+      <li
+        *ngFor="let cell of visibleCells; trackBy: trackByFn"
+        class="cell"
+        [style.--indent]="cell.level"
+        [attr.data-id]="cell.id"
+        [class.selected]="selectedId === cell.id"
+        [class.hovered]="hoveredId === cell.id"
+        [class.selectable]="cell.selectable"
+        [class.show-arrow]="cell?.children"
+      >
+        <ng-container
+          [ngTemplateOutlet]="indentLines"
+          [ngTemplateOutletContext]="{ $implicit: cell.level }"
+        ></ng-container>
+
+        <div
+          class="cell-arrow icon-font"
+          [class.root]="cell.id === cell.rootId"
+          [class.expanded]="isFiltering || expanded.has(cell.id)"
+        ></div>
+        <div class="cell-desc" [cdTooltip]="cell.inputs ? 'View attributes' : null">
+          <cd-icon
+            *ngIf="cell.icon?.name; let iconName"
+            class="icon"
+            [name]="iconName"
+            [size]="cell.icon?.size"
+            scale="0.7"
+          ></cd-icon>
+          <span class="cell-title">
+            {{ cell.title }}
+            <div class="deselect icon-font"></div>
+          </span>
+          <span class="inputs-indicator" *ngIf="cell.inputs">
+            <cd-icon name="accessibility" [scale]="0.75" class="a11y"></cd-icon>
+          </span>
+          <span class="cell-value" *ngIf="cell.value">{{ cell.value }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Indent lines -->
+<ng-template #indentLines let-level>
+  <ng-container *ngFor="let item of level | dataIndentPipe; let i = index">
+    <div class="indent-line" [style.--level]="i + 1"></div>
+  </ng-container>
+</ng-template>
+
+<!-- EMPTY -->
+<ng-template #emptyTreeRef>
+  <div class="empty-tree">
+    <ng-container *ngIf="isProjectElementsType; else fallbackEmptyRef">
+      <h3>No available elements</h3>
+      <span>Add content to your project for binding</span>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #fallbackEmptyRef>
+  <h3>Empty source</h3>
+  <span>Add content to this data source for binding</span>
+</ng-template>

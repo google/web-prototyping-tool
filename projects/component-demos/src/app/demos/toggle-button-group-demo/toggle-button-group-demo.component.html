@@ -1,0 +1,79 @@
+<div class="variant-group">
+  <h4>Normal Connected Button Group</h4>
+  <cd-toggle-button-group
+    showBackground
+    [(value)]="activeDisplayMode"
+    (valueChange)="onModeChange($event)"
+  >
+    <button cd-button cdToggleButton size="small" expand="true" [value]="DisplayMode.Block">
+      All
+    </button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Inline"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/inline.svg"
+      [value]="DisplayMode.Inline"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Float Left"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/float-left.svg"
+      [value]="DisplayMode.FloatLeft"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Float Right"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/float-right.svg"
+      [value]="DisplayMode.FloatRight"
+    ></button>
+  </cd-toggle-button-group>
+</div>
+
+<div class="variant-group">
+  <h4>Non-connected Button Group</h4>
+  <cd-toggle-button-group
+    separatedButtons
+    [(value)]="activeDisplayMode"
+    (valueChange)="onModeChange($event)"
+  >
+    <button cd-button cdToggleButton size="small" expand="true" [value]="DisplayMode.Block">
+      All
+    </button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Inline"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/inline.svg"
+      [value]="DisplayMode.Inline"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Float Left"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/float-left.svg"
+      [value]="DisplayMode.FloatLeft"
+    ></button>
+    <button
+      cd-button
+      cdToggleButton
+      cdTooltip="Float Right"
+      size="small"
+      expand="true"
+      iconName="/assets/icons/float-right.svg"
+      [value]="DisplayMode.FloatRight"
+    ></button>
+  </cd-toggle-button-group>
+</div>

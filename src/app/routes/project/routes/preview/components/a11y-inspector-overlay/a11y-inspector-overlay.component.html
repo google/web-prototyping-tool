@@ -1,0 +1,38 @@
+<div class="overlay-container" *ngIf="overlayHasContent">
+  <header class="overlay-header">
+    <h3 class="title" *ngIf="activeElementProps?.name">
+      {{ activeElementProps?.name }}
+    </h3>
+    <div class="child" *ngIf="greenlineElementInfo?.tag && isChildElement; else greenline">
+      <cd-icon name="subdirectory_arrow_right" size="small" class="child-icon"></cd-icon>
+      <span class="child-info">
+        <span class="child-label"><{{ greenlineElementInfo?.tag }}></span>
+        <ng-container *ngTemplateOutlet="greenline"></ng-container>
+      </span>
+    </div>
+  </header>
+  <div class="overlay-content">
+    <ng-container *ngIf="attributesList?.length; else noAttrs">
+      <ul class="attrs">
+        <li *ngFor="let attr of attributesList">
+          <span class="attr-name">{{ attr.name | attrNameLabelPipe }}:</span>
+          <span class="attr-value">{{ attr.value }}</span>
+        </li>
+      </ul>
+    </ng-container>
+    <div class="notes-available" *ngIf="activeElementProps?.a11yInputs?.notes">
+      <cd-icon name="sticky_note_2" size="small" class="notes-icon"></cd-icon>
+      Notes available
+    </div>
+  </div>
+</div>
+
+<ng-template #greenline>
+  <div *ngIf="greenlineDetails" class="greenline-details" [appPreviewGreenline]="hoveredGreenline">
+    <span>{{ greenlineDetails }}</span>
+  </div>
+</ng-template>
+
+<ng-template #noAttrs>
+  <div class="empty-state">No additional accessibility information is set on this element</div>
+</ng-template>

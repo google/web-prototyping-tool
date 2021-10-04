@@ -1,0 +1,71 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Theme">
+  <cd-menu-button
+    class="menu-button"
+    size="medium"
+    iconSize="medium"
+    [data]="menuData"
+    (selected)="onMenuSelect($event)"
+  ></cd-menu-button>
+</app-activity-panel-header>
+
+<div class="select-wrapper">
+  <cd-select-input
+    placeholder="Custom"
+    [data]="themeList"
+    (change)="onThemeChange($event)"
+  ></cd-select-input>
+</div>
+
+<cd-tab-group fixed>
+  <cd-tab label="Color">
+    <cd-scroll-view>
+      <div class="scroll-wrapper">
+        <app-theme-color
+          [designSystem]="designSystem$ | async"
+          (colorPick)="onColorPick($event)"
+          (colorRemoved)="onRemoveColor($event)"
+        ></app-theme-color>
+      </div>
+    </cd-scroll-view>
+  </cd-tab>
+
+  <cd-tab label="Type">
+    <cd-scroll-view>
+      <div class="scroll-wrapper">
+        <app-font-family
+          [fontFamilies]="(designSystem$ | async)?.fonts"
+          (addFont)="onAddFont($event)"
+          (removeFont)="onRemoveFont($event)"
+        ></app-font-family>
+        <app-type-ramp
+          [designSystem]="designSystem$ | async"
+          (changeStyle)="onTypographyChange($event)"
+          (removeStyle)="onRemoveTypeStyle($event)"
+        ></app-type-ramp>
+      </div>
+    </cd-scroll-view>
+  </cd-tab>
+
+  <cd-tab label="Variables">
+    <cd-scroll-view>
+      <div class="scroll-wrapper">
+        <app-theme-variables
+          [designSystem]="designSystem$ | async"
+          (changeVariable)="onVariableChange($event)"
+          (removeVariable)="onVariableRemove($event)"
+        ></app-theme-variables>
+      </div>
+    </cd-scroll-view>
+  </cd-tab>
+
+  <cd-tab label="Icons">
+    <cd-scroll-view>
+      <div class="scroll-wrapper">
+        <app-theme-icon-styles
+          [designSystem]="designSystem$ | async"
+          (selectStyle)="onSelectIconStyle($event)"
+        ></app-theme-icon-styles>
+      </div>
+    </cd-scroll-view>
+  </cd-tab>
+</cd-tab-group>

@@ -1,0 +1,23 @@
+<header *ngIf="showSearch" class="search">
+  <cd-icon name="search" size="small" class="search-ico"></cd-icon>
+  <cd-search-input
+    autofocus
+    [value]="searchValue"
+    (valueChange)="onSearchValueChange($event)"
+    (keydown)="onKeyDown($event)"
+    placeholder="Search for someone to add..."
+  ></cd-search-input>
+</header>
+<ul class="list" (click)="onSelectUser($event)">
+  <li
+    *ngFor="let user of users; index as i; trackBy: trackByFn"
+    class="list-item"
+    [class.active]="i === activeIndex"
+  >
+    <img [src]="user.photoUrl" />
+    <section>
+      <span class="name">{{ user.name }}</span>
+      <span class="email">{{ user.email }}</span>
+    </section>
+  </li>
+</ul>

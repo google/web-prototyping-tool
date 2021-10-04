@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Anthora MK",
+    "location": "US-NYC-9TH-5F237",
+    "lastRestocked": "Apr 18, 2019, 5:40:52 PM",
+    "tags": "coffee machine"
+  },
+  {
+    "name": "Food Fighters",
+    "location": "US-SEA-PKV-351",
+    "lastRestocked": "Apr 18, 2019, 5:40:52 PM",
+    "tags": "coffee machine, espresso machine, juicer, ice"
+  },
+  {
+    "name": "Reboot Coffee Lab",
+    "location": "US-SEA-WAT-224",
+    "lastRestocked": "Apr 18, 2019, 5:40:52 PM",
+    "tags": "barista, coffee machine, espresso machine"
+  },
+  {
+    "name": "Winter MK",
+    "location": "US-NYC-9TH-11A222",
+    "lastRestocked": "Apr 18, 2019, 5:40:52 PM",
+    "tags": "coffee machine, espresso machine"
+  }
+]

@@ -1,0 +1,6 @@
+<cd-icon name="filter_list" class="icon" (click)="onIconClick()"></cd-icon>
+<cd-search-input
+  #searchInputRef
+  [value]="value"
+  (valueChange)="valueChange.emit($event)"
+></cd-search-input>

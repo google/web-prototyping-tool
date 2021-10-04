@@ -1,0 +1,44 @@
+<div class="header-line">
+  <div class="header-text" [class.unlabeled]="!event.label">
+    {{ event.label || UNBOUND_EVENT_NAME }}
+  </div>
+  <button
+    cd-button
+    class="delete-button"
+    cdTooltip="Delete"
+    iconName="delete"
+    iconSize="small"
+    (click)="onDelete()"
+  ></button>
+</div>
+
+<div class="fields">
+  <cd-input-group label="Name">
+    <cd-input
+      placeholder="Name of the event"
+      [value]="event.eventName"
+      [errorText]="nameErrorText"
+      (change)="onNameChange($event)"
+      (input)="requestNameValidation($event)"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Type">
+    <cd-select-input
+      placeholder="Select payload type"
+      [data]="EVENT_PAYLOAD_TYPES_MENU_DATA | MarkSelection: event.type"
+      [helpText]="typeHelpText"
+      (change)="onTypeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <cd-input-group label="Input binding">
+    <cd-select-input
+      placeholder="None"
+      resetState="none"
+      [data]="allInputs | PropertiesToMenuItemsPipe | MarkSelection: event.binding"
+      (change)="onInputBindingChange($event)"
+      [helpText]="inputBindingHelpText"
+    ></cd-select-input>
+  </cd-input-group>
+</div>

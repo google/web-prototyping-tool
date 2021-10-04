@@ -1,0 +1,9 @@
+<div class="left">
+  <template *ngIf="leftTemplate" [ngTemplateOutlet]="leftTemplate"></template>
+</div>
+
+<h4 class="header-title">{{ label }}</h4>
+
+<div class="right">
+  <template *ngIf="rightTemplate" [ngTemplateOutlet]="rightTemplate"></template>
+</div>

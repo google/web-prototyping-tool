@@ -1,0 +1,19 @@
+<cd-slider
+  [max]="max"
+  [step]="step"
+  [min]="min"
+  [value]="value"
+  (change)="writeValue($event)"
+></cd-slider>
+<cd-input
+  [type]="type"
+  [resetNumberOnDelete]="resetNumberOnDelete"
+  [innerLabel]="innerLabel"
+  [max]="max"
+  [step]="step"
+  [min]="min"
+  [value]="value"
+  [data]="autocompleteMenu"
+  [placeholder]="placeholder"
+  (change)="writeValue($event)"
+></cd-input>

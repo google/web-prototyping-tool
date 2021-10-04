@@ -1,0 +1,17 @@
+<cd-chip
+  *ngFor="let chip of chips; let idx = index"
+  [chipTitle]="chip"
+  [removeable]="!disabled"
+  (remove)="onRemoveChip(idx)"
+></cd-chip>
+
+<input
+  #inputRef
+  cd-measured-input
+  class="new-chip-input"
+  [attr.disabled]="disabled"
+  [value]="value"
+  (blur)="onInputBlur()"
+  (focus)="onInputFocus()"
+  (keydown)="onInputKeydown($event)"
+/>

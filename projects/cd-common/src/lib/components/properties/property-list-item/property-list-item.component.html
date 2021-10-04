@@ -1,0 +1,15 @@
+<div class="left">
+  <ng-content select="[cdPropertyListItemLeft]"></ng-content>
+</div>
+<div class="content"><ng-content></ng-content></div>
+<div class="right">
+  <button
+    cd-button
+    cdTooltip="Delete"
+    cdTooltipDirection="left"
+    iconName="delete_outline"
+    size="small"
+    iconSize="small"
+    (click)="onDeleteClick()"
+  ></button>
+</div>

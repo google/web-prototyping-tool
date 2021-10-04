@@ -1,0 +1,68 @@
+<cd-chip
+  *ngIf="binding; else showInput"
+  [focus]="focusButton"
+  [chipTitle]="binding?.name"
+  [cdTooltip]="binding?.name"
+  [data]="colorData"
+  [swatchColor]="binding?.value"
+  (menuSelect)="onSelect($event)"
+  (remove)="onRemoveChip()"
+></cd-chip>
+
+<ng-template #showInput>
+  <div [class.solid]="!gradient" [class.gradient]="gradient">
+    <ng-container *ngTemplateOutlet="swatch"></ng-container>
+    <ng-container *ngTemplateOutlet="gradient ? gradientRef : solidRef"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #solidRef>
+  <cd-input
+    showLeft
+    class="hex"
+    [value]="value"
+    [data]="colorData"
+    [innerLabel]="hideOpacity ? (alpha | colorAlpha) : ''"
+    (change)="onSelect($event)"
+  ></cd-input>
+
+  <cd-input
+    *ngIf="showOpacity"
+    min="0"
+    max="100"
+    innerLabel="%"
+    type="percent"
+    [value]="alpha"
+    [data]="opacityAutocomplete"
+    (change)="onAlphaChange($event)"
+  ></cd-input>
+  <span class="bottom-label" *ngIf="bottomLabel">{{ bottomLabel }}</span>
+</ng-template>
+
+<ng-template #swatch>
+  <button
+    cdTooltip="Show color picker"
+    cdColorPicker
+    class="swatch-holder"
+    cdInputLeft
+    tabindex="0"
+    (click)="onSwatchClick()"
+    (gradientPick)="onGradientPick($event)"
+    (colorPick)="onColorPick($event)"
+  >
+    <cd-swatch
+      size="16"
+      class="swatch"
+      [color]="gradient || rgbaString"
+      borderRadius="2"
+    ></cd-swatch>
+  </button>
+</ng-template>
+
+<ng-template #gradientRef>
+  <cd-gradient-select
+    embed
+    [gradient]="gradient"
+    (gradientChange)="onGradientPick($event)"
+  ></cd-gradient-select>
+</ng-template>

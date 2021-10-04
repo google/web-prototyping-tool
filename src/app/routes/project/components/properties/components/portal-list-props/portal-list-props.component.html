@@ -1,0 +1,10 @@
+<app-generic-props-group
+  [label]="prop?.label"
+  [data]="data"
+  [iconClass]="iconClass"
+  [options]="options"
+  [config]="prop?.optionsConfig"
+  [selectedIndex]="selectedIndex"
+  (dataChange)="onChildPortalsChange($event)"
+  (selectedIndexChange)="onSelectedTabChange($event)"
+></app-generic-props-group>

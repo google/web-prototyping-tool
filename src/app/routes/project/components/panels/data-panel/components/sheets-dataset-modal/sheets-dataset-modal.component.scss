@@ -1,0 +1,82 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  width: 275px;
+  height: 375px;
+  padding: var(--cd-spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--cd-spacing-3);
+  pointer-events: all;
+  background: var(--cd-modal-background-color);
+  border-radius: var(--cd-border-radius-3);
+  box-shadow: var(--cd-depth-6);
+  overflow: hidden;
+  contain: content;
+}
+
+.field-header {
+  font-size: var(--cd-font-size-default);
+}
+
+.results {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: var(--cd-input-background-color);
+  border-radius: var(--cd-border-radius-1);
+  color: var(--cd-font-color);
+  padding: var(--cd-spacing-2);
+  overflow-y: auto;
+}
+
+.results > pre {
+  margin: 0;
+  font-family: var(--cd-mono-font);
+  font-size: 11px;
+}
+
+.loader {
+  height: 100%;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-3);
+  justify-content: end;
+  align-items: center;
+  text-align: end;
+}
+
+.error-status {
+  display: grid;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  height: 100%;
+  gap: var(--cd-spacing-3);
+  overflow-wrap: anywhere;
+}
+
+.error-message {
+  font-size: var(--cd-font-size-h2);
+  text-align: center;
+}

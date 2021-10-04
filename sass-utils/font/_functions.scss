@@ -1,0 +1,58 @@
+@use "sass:math";
+
+@function cd-font-get-global-variable_($style) {
+  @if $style == 'headline1' {
+    @return $cd-font-styles-headline1;
+  } @else if $style == 'headline2' {
+    @return $cd-font-styles-headline2;
+  } @else if $style == 'headline3' {
+    @return $cd-font-styles-headline3;
+  } @else if $style == 'headline4' {
+    @return $cd-font-styles-headline4;
+  } @else if $style == 'headline5' {
+    @return $cd-font-styles-headline5;
+  } @else if $style == 'headline6' {
+    @return $cd-font-styles-headline6;
+  } @else if $style == 'subhead1' {
+    @return $cd-font-styles-subhead1;
+  } @else if $style == 'subhead2' {
+    @return $cd-font-styles-subhead2;
+  } @else if $style == 'subtitle1' {
+    @return $cd-font-styles-subtitle1;
+  } @else if $style == 'subtitle2' {
+    @return $cd-font-styles-subtitle2;
+  } @else if $style == 'body1' {
+    @return $cd-font-styles-body1;
+  } @else if $style == 'body2' {
+    @return $cd-font-styles-body2;
+  } @else if $style == 'caption' {
+    @return $cd-font-styles-caption;
+  } @else if $style == 'button' {
+    @return $cd-font-styles-button;
+  } @else if $style == 'overline' {
+    @return $cd-font-styles-overline;
+  } @else {
+    @return ();
+  }
+}
+
+@function cd-font-set-styles_($base-styles, $scale-styles) {
+  @each $style, $style-props in $scale-styles {
+    // Merge base properties for all styles.
+    $style-props: map-merge($base-styles, $style-props);
+
+    // Merge global overrides onto each style.
+    @if global_variable_exists(unquote('cd-font-styles-#{$style}')) {
+      $style-props: map-merge($style-props, cd-font-get-global-variable_(#{$style}));
+    }
+
+    // Override original styles with new styles.
+    $scale-styles: map-merge($scale-styles, (#{$style}: $style-props));
+  }
+
+  @return $scale-styles;
+}
+
+@function cd-font-get-letter-spacing_($tracking, $font-size) {
+  @return math.div($tracking, $font-size * 12) * 1em;
+}

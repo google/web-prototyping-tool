@@ -1,0 +1,78 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+.cd-portal-zero-state {
+  height: 100%;
+  background: #d2d5db;
+  box-shadow: rgb(0 0 0 / 6%) 0 0 20px 0 inset;
+  color: #575d66;
+  text-shadow: 1px 1px 0 #e4e7eb;
+  display: grid;
+  grid-auto-flow: row;
+  position: relative;
+  justify-content: center;
+  grid-auto-rows: min-content;
+  justify-items: center;
+  align-content: center;
+  gap: 8px;
+  align-items: center;
+  padding: 2%;
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  &::after {
+    // --cd-portal-zero-state-message can be set per portal to customize the zero state message
+    content: var(--cd-portal-zero-state-message, 'Select a board to display its contents');
+    font-size: 14.5px;
+    font-weight: 400;
+  }
+}
+
+.cd-portal-error-state {
+  background: #ffcdd4;
+  color: #d45365;
+  text-shadow: 1px 1px 0 #fde2e6;
+
+  &::after {
+    content: 'A portal cannot point to itself';
+  }
+}
+
+.cd-portal-wrapper > cd-outlet > .inner-root {
+  width: 100%;
+  height: 100%;
+}
+
+// Fix issue inside stepper
+
+.cd-child-content-portal > cd-outlet > .inner-root {
+  overflow: visible;
+}
+
+.cd-portal-wrapper {
+  contain: layout; // Perf improvement... Dont render invisible tabs & portals
+}

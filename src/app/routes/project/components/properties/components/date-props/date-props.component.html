@@ -1,0 +1,26 @@
+<cd-input-group [label]="label" columns="1fr 1fr 1.5fr">
+  <cd-input
+    min="1"
+    max="12"
+    type="number"
+    bottomLabel="Month"
+    [value]="month"
+    (change)="onMonthChange($event)"
+  ></cd-input>
+  <cd-input
+    min="1"
+    max="31"
+    type="number"
+    bottomLabel="day"
+    [value]="day"
+    (change)="onDayChange($event)"
+  ></cd-input>
+  <cd-input
+    min="1970"
+    max="3000"
+    type="number"
+    bottomLabel="year"
+    [value]="year"
+    (change)="onYearChange($event)"
+  ></cd-input>
+</cd-input-group>

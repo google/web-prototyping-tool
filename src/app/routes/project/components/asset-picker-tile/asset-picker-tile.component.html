@@ -1,0 +1,38 @@
+<div class="preview" (click)="onPreviewClick()" [style.--rows]="rows" [style.--cols]="cols">
+  <ng-container *ngIf="hasSelection; else defaultPreviewImage">
+    <img *ngFor="let item of previewItems" loading="lazy" class="preview-image" [src]="item" />
+    <img *ngIf="hoverPreview" class="preview-image" [src]="hoverPreview" />
+  </ng-container>
+</div>
+<div class="footer" (click)="onPreviewClick()">
+  <span class="asset-name">{{ name }}</span>
+
+  <span *ngIf="hasSelection" class="selected-check">
+    <cd-icon name="done"></cd-icon>
+  </span>
+
+  <div *ngIf="hasMultipleVariants" class="variant-options" (click)="$event.stopPropagation()">
+    <label
+      *ngFor="let variant of variants"
+      class="variant-checkbox-container"
+      cdTooltipDirection="top"
+      [cdTooltip]="variant.key | sentenceCase"
+      (mouseenter)="onVariantMouseEnter(variant.src)"
+      (mouseleave)="onVariantMouseLeave()"
+    >
+      <input
+        type="checkbox"
+        class="variant-checkbox"
+        [checked]="selectedAssets | isVariantSelectedPipe: variant.src"
+        (change)="onVariantToggle($event, variant.src)"
+      />
+      <span class="variant-checkmark" [ngClass]="variant.key"></span>
+    </label>
+  </div>
+</div>
+
+<ng-template #defaultPreviewImage>
+  <ng-container *ngIf="asset | defaultPreviewImagePipe; let previewSrc">
+    <img loading="lazy" class="preview-image" [src]="hoverPreview ? hoverPreview : previewSrc" />
+  </ng-container>
+</ng-template>

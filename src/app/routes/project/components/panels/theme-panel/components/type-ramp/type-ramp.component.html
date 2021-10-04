@@ -1,0 +1,29 @@
+<header class="title">Type Scale</header>
+<ul class="ramp-list">
+  <li
+    *ngFor="let item of typeRampStyles; let index = index; trackBy: trackByFn"
+    class="type-ramp-item"
+    [class.editing]="item.id === editingTextStyle?.id"
+    [class.dim]="editingTextStyle !== null && item.id !== editingTextStyle?.id"
+    (click)="onStyleClick($event, item)"
+  >
+    <span class="label" cdTooltipDirection="top" [cdTooltip]="item.name">{{ item.name }}</span>
+    <div class="value">
+      <span [ngStyle]="item | FontStyle: designSystem?.fonts">
+        {{ item | FontValue: designSystem?.fonts }}
+      </span>
+    </div>
+    <button cd-button iconName="edit" iconSize="small" cdTooltip="Edit"></button>
+  </li>
+</ul>
+
+<button
+  cd-dashed-button
+  cd-shaped-button
+  size="small"
+  iconSize="small"
+  iconName="add"
+  (click)="onAddItem($event)"
+>
+  Add
+</button>

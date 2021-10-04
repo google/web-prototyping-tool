@@ -1,0 +1,62 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  display: grid;
+  grid-template-columns: var(--cd-size-5) 1fr auto;
+  grid-template-rows: var(--cd-size-5);
+  column-gap: var(--cd-spacing-3);
+  padding: var(--cd-spacing-4) var(--cd-spacing-3) 0;
+}
+
+.metadata {
+  display: grid;
+}
+
+.name {
+  @include cd-font-base;
+  @include cd-font-overflow-ellipsis;
+  @include cd-font(commentor-name);
+
+  align-self: start;
+  color: var(--cd-header-font-color);
+}
+
+.unpublished .name {
+  align-self: center;
+}
+
+.date {
+  @include cd-font-base;
+  @include cd-font-overflow-ellipsis;
+  @include cd-font(comment-date);
+
+  align-self: end;
+  color: var(--cd-font-color);
+}
+
+.write-header {
+  grid-template-columns: var(--cd-size-5) 1fr;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+  height: var(--cd-min-button-height-small);
+}

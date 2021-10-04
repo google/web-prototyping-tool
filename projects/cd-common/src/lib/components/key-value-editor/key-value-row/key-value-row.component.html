@@ -1,0 +1,84 @@
+<div class="left">
+  <div class="check">
+    <ng-container *ngIf="showWarning; else checkboxRef">
+      <cd-icon name="warning" size="small" cdTooltip="Invalid key or value"></cd-icon>
+    </ng-container>
+  </div>
+
+  <input
+    #keyRef
+    cdInputReset
+    cdInputAutoComplete
+    useParentBoundsForMenu
+    class="input key"
+    [value]="keyValue?.name"
+    [data]="keyMenuData | menuForKeyPipe"
+    [class.focus]="focused"
+    [class.invalid]="keyValue | checkInvalidPipe: inputMode"
+    [style.width]="keyValue?.name | KeyValueWidthPipe"
+    (paste)="onPaste($event)"
+    (keydown)="onKeyDown($event)"
+    (selectItem)="onKeyInputSelect($event)"
+    (change)="onKeyChange($event)"
+  />
+  <span class="divider">:</span>
+
+  <cd-chip
+    *ngIf="keyValue?.id; else valueInputRef"
+    class="chip"
+    [chipTitle]="keyValue | KeyValueBindingNamePipe: designSystem"
+    [cdTooltip]="keyValue | KeyValueBindingNamePipe: designSystem"
+    [swatchColor]="keyValue | KeyValueColorPipe: designSystem?.colors"
+    [data]="keyValue.name | menuForChipPipe: designSystem"
+    (menuSelect)="onChipSelect($event)"
+    (remove)="onRemoveChip()"
+  ></cd-chip>
+</div>
+
+<ng-template #checkboxRef>
+  <cd-checkbox
+    tabindex="-1"
+    dragApply
+    hideRipple
+    [checked]="isChecked"
+    (change)="onCheckedChange($event)"
+  ></cd-checkbox>
+</ng-template>
+
+<ng-template #valueInputRef>
+  <cd-swatch
+    *ngIf="keyValue.name | KeyValueShowColorPipe"
+    class="swatch"
+    cdColorPicker
+    [color]="keyValue.value"
+    size="12"
+    (click)="onSwatchClick()"
+    (gradientPick)="onGradientPick($event)"
+    (colorPick)="onColorPick($event)"
+  ></cd-swatch>
+  <input
+    #valueRef
+    cdInputReset
+    cdInputAutoComplete
+    useParentBoundsForMenu
+    class="input value"
+    [value]="keyValue?.value"
+    [class.focus]="focused"
+    [class.invalid]="keyValue | checkInvalidPipe: inputMode"
+    [style.width]="keyValue.value | KeyValueWidthPipe"
+    [data]="keyValueName | menuForValuePipe: valueMenuDataMap:designSystem"
+    (change)="onValueChange($event)"
+    (keydown)="onValueKeydown($event)"
+    (selectItem)="onValueSelect($event)"
+  />
+</ng-template>
+
+<div class="remove-btn">
+  <button
+    cd-button
+    size="small"
+    iconSize="small"
+    iconName="remove_circle"
+    (click)="onDelete()"
+  ></button>
+</div>

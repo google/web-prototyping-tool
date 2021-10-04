@@ -1,0 +1,43 @@
+<div class="top-bar">
+  <h2 class="headline">Cloud Assets</h2>
+  <button
+    *ngIf="settings$ | async as settings"
+    cdToggleButton
+    cd-button
+    size="medium"
+    iconSize="large"
+    [selected]="settings?.darkTheme"
+    [cdTooltip]="settings?.darkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+    cdTooltipDirection="bottom"
+    (click)="onDarkThemeToggle(settings?.darkTheme)"
+    unselectedIconName="/assets/icons/dark_mode.svg"
+    selectedIconName="/assets/icons/light_mode.svg"
+  ></button>
+</div>
+<div class="copied-indicator-container">
+  <div class="copied-indicator" [class.copied-shown]="copied">
+    <cd-icon name="done" size="large"></cd-icon>
+    Copied
+  </div>
+</div>
+<div class="body">
+  <section class="icon-section">
+    <header class="section-header">Assets</header>
+    <div *ngFor="let asset of assets" class="product-row">
+      <h4>{{ asset.name }}</h4>
+      <div class="icons">
+        <div
+          class="icon"
+          *ngFor="let variant of asset.variants | keyvalue"
+          [class.alpha-icon]="variant.value | isAlpha"
+          [cdTooltip]="asset.name | iconAssetTooltipText: variant.value"
+          cdTooltipDirection="bottom"
+          (click)="onClick(asset, variant.value)"
+        >
+          <img class="icon-image" [src]="variant.value | buildImageSource: asset" />
+          <span class="icon-label">{{ variant.key }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

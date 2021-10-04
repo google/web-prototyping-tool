@@ -1,0 +1,21 @@
+<ul role="menu" [class.small]="smallIcons">
+  <li
+    *ngFor="let item of items; let i = index"
+    role="menuitem"
+    [class.active]="i === selectedIndex"
+    [class.disabled]="item.disabled"
+    [class.url]="item.linkType === NavigationLinkType.Url"
+    (click)="onItemClick(item, i)"
+  >
+    <button #btnRef role="link" class="nav-item" [attr.disabled]="item.disabled || null">
+      <cd-icon-element
+        *ngIf="item?.icon as itemIcon"
+        class="nav-icon"
+        [icon]="itemIcon"
+        aria-hidden="true"
+      ></cd-icon-element>
+      <span class="label">{{ item?.label || '' }}</span>
+      <mat-icon *ngIf="item | navItemHasNewTabPipe" class="new-tab-icon">open_in_new</mat-icon>
+    </button>
+  </li>
+</ul>

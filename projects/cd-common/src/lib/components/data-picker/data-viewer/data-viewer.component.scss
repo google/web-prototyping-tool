@@ -1,0 +1,111 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/font/font';
+@use 'sass-utils/scroll/scroll';
+
+:host {
+  width: 260px;
+  height: 380px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+
+  @include scroll.themed-scrollbars();
+}
+
+.invalid-binding {
+  display: grid;
+  gap: var(--cd-spacing-2);
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+
+  span {
+    padding-bottom: var(--cd-spacing-2);
+  }
+}
+
+.footer {
+  height: var(--cd-size-6);
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  padding-right: var(--cd-spacing-2);
+  padding-left: var(--cd-spacing-3);
+  position: relative;
+  transition: height 150ms var(--cd-transition-timing);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+.selected-title,
+.selected-id {
+  display: block;
+}
+
+.selected {
+  display: grid;
+  gap: var(--cd-spacing-0);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.selected-title {
+  font-size: 11px;
+  opacity: 0.72;
+}
+
+.selected-id {
+  font-size: 12px;
+  color: var(--cd-primary-color);
+  font-family: var(--cd-header-font);
+  font-weight: 500;
+  @include font.cd-font-overflow-ellipsis;
+}
+
+.content {
+  display: grid;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--cd-spacing-2);
+  padding-top: 0;
+}
+
+.editor {
+  resize: none;
+  outline: none;
+  padding: var(--cd-spacing-2);
+  font-family: var(--cd-mono-font);
+  font-size: 11px;
+  line-height: 16.5px;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  color: var(--cd-font-color);
+  border: none;
+  border-radius: var(--cd-border-radius-1);
+  background: var(--cd-input-background-color);
+
+  &:focus {
+    box-shadow: inset 0 0 0 2px var(--cd-primary-color);
+  }
+}
+
+.editor-footer {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  padding-top: var(--cd-spacing-2);
+}

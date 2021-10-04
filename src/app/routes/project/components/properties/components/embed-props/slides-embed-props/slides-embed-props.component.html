@@ -1,0 +1,30 @@
+<cd-input-group label="Id" columns="1fr auto">
+  <cd-input [value]="docId" (change)="onDocIdChange($event)"></cd-input>
+  <button
+    cd-button
+    iconName="open_in_new"
+    (click)="openSlides()"
+    [disabled]="!docId"
+    cdTooltip="Open in Slides"
+  ></button>
+</cd-input-group>
+
+<cd-input-group label="Slide Id">
+  <cd-input placeholder="Auto" [value]="slideId" (change)="onSlideIdChange($event)"></cd-input>
+</cd-input-group>
+
+<cd-input-group label="Slide Delay">
+  <cd-input innerLabel="ms" [value]="delay" (change)="onDelayChange($event)"></cd-input>
+</cd-input-group>
+
+<cd-input-group label="Loop">
+  <cd-checkbox [checked]="loop" (change)="onLoopToggle($event)"></cd-checkbox>
+</cd-input-group>
+
+<cd-input-group label="Start">
+  <cd-checkbox [checked]="start" (change)="onStartToggle($event)"></cd-checkbox>
+</cd-input-group>
+
+<span class="helper-text">
+  * Ensure this document's share settings are visible for all of Google.
+</span>

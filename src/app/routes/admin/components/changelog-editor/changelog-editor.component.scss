@@ -1,0 +1,84 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+
+aside {
+  width: 350px;
+  height: 100%;
+  overflow-y: auto;
+  border-left: 1px solid var(--cd-border-color);
+}
+
+.main {
+  padding: var(--cd-spacing-5) var(--cd-spacing-4);
+  overflow-y: auto;
+}
+
+.page-header {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-4);
+  justify-content: start;
+  align-items: center;
+  padding-left: 8px;
+}
+
+.header-text {
+  font-size: 22px;
+}
+
+.active {
+  box-shadow: 0 0 0 2px var(--cd-primary-color);
+}
+
+.news-item {
+  padding: var(--cd-spacing-2);
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  &:hover:not(.active) {
+    box-shadow: 0 0 0 2px var(--cd-selected-fill);
+  }
+}
+
+.news-list {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}
+
+.button-wrapper {
+  display: grid;
+  padding: 0 var(--cd-spacing-4);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cd-spacing-4);
+}
+
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  display: block;
+}
+
+.delete {
+  margin: 0 var(--cd-spacing-4);
+}

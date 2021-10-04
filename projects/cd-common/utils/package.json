@@ -1,0 +1,25 @@
+{
+  "sideEffects": false,
+  "ngPackage": {
+    "lib": {
+      "umdModuleIds": {
+        "cd-interfaces": "cd-interfaces",
+        "cd-metadata/aria": "cd-metadata/aria",
+        "cd-metadata/fonts": "cd-metadata/fonts",
+        "cd-metadata/units": "cd-metadata/units",
+        "cd-themes": "cd-themes",
+        "cd-utils/array": "cd-utils/array",
+        "cd-utils/color": "cd-utils/color",
+        "cd-utils/guid": "cd-utils/guid",
+        "cd-utils/numeric": "cd-utils/numeric",
+        "cd-utils/object": "cd-utils/object",
+        "cd-utils/string": "cd-utils/string",
+        "cd-utils/stylesheet": "cd-utils/stylesheet",
+        "cd-utils/url": "cd-utils/url",
+        "dayjs": "dayjs",
+        "firebase/app": "firebase/app",
+        "immutable": "immutable"
+      }
+    }
+  }
+}

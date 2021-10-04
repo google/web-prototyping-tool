@@ -1,0 +1,21 @@
+<cd-input-group label="Initial size" labelTooltip="Initial size when added">
+  <cd-input
+    innerLabel="w"
+    type="number"
+    [min]="minBoardSize"
+    [max]="maxBoardSize"
+    [value]="size?.width"
+    [disabled]="disabled"
+    (change)="onWidthChange($event)"
+  ></cd-input>
+
+  <cd-input
+    innerLabel="h"
+    type="number"
+    [min]="minBoardSize"
+    [max]="maxBoardSize"
+    [value]="size?.height"
+    [disabled]="disabled"
+    (change)="onHeightChange($event)"
+  ></cd-input>
+</cd-input-group>

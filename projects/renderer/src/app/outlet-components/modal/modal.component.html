@@ -1,0 +1,13 @@
+<dialog
+  #contentRef
+  open
+  class="modal-content"
+  [style.width]="width"
+  [style.height]="height"
+  [style.borderRadius.px]="borderRadius"
+  [style.boxShadow]="boxShadow"
+  [cdkTrapFocus]="hasFocusTrap"
+>
+  <ng-content></ng-content>
+</dialog>
+<div class="backdrop" (click)="close()" [style.--backdrop-color]="backdropColor"></div>

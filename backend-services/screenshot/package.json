@@ -1,0 +1,20 @@
+{
+  "name": "screenshot-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Package.json for node app running inside screenshot service container",
+  "repository": {
+    "type": "git"
+  },
+  "main": "screenshot-service.js",
+  "scripts": {
+    "start": "node ./screenshot-service.js"
+  },
+  "dependencies": {
+    "@google-cloud/debug-agent": "^4.2.2",
+    "express": "^4.17.1",
+    "firebase-admin": "^9.10.0",
+    "puppeteer": "^5.3.1"
+  },
+  "devDependencies": {}
+}

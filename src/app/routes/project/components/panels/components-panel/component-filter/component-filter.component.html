@@ -1,0 +1,10 @@
+<ul class="filters">
+  <li
+    *ngFor="let filter of filters"
+    [class.active]="filter.value === active"
+    [cdTooltip]="filter.tooltip"
+    (click)="onFilterClick(filter.value)"
+  >
+    <span>{{ filter.name }}</span>
+  </li>
+</ul>

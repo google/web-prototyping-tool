@@ -1,0 +1,109 @@
+<a
+  #coverRef
+  class="target"
+  (mouseover)="onOver()"
+  routerLink="/project/{{ project.id }}"
+  [fragment]="urlFragment"
+  [preserveFragment]="false"
+></a>
+
+<div class="header">
+  <div class="input">
+    <input
+      #labelRef
+      cd-measured-input
+      measureOnFocus
+      cdInputReset
+      (focus)="onInputFocus($event)"
+      [placeholder]="UNTITLED_PROJECT_NAME"
+      [value]="project.name"
+      (change)="onNameChange($event)"
+    />
+  </div>
+  <div class="accessory">
+    <button
+      cd-button
+      cdToggleButton
+      [cdTooltip]="starred ? 'Remove from starred' : 'Add to starred'"
+      size="medium"
+      iconSize="medium"
+      selectedIconName="star"
+      unselectedIconName="star_outline"
+      [selected]="starred"
+      (click)="onStarredClick()"
+    ></button>
+  </div>
+</div>
+
+<div class="body">
+  <div class="empty" *ngIf="!boardThumbnails.length; else previews">
+    <div class="empty-inner">
+      <cd-icon name="/assets/empty-project.svg" class="icon" scale="5"></cd-icon>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="actionable" class="footer">
+  <!-- FOOTER LEFT -->
+  <div class="left">
+    <ng-container *ngIf="canShowAvatar; else timestamp">
+      <ng-container *ngIf="user$ | async as user; else emptyAvatar">
+        <cd-avatar
+          cdTooltip="Show user's projects"
+          class="avatar"
+          [profileImgUrl]="user?.photoUrl"
+          (click)="onAvatarClick($event, user?.email)"
+        ></cd-avatar>
+        <div class="avatar-label">
+          <span class="username">{{ user?.name }}</span>
+          <ng-container *ngTemplateOutlet="timestamp"></ng-container>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <!-- FOOTER RIGHT -->
+  <div class="right">
+    <div
+      class="comments"
+      *ngIf="project?.numComments; let numComments"
+      (click)="onCommentsClicked($event)"
+    >
+      <button cd-button size="medium" iconSize="medium" iconName="mode_comment"></button>
+      <span [innerText]="numComments"></span>
+    </div>
+    <cd-menu-button
+      size="medium"
+      menuSize="medium"
+      iconSize="medium"
+      [data]="menuConfig"
+      (selected)="onMenuSelected($event)"
+    ></cd-menu-button>
+  </div>
+</div>
+
+<ng-template #previews>
+  <div class="previews" routerLink="/project/{{ project.id }}">
+    <app-project-tile-preview
+      *ngFor="let board of boardThumbnails"
+      [imgSrc]="board"
+      [loaded]="thumbLoaded.has(board)"
+    ></app-project-tile-preview>
+  </div>
+</ng-template>
+
+<ng-template #timestamp>
+  <div class="timestamp">{{ updatedAt }}</div>
+</ng-template>
+
+<ng-template #emptyAvatar>
+  <cd-avatar
+    cdTooltip="Show user's projects"
+    class="avatar"
+    profileImgUrl="/assets/avatar.svg?"
+    (click)="onAvatarClick($event, project.owner?.email)"
+  ></cd-avatar>
+  <div class="avatar-label">
+    <span class="username">{{ project.owner?.email }}</span>
+    <ng-container *ngTemplateOutlet="timestamp"></ng-container>
+  </div>
+</ng-template>

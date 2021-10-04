@@ -1,0 +1,48 @@
+<aside class="menu">
+  <header class="header">
+    <a routerLink="/dashboard">
+      <img src="/assets/logo/logo.svg" />
+    </a>
+    <h1 class="title">WebPrototypingTool Admin</h1>
+  </header>
+  <div class="menu-container">
+    <cd-scroll-view shaded="true">
+      <div class="menu-list">
+        <cd-menu-list
+          [selectedId]="(route.params | async)?.pageId"
+          [items]="navItems"
+          (selectedIdChange)="onSelectedIdChange($event)"
+        ></cd-menu-list>
+      </div>
+    </cd-scroll-view>
+  </div>
+</aside>
+
+<div class="content-wrapper">
+  <cd-scroll-view class="content" #scrollView shaded="true">
+    <ng-container *ngIf="(route.params | async)?.pageId as pageId; else homePage">
+      <ng-container [ngSwitch]="pageId">
+        <!-- Status Banner Editor -->
+        <ng-container *ngSwitchCase="pages.Banner">
+          <app-banner-editor></app-banner-editor>
+        </ng-container>
+
+        <!-- Changelog Editor -->
+        <ng-container *ngSwitchCase="pages.Changelog">
+          <app-changelog-editor></app-changelog-editor>
+        </ng-container>
+
+        <!-- Analytics Viewer -->
+        <ng-container *ngSwitchCase="pages.Analytics">
+          <app-analytics></app-analytics>
+        </ng-container>
+      </ng-container>
+    </ng-container>
+  </cd-scroll-view>
+</div>
+
+<ng-template #homePage>
+  <div class="home">
+    <app-authed-user-details></app-authed-user-details>
+  </div>
+</ng-template>

@@ -1,0 +1,181 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$transitionSpeed: 250ms;
+$minTileHeight: 86px;
+
+.details {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms;
+  font-family: var(--cd-mono-font);
+  padding: 2px 4px;
+  border-radius: 3px;
+  overflow: hidden;
+  font-size: 9px;
+  color: var(--cd-inverted-font-color);
+  font-weight: 500;
+  position: absolute;
+  top: 1px;
+  left: 20px;
+
+  &::before {
+    content: '';
+    background: var(--cd-modal-background-color-inverted);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    opacity: 0.8;
+    z-index: -1;
+  }
+
+  span {
+    white-space: nowrap;
+  }
+}
+
+.dimensions {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 200ms;
+
+  &:hover .details {
+    opacity: 1;
+  }
+}
+
+.menu-button {
+  vertical-align: middle;
+  display: none;
+}
+
+:host {
+  display: grid;
+  contain: strict;
+  box-sizing: border-box;
+  position: relative;
+  grid-template-rows: 1fr auto;
+  background-color: var(--cd-sidebar-color);
+  height: 100%;
+  min-height: $minTileHeight;
+  user-select: none;
+  border: 1px solid var(--cd-outline-color);
+  border-radius: var(--cd-border-radius-2);
+  transition: border-color $transitionSpeed, box-shadow $transitionSpeed,
+    background-color $transitionSpeed;
+  transition-timing-function: var(--cd-transition-timing);
+
+  &:hover {
+    --cd-font-color: var(--cd-primary-color);
+
+    border-color: var(--cd-active-fill);
+    background-color: var(--cd-focus-fill);
+    box-shadow: var(--cd-depth-1);
+
+    .menu-button {
+      display: grid;
+    }
+
+    .dimensions {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    background-color: var(--cd-active-fill);
+  }
+}
+
+.body {
+  display: flex;
+  place-items: center;
+  padding: var(--cd-spacing-1);
+  position: relative;
+  border-top-left-radius: var(--cd-border-radius-3);
+  border-top-right-radius: var(--cd-border-radius-3);
+  grid-template-columns: 1fr;
+  grid-template-rows: 100%;
+  background: var(--cd-grid-bkd);
+  overflow: hidden;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.img {
+  object-fit: contain;
+  pointer-events: none;
+  height: 100%;
+  width: 100%;
+}
+
+.error-icon {
+  color: var(--cd-error-color);
+}
+
+.progress-pie,
+.error-icon {
+  vertical-align: middle;
+  margin-right: 2px;
+  margin-left: 4px;
+}
+
+.progress-pie {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.label {
+  @include cd-font(tile);
+  @include cd-font-overflow-ellipsis;
+
+  padding: 2px 4px;
+  pointer-events: none;
+
+  &:focus {
+    pointer-events: initial;
+  }
+
+  :host.untitled & {
+    font-style: italic;
+  }
+}
+
+.footer {
+  display: grid;
+  height: 28px;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border-top: 1px solid var(--cd-outline-color);
+  transition: height 2s var(--cd-transition-timing);
+  padding: 0 var(--cd-spacing-0);
+  contain: layout;
+}
+
+.left {
+  display: flex;
+  overflow: hidden;
+}

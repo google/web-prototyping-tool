@@ -1,0 +1,35 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/lib",
+    "declarationMap": true,
+    "target": "es2015",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "declaration": true,
+    "sourceMap": false,
+    "inlineSources": false,
+    "experimentalDecorators": false,
+    "importHelpers": true,
+    "lib": ["dom", "es2018"],
+    "paths": {
+      "cd-common": ["dist/cd-common"],
+      "cd-common/*": ["dist/cd-common/*"],
+      "cd-interfaces": ["dist/cd-interfaces"],
+      "cd-interfaces/*": ["dist/cd-interfaces/*"],
+      "cd-utils": ["dist/cd-utils"],
+      "cd-utils/*": ["dist/cd-utils/*"],
+      "cd-metadata": ["dist/cd-metadata"],
+      "cd-metadata/*": ["dist/cd-metadata/*"]
+    }
+  },
+  "angularCompilerOptions": {
+    "skipTemplateCodegen": true,
+    "strictMetadataEmit": true,
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true,
+    "enableResourceInlining": false,
+    "enableIvy": false
+  },
+  "exclude": ["src/test.ts", "**/*.spec.ts"]
+}

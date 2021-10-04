@@ -1,0 +1,191 @@
+<div class="demo">
+  <section>
+    <h4>Elements</h4>
+    <div class="group">
+      <div *ngFor="let button of buttons">
+        {{ button.title }}
+        <button [disabled]="button.disabled" [hidden]="button.hidden" class="focus-test">
+          {{ button.title }}
+        </button>
+      </div>
+    </div>
+    <div class="group">
+      <div *ngFor="let input of inputs">
+        {{ input.title }}
+        <input
+          [type]="input.type"
+          [hidden]="input.hidden"
+          [disabled]="input.disabled"
+          [attr.placeholder]="input.title"
+          class="focus-test"
+        />
+      </div>
+    </div>
+    <div class="group">
+      <select class="focus-test">
+        <option>select</option>
+      </select>
+      <select disabled class="focus-test">
+        <option>disabled select</option>
+      </select>
+      <textarea class="focus-test">textarea</textarea>
+      <textarea disabled class="focus-test">textarea disabled</textarea>
+    </div>
+    <div class="group">
+      <a href="#" class="focus-test">link with href</a>
+      <a class="focus-test">link no href</a>
+      <a href="#" disabled class="focus-test">disabled on element that does not support</a>
+    </div>
+  </section>
+  <section>
+    <h4>Tabindex</h4>
+    <div class="group">
+      <div *ngFor="let tabindex of tabindexes" [tabindex]="tabindex.value" class="focus-test">
+        {{ tabindex.title }}
+      </div>
+      <div style="flex-basis: 100%"></div>
+      <button tabindex="-1" class="focus-test">tabindex -1 on focusable element</button>
+      <button tabindex class="focus-test">tabindex empty on focusable element</button>
+      <button tabindex="foo" class="focus-test">tabindex="foo" on focusable element</button>
+      <div tabindex class="focus-test">tabindex empty on div</div>
+      <div tabindex="foo" class="focus-test">tabindex="foo" on div</div>
+    </div>
+  </section>
+
+  <section>
+    <h4>Media</h4>
+    <div class="group">
+      <div>
+        Default video with controls
+        <br />
+        <video controls src="/assets/media/motion.mp4" width="200" class="focus-test"></video>
+      </div>
+      <div>
+        Default video with controls and tabindex="-1"
+        <br />
+        <video
+          controls
+          src="/assets/media/motion.mp4"
+          width="200"
+          tabindex="-1"
+          class="focus-test"
+        ></video>
+      </div>
+      <div>
+        Default video with no controls
+        <br />
+        <video src="/assets/media/motion.mp4" width="200" class="focus-test"></video>
+      </div>
+    </div>
+    <div class="group">
+      <div>
+        Default audio with controls
+        <br />
+        <audio controls class="focus-test"></audio>
+      </div>
+      <div>
+        Default audio with controls and tabindex="-1"
+        <br />
+        <audio controls tabindex="-1" class="focus-test"></audio>
+      </div>
+      <div>
+        Default audio with no controls
+        <br />
+        <audio class="focus-test"></audio>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h4>Styles</h4>
+    <div class="group">
+      'visibility: hidden' button
+      <button style="visibility: hidden" class="focus-test">hidden button</button>
+      'visibility: collapse' button
+      <button style="visibility: collapse" class="focus-test">hidden button</button>
+      'display: none' button
+      <button style="display: none" class="focus-test">hidden button</button>
+    </div>
+  </section>
+  <section>
+    <h4>Ancestry</h4>
+    <div class="group">
+      'visibility: hidden' parent with focusable items
+      <div style="visibility: hidden">
+        <button class="focus-test">hidden button</button>
+        <a href="#" class="focus-test">hidden link</a>
+      </div>
+    </div>
+    <div class="group">
+      'visibility: hidden' parent with deeply nested focusable items
+      <div style="visibility: hidden">
+        <div>
+          <div>
+            <div>
+              <button class="focus-test">hidden button</button>
+              <a href="#" class="focus-test">hidden link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      'visibility: collapse' parent with focusable items
+      <div style="visibility: collapse">
+        <button class="focus-test">hidden button</button>
+        <a href="#" class="focus-test">hidden link</a>
+      </div>
+    </div>
+    <div class="group">
+      [hidden] parent with focusable items
+      <div hidden>
+        <button class="focus-test">hidden button</button>
+        <a href="#" class="focus-test">hidden link</a>
+      </div>
+    </div>
+    <div class="group">
+      [hidden] parent with deeply nested focusable items
+      <div hidden>
+        <div>
+          <div>
+            <div>
+              <button class="focus-test">hidden button</button>
+              <a href="#" class="focus-test">hidden link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group">
+      'display: none' parent with focusable items
+      <div style="display: none">
+        <button class="focus-test">hidden button</button>
+        <a href="#" class="focus-test">hidden link</a>
+      </div>
+    </div>
+    <div class="group">
+      'display: none' parent with deeply nested focusable items
+      <div style="display: none">
+        <div>
+          <div>
+            <div>
+              <button class="focus-test">hidden button</button>
+              <a href="#" class="focus-test">hidden link</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div>
+  <h1>Focus query results</h1>
+  <ol>
+    <li *ngFor="let line of tabbableOutput">{{ line }}</li>
+  </ol>
+  <h2>Legend</h2>
+  <br />
+  <div class="focusable" style="width: 75px; height: 25px">focusable</div>
+  <br />
+  <div class="focusable" style="width: 75px; height: 25px; outline-color: purple">focused</div>
+</div>

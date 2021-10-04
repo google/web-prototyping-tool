@@ -1,0 +1,27 @@
+<img class="graphic" *ngIf="headerImg" [src]="headerImg" />
+<div class="description">
+  <h1 class="title">{{ header }}</h1>
+  <p class="subtitle">{{ description }}</p>
+  <button
+    *ngIf="actionName && actionIcon"
+    cd-unelevated-button
+    cd-shaped-button
+    fabStyle
+    size="large"
+    iconSize="large"
+    [iconName]="actionIcon"
+    (click)="onActionClick()"
+  >
+    {{ actionName }}
+  </button>
+  <button
+    *ngIf="actionName && !actionIcon"
+    cd-unelevated-button
+    cd-shaped-button
+    fabStyle
+    size="large"
+    (click)="onActionClick()"
+  >
+    {{ actionName }}
+  </button>
+</div>

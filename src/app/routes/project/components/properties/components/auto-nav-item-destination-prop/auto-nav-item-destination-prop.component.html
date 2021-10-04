@@ -1,0 +1,10 @@
+<cd-input-group [label]="label">
+  <cd-select-input
+    placeholder="Select a Board..."
+    resetState="None"
+    [helpText]="helpText | richTooltipPipe"
+    [data]="inputs | autoNavItemDestinationOptionsPipe: boards:parentPortalTarget:props"
+    (change)="onSelected($event)"
+    (activeValue)="onActiveValue($event)"
+  ></cd-select-input>
+</cd-input-group>

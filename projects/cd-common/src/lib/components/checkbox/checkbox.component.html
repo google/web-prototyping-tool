@@ -1,0 +1,30 @@
+<div class="checkbox-and-label-wrapper">
+  <div
+    class="container"
+    [class.focused]="focused"
+    [class.rounded]="rounded"
+    [class.hide-ripple]="hideRipple"
+  >
+    <cd-icon [name]="iconName" class="icon" [size]="iconSize"></cd-icon>
+  </div>
+  <cd-checkbox-input
+    [tabindex]="tabindex"
+    [dragApply]="dragApply"
+    [checked]="checked"
+    class="checkbox-input"
+    [label]="label"
+    [disabled]="disabled"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (change)="onCheckboxChange($event)"
+  ></cd-checkbox-input>
+</div>
+<cd-icon
+  *ngIf="helpText"
+  class="help-icon"
+  [cdRichTooltip]="helpText"
+  [class.active]="richTooltipActive"
+  [name]="richTooltipIcon"
+  size="small"
+  (click)="onShowRichTooltip($event)"
+></cd-icon>

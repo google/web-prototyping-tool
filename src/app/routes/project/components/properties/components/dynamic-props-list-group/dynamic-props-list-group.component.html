@@ -1,0 +1,17 @@
+<cd-property-group [groupTitle]="label" type="add" (add)="onAddItem()">
+  <app-dynamic-props-list
+    #propsListRef
+    [data]="data"
+    [schema]="schema"
+    [config]="config"
+    [parentMergedProps]="parentMergedProps"
+    [designSystem]="designSystem"
+    [boards]="boards"
+    [colorMenuData]="colorMenuData"
+    [selectedIndex]="selectedIndex"
+    [selectedValue]="selectedValue"
+    (dataChange)="onDataChange($event)"
+    (selectedIndexChange)="onSelectedIndexChange($event)"
+    (selectedValueChange)="onSelectedValueChange($event)"
+  ></app-dynamic-props-list>
+</cd-property-group>

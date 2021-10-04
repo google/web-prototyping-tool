@@ -1,0 +1,42 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+@import 'sass-utils/components/chip/chip.scss';
+
+:host {
+  @include cd-font(taggable-text-field-text);
+
+  padding: var(--cd-spacing-3);
+  white-space: pre-wrap;
+  color: var(--cd-font-color);
+  user-select: text;
+}
+
+section {
+  word-break: break-word;
+}
+
+.chip {
+  @include chip-base;
+  @include cd-font(taggable-text-field-chip);
+
+  height: 20px;
+  padding: 0 var(--cd-spacing-1);
+  margin-right: var(--cd-spacing-0);
+  min-width: fit-content;
+  white-space: nowrap;
+}

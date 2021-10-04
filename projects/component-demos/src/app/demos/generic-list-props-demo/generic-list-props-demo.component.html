@@ -1,0 +1,24 @@
+<div class="wrapper">
+  <app-generic-props-group
+    label="Values"
+    [data]="data"
+    [config]="config"
+    [options]="options"
+    [iconClass]="iconClass"
+    (dataChange)="onDataChange($event)"
+    [selectedIndex]="selectedIndex"
+    (selectedIndexChange)="onSelectedIndexChange($event)"
+  ></app-generic-props-group>
+</div>
+
+<div class="code">
+  <span>Selected Index: {{ selectedIndex }}</span>
+  <br />
+  <br />
+  <span>Options</span>
+  <pre>{{ options | json }}</pre>
+  <span>Configuration</span>
+  <pre>{{ config | json }}</pre>
+  <span>Data</span>
+  <pre>{{ data | json }}</pre>
+</div>

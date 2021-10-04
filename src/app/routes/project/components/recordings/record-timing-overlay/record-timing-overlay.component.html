@@ -1,0 +1,105 @@
+<header class="header">
+  <h2 class="title">
+    {{ model?.elementId | recordedTitlePipe }} / {{ model | recordedLabelPipe }}
+  </h2>
+</header>
+
+<div class="content">
+  <ng-container
+    *ngIf="model?.elementId | recordInputType: model.key:model.value:model.type; let val"
+  >
+    <!-- prettier-ignore -->
+    <cd-input-group label="Value" [ngSwitch]="val[0]">
+      <ng-container *ngSwitchCase="RecordedInputType.Text"        [ngTemplateOutlet]="textInputRef"     [ngTemplateOutletContext]="{ $implicit:val[1]}"></ng-container>
+      <ng-container *ngSwitchCase="RecordedInputType.Number"      [ngTemplateOutlet]="numberInputRef"   [ngTemplateOutletContext]="{ $implicit:val[1]}"></ng-container>
+      <ng-container *ngSwitchCase="RecordedInputType.Dropdown"    [ngTemplateOutlet]="dropdownInputRef" [ngTemplateOutletContext]="{ $implicit:val[1]}"></ng-container>
+      <ng-container *ngSwitchCase="RecordedInputType.Boolean"     [ngTemplateOutlet]="booleanInputRef"  [ngTemplateOutletContext]="{ $implicit:val[1]}"></ng-container>
+      <ng-container *ngSwitchCase="RecordedInputType.Portal"      [ngTemplateOutlet]="portalInputRef"   [ngTemplateOutletContext]="{ $implicit:val[1]}"></ng-container>
+      <ng-container *ngSwitchDefault                              [ngTemplateOutlet]="defaultValueRef"></ng-container>
+
+    </cd-input-group>
+  </ng-container>
+
+  <cd-input-group label="Easing" *ngIf="isStyleAction">
+    <cd-select-input
+      placeholder="Linear"
+      [data]="easingMenu | MarkSelection: model?.animation?.easing"
+      (change)="onEasingChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <cd-input-group label="Duration" *ngIf="isStyleAction">
+    <cd-input
+      resetNumberOnDelete
+      (change)="onDurationChange($event)"
+      [max]="10000"
+      [min]="0"
+      [value]="model?.animation?.duration"
+      innerLabel="MS"
+      placeholder="0"
+      type="number"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Delay">
+    <cd-input
+      resetNumberOnDelete
+      placeholder="0"
+      [max]="10000"
+      [min]="0"
+      type="number"
+      innerLabel="MS"
+      [value]="model?.animation?.delay"
+      (change)="onDelayChange($event)"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group
+    *ngIf="showPin"
+    label="Pin"
+    labelTooltip="Prevent property from automatic removal"
+  >
+    <cd-checkbox [checked]="model?.persist" (change)="onPersistChange($event)"></cd-checkbox>
+  </cd-input-group>
+</div>
+
+<!-- Record Input Value Modifiers -->
+
+<ng-template #numberInputRef>
+  <cd-input [value]="model.value" type="number" (change)="onNumberValueChange($event)"></cd-input>
+</ng-template>
+
+<ng-template #textInputRef>
+  <cd-input [value]="model.value" (change)="onTextValueChange($event)"></cd-input>
+</ng-template>
+
+<ng-template #dropdownInputRef let-inputs>
+  <cd-select-input
+    [data]="inputs | recordInputMenuPipe: model.elementId | MarkSelection: model.value"
+    (change)="onSelectValueChange($event)"
+  ></cd-select-input>
+</ng-template>
+
+<ng-template #booleanInputRef>
+  <cd-toggle-button-group
+    showBackground
+    [value]="model.value"
+    (valueChange)="onBoolValueChange($event)"
+  >
+    <button cd-button cdToggleButton expand [value]="true">True</button>
+    <button cd-button cdToggleButton expand [value]="false">False</button>
+  </cd-toggle-button-group>
+</ng-template>
+
+<ng-template #defaultValueRef>
+  <cd-input disabled [value]="model | recordedOutputPipe: designSystem"></cd-input>
+</ng-template>
+
+<ng-template #portalInputRef let-inputs>
+  <cd-select-input
+    placeholder="Select a board..."
+    resetState="None"
+    [data]="model.value | portalPipe: boards:inputs.targetId"
+    (change)="onSelectValueChange($event)"
+  ></cd-select-input>
+</ng-template>

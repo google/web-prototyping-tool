@@ -1,0 +1,116 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  width: 400px;
+  height: 250px;
+  background: #ebf5ff;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  color: #4676a5;
+  box-shadow: var(--cd-depth-0);
+}
+
+header {
+  height: 48px;
+  background: #d0e2f5;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 8px 16px;
+  border-bottom: 1px solid #b7cfe6;
+
+  h4 {
+    color: #4676a5;
+  }
+}
+
+.box {
+  box-sizing: border-box;
+  background: #ebf5ff;
+  border: 1px solid #91b7dc;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #91b7dc;
+}
+
+.right {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 8px;
+}
+
+.main {
+  display: grid;
+  overflow: hidden;
+  grid-template-columns: 92px 1fr;
+}
+
+.nav {
+  background: #fff;
+  border-right: 1px solid #b7cfe6;
+
+  ul {
+    list-style: none;
+    padding: 10px;
+    padding-left: 0;
+    margin: 0;
+    display: grid;
+
+    li {
+      display: grid;
+      align-items: center;
+      padding: 0 16px;
+      height: 24px;
+
+      &.active {
+        background: #91b7dc;
+        color: #fff;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+      }
+    }
+  }
+}
+
+.page {
+  padding: 16px;
+}
+
+.inner-page {
+  width: 100%;
+  height: 80px;
+  background: #d1e3f5;
+}
+
+.page-content {
+  display: grid;
+  grid-auto-flow: column;
+  width: 100%;
+  height: 80px;
+  padding: 10px 0;
+  box-sizing: border-box;
+  gap: 10px;
+}
+
+.box-item {
+  background: #d1e3f5;
+}

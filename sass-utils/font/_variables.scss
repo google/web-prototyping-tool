@@ -1,0 +1,187 @@
+@import 'functions';
+
+$cd-font-font-family: 'Google Sans', 'Roboto', sans-serif;
+$cd-font-font-family-display: var(--cd-header-font);
+$cd-font-font-family-mono: var(--cd-mono-font);
+$cd-font-font-family-body: var(--cd-body-font);
+
+$cd-font-base: (
+  font-family: $cd-font-font-family,
+  -moz-osx-font-smoothing: grayscale,
+  -webkit-font-smoothing: antialiased,
+  text-decoration: inherit,
+  text-transform: inherit,
+);
+
+$cd-font-font-weight-values: (
+  thin: 100,
+  light: 300,
+  regular: 400,
+  medium: 500,
+  bold: 700,
+  black: 900,
+);
+
+$cd-font-styles: cd-font-set-styles_(
+  $cd-font-base,
+  (
+    display1: (
+      font-size: 5.334rem,
+      line-height: 6.334rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    display2: (
+      font-size: 4.667rem,
+      line-height: 5.334rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    display3: (
+      font-size: 3.667rem,
+      line-height: 4.334rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    headline1: (
+      font-size: 3rem,
+      line-height: 3.667rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    headline2: (
+      font-size: 2.667rem,
+      line-height: 3.334rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    overlay-headline2: (
+      font-family: var(--cd-header-font),
+      font-size: var(--cd-font-size-h2),
+      font-weight: map-get($cd-font-font-weight-values, medium),
+    ),
+    headline3: (
+      font-size: 2.334rem,
+      line-height: 3rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    headline4: (
+      font-size: 2rem,
+      line-height: 2.667rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    headline5: (
+      font-size: 1.834rem,
+      line-height: 2.334rem,
+      font-weight: map-get($cd-font-font-weight-values, regular),
+    ),
+    headline6: (
+      font-size: 1.5rem,
+      line-height: 2rem,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+    ),
+    subhead1: (
+      font-size: 1.334rem,
+      line-height: 2rem,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      letter-spacing: cd-font-get-letter-spacing_(-1, 16),
+    ),
+    subhead2: (
+      font-size: 1.167rem,
+      line-height: 1.667rem,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      font-family: $cd-font-font-family-display,
+      letter-spacing: cd-font-get-letter-spacing_(-2.5, 14),
+    ),
+    subtitle1: (
+      font-size: 1.334rem,
+      line-height: 2rem,
+      font-family: $cd-font-font-family-body,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      letter-spacing: cd-font-get-letter-spacing_(-2, 16),
+    ),
+    subtitle2: (
+      font-size: 1.167rem,
+      line-height: 1.667rem,
+      font-family: $cd-font-font-family-body,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      letter-spacing: cd-font-get-letter-spacing_(-2.5, 14),
+    ),
+    overline: (
+      font-size: 10.25px,
+      font-family: $cd-font-font-family,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      letter-spacing: 1.24px,
+      text-rendering: optimizeLegibility,
+      text-transform: uppercase,
+      opacity: 1,
+    ),
+    body1: (
+      font-size: 1.334rem,
+      line-height: 2rem,
+      font-family: $cd-font-font-family-body,
+      letter-spacing: cd-font-get-letter-spacing_(-1, 16),
+    ),
+    body2: (
+      font-size: 1.167rem,
+      line-height: 1.667rem,
+      font-family: $cd-font-font-family-body,
+      letter-spacing: cd-font-get-letter-spacing_(-2, 14),
+    ),
+    list-item: (
+      font-size: 1.167rem,
+      line-height: 1.3rem,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+    ),
+    list-item-secondary: (
+      font-size: 1rem,
+      font-family: $cd-font-font-family-body,
+    ),
+    taggable-text-field-text: (
+      font-size: 13px,
+      font-family: $cd-font-font-family-body,
+      letter-spacing: cd-font-get-letter-spacing_(-2, 14),
+      line-height: 2rem,
+    ),
+    taggable-text-field-chip: (
+      font-size: 1rem,
+      line-height: 2rem,
+      font-family: $cd-font-font-family,
+      letter-spacing: cd-font-get-letter-spacing_(-2, 14),
+      font-weight: 500,
+    ),
+    caption: (
+      font-size: 1rem,
+      line-height: 1.334rem,
+      font-family: $cd-font-font-family-body,
+      letter-spacing: cd-font-get-letter-spacing_(1.3, 14),
+    ),
+    commentor-name: (
+      font-size: 1.167rem,
+      line-height: 1.3rem,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+    ),
+    comment-date: (
+      font-size: 1rem,
+      font-family: $cd-font-font-family-body,
+      letter-spacing: cd-font-get-letter-spacing_(1.3, 14),
+    ),
+    swatch: (
+      font-size: 1rem,
+      line-height: 1.334rem,
+      font-family: $cd-font-font-family,
+      font-weight: map-get($cd-font-font-weight-values, medium),
+      letter-spacing: cd-font-get-letter-spacing_(2, 11),
+      color: var(--cd-text-color),
+      text-rendering: optimizeLegibility,
+    ),
+    tile: (
+      color: var(--cd-font-color),
+      font-family: var(--cd-body-font),
+      font-size: var(--cd-font-size-default),
+      line-height: 1,
+      -webkit-font-smoothing: antialiased,
+    ),
+    code-snippet: (
+      line-height: 16px,
+      font-family: $cd-font-font-family-mono,
+      font-size: 12px,
+      -webkit-font-smoothing: antialiased,
+    ),
+  )
+);

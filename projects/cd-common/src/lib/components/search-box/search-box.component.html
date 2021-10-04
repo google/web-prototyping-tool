@@ -1,0 +1,17 @@
+<cd-icon name="search" size="large"></cd-icon>
+<input
+  class="input"
+  #inputRef
+  cdInputReset
+  type="text"
+  [value]="value"
+  [placeholder]="placeholder"
+/>
+<button
+  *ngIf="value"
+  cd-button
+  size="small"
+  iconSize="medium"
+  iconName="close"
+  (click)="onClearClick()"
+></button>

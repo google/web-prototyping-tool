@@ -1,0 +1,77 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$transitionDuration: 250ms;
+$height: 116px;
+
+.img {
+  background: none;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+  transition: background-color 200ms ease;
+  border-radius: 2px;
+  overflow: hidden;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.img.placeholder {
+  background: var(--cd-sidebar-color);
+}
+
+:host {
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  min-height: $height;
+  contain: paint;
+  width: 148px;
+  border: 1px solid var(--cd-border-color);
+  border-radius: var(--cd-border-radius-3);
+  background: var(--cd-grid-bkd);
+  transition-property: border-color box-shadow background-color;
+  transition-timing-function: var(--cd-transition-timing);
+  transition-duration: $transitionDuration;
+
+  &:hover {
+    border-color: var(--cd-active-fill);
+    background-color: var(--cd-focus-fill);
+    box-shadow: var(--cd-depth-1);
+  }
+
+  &:active {
+    background-color: var(--cd-active-fill);
+  }
+}
+
+.asset {
+  opacity: 0;
+  transition: opacity 250ms;
+
+  &.show {
+    opacity: 1;
+  }
+}
+
+:host-context(.dark-theme) {
+  .img.placeholder {
+    background: var(--cd-hover-fill);
+    background: rgb(69, 73, 84);
+  }
+}

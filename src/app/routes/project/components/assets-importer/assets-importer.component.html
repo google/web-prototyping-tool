@@ -1,0 +1,82 @@
+<!-- LEFT SIDE NAVIGATION -->
+<aside class="navigation-drawer">
+  <header class="assets-importer-header">Assets Gallery</header>
+  <ul class="nav-list">
+    <li *ngFor="let section of sections" [class.selected]="selectedSection === section">
+      <button class="item-button" (click)="onSectionClick(section)">
+        <span class="item-text">{{ section | kebabToSentence }}</span>
+        <span class="item-count">{{ section | assetCountPipe: assets:query }}</span>
+      </button>
+    </li>
+  </ul>
+</aside>
+
+<div class="assets-picker">
+  <div class="assets-picker-header">
+    <cd-search-box
+      placeholder="Search"
+      [value]="query"
+      (valueChange)="onSearchValueChange($event)"
+    ></cd-search-box>
+    <div class="assets-picker-preview-controls">
+      <span class="assets-picker-slider">
+        <cd-slider
+          [min]="1"
+          [max]="100"
+          [step]="1"
+          (change)="onSizeSliderChange($event)"
+        ></cd-slider>
+      </span>
+      <button
+        cdToggleButton
+        cd-button
+        size="medium"
+        iconSize="medium"
+        cdTooltipDirection="bottom"
+        unselectedIconName="/assets/icons/dark_mode.svg"
+        selectedIconName="/assets/icons/light_mode.svg"
+        [selected]="darkPreview"
+        [cdTooltip]="darkPreview ? 'Switch to light preview' : 'Switch to dark preview'"
+        (click)="onDarkPreviewToggle()"
+      ></button>
+    </div>
+  </div>
+
+  <ng-container *ngIf="sliderValue$ | async as sliderValue; else loader">
+    <div class="scroll-container" [style.--card-size-multiplier]="sliderValue / 100 + 1">
+      <cd-scroll-view #scrollView shaded="true">
+        <div class="assets-picker-tile-container">
+          <app-asset-picker-tile
+            *ngFor="
+              let asset of selectedSection | assetSectionFilterPipe: assets:query;
+              trackBy: trackByAssetFn
+            "
+            [asset]="asset"
+            [selectedAssets]="selectedAssets"
+            [ngClass]="previewBackground"
+            (variantSelectionAdd)="onVariantSelectionAdd($event)"
+            (variantSelectionRemove)="onVariantSelectionRemove($event)"
+            (variantSelectionRemoveAll)="onVariantSelectionRemoveAll($event)"
+          ></app-asset-picker-tile>
+        </div>
+      </cd-scroll-view>
+    </div>
+  </ng-container>
+
+  <div class="assets-picker-actions" [class.selection-exists]="selectedAssets.size > 0">
+    <div *ngIf="selectedAssets.size > 0" class="selected-count">
+      <button cd-icon-button iconName="close" (click)="onClearSelection()"></button>
+      <span>{{ selectedAssets.size | selectionCountLabelPipe }}</span>
+    </div>
+    <button cd-button size="medium" class="footer-button" (click)="onCancel()">Cancel</button>
+    <button cd-unelevated-button size="medium" class="footer-button" (click)="onAddSelected()">
+      Add selected
+    </button>
+  </div>
+</div>
+
+<ng-template #loader>
+  <div class="loader">
+    <cd-spinner></cd-spinner>
+  </div>
+</ng-template>

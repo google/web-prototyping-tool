@@ -1,0 +1,54 @@
+<div class="body">
+  <img [src]="thumbnailSrc | safeURL" class="img" loading="lazy" />
+
+  <ng-template #componentIcon>
+    <cd-icon name="/assets/component-placeholder.svg" size="auto"></cd-icon>
+  </ng-template>
+
+  <div *ngIf="asset" class="dimensions">
+    <cd-icon name="info" size="small"></cd-icon>
+    <div class="details">
+      <span>{{ asset?.width }}x{{ asset?.height }}</span>
+      <span class="density" *ngIf="isSVG; else density">- SVG</span>
+      <ng-template #density>
+        <span class="density" *ngIf="(asset?.density || 0) > 1">- {{ asset?.density }}x</span>
+      </ng-template>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="left">
+    <input
+      #nameInput
+      cd-measured-input
+      measureOnFocus
+      cdInputReset
+      class="label"
+      placeholder="Untitled"
+      [value]="label"
+      (change)="onAssetNameChange($event)"
+      (mousedown)="onInputMousedown($event)"
+    />
+  </div>
+
+  <div class="right">
+    <cd-icon name="error" class="error-icon" size="medium" *ngIf="uploadStatus?.failed"></cd-icon>
+
+    <cd-progress-pie
+      class="progress-pie"
+      *ngIf="uploadPending && !uploadStatus?.failed"
+      progress="{{ uploadStatus?.progress }}"
+      #progressPie
+    ></cd-progress-pie>
+
+    <cd-menu-button
+      *ngIf="!uploadPending"
+      class="menu-button"
+      size="small"
+      iconSize="small"
+      [data]="menuConfig"
+      (selected)="onMenuSelect($event)"
+    ></cd-menu-button>
+  </div>
+</footer>

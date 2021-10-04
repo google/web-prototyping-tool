@@ -1,0 +1,23 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+
+      function isScreenshotService() {
+        return false;
+      }
+
+      function isVerified(){
+        return request.auth.token.email_verified == true && request.auth.token.email.matches(".*@google.com");
+      }
+
+      // allow read: if isScreenshotService() || isVerified();
+      // Allow global read access to storage files to support embed mode
+      // Fix for issue: https://app.asana.com/0/1199731709488342/1200107254922059
+      // TODO: support the ability to make a project public/private
+      allow read: if true;
+
+      allow write: if isVerified();
+    }
+  }
+}

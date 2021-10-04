@@ -1,0 +1,55 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Data">
+  <cd-menu-button
+    #addDatasetMenuRef
+    size="small"
+    iconSize="small"
+    iconName="add"
+    cdTooltip="Add Dataset"
+    cdTooltipDirection="left"
+    [data]="menuData"
+    (selected)="onMenuSelect($event)"
+  ></cd-menu-button>
+</app-activity-panel-header>
+
+<ng-container *ngIf="datasetService.datasets$ | async as dataSets; else zeroState">
+  <cd-scroll-view *ngIf="dataSets.length; else zeroState">
+    <ul class="dataset-list" (click)="onSelectDataset($event)">
+      <li
+        app-dataset-list-item
+        class="list-item"
+        *ngFor="let dataset of dataSets; let i = index; trackBy: trackByFn"
+        [dataset]="dataset"
+        [class.dim]="activeIndex !== -1 && activeIndex !== i"
+        (activePicker)="onActivePicker($event, i)"
+        (rename)="onRenameDataset($event, dataset)"
+        (duplicate)="onDuplicateDataset($event)"
+        (replace)="onReplaceDataset($event)"
+        (download)="onDownloadDataset($event)"
+        (delete)="onDeleteDataset($event)"
+      ></li>
+    </ul>
+    <button
+      #addButtonRef
+      cd-dashed-button
+      cd-shaped-button
+      class="add-button"
+      size="small"
+      iconSize="small"
+      iconName="add"
+      (click)="onAddButtonClick()"
+    >
+      Add
+    </button>
+  </cd-scroll-view>
+</ng-container>
+
+<ng-template #zeroState>
+  <ul
+    app-zero-state-menu
+    class="zero-state"
+    moreIcon="add"
+    [menuItems]="zeroStateItems"
+    (moreClick)="onOpenAddDatasetMenuTrigger(true)"
+    (itemClick)="onZeroStateItemClicked($event)"
+  ></ul>
+</ng-template>

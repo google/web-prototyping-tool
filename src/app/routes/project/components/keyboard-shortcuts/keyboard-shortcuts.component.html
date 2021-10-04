@@ -1,0 +1,28 @@
+<header class="header">
+  <cd-icon name="keyboard" size="large"></cd-icon>
+  <h1 class="title">Keyboard Shortcuts</h1>
+</header>
+<div class="content-wrapper">
+  <cd-scroll-view #scrollView shaded="true">
+    <div class="body">
+      <div *ngFor="let section of shortcutSections" class="shortcuts-section">
+        <h2 class="list-header">{{ section.header }}</h2>
+        <ng-container *ngFor="let shortcut of section.shortcuts">
+          <div class="shortcut-key-wrapper">
+            <div class="shortcut">{{ shortcut.parsedShortcut }}</div>
+          </div>
+          {{ shortcut.title }}
+        </ng-container>
+      </div>
+    </div>
+  </cd-scroll-view>
+</div>
+<footer class="footer">
+  <div class="left">
+  </div>
+  <div class="right">
+    <button cd-button size="medium" cd-e2e-label="share-dialog-done" (click)="onDismissClicked()">
+      Done
+    </button>
+  </div>
+</footer>

@@ -1,0 +1,19 @@
+<img
+  *ngIf="imgSrc; else placeholder"
+  [src]="imgSrc"
+  loading="lazy"
+  width="110"
+  height="90"
+  class="img asset"
+  [class.show]="loaded"
+/>
+
+<ng-template #placeholder>
+  <img
+    src="/assets/board-placeholder.svg"
+    loading="lazy"
+    width="110"
+    height="90"
+    class="img placeholder"
+  />
+</ng-template>

@@ -1,0 +1,30 @@
+<cd-scroll-view>
+  <cd-property-group groupTitle="Boards">
+    <app-preview-outlet-list
+      [outlets]="boardList"
+      [homeBoardId]="homeBoardId"
+      [navigateToBoard]="true"
+      [activeOutletId]="activeOutletId"
+      (paramChange)="onParamChange($event)"
+      (shortcutClick)="onBoardClick($event)"
+    ></app-preview-outlet-list>
+  </cd-property-group>
+
+  <cd-property-group *ngIf="portalList.length" groupTitle="Portals">
+    <app-preview-outlet-list
+      [outlets]="portalList"
+      [navigateToBoard]="true"
+      [activeOutletId]="activeOutletId"
+      (shortcutClick)="onBoardClick($event)"
+      (paramChange)="onParamChange($event)"
+    ></app-preview-outlet-list>
+  </cd-property-group>
+
+  <cd-property-group *ngIf="componentList.length" groupTitle="Components">
+    <app-preview-outlet-list
+      [outlets]="componentList"
+      [activeOutletId]="activeOutletId"
+      (paramChange)="onParamChange($event)"
+    ></app-preview-outlet-list>
+  </cd-property-group>
+</cd-scroll-view>

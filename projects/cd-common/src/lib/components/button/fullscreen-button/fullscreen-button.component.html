@@ -1,0 +1,14 @@
+<button
+  cd-button
+  cdToggleButton
+  iconSize="medium"
+  size="medium"
+  [disabled]="disabled"
+  [selectedIconName]="collapseIcon"
+  [unselectedIconName]="expandIcon"
+  [attr.aria-label]="fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
+  [cdTooltip]="tooltip"
+  [cdTooltipDirection]="tooltipDirection"
+  [selected]="fullscreen"
+  (click)="onFullScreenToggle()"
+></button>

@@ -1,0 +1,28 @@
+<header>
+  <cd-font-props
+    editable
+    [value]="value"
+    [designSystem]="designSystem"
+    [colorMenuData]="colorMenuData"
+    (valueChange)="onValueChange($event)"
+  ></cd-font-props>
+</header>
+
+<footer [class.add]="addStyle">
+  <button
+    *ngIf="addStyle; else removeStyle"
+    cd-outlined-button
+    (click)="onAddTypeStyle()"
+    size="small"
+  >
+    Insert
+  </button>
+</footer>
+
+<ng-template #removeStyle>
+  <button class="delete-btn" (click)="onRemoveStyle()">
+    <cd-icon name="delete"></cd-icon>
+    <span>Delete</span>
+  </button>
+  <button cd-outlined-button (click)="onCommitUpdate()" size="small">Update</button>
+</ng-template>

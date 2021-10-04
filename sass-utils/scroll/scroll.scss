@@ -1,0 +1,27 @@
+@mixin themed-scrollbars() {
+  ::-webkit-scrollbar {
+    background-color: transparent;
+    height: var(--cd-scrollbar-size);
+    width: var(--cd-scrollbar-size);
+  }
+
+  :hover::-webkit-scrollbar-thumb {
+    border-radius: var(--cd-scrollbar-size);
+    background-clip: padding-box;
+    background-color: var(--cd-scrollbar-thumb-color);
+  }
+
+  ::-webkit-scrollbar-button {
+    height: 0;
+    width: 0;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    background-color: transparent;
+  }
+}

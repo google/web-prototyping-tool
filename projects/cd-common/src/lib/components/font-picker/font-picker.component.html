@@ -1,0 +1,59 @@
+<section class="master">
+  <cd-scroll-view nativeScrollbars>
+    <div class="header-wrapper" cdScrollHeader>
+      <cd-search-input autofocus (valueChange)="onFilter($event)"></cd-search-input>
+    </div>
+    <ul class="list" #fontListRef>
+      <li
+        class="list-item"
+        [attr.data-family]="item.family"
+        [class.list-item--selected]="selectedFontFamily === item"
+        *ngFor="
+          let item of fontFamilies | FontFilter: filter:existingFonts;
+          index as index;
+          trackBy: trackByFn
+        "
+      >
+        <button
+          class="list-item-button"
+          (click)="handleClick(item)"
+          (dblclick)="onDoubleClick(item)"
+        >
+          {{ [item.family] }}
+        </button>
+      </li>
+    </ul>
+  </cd-scroll-view>
+</section>
+
+<section class="detail" *ngIf="selectedFontFamily">
+  <header>
+    <span class="preview-title">{{ [selectedFontFamily?.family] }}</span>
+    <a
+      cdTooltip="View on fonts.google.com"
+      class="fonts-link"
+      href="https://fonts.google.com/specimen/{{ selectedFontFamily?.family }}"
+      target="_blank"
+    >
+      <cd-icon name="open_in_new" size="medium"></cd-icon>
+    </a>
+  </header>
+
+  <section class="preview">
+    <div class="preview-subtitle">
+      Preview ({{ selectedFontVariantLength }} style{{ selectedFontVariantLength > 1 ? 's' : '' }})
+    </div>
+    <div
+      class="preview-text"
+      [style.font-family]="selectedFontFamily?.family"
+      *ngIf="!loadingPreview"
+    >
+      Almost before we knew it, we had left the ground.
+    </div>
+    <div class="cover"></div>
+  </section>
+
+  <footer>
+    <button cd-outlined-button (click)="addFontFamilyToCollection()">Install font</button>
+  </footer>
+</section>

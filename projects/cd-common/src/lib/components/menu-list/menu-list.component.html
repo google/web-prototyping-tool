@@ -1,0 +1,7 @@
+<cd-menu-list-item
+  *ngFor="let item of items"
+  [name]="item.name"
+  [count]="item.count"
+  [selected]="selectedId === item.id"
+  (click)="onMenuListItemClicked(item.id)"
+></cd-menu-list-item>

@@ -1,0 +1,12 @@
+<cd-swatch
+  *ngIf="swatchColor"
+  size="16"
+  borderRadius="16"
+  class="swatch"
+  [color]="swatchColor"
+></cd-swatch>
+<cd-icon *ngIf="iconName" [name]="iconName" size="small" [iconClass]="iconClass"></cd-icon>
+<span class="title">{{ chipTitle }}</span>
+<button *ngIf="removeable" #btnRef class="close-btn" (click)="onRemoveChip($event)">
+  <cd-icon name="close" size="small"></cd-icon>
+</button>

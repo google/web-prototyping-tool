@@ -1,0 +1,98 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin checkboxOverrides() {
+  $innerContainerMargin: 8px;
+  $hintMarginLabelAfter: 0.25em 0.5em 0 0;
+  $hintMarginLabelBefore: 0.25em 0 0 0.5em;
+  $hintTextFontSize: 12px;
+  $hintTextLineHeight: 16px;
+
+  .mat-checkbox-label {
+    color: rgba(var(--palette-foreground-divider), 0.87);
+  }
+
+  .mat-checkbox-layout .mat-checkbox-label {
+    @include applyFontVars('body1');
+
+    color: rgba(var(--palette-foreground-divider), 0.87);
+  }
+
+  .mat-checkbox {
+    --palette-primary-500: var(--co-primary-rgb);
+    --palette-warn-500: var(--co-warn-rgb);
+    --palette-accent-500: var(--co-secondary-rgb);
+  }
+
+  .mat-checkbox-disabled {
+    .mat-checkbox-label {
+      color: rgba(var(--palette-foreground-divider), 0.54);
+    }
+  }
+
+  .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
+    background-color: rgb(176, 176, 176);
+  }
+
+  .mat-checkbox-inner-container {
+    margin: auto;
+    margin-right: $innerContainerMargin;
+  }
+
+  .mat-checkbox-label-before .mat-checkbox-inner-container {
+    margin: auto;
+    margin-left: $innerContainerMargin;
+  }
+
+  // Material hint overrides
+  .mat-checkbox.mat-has-hint {
+    // By default, it's inline, but needs to be inline-block in include hint
+    display: inline-block;
+
+    // By default, the switch is centered, but needs to be top aligned to match spec
+    .mat-checkbox-layout {
+      align-items: start;
+    }
+
+    mat-hint {
+      display: block;
+      font-size: $hintTextFontSize;
+      line-height: $hintTextLineHeight;
+    }
+
+    // Since it's now top aligned via flexbox, the margin needs to be re-adjusted
+    // so that it aligns vertically/horizontally with the label
+    .mat-checkbox-inner-container {
+      margin: $hintMarginLabelAfter;
+    }
+
+    &.mat-checkbox-label-before {
+      // Horizontal opposite of above
+      .mat-checkbox-inner-container {
+        margin: $hintMarginLabelBefore;
+      }
+
+      // Right align both label and hint
+      mat-label,
+      mat-hint {
+        display: block;
+        text-align: right;
+      }
+    }
+  }
+}
+
+@include checkboxOverrides();

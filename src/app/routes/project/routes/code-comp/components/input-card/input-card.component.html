@@ -1,0 +1,184 @@
+<div class="header-line">
+  <ng-content select="[inputCardDragHandle]"></ng-content>
+  <div class="header-text" [class.unlabeled]="!input?.label">
+    {{ input?.label || UNLABELED_INPUT_NAME }}
+  </div>
+  <button
+    cd-button
+    class="delete-button"
+    cdTooltip="Delete"
+    iconName="delete"
+    iconSize="small"
+    (click)="onDelete()"
+  ></button>
+  <button
+    *ngIf="!previewCard"
+    class="ico-btn"
+    cdTooltipDirection="left"
+    [cdTooltip]="collapsed ? 'Expand' : 'Collapse'"
+    (click)="toggleCollapsed()"
+  >
+    <cd-icon #arrow name="keyboard_arrow_down" class="icon" [class.collapsed]="collapsed"></cd-icon>
+  </button>
+</div>
+
+<div *ngIf="canShowContents" class="dynamic-fields">
+  <cd-input-group label="Label">
+    <cd-input
+      placeholder="Panel label"
+      [value]="labelValue"
+      (change)="onLabelChange($event)"
+    ></cd-input>
+  </cd-input-group>
+
+  <cd-input-group label="Type">
+    <cd-select-input
+      [data]="INPUT_BINDING_TYPES_MENU_DATA | MarkSelection: input?.bindingType"
+      (change)="onBindingTypeChange($event)"
+      [helpText]="inputTypeHelpText"
+      [errorText]="dataToAttributeErrorText"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <ng-container [ngSwitch]="input?.bindingType">
+    <cd-input-group label="Input" *ngSwitchDefault>
+      <cd-input
+        [placeholder]="inputPropAttrNameHelpText.text"
+        [helpText]="inputPropAttrNameHelpText"
+        [value]="nameValue"
+        [errorText]="nameErrorText"
+        (input)="requestNameValidation($event)"
+        (change)="onNameChange($event)"
+      ></cd-input>
+    </cd-input-group>
+
+    <cd-input-group label="Input" *ngSwitchCase="BindingType.CssVar">
+      <cd-input
+        [placeholder]="inputCssNameHelpText.text"
+        [helpText]="inputCssNameHelpText"
+        [value]="nameValue"
+        [errorText]="nameErrorText"
+        (input)="requestNameValidation($event)"
+        (change)="onNameChange($event)"
+      ></cd-input>
+    </cd-input-group>
+  </ng-container>
+
+  <cd-input-group label="Control">
+    <cd-select-input
+      placeholder="Select a type of control"
+      [data]="INPUT_TYPES_MENU_DATA | MarkSelection: input?.inputType"
+      (change)="onTypeChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+
+  <!-- prettier-ignore -->
+  <ng-container [ngSwitch]="input?.inputType">
+    <ng-container *ngSwitchCase="PropertyInput.Checkbox"        [ngTemplateOutlet]="checkboxRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Color"           [ngTemplateOutlet]="colorRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Icon"            [ngTemplateOutlet]="iconRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Number"          [ngTemplateOutlet]="numberRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Range"           [ngTemplateOutlet]="rangeRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.Text"            [ngTemplateOutlet]="textRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.TextArea"        [ngTemplateOutlet]="textAreaRef"></ng-container>
+    <ng-container *ngSwitchCase="PropertyInput.DatasetSelect"   [ngTemplateOutlet]="datasetSelectRef"></ng-container>
+  </ng-container>
+</div>
+
+<ng-content select="[inputCardDragPreview]"></ng-content>
+
+<ng-template #checkboxRef>
+  <cd-input-group label="Default">
+    <cd-checkbox [checked]="input?.defaultValue" (change)="onCheckboxChange($event)"></cd-checkbox>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #colorRef>
+  <cd-input-group label="Default">
+    <cd-color-input
+      [colorData]="colorMenuData"
+      [value]="input?.defaultValue | IValueValue"
+      [binding]="input?.defaultValue | IValueLookup: colors"
+      (colorSelect)="onColorChange($event)"
+      (valueChange)="onColorChange($event)"
+    ></cd-color-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #iconRef>
+  <cd-input-group label="Default">
+    <cd-icon-input
+      [iconClass]="iconClass"
+      [value]="input?.defaultValue"
+      (valueChange)="onIconChange($event)"
+    ></cd-icon-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #numberRef>
+  <cd-input-group label="Default">
+    <cd-input
+      type="number"
+      placeholder="Default value"
+      [value]="input?.defaultValue"
+      (change)="onNumberChange($event)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #rangeRef>
+  <cd-input-group label="Range">
+    <cd-input
+      type="number"
+      placeholder="Min"
+      [value]="input?.min"
+      (change)="onMinChange($event)"
+    ></cd-input>
+    <cd-input
+      type="number"
+      placeholder="Max"
+      [value]="input?.max"
+      (change)="onMaxChange($event)"
+    ></cd-input>
+  </cd-input-group>
+  <cd-input-group label="Default">
+    <cd-range-input
+      type="number"
+      [min]="input?.min"
+      [max]="input?.max"
+      [value]="input?.defaultValue || 0"
+      (valueChange)="onRangeChange($event)"
+    ></cd-range-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #textRef>
+  <cd-input-group label="Default" (valueChange)="onTextChange($event)">
+    <cd-input
+      placeholder="Default value"
+      [value]="input?.defaultValue || ''"
+      (change)="onTextChange($event)"
+    ></cd-input>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #textAreaRef>
+  <cd-input-group label="Default">
+    <cd-textarea
+      [value]="input?.defaultValue || ''"
+      (change)="onTextChange($event)"
+      resize="vertical"
+    ></cd-textarea>
+  </cd-input-group>
+</ng-template>
+
+<ng-template #datasetSelectRef>
+  <cd-input-group label="Default">
+    <cd-select-input
+      placeholder="Select data"
+      resetState="None"
+      [data]="datasetsMenuItems | MarkSelection: input?.defaultValue"
+      (change)="onDatasetChange($event)"
+    ></cd-select-input>
+  </cd-input-group>
+</ng-template>

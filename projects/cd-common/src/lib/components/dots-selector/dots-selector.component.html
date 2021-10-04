@@ -1,0 +1,7 @@
+<ul class="dots" (click)="onClick($event)">
+  <li
+    *ngFor="let item of data; trackBy: trackByfn"
+    [title]="item.title"
+    [class.active]="item.selected"
+  ></li>
+</ul>

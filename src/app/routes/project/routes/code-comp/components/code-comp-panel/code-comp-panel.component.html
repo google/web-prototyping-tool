@@ -1,0 +1,198 @@
+<cd-scroll-view>
+  <div cdScrollHeader class="panel-header">
+    <cd-tab-group
+      fixed
+      fullHeight
+      (tabChange)="onStateChange($event)"
+      [activeTabIndex]="panelState"
+    >
+      <cd-tab label="Details" tooltip="Component details" tooltipDirection="bottom"></cd-tab>
+      <cd-tab
+        label="Inputs"
+        tooltip="Define inputs to control the component"
+        tooltipDirection="bottom"
+      ></cd-tab>
+      <cd-tab
+        label="Events"
+        tooltip="Define custom events that the component outputs"
+        tooltipDirection="bottom"
+      ></cd-tab>
+    </cd-tab-group>
+  </div>
+
+  <!-- prettier-ignore -->
+  <ng-container [ngSwitch]="panelState">
+    <ng-container *ngSwitchCase="ImporterState.Inputs" [ngTemplateOutlet]="inputsProps"></ng-container>
+    <ng-container *ngSwitchCase="ImporterState.Events" [ngTemplateOutlet]="outputsProps"></ng-container>
+    <ng-container *ngSwitchDefault [ngTemplateOutlet]="defaultProps"></ng-container>
+  </ng-container>
+</cd-scroll-view>
+
+<ng-template #defaultProps>
+  <!-- Versions -->
+  <app-publish-panel
+    *ngIf="codeComponent"
+    [templateRef]="compContentRef"
+    [id]="codeComponent?.id"
+    [showOwner]="true"
+    [publishId]="codeComponent?.publishId"
+    [publishType]="PublishType.CodeComponent"
+  ></app-publish-panel>
+</ng-template>
+
+<ng-template #inputsProps>
+  <app-inputs-panel-content
+    [inputs]="codeComponent?.properties"
+    [outputs]="codeComponent?.outputs || []"
+    [designSystem]="designSystem"
+    [datasetsMenuItems]="datasetsMenuItems"
+    [disabled]="!userCanEdit"
+    (inputsChange)="onInputsChange($event)"
+    (defaultValueChange)="onDefaultValueChange($event)"
+  ></app-inputs-panel-content>
+</ng-template>
+
+<ng-template #outputsProps>
+  <app-events-panel-content
+    [inputs]="codeComponent?.properties"
+    [outputs]="codeComponent?.outputs"
+    (outputsChange)="onOutputsChange($event)"
+  ></app-events-panel-content>
+</ng-template>
+
+<ng-template #compContentRef>
+  <cd-property-group>
+    <cd-input-group label="Name" labelTooltip="The label shown in the layers tree">
+      <cd-input
+        [value]="codeComponent?.title"
+        (change)="onTitleChange($event)"
+        [disabled]="!userCanEdit"
+      ></cd-input>
+    </cd-input-group>
+    <cd-input-group label="Tag name">
+      <cd-input
+        [value]="codeComponent?.tagName"
+        [disabled]="!userCanEdit"
+        [helpText]="tagNameHelpText"
+        [errorText]="tagNameErrorText"
+        (change)="onTagNameChange($event)"
+        (input)="requestTagNameValidation($event)"
+      ></cd-input>
+    </cd-input-group>
+    <cd-input-group label="Icon" labelTooltip="The icon shown in the layers tree">
+      <cd-icon-input
+        [value]="codeComponent?.icon"
+        [disabled]="!userCanEdit"
+        (valueChange)="onIconChange($event, codeComponent?.icon)"
+      ></cd-icon-input>
+    </cd-input-group>
+  </cd-property-group>
+  <cd-property-group>
+    <cd-initial-size-props
+      [size]="codeComponent?.frame"
+      [minBoardSize]="minBoardSize"
+      [maxBoardSize]="maxBoardSize"
+      [disabled]="!userCanEdit"
+      (sizeChange)="onFrameSizeChange($event)"
+    ></cd-initial-size-props>
+    <!-- PREVENT RESIZE -->
+    <cd-input-group
+      label="Resizable"
+      columns="auto auto 1fr"
+      labelTooltip="Uncheck to prevent resizing this component"
+    >
+      <cd-checkbox
+        [checked]="!!!codeComponent?.preventResize"
+        [disabled]="!userCanEdit"
+        (change)="onPreventResizeChange($event)"
+      ></cd-checkbox>
+    </cd-input-group>
+    <!-- ALLOW CHILDREN -->
+    <cd-input-group
+      label="Children"
+      columns="auto auto 1fr"
+      labelTooltip="Allows children to be placed inside of this component, i.e. <slot>"
+    >
+      <cd-checkbox
+        [checked]="codeComponent?.childrenAllowed"
+        [disabled]="!userCanEdit"
+        (change)="onChildrenAllowedChange($event)"
+      ></cd-checkbox>
+    </cd-input-group>
+  </cd-property-group>
+
+  <app-code-comp-fonts
+    [fontList]="codeComponent?.fontList"
+    (fontListChange)="onFontListChange($event)"
+  ></app-code-comp-fonts>
+
+  <cd-editable-notes
+    title="Description"
+    [collapsed]="false"
+    [notes]="codeComponent?.description || ''"
+    [emptyStateMessage]="descriptionEmptyStateMessage"
+    (notesChange)="onDescriptionChange($event)"
+  >
+    <cd-input-group
+      label="Repository"
+      columns="1fr auto"
+      title="URL for the source code repository"
+    >
+      <cd-input
+        [value]="codeComponent?.repositoryUrl || ''"
+        (change)="onRepositoryURLChange($event)"
+        placeholder="https://"
+      ></cd-input>
+      <a
+        cd-button
+        iconName="open_in_new"
+        [disabled]="!codeComponent?.repositoryUrl"
+        [href]="codeComponent?.repositoryUrl"
+        target="_blank"
+        title="Goto source code repository"
+      ></a>
+    </cd-input-group>
+  </cd-editable-notes>
+
+  <cd-property-group
+    groupTitle="Bundle"
+    [type]="PropertyGroupType.Collapse"
+    *ngIf="jsBundleMetadata"
+  >
+    <div class="bundle-actions" cdPropertyGroupHeader>
+      <button
+        cd-button
+        cdTooltip="Replace JS bundle with new file"
+        cdTooltipDirection="left"
+        size="small"
+        iconSize="medium"
+        iconName="file_upload"
+        (click)="onUpdateJsBundle()"
+      ></button>
+      <button
+        cd-button
+        cdTooltip="Download JS bundle"
+        cdTooltipDirection="left"
+        size="small"
+        iconSize="medium"
+        iconName="file_download"
+        (click)="onDownloadJsBundle()"
+      ></button>
+    </div>
+    <cd-input-group label="Filename">
+      <span class="bundle-info-line" [innerText]="jsBundleMetadata?.name"></span>
+    </cd-input-group>
+    <cd-input-group label="File size">
+      <span
+        class="bundle-info-line"
+        [innerText]="jsBundleMetadata?.size | formatFileSizePipe"
+      ></span>
+    </cd-input-group>
+    <cd-input-group label="Uploaded">
+      <span
+        class="bundle-info-line"
+        [innerText]="jsBundleMetadata?.timeCreated | FormatFirebaseTime"
+      ></span>
+    </cd-input-group>
+  </cd-property-group>
+</ng-template>

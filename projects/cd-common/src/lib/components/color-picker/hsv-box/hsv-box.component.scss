@@ -1,0 +1,80 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$cursorSize: 12px;
+$cursorSizeActive: 14px;
+$boxWidth: 204px;
+$boxHeight: 95px;
+
+:host {
+  background: #f00;
+  height: $boxHeight;
+  width: $boxWidth;
+  overflow: hidden;
+  position: relative;
+  transition: background-color 200ms;
+  user-select: none;
+  display: block;
+
+  &:active {
+    cursor: pointer;
+
+    .hsv-cursor {
+      width: $cursorSizeActive;
+      height: $cursorSizeActive;
+      top: -$cursorSizeActive * 0.5;
+      left: -$cursorSizeActive * 0.5;
+      transition: none;
+    }
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &::before {
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+  }
+
+  &::after {
+    background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+  }
+}
+
+.hsv-cursor {
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  height: $cursorSize;
+  left: -$cursorSize * 0.5;
+  pointer-events: none;
+  position: absolute;
+  top: -$cursorSize * 0.5;
+  transform: translate3d($boxWidth, 0, 0);
+  width: $cursorSize;
+  z-index: 3;
+
+  &.active {
+    transition: transform 200ms ease-out, background-color 200ms;
+  }
+}

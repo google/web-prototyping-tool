@@ -1,0 +1,14 @@
+{
+  "sideEffects": false,
+  "ngPackage": {
+    "lib": {
+      "umdModuleIds": {
+        "dayjs": "dayjs",
+        "cd-metadata/fonts": "cd-metadata/fonts",
+        "cd-utils/numeric": "cd-utils/numeric",
+        "cd-utils/css": "cd-utils/css",
+        "cd-utils/string": "cd-utils/string"
+      }
+    }
+  }
+}

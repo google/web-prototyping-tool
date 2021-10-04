@@ -1,0 +1,18 @@
+<!--   [iconClass]="iconClass" -->
+<cd-chip
+  *ngIf="activeElement; else showInput"
+  [iconName]="activeIcon"
+  [active]="active"
+  [cdTooltip]="activeElement?.name"
+  [chipTitle]="activeElement?.name"
+  (click)="onSelectTarget()"
+  (remove)="onRemoveChip()"
+  (mouseenter)="showActiveHighlight()"
+  (mouseleave)="removeActiveHighlight()"
+></cd-chip>
+
+<ng-template #showInput>
+  <button #btnRef class="button-cta" (click)="onSelectTarget()">
+    <cd-input [value]="inputLabel" disabled="true"></cd-input>
+  </button>
+</ng-template>

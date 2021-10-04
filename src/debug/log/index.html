@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>DebugLog</title>
+    <base href="/debug/log/" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" type="module"></script>
+  </head>
+  <body>
+    <aside id="master">
+      <header>
+        <!-- Fitler isn't implemented yet -->
+        <input type="search" placeholder="Filter" id="search" />
+        <!--  -->
+        <button id="clear">Clear List</button>
+      </header>
+      <footer id="scroller">
+        <ul id="list"></ul>
+      </footer>
+    </aside>
+    <article id="detail">
+      <button id="copy"></button>
+      <div id="content"></div>
+    </article>
+  </body>
+</html>

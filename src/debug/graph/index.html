@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>WebPrototypingTool Debug Graph</title>
+    <base href="/debug/graph/" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="https://visjs.github.io/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/darcula.min.css"
+    />
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" type="module"></script>
+  </head>
+  <body>
+    <div class="action-bar">
+      <div class="graph-type-action">
+        <label>
+          <input type="radio" name="graphType" value="dependencies" checked />
+          Dependency graph
+        </label>
+        <label>
+          <input type="radio" name="graphType" value="project" />
+          Full project graph
+        </label>
+      </div>
+      <button id="updateButton">Update</button>
+    </div>
+    <div id="legend"></div>
+    <div id="graph"></div>
+    <div id="elementDetails" class="hidden">
+      <span id="closeButton"><i class="material-icons">close</i></span>
+      <pre><code id="elementDetailsJson" class="json"></code></pre>
+    </div>
+    <div id="spinner"></div>
+  </body>
+</html>

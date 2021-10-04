@@ -1,0 +1,49 @@
+<ng-container
+  [ngTemplateOutlet]="headerRef"
+  [ngTemplateOutletContext]="{ $implicit: user$ | async }"
+></ng-container>
+<div class="actions">
+  <button
+    *ngIf="canShowResolveThread"
+    cdTooltip="Resolve thread"
+    cd-button
+    size="small"
+    iconName="done"
+    (click)="onResolveThread()"
+  ></button>
+  <cd-menu-button
+    *ngIf="canShowCommentActionsMenu"
+    cdTooltip="Comment actions"
+    size="small"
+    [data]="menuData"
+    (selected)="onMenuSelect($event)"
+  ></cd-menu-button>
+  <button *ngIf="canShowReopenAction" cd-unelevated-button size="small" (click)="onReopenThread()">
+    Re-open
+  </button>
+  <button
+    *ngIf="firstCommentInThreadHeader"
+    cd-button
+    cdToggleButton
+    cdTooltip="Select element"
+    size="small"
+    iconSize="small"
+    iconName="/assets/icons/selection.svg"
+    [selected]="selectionActive"
+    (click)="onSelectingElementClick()"
+  ></button>
+</div>
+
+<ng-template #headerRef let-userData>
+  <cd-avatar
+    [cdBadge]="avatarBadgeLabel"
+    cdBadgePosition="Bottom Right"
+    [profileImgUrl]="userData?.photoUrl || ''"
+  ></cd-avatar>
+  <div class="metadata" [class.unpublished]="firstCommentInThreadHeader">
+    <span class="name">{{ userData?.name || user?.email }}</span>
+    <span *ngIf="!firstCommentInThreadHeader" class="date">
+      {{ updatedAt | date: 'h:mm a - MMM d, y' }}
+    </span>
+  </div>
+</ng-template>

@@ -1,0 +1,69 @@
+<div class="main-content" *ngIf="!uploadInProgress; else uploadingRef">
+  <div class="left">
+    <h1>Import code component</h1>
+    <p>
+      Use real components in your prototypes by uploading a
+      <a
+        target="_blank"
+        href="https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define"
+      >
+        custom element
+      </a>
+      .
+      <br />
+      <br />
+      To get up and running quickly, check out our
+      <a target="_blank" [href]="GUIDE_URL">guide</a>
+      and download one of our
+      <a [href]="STARTER_PROJECTS_URL" target="_blank">starter projects</a>
+      .
+    </p>
+  </div>
+  <div class="divider"></div>
+  <div class="right">
+    <cd-input
+      [value]="title"
+      outline
+      large
+      placeholder="Name"
+      [errorText]="nameErrorText"
+      (input)="onNameInput($event)"
+    ></cd-input>
+    <cd-input
+      outline
+      large
+      placeholder="Tag name"
+      [value]="tagName"
+      [helpText]="tagNameHelpText"
+      [errorText]="tagNameErrorText"
+      (input)="onTagNameInput($event)"
+    ></cd-input>
+    <cd-file-input
+      [acceptedMimeTypes]="['text/javascript']"
+      (filesChosen)="onFileRefChange($event)"
+    ></cd-file-input>
+
+    <div class="bottom-right">
+      <div class="error-message" *ngIf="fileSizeErrorMessage">
+        <cd-icon size="small" name="error"></cd-icon>
+        <span>{{ fileSizeErrorMessage }}</span>
+      </div>
+
+      <div class="actions">
+        <button cd-button size="medium" (click)="onCancel()">Cancel</button>
+        <button cd-unelevated-button size="medium" [disabled]="nextDisabled" (click)="onNext()">
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #uploadingRef>
+  <div class="uploading-loader">
+    <h2>Uploading...</h2>
+    <div class="progress-bar">
+      <div class="progress" [style.width.%]="uploadProgress"></div>
+    </div>
+  </div>
+</ng-template>

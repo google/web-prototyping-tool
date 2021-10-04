@@ -1,0 +1,35 @@
+<header class="top">
+  <div class="wrapper">
+    <a
+      class="ico logo"
+      routerLink="/dashboard"
+      cdTooltip="Return to Dashboard"
+      cdTooltipDirection="right"
+    ></a>
+    <button
+      class="ico"
+      *ngFor="let item of top; trackBy: trackByFn"
+      [class.active]="item.id === currentActivity"
+      (click)="selectActivity(item)"
+      [cdTooltip]="item | activityTooltip"
+      cdTooltipDirection="right"
+    >
+      <cd-icon [name]="item.icon" class="cd-icon"></cd-icon>
+    </button>
+  </div>
+</header>
+
+<footer class="bottom">
+  <div class="wrapper">
+    <button
+      class="ico"
+      *ngFor="let item of bottom; trackBy: trackByFn"
+      [class.active]="item.id === currentActivity"
+      (click)="selectActivity(item)"
+      [cdTooltip]="item | activityTooltip"
+      cdTooltipDirection="right"
+    >
+      <cd-icon [name]="item.icon" class="cd-icon"></cd-icon>
+    </button>
+  </div>
+</footer>

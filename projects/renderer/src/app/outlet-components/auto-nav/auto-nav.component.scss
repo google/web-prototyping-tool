@@ -1,0 +1,148 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  --nav-ico-size: 24px;
+  --nav-gap: 20px;
+  --nav-height: 40px;
+  --nav-radius: 66px;
+  --nav-font-size: 13px;
+  --nav-padding: 16px;
+  --nav-focus-outline: 1px;
+  --nav-focus-offset: -2px;
+  --nav-outline-radius: 0 var(--nav-radius) var(--nav-radius) 0;
+
+  overflow: hidden;
+}
+
+.small {
+  --nav-ico-size: 20px;
+  --nav-gap: 18px;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: row;
+}
+
+.label {
+  text-align: left;
+  -webkit-font-smoothing: antialiased;
+  font-size: var(--nav-font-size);
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.new-tab-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  opacity: 0;
+  transition: opacity 160ms;
+  display: none;
+}
+
+// Only show new tab icon if url
+li.url .new-tab-icon {
+  display: block;
+}
+
+.nav-icon {
+  width: var(--nav-ico-size);
+  height: var(--nav-ico-size);
+  font-size: var(--nav-ico-size);
+  flex-shrink: 0;
+  align-items: end;
+  display: grid;
+}
+
+.nav-item {
+  border-radius: 0 var(--nav-radius) var(--nav-radius) 0;
+  padding: 0 var(--nav-padding);
+  display: flex;
+  align-items: center;
+  grid-template-columns: auto 1fr auto;
+  justify-content: flex-start;
+  height: var(--nav-height);
+  gap: var(--nav-gap);
+  overflow: hidden;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  position: relative;
+  color: var(--co-text);
+}
+
+li {
+  height: var(--nav-height);
+  overflow: hidden;
+  width: 100%;
+
+  &:hover {
+    .nav-item {
+      background-color: rgba(var(--palette-foreground-text), 0.05);
+    }
+
+    .new-tab-icon {
+      opacity: 1;
+    }
+  }
+
+  // Don't show for focused URL
+  &.url:hover .nav-item:focus {
+    background-color: transparent;
+  }
+
+  &:not(.disabled).active .nav-item {
+    color: var(--co-primary);
+    background: rgba(var(--co-primary-rgb), 0.1);
+    font-weight: 600;
+
+    .nav-icon {
+      color: var(--co-primary);
+    }
+  }
+
+  &:not(.disabled) .nav-item:focus:not(:active) {
+    color: var(--co-primary);
+    background-color: transparent;
+
+    &::before {
+      content: '';
+      position: absolute;
+      border-radius: var(--nav-outline-radius);
+      border: var(--nav-focus-outline) solid var(--co-primary);
+      top: 0;
+      right: 0;
+      left: var(--nav-focus-offset);
+      bottom: 0;
+    }
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+}

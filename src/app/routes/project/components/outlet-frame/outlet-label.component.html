@@ -1,0 +1,27 @@
+<div class="wrapper">
+  <div class="left">
+    <cd-icon
+      [name]="id | outletIconPipe: elementType:homeBoardId"
+      [scale]="iconScale"
+      size="medium"
+    ></cd-icon>
+    <span
+      #elementName
+      class="text"
+      [class.debug]="debug"
+      [attr.data-debug]="id"
+      spellcheck="false"
+      [innerText]="name"
+    ></span>
+  </div>
+
+  <div
+    class="comment-count"
+    *ngIf="commentCount > 0"
+    (mousedown)="onCommentMousedown($event)"
+    (click)="onCommentClick()"
+  >
+    <cd-icon name="mode_comment" [scale]="iconScale" size="small"></cd-icon>
+    <span class="text" [innerText]="commentCount"></span>
+  </div>
+</div>

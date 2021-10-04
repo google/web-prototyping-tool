@@ -1,0 +1,13 @@
+<div class="track">
+  <div
+    class="handle"
+    [class.active]="active"
+    [class.pressed]="pressed"
+    [class.zero]="zeroState"
+    [style.left.%]="handlePosition"
+  ></div>
+</div>
+<div class="bar">
+  <div class="track-fill" [style.width.%]="handlePosition" [class.active]="active"></div>
+  <ng-content></ng-content>
+</div>

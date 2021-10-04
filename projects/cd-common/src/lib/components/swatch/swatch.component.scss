@@ -1,0 +1,59 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$defaultSize: 13px;
+
+:host {
+  position: relative;
+  width: $defaultSize;
+  height: $defaultSize;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 2px;
+  contain: strict;
+  flex-shrink: 0;
+
+  &.grid {
+    background: var(--cd-grid-bkd);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    border-radius: inherit;
+    box-shadow: var(--cd-inset);
+    pointer-events: none;
+    user-select: none;
+  }
+}
+
+.swatch {
+  cursor: pointer;
+  position: absolute;
+  background: var(--swatch-color, transparent);
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  transition: background-color 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}

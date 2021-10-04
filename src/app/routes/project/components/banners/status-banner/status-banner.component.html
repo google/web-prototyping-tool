@@ -1,0 +1,7 @@
+<ng-container *ngIf="showBanner && status">
+  <span>
+    {{ status?.message }}
+    <a *ngIf="status?.link; let link" [href]="link.url">{{ link.title }}</a>
+  </span>
+  <button (click)="onDismiss()">Dismiss</button>
+</ng-container>

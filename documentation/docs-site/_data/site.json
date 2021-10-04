@@ -1,0 +1,16 @@
+{
+  "name": "Docs",
+  "subtitle": "",
+  "description": "documentation",
+  "emoji": "",
+  "url": "",
+  "enableSearch": true,
+  "enableDarkMode": false,
+  "enableEditButton": false,
+  "enableGithubLink": false,
+  "enableContact": false,
+  "enableTOC": true,
+  "enableNetlifyCMS": false,
+  "enableComments": false,
+  "enableEncryption": false
+}

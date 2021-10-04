@@ -1,0 +1,13 @@
+<!--
+  The trick to save us from lots of math calculation is the viewbox:
+  it abstracts the svg coordinates, such that we only need to work on
+  a unit circle (i.e. radius=1) with center of (0, 0).
+  The viewbox is sized with an extra unit (from -1 -1 2 2 to -1.5 -1.5 3 3)
+  to prevent the circle stroke from being clipped.
+-->
+<svg width="100%" height="100%" viewBox="-1.5 -1.5 3 3" preserveAspectRatio="none">
+  <!-- if progress == 1 we use the <circle> for filling the pie,
+       because <path> would not render due to start point == end point -->
+  <circle cx="0" cy="0" r="1" [class.filled]="progress === 1" />
+  <path *ngIf="progress < 1" [attr.d]="piePath"></path>
+</svg>

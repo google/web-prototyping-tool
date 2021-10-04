@@ -1,0 +1,27 @@
+<div
+  class="canvas-content"
+  [style.--border-size.px]="borderSize"
+  [style.--font-size.%]="fontSize"
+  [style.transform]="position"
+>
+  <ng-content></ng-content>
+</div>
+
+<app-glass-layer
+  [canvas]="canvas"
+  [grab]="grab"
+  [isRecording]="isRecording"
+  [canvasPos]="position"
+></app-glass-layer>
+
+<div
+  class="scrollbar horizontal"
+  [style.width.px]="scrollbars?.horzSize"
+  [style.transform]="scrollPosX"
+></div>
+
+<div
+  class="scrollbar vertical"
+  [style.height.px]="scrollbars?.vertSize"
+  [style.transform]="scrollPosY"
+></div>

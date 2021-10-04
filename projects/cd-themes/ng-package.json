@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/cd-themes",
+  "lib": {
+    "entryFile": "src/public_api.ts",
+    "umdModuleIds": {
+      "cd-interfaces": "cd-interfaces",
+      "cd-utils/color": "cd-utils/color",
+      "cd-utils/numeric": "cd-utils/numeric",
+      "cd-metadata/fonts": "cd-metadata/fonts",
+      "cd-metadata/units": "cd-metadata/units"
+    }
+  }
+}

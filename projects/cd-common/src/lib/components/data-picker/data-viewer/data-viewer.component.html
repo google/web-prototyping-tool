@@ -1,0 +1,104 @@
+<cd-data-header
+  [label]="data?.name"
+  [leftTemplate]="backBtnRef"
+  [rightTemplate]="rightHeaderRef"
+></cd-data-header>
+
+<ng-container *ngIf="hasValidBinding; else invalidBindingRef">
+  <div class="content" *ngIf="editing; else treeView">
+    <textarea
+      #textAreaRef
+      class="editor"
+      spellcheck="false"
+      wrap="off"
+      (input)="onInputChange($event)"
+      [value]="data?.value"
+    ></textarea>
+    <footer class="editor-footer">
+      <cd-valid-icon [isValid]="isValid"></cd-valid-icon>
+      <button cd-outlined-button size="small" (click)="onCommitUpdate()">Update</button>
+    </footer>
+  </div>
+</ng-container>
+
+<ng-template #invalidBindingRef>
+  <div class="invalid-binding">
+    <h3>Unknown binding</h3>
+    <span>Data source is missing or removed</span>
+    <button cd-outlined-button size="medium" (click)="onUpdateBinding()">Update</button>
+  </div>
+</ng-template>
+
+<ng-template #treeView>
+  <cd-data-tree
+    #dataTreeRef
+    class="tree"
+    [data]="data"
+    [ignoreEmpty]="!showBackButton"
+    [filterElementIds]="filterElementIds"
+    [selectedId]="selectedLookupPath"
+    (hoveredIdChange)="onHoverId($event)"
+    (selectedIdChange)="onSelectedIdChange($event)"
+  ></cd-data-tree>
+  <!-- footer -->
+  <footer
+    class="footer"
+    [style.height.px]="dataTreeFooterHeight"
+    *ngIf="doesDataSourceMatchSelection"
+  >
+    <div class="selected">
+      <span class="selected-title">Selected</span>
+      <span class="selected-id" (click)="scrollToSelected()">
+        {{ selection | formatSelectedValueForDataPipe: data }}
+      </span>
+    </div>
+    <button
+      cd-button
+      cdTooltip="Clear selection"
+      class="clear-btn"
+      iconName="close"
+      iconSize="small"
+      size="small"
+      (click)="clearSelection()"
+    ></button>
+  </footer>
+</ng-template>
+
+<ng-template #backBtnRef>
+  <button
+    *ngIf="showBackButton"
+    cd-button
+    cdTooltip="Go Back"
+    class="close-icon"
+    iconName="arrow_back"
+    iconSize="small"
+    size="small"
+    (click)="goBack()"
+  ></button>
+</ng-template>
+
+<ng-template #rightHeaderRef>
+  <cd-fullscreen-button
+    *ngIf="!showBackButton"
+    tooltipDirection="top"
+    [fullscreen]="fullscreen"
+    (fullscreenChange)="onFullScreenToggle()"
+  ></cd-fullscreen-button>
+  <button
+    *ngIf="canEdit"
+    cd-button
+    cdToggleButton
+    iconName="edit"
+    iconSize="small"
+    size="small"
+    (click)="onEditData()"
+    cdTooltip="Edit data"
+    [selected]="editing"
+  ></button>
+</ng-template>
+
+<cd-data-warning
+  *ngIf="showWarning"
+  (edit)="onFixWarning()"
+  (cancel)="onIgnoreWarning()"
+></cd-data-warning>

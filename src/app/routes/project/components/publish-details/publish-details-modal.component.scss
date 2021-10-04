@@ -1,0 +1,82 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/cssvars' as *;
+
+$leftRightPadding: 20px;
+$topBottomPadding: 12px;
+$headerFooterHeight: 54px;
+
+:host {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  width: 500px;
+  min-height: 480px;
+  overflow: hidden;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border-bottom: 1px solid #{cssvar(border-color)};
+}
+
+.details {
+  padding: cssvar(spacing-5);
+}
+
+.version {
+  color: cssvar(font-color);
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+.header,
+.footer {
+  display: grid;
+  align-items: center;
+  box-sizing: border-box;
+  height: $headerFooterHeight;
+  min-height: $headerFooterHeight;
+  padding: #{cssvar(spacing-3)} #{cssvar(size-3)};
+}
+
+.footer {
+  position: relative;
+  display: grid;
+  min-height: 74px;
+  grid-template-columns: 1fr auto;
+}
+
+.left,
+.right {
+  display: grid;
+  align-items: center;
+  gap: cssvar(spacing-2);
+}
+
+.right {
+  gap: cssvar(spacing-3);
+  grid-auto-flow: column;
+  justify-content: end;
+}
+
+.visibility-desc {
+  opacity: 0.64;
+  user-select: none;
+}

@@ -1,0 +1,94 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.buttons {
+  display: grid;
+  gap: var(--cd-spacing-0);
+  grid-template-columns: 1fr;
+  padding-right: var(--cd-spacing-4);
+  padding-bottom: var(--cd-spacing-5);
+}
+
+.btn {
+  text-align: left;
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  color: var(--cd-font-color);
+  font-family: var(--cd-header-font);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  font-size: 13px;
+  height: 28px;
+  cursor: pointer;
+
+  span {
+    padding-left: var(--cd-spacing-3);
+  }
+
+  &:hover {
+    color: var(--cd-primary-color);
+  }
+}
+
+.news-title {
+  @include cd-font(overline);
+
+  padding-bottom: var(--cd-spacing-0);
+  padding-bottom: var(--cd-spacing-2);
+}
+
+.news-item {
+  user-select: text;
+  -webkit-font-smoothing: antialiased;
+
+  header {
+    background: var(--cd-sidebar-color);
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding-right: var(--cd-spacing-4);
+    height: var(--cd-size-2);
+
+    .date {
+      opacity: 0.67;
+      text-align: right;
+      font-size: 11px;
+    }
+
+    .title {
+      font-size: var(--cd-font-size-h2);
+      font-family: var(--cd-header-font);
+      display: grid;
+      align-items: center;
+      padding: 0;
+    }
+  }
+}

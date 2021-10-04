@@ -1,0 +1,43 @@
+<div class="left">
+  <div class="preview" (click)="showDetails($event)">
+    <ng-container *ngIf="img | async as src; else loading">
+      <img
+        [src]="src"
+        height="110"
+        class="img"
+        [class.show]="imgLoaded"
+        loading="lazy"
+        (load)="onImgLoad()"
+      />
+      <svg class="svg">
+        <rect class="solid" width="66" height="40" rx="4" />
+      </svg>
+    </ng-container>
+    <cd-icon name="zoom_in" class="show-details" size="large"></cd-icon>
+  </div>
+</div>
+<div class="right">
+  <span>
+    {{ title }}
+  </span>
+  <cd-menu-button
+    class="menu-button"
+    size="small"
+    iconSize="small"
+    [data]="menuConfig"
+    (selected)="onMenuSelect($event)"
+  ></cd-menu-button>
+</div>
+
+<ng-template #loading>
+  <img
+    cdTooltip="processing thumbnail"
+    src="/assets/component-placeholder.svg"
+    height="110"
+    class="img show"
+  />
+  <svg class="svg">
+    <rect class="solid" width="66" height="40" rx="4" />
+    <rect class="progress" width="66" height="40" rx="4" />
+  </svg>
+</ng-template>

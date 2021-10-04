@@ -1,0 +1,165 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// stylelint-disable selector-type-no-unknown
+
+@mixin formFieldOverrides() {
+  .mat-form-field {
+    --matco-suffix-icon-size: 24px;
+    --matco-input-font-family: var(--override-mat-input-font-family, var(--co-body1-font-family));
+    --matco-input-font-size: var(--override-mat-input-font-size, var(--co-body1-font-size));
+    --matco-input-font-color: var(
+      --override-mat-input-color,
+      rgba(var(--palette-foreground-text), var(--palette-foreground-text-alpha, 1))
+    );
+  }
+
+  .mat-form-field,
+  .mat-radio-button,
+  .mat-select {
+    @include applyFontVars('body1');
+
+    // Unfortunately these need to be inside a wrapper
+    width: 100%; // < Do not remove
+  }
+
+  .mat-form-field-label * {
+    @include applyFontVars('body1');
+  }
+
+  // prevent background of empty label from clipping border of input
+  .mat-form-field-label mat-label:empty {
+    display: none !important;
+  }
+
+  // Fix text overflow in mat-select
+  .mat-select .mat-select-trigger {
+    display: inline-flex;
+    width: 100%;
+    align-items: center;
+  }
+
+  .mat-select-value {
+    max-width: initial;
+  }
+
+  .mat-form-field-appearance-standard .mat-form-field-flex {
+    // padding on right is retained to offset resizer icon
+    padding-left: 0;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline {
+    top: 5px; // fix offset issue
+    color: rgba(var(--palette-foreground-divider), 0.12);
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+    color: rgba(var(--palette-foreground-divider), 0.87);
+  }
+
+  .mat-form-field-appearance-fill,
+  .mat-form-field-appearance-standard {
+    .mat-form-field-underline,
+    .mat-form-field-underline::before {
+      background-color: rgba(var(--palette-foreground-divider), 0.42);
+    }
+  }
+
+  // Fix Disabled underline
+  .mat-form-field-appearance-standard.mat-form-field-disabled .mat-form-field-underline {
+    background-color: transparent;
+    background-image: linear-gradient(
+      to right,
+      rgba(var(--palette-foreground-divider), 0.42) 0%,
+      rgba(var(--palette-foreground-divider), 0.42) 33%,
+      transparent 0%
+    );
+  }
+
+  .mat-select-arrow {
+    color: rgba(var(--palette-foreground-secondary-text), 0.87);
+  }
+
+  .mat-form-field-ripple {
+    background-color: rgba(var(--palette-foreground-divider), 0.87);
+  }
+
+  .mat-input-element {
+    color: var(--matco-input-font-color);
+    font-family: var(--matco-input-font-family);
+    font-size: var(--matco-input-font-size);
+  }
+
+  .mat-form-field-suffix cd-icon-element {
+    width: initial;
+    height: initial;
+    font-size: initial;
+
+    .ace-icon,
+    .mat-icon {
+      font-size: var(--matco-suffix-icon-size) !important;
+      width: var(--matco-suffix-icon-size) !important;
+      height: var(--matco-suffix-icon-size) !important;
+    }
+  }
+
+  .mat-form-field-suffix .mat-icon:not(.cd-rendered-element) {
+    color: rgba(var(--palette-foreground-text), 0.87);
+  }
+
+  // Sets the label color to match the selected theme color
+
+  .mat-form-field-appearance-outline,
+  .mat-form-field-appearance-standard,
+  .mat-form-field-appearance-fill {
+    &.mat-focused.mat-primary {
+      .mat-form-field-outline,
+      .mat-form-field-label * {
+        color: rgba(var(--co-primary-rgb), 1);
+      }
+    }
+
+    &.mat-focused.mat-accent {
+      .mat-form-field-outline,
+      .mat-form-field-label * {
+        color: rgba(var(--co-secondary-rgb), 1);
+      }
+    }
+
+    &.mat-focused.mat-warn {
+      .mat-form-field-outline,
+      .mat-form-field-label * {
+        color: rgba(var(--co-warn-rgb), 1);
+      }
+    }
+  }
+
+  // Fix Disabled
+
+  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
+  .mat-form-field-disabled .mat-form-field-label mat-label,
+  .mat-select-disabled .mat-select-value {
+    color: rgba(var(--palette-foreground-secondary-text), 0.38);
+  }
+
+  .mat-input-element[disabled]:disabled,
+  .mat-input-element:disabled,
+  .mat-form-field-type-mat-native-select.mat-form-field-disabled .mat-form-field-infix::after {
+    color: rgba(var(--palette-foreground-secondary-text), 0.38);
+  }
+}
+
+@include formFieldOverrides();

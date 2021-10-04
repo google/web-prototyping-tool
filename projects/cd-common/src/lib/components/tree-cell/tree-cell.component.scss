@@ -1,0 +1,138 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+:host.symbol {
+  --cd-font-color: var(--cd-symbol-color);
+
+  color: var(--cd-symbol-color);
+}
+
+.arrow {
+  visibility: hidden;
+  background: transparent;
+  width: var(--cd-size-1);
+  height: var(--cd-size-3);
+  overflow: hidden;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-icon {
+  transition: transform 200ms;
+}
+
+.vis-toggle,
+.goto-board {
+  visibility: hidden;
+}
+
+:host.hover-board .goto-board {
+  visibility: visible;
+}
+
+:host {
+  display: grid;
+  grid-template-columns: var(--cd-size-1) var(--cd-size-1) 1fr auto auto;
+  padding-left: var(--cd-spacing-0);
+  cursor: pointer;
+  box-sizing: content-box;
+  align-items: center;
+  height: var(--cd-size-3);
+
+  &.show-vis {
+    grid-template-columns: var(--cd-size-1) var(--cd-size-1) 1fr auto auto;
+  }
+
+  &.show-actions-on-hover:hover .vis-toggle {
+    display: inline-flex;
+    visibility: visible;
+  }
+
+  &:hover .goto-board {
+    visibility: visible;
+  }
+  // mark hidden only shows toggle button
+  &.mark-hidden.show-actions-on-hover.show-hide-button .vis-toggle {
+    display: inline-flex;
+    visibility: visible;
+  }
+
+  // hover shows both buttons
+  &.show-actions-on-hover.show-hide-button:hover .vis-toggle {
+    display: inline-flex;
+    visibility: visible;
+  }
+
+  &.show-highlight {
+    --cd-font-color: var(--cd-primary-color);
+
+    color: var(--cd-primary-color);
+  }
+
+  &.expanded .arrow .arrow-icon {
+    transform: rotate(90deg);
+  }
+
+  &.show-expander .arrow {
+    visibility: visible;
+  }
+}
+
+.input-mask {
+  position: relative;
+  overflow: hidden;
+}
+
+.label {
+  @include cd-font-overflow-ellipsis;
+
+  outline: none;
+  color: var(--cd-font-color);
+  pointer-events: none;
+  user-select: none;
+  max-width: 100%;
+  box-sizing: content-box;
+  border-radius: var(--cd-border-radius-1);
+  height: var(--cd-size-0);
+  line-height: var(--cd-size-0);
+  padding: 0 4px 0 6px;
+  letter-spacing: 0;
+
+  &.editing {
+    pointer-events: all;
+    cursor: text;
+    user-select: all;
+    margin-right: var(--cd-spacing-2);
+    padding-right: var(--cd-spacing-4);
+    text-overflow: clip;
+    box-shadow: none;
+    border: none;
+    outline: none;
+  }
+
+  &::selection {
+    font-weight: normal;
+    color: var(--cd-selected-text-color);
+    background-color: var(--cd-primary-color);
+  }
+}
+
+:host.board .label {
+  font-weight: 500;
+}

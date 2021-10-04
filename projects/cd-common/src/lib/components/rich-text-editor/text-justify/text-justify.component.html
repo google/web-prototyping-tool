@@ -1,0 +1,34 @@
+<cd-toggle-button-group
+  showBackground
+  [value]="alignment"
+  (valueChange)="onAlignmentChange($event)"
+>
+  <button
+    cdToggleButton
+    cd-button
+    size="small"
+    iconName="format_align_left"
+    [value]="TextFormat.JustifyLeft"
+  ></button>
+  <button
+    cdToggleButton
+    cd-button
+    size="small"
+    iconName="format_align_center"
+    [value]="TextFormat.JustifyCenter"
+  ></button>
+  <button
+    cdToggleButton
+    cd-button
+    size="small"
+    iconName="format_align_right"
+    [value]="TextFormat.JustifyRight"
+  ></button>
+  <button
+    cdToggleButton
+    cd-button
+    size="small"
+    iconName="format_align_justify"
+    [value]="TextFormat.JustifyFull"
+  ></button>
+</cd-toggle-button-group>

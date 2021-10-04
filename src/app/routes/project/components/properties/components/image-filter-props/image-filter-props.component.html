@@ -1,0 +1,77 @@
+<cd-input-group label="Blend mode">
+  <cd-select-input
+    placeholder="Normal"
+    resetState="Normal"
+    [data]="blendModeMenu | MarkSelection: model?.mixBlendMode"
+    (change)="onBlendModeChange($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group label="Grayscale">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.Grayscale].value"
+    min="0"
+    max="100"
+    type="percent"
+    innerLabel="%"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<cd-input-group label="Brightness">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.Brightness].value"
+    min="0"
+    max="200"
+    type="percent"
+    innerLabel="%"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<cd-input-group label="Contrast">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.Contrast].value"
+    min="0"
+    max="200"
+    type="percent"
+    innerLabel="%"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<cd-input-group label="Hue">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.HueRotate].value"
+    min="0"
+    max="360"
+    type="number"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<cd-input-group label="Invert">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.Invert].value"
+    min="0"
+    max="100"
+    type="percent"
+    innerLabel="%"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<cd-input-group label="Blur">
+  <cd-range-input
+    [(value)]="filters[SVGFilter.Blur].value"
+    min="0"
+    max="50"
+    type="number"
+    innerLabel="px"
+    (valueChange)="onSliderChange()"
+  ></cd-range-input>
+</cd-input-group>
+
+<div class="btn" *ngIf="canReset">
+  <button cd-outlined-button (click)="onReset()">Reset</button>
+</div>

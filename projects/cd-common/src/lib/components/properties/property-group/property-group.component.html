@@ -1,0 +1,83 @@
+<header>
+  <div class="left"></div>
+  <div class="center">
+    <span class="title" (click)="onTitleClick()">
+      {{ groupTitle }}
+    </span>
+  </div>
+  <div class="inserted">
+    <ng-content select="[cdPropertyGroupHeader]"></ng-content>
+  </div>
+  <div class="right" [ngSwitch]="type">
+    <cd-icon
+      *ngIf="groupHelpTooltip"
+      [cdTooltip]="groupHelpTooltip"
+      name="help"
+      size="small"
+      class="title-help-tooltip"
+    ></cd-icon>
+    <!-- TOGGLE SWITCH -->
+    <cd-switch
+      *ngSwitchCase="GroupType.ToggleSwitch"
+      [checked]="enabled"
+      (change)="onSwitchToggle($event)"
+      class="enabled-switch"
+    ></cd-switch>
+    <!-- COLLAPSE / EXPAND -->
+    <button
+      *ngSwitchCase="GroupType.Collapse"
+      (click)="onCollapseClick()"
+      class="ico-btn"
+      [cdTooltip]="collapsed ? 'Expand' : 'Collapse'"
+      cdTooltipDirection="left"
+    >
+      <cd-icon
+        #arrow
+        name="keyboard_arrow_down"
+        class="icon"
+        [class.collapsed]="collapsed"
+      ></cd-icon>
+    </button>
+    <!-- ADD -->
+    <button
+      *ngSwitchCase="GroupType.Add"
+      cd-button
+      [cdTooltip]="addTooltip"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="add"
+      [disabled]="disable"
+      (click)="onAddClick()"
+    ></button>
+    <!-- DELETE -->
+    <button
+      *ngSwitchCase="GroupType.Delete"
+      cd-button
+      cdTooltip="Delete"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="delete_outline"
+      [disabled]="disable"
+      (click)="onDeleteClick()"
+    ></button>
+    <!-- DELETE ALL -->
+    <button
+      *ngSwitchCase="GroupType.DeleteAll"
+      cd-button
+      cdTooltip="Delete All"
+      cdTooltipDirection="left"
+      size="small"
+      iconSize="small"
+      iconName="delete_forever"
+      [disabled]="disable"
+      (click)="onDeleteClick()"
+    ></button>
+  </div>
+</header>
+<div class="content" #content [class.enabled]="enabled">
+  <div class="content-wrapper" #contentWrapper [class.collapsed]="contentCollapsed">
+    <ng-content></ng-content>
+  </div>
+</div>

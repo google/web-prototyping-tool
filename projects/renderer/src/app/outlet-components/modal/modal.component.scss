@@ -1,0 +1,110 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+$easing: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+:host {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 3; // Must be greater than drawer but less than overlay
+}
+
+.modal-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  overflow: hidden auto;
+  padding: 0;
+  border: none;
+  z-index: 2;
+  animation: showdialog 0.4s $easing;
+  max-width: 100vw;
+  max-height: 100vh;
+}
+
+:host.init .modal-content {
+  transition: width 200ms $easing, height 200ms $easing;
+}
+
+@keyframes showdialog {
+  0% {
+    transform: scale(0.92, 0.92) translate3d(0, 0, 0);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1, 1) translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes hidedialog {
+  0% {
+    transform: scale(1, 1) translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.92, 0.92) translate3d(0, 0, 0);
+    opacity: 0;
+  }
+}
+
+@keyframes showbackdrop {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hidebackdrop {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--backdrop-color);
+  animation: showbackdrop 0.4s $easing;
+}
+
+:host.hide {
+  .modal-content {
+    animation: hidedialog 0.4s $easing forwards;
+  }
+
+  .backdrop {
+    animation: hidebackdrop 0.4s $easing forwards;
+  }
+}

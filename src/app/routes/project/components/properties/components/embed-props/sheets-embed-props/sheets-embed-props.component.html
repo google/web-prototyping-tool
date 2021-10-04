@@ -1,0 +1,30 @@
+<cd-input-group label="Id" columns="1fr auto">
+  <cd-input [value]="docId" (change)="onDocIdChange($event)"></cd-input>
+  <button
+    cd-button
+    iconName="open_in_new"
+    (click)="openSheets()"
+    [disabled]="!docId"
+    cdTooltip="Open in Sheets"
+  ></button>
+</cd-input-group>
+
+<cd-input-group label="Table Id">
+  <cd-input placeholder="Auto" [value]="tableId" (change)="onTableIdChange($event)"></cd-input>
+</cd-input-group>
+
+<cd-input-group label="Title">
+  <cd-checkbox [checked]="title" (change)="onTitleToggle($event)"></cd-checkbox>
+</cd-input-group>
+
+<cd-input-group label="Headers">
+  <cd-checkbox [checked]="headers" (change)="onHeadersToggle($event)"></cd-checkbox>
+</cd-input-group>
+
+<cd-input-group label="Widget">
+  <cd-checkbox [checked]="widget" (change)="onWidgetToggle($event)"></cd-checkbox>
+</cd-input-group>
+
+<span class="helper-text">
+  * Ensure this document's share settings are visible for all of Google.
+</span>

@@ -1,0 +1,27 @@
+<header class="title">Style</header>
+
+<ul class="styles-list">
+  <li
+    *ngFor="let style of orderedIconStyles"
+    class="style-item"
+    [class.active]="selectedStyle === style"
+  >
+    <button class="icon-style-btn" (click)="onClick(style)">
+      <div class="inner-button">
+        <cd-icon [name]="iconStyleNames[style].icon" size="small"></cd-icon>
+        <span class="icon-label">{{ iconStyleNames[style].label }}</span>
+      </div>
+    </button>
+  </li>
+</ul>
+
+<header class="title">Preview</header>
+<ul class="preview-list">
+  <li *ngFor="let icon of previewIcons">
+    <cd-icon
+      size="large"
+      [name]="icon"
+      [iconClass]="iconFontFamilyClassMap[fontFamily.family]"
+    ></cd-icon>
+  </li>
+</ul>

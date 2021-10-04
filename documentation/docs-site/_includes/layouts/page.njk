@@ -1,0 +1,45 @@
+---
+layout: layouts/base.njk
+section: page
+---
+{% include "components/svg-icons.njk" %}
+
+<div class="flex mt-4 justify-end">
+  {% if eleventyNavigation.key !== 'changelog' %}
+    <div class="inline-block w-auto text-xs text-gray-500 pt-1 pb-1 pl-3 mr-2 rounded ">
+      Updated
+      <time datetime="{{ page.date | machineDate }}">{{ page.date | readableDate }}</time>
+    </div>
+  {% endif %}
+</div>
+
+<div class="flex w-full justify-center">
+  <div class="mt-4 px-2 lg:px-0 w-full max-w-6xl {% if site.enableTOC and toc %} max-w-7xl {% endif %}">
+    <div class="wrapper flex justify-between">
+      {% if site.enableTOC and toc %}
+        <div class="main flex flex-col pr-0 xl:pr-64 prose sm:prose lg:prose-lg xl:prose-md">
+        {% else %}
+          <div class="main  flex flex-col pr-0 prose sm:prose lg:prose-lg xl:prose-md">
+          {% endif %}
+          <article>
+            <header class="head pb-5 mb-5">
+              <h1 class="dark:text-gray-500 mb-0 pb-3">{{ title }}</h1>
+              <a href="http://{{goLink}}" class="text-gray-600">{{goLink}}</a>
+            </header>
+            <div class="adjust dark:text-gray-400">
+              {{ layoutContent | safe }}
+              {% include "components/footer.njk" %}
+            </div>
+          </article>
+        </div>
+        {% if site.enableTOC and toc %}
+          <div class="text-gray-500 font-semibold hidden xl:block sidebar sticky right-0 mt-12 -ml-56 w-56 h-full top-48">
+            <small>CONTENTS</small><br/>
+            <aside class="font-normal">
+              {{ content | toc | safe }}
+            </aside>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>

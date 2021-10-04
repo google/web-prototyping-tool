@@ -1,0 +1,157 @@
+<ng-container *ngIf="searchString; else default">
+  <div class="no-results" *ngIf="showEmptySearchResultsState">
+    <span class="no-results-title">We couldn't find any projects for</span>
+    <span>{{ searchString }}</span>
+  </div>
+
+  <!-- Found Users -->
+  <ng-container *ngIf="foundUsers$ | async as foundUsers">
+    <div class="found-users" *ngIf="foundUsers.length">
+      <h3>Users</h3>
+      <ul>
+        <li
+          *ngFor="let foundUser of foundUsers"
+          (click)="onAvatarClick(foundUser?.email)"
+          cdTooltip="Show projects"
+          cdTooltipDirection="bottom"
+        >
+          <cd-avatar [profileImgUrl]="foundUser?.photoUrl"></cd-avatar>
+          <span>{{ foundUser?.name }}</span>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <!-- User Projects -->
+  <ng-container *ngIf="userSearchResults.length">
+    <div class="user-projects">
+      <h3>Yours</h3>
+      <ng-container
+        *ngTemplateOutlet="projectList; context: { $implicit: userSearchResults }"
+      ></ng-container>
+    </div>
+  </ng-container>
+
+  <!-- Others Projects -->
+  <ng-container *ngIf="otherSearchResults.length">
+    <div class="other-projects">
+      <h3>Others</h3>
+      <ng-container
+        *ngTemplateOutlet="projectList; context: { $implicit: otherSearchResults }"
+      ></ng-container>
+      <ng-container
+        *ngTemplateOutlet="loader; context: { $implicit: loading || userLoading }"
+      ></ng-container>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #default>
+  <ng-container *ngIf="canShowProjectList; else emptyState">
+    <div class="action-bar" *ngIf="canShowActionBar">
+      <ng-container>
+        <button
+          fabStyle
+          cd-unelevated-button
+          cd-shaped-button
+          size="large"
+          iconSize="large"
+          iconName="add"
+          (click)="onCreateProjectClick()"
+        >
+          New Project
+        </button>
+        <cd-toggle-button-group
+          separatedButtons
+          [value]="queryState"
+          class="filter-toggles"
+          (valueChange)="onQueryStateChange($event)"
+        >
+          <button
+            cd-button
+            cdToggleButton
+            size="medium"
+            [value]="QueryState.Mine"
+            expand="true"
+            cdTooltip="Your projects"
+          >
+            Mine
+          </button>
+          <button
+            cd-button
+            cdToggleButton
+            size="medium"
+            [value]="QueryState.Starred"
+            expand="true"
+            cdTooltip="Starred projects"
+          >
+            Starred
+          </button>
+          <button
+            cd-button
+            cdToggleButton
+            size="medium"
+            [value]="QueryState.All"
+            expand="true"
+            cdTooltip="Explore projects from all users"
+          >
+            All
+          </button>
+        </cd-toggle-button-group>
+      </ng-container>
+    </div>
+    <ng-container *ngTemplateOutlet="projectList; context: { $implicit: projects }"></ng-container>
+    <ng-container *ngTemplateOutlet="loader; context: { $implicit: loading }"></ng-container>
+  </ng-container>
+</ng-template>
+
+<!-- EMPTY STATE -->
+<ng-template #emptyState>
+  <app-empty-message
+    header="Get started"
+    headerImg="/assets/placeholder.svg"
+    description="Quickly create realistic prototypes using real components without writing code."
+    actionName="New project"
+    actionIcon="add"
+    (action)="onCreateProjectClick()"
+  ></app-empty-message>
+</ng-template>
+
+<!-- Loader -->
+<ng-template #loader let-isLoading>
+  <div class="loader" *ngIf="isLoading">
+    <cd-spinner></cd-spinner>
+  </div>
+</ng-template>
+
+<!-- Project list -->
+<ng-template #projectList let-projectList>
+  <div class="list project-list body" *ngIf="projectList.length > 0">
+    <app-project-tile
+      *ngFor="let project of projectList; trackBy: trackFn"
+      actionable="true"
+      editable="true"
+      [project]="project"
+      [userEmail]="user?.email"
+      [starred]="starredProjects.has(project.id)"
+      [showAvatar]="project.owner?.id !== userId"
+      [updatedAt]="project.updatedAt | FormatFirebaseTime"
+      [menuConfig]="project.owner?.id === userId ? projectMenuConfig : nonOwnerProjectMenuconfig"
+      [boardThumbnails]="project | projectThumbnailPipe: boardThumbnails"
+      (menuSelected)="onProjectMenuSelected($event, project)"
+      (nameChange)="onProjectNameChange($event, project)"
+      (avatarClick)="onAvatarClick($event)"
+      (commentsClicked)="onOpenProjectComments(project)"
+      (starredClick)="onStarredProjectClick($event, project.id)"
+    ></app-project-tile>
+  </div>
+
+  <app-empty-message
+    *ngIf="canShowStarredZeroState"
+    class="starred-zero"
+    type="vertical"
+    header="No starred projects"
+    headerImg="/assets/star-placeholder.svg"
+    description="Click the star on a project to have it show up here."
+  ></app-empty-message>
+</ng-template>

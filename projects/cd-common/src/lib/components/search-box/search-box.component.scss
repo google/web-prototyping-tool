@@ -1,0 +1,66 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/font/font.scss';
+
+$transition: 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+:host {
+  display: grid;
+  align-items: center;
+  min-height: 42px;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--cd-spacing-2);
+  padding: 0 var(--cd-spacing-3);
+  border: 1px solid var(--cd-outline-color);
+  border-radius: var(--cd-border-radius-2);
+  transition: box-shadow $transition, border-color $transition, background-color $transition;
+  color: var(--cd-font-color);
+
+  &:hover {
+    background-color: var(--cd-focus-fill);
+    border-color: var(--cd-active-fill);
+
+    --cd-font-color: var(--cd-primary-color);
+  }
+
+  &:focus-within {
+    --cd-font-color: initial;
+
+    background-color: initial;
+    border-color: transparent;
+    box-shadow: var(--cd-outline-focus);
+  }
+}
+
+.input {
+  @include cd-font-overflow-ellipsis;
+
+  font-size: 17px;
+  line-height: 40px;
+  color: var(--cd-font-color);
+  border: none;
+  outline: none;
+  font-family: var(--cd-header-font);
+  -webkit-font-smoothing: antialiased;
+  background: transparent;
+
+  &::placeholder {
+    color: var(--cd-font-color);
+    transition: color $transition;
+    opacity: 0.6;
+  }
+}

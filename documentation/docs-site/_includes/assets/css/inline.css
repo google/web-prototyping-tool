@@ -1,0 +1,189 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* CODE COMPONENT SAMPLE PAGE */
+
+.code-comp-sample {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 3em;
+  margin-bottom: 3em;
+  align-items: center;
+}
+
+.code-comp-sample aside h3 {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.code-comp-sample aside {
+  display: flex;
+  flex-direction: column;
+}
+
+.code-comp-sample img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.prev-next {
+  display: flex;
+  align-items: center;
+}
+
+h1 .direct-link,
+h2 .direct-link,
+h3 .direct-link,
+h4 .direct-link,
+h5 .direct-link,
+h6 .direct-link {
+  display: none;
+}
+
+.direct-link::after {
+  content: 'link';
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+.direct-link::after,
+.ico {
+  font-family: 'Google Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+
+.ico {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  overflow: hidden;
+}
+
+svg.ico {
+  width: 20px;
+  height: 20px;
+}
+
+.ico.btm {
+  vertical-align: text-bottom;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr;
+  gap: 2em;
+}
+
+.hide-table-top thead {
+  display: none;
+}
+
+/* Grid used in basics  */
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 2rem;
+}
+
+.grid-container a {
+  background: #f3f3f5;
+  height: 227px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr 75px;
+  color: #111827;
+  transition: background-color 120ms;
+}
+
+.grid-container img {
+  padding: 0;
+  margin: 0;
+  object-fit: cover;
+  object-position: 0 0;
+  height: 100%;
+  width: 100%;
+}
+
+.grid-container a header {
+  overflow: hidden;
+  padding: 8px;
+  padding-bottom: 0;
+}
+
+.grid-container a:hover {
+  text-decoration: none !important;
+  color: #111827;
+}
+
+.grid-footer {
+  padding: 8px 12px;
+  width: 100%;
+  overflow: hidden;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.grid-footer h4 {
+  margin: 0;
+  padding: 0;
+}
+
+.grid-footer span {
+  font-size: 12px;
+  white-space: normal;
+  font-weight: normal;
+  opacity: 0.72;
+}
+
+.grid-container a:hover {
+  background: #e3e3e8;
+}
+
+[style*='--aspect-ratio'] > :first-child {
+  width: 100%;
+}
+[style*='--aspect-ratio'] > iframe {
+  height: auto;
+}
+
+[style*='--aspect-ratio'] {
+  position: relative;
+}
+[style*='--aspect-ratio']::before {
+  content: '';
+  display: block;
+  padding-bottom: calc(100% / (var(--aspect-ratio)));
+}
+[style*='--aspect-ratio'] > :first-child {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+}

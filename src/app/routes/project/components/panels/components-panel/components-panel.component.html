@@ -1,0 +1,216 @@
+<app-activity-panel-header cdPanelHeader panelTitle="Components">
+  <div class="right">
+    <button
+      cd-button
+      iconName="file_upload"
+      size="medium"
+      iconSize="medium"
+      (click)="onAddCodeComponent()"
+      cdTooltip="Upload component"
+      cdTooltipDirection="bottom"
+    ></button>
+    <button
+      cd-button
+      iconName="shopping_cart"
+      size="medium"
+      iconSize="medium"
+      (click)="onMarketplaceClick()"
+      cdTooltip="Component Marketplace"
+      cdTooltipDirection="bottom"
+    ></button>
+  </div>
+</app-activity-panel-header>
+
+<header class="filters">
+  <app-searchbar
+    class="searchbar"
+    [(value)]="searchString"
+    (valueChange)="onSearchValueChange()"
+  ></app-searchbar>
+  <app-component-filter
+    [filters]="filters"
+    [(active)]="activeFilter"
+    (activeChange)="onActiveFilterChange()"
+  ></app-component-filter>
+</header>
+
+<cd-scroll-view>
+  <div class="wrapper">
+    <!-- PRIMITIVES -->
+
+    <ng-container
+      [ngTemplateOutlet]="listRef"
+      [ngTemplateOutletContext]="{
+        $implicit: componentsService.primitiveComponents,
+        filterBy: 'title',
+        className: 'primitives'
+      }"
+    ></ng-container>
+
+    <!-- MATERIAL COMPONENTS -->
+
+    <ng-container
+      [ngTemplateOutlet]="listRef"
+      [ngTemplateOutletContext]="{
+        $implicit: componentsService.allComponents,
+        filterBy: 'title',
+        className: 'common'
+      }"
+    ></ng-container>
+
+    <!-- CUSTOM COMPONENTS (Symbols and Code Components) -->
+    <ng-container
+      [ngTemplateOutlet]="listRef"
+      [ngTemplateOutletContext]="{
+        $implicit: customComponents,
+        headline: 'Custom',
+        filterBy: 'name',
+        isCustom: true,
+        className: 'custom-components'
+      }"
+    ></ng-container>
+
+    <button
+      cd-outlined-button
+      *ngIf="showDiscoverBtn"
+      size="small"
+      class="discover"
+      (click)="onMarketplaceClick($event)"
+    >
+      Discover more...
+    </button>
+  </div>
+  <ng-container
+    *ngIf="showCustomCompZeroState"
+    [ngTemplateOutlet]="customComponentZeroRef"
+  ></ng-container>
+</cd-scroll-view>
+
+<!-- SECTION HEADER -->
+
+<ng-template #listHeader let-headline let-count="count">
+  <div class="header" *ngIf="headline">
+    {{ headline }}
+    <div class="count">{{ count }}</div>
+  </div>
+</ng-template>
+
+<!-- SECTION -->
+
+<ng-template
+  #listRef
+  let-list
+  let-headline="headline"
+  let-isCustom="isCustom"
+  let-filter="filterBy"
+  let-className="className"
+>
+  <ng-container
+    *ngIf="list | filterByLibraryPipe: activeFilter | filterBy: [filter]:searchString as items"
+  >
+    <section [class]="className" *ngIf="items.length">
+      <!-- <ng-container
+      *ngIf="items.length && headline"
+      [ngTemplateOutlet]="listHeader"
+      [ngTemplateOutletContext]="{
+        $implicit: headline,
+        count: items.length
+      }"
+    ></ng-container> -->
+      <div class="grid">
+        <ng-container
+          *ngIf="items.length"
+          [ngTemplateOutlet]="isCustom ? customComponentsRef : buttonRef"
+          [ngTemplateOutletContext]="{ $implicit: items }"
+        ></ng-container>
+      </div>
+    </section>
+  </ng-container>
+</ng-template>
+
+<!-- BUTTON -->
+
+<ng-template #buttonRef let-items>
+  <button
+    *ngFor="let item of items"
+    cd-outlined-button
+    class="btn"
+    [appComponentDragItem]="item.id"
+    [attr.cd-e2e-label]="item.title"
+  >
+    <div class="btn-contents">
+      <cd-icon [name]="item.icon" size="medium"></cd-icon>
+      <span>{{ item.title }}</span>
+    </div>
+  </button>
+</ng-template>
+
+<!-- CUSTOM COMPONENTS (Symbols and Code Components) -->
+
+<ng-template #customComponentsRef let-items>
+  <ng-container *ngFor="let customComponent of items">
+    <ng-container
+      *ngTemplateOutlet="
+        customComponent.type === EntityType.CodeComponent ? codeComponentRef : symbolRef;
+        context: { $implicit: customComponent }
+      "
+    ></ng-container>
+  </ng-container>
+</ng-template>
+
+<ng-template #codeComponentRef let-codeComponent>
+  <app-component-tile
+    [id]="codeComponent.id"
+    [name]="codeComponent.title"
+    [isAdmin]="isAdmin"
+    [appCodeComponentDragItem]="codeComponent"
+    (edit)="onEditComponnet(codeComponent)"
+    (viewDetails)="onComponentPreview(codeComponent)"
+    (dblclick)="onEditComponnet(codeComponent)"
+    (delete)="onDeleteComponent(codeComponent)"
+  ></app-component-tile>
+</ng-template>
+
+<ng-template #symbolRef let-symbol>
+  <app-component-tile
+    [id]="symbol.id"
+    [name]="symbol.name"
+    [isAdmin]="isAdmin"
+    [appSymbolDragItem]="symbol"
+    (edit)="onEditComponnet(symbol)"
+    (viewDetails)="onComponentPreview(symbol)"
+    (dblclick)="onEditComponnet(symbol)"
+    (delete)="onDeleteComponent(symbol)"
+  ></app-component-tile>
+</ng-template>
+
+<ng-template #customComponentZeroRef>
+  <div class="custom-zerostate">
+    <div class="blank">
+      <img src="/assets/component-placeholder.svg" width="62" height="62" />
+      <h3>Custom components</h3>
+      <span>
+        Create reusable patterns within the editor or upload your own code.
+      </span>
+      <footer>
+        <button
+          cd-outlined-button
+          size="medium"
+          iconName="shopping_cart"
+          cdTooltip="Discover components created by other users"
+          (click)="onMarketplaceClick()"
+        >
+          Browse marketplace...
+        </button>
+        <button
+          cd-outlined-button
+          size="medium"
+          iconName="file_upload"
+          (click)="onAddCodeComponent()"
+        >
+          Upload code component
+        </button>
+      </footer>
+    </div>
+  </div>
+</ng-template>

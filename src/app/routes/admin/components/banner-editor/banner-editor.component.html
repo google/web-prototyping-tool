@@ -1,0 +1,28 @@
+<div class="status-header">
+  <h1 class="header-text">Status Banner</h1>
+  <span class="status-id-hint">Change Status ID to push a new banner</span>
+</div>
+
+<div class="status-controls">
+  <cd-input
+    innerLabel="Status ID"
+    [value]="activeStatusID"
+    (change)="onStatusIDChange($event)"
+  ></cd-input>
+  <cd-input
+    innerLabel="Message"
+    [value]="activeStatusMessage"
+    (change)="onStatusMessageChange($event)"
+  ></cd-input>
+  <cd-input
+    innerLabel="Link Text"
+    [value]="activeStatusLinkTitle"
+    (change)="onStatusLinkTextChange($event)"
+  ></cd-input>
+  <cd-input
+    innerLabel="Link URL"
+    [value]="activeStatusLinkURL"
+    (change)="onStatusLinkURLChange($event)"
+  ></cd-input>
+  <button cd-unelevated-button (click)="commitStatusBanner()">Save</button>
+</div>

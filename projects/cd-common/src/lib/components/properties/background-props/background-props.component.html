@@ -1,0 +1,16 @@
+<div class="wrapper">
+  <cd-property-list-item
+    hideLeft
+    [noBottom]="noPadding"
+    *ngFor="let bkd of data; let i = index; trackBy: trackFn"
+    (delete)="onDelete(i)"
+  >
+    <cd-color-input
+      [value]="bkd | IValueValue"
+      [binding]="bkd | IValueLookup: designSystem?.colors"
+      [colorData]="colorMenuData"
+      (colorSelect)="onSelect($event, i)"
+      (valueChange)="onChange($event, i)"
+    ></cd-color-input>
+  </cd-property-list-item>
+</div>

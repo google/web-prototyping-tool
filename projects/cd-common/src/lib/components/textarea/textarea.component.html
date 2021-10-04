@@ -1,0 +1,18 @@
+<cd-input-group-label *ngIf="label" class="label">{{ label }}</cd-input-group-label>
+<textarea
+  #textareaRef
+  [value]="value"
+  (change)="onChange($event)"
+  (input)="onInput($event)"
+  [attr.disabled]="disabled"
+  [attr.rows]="rows"
+  [attr.cols]="cols"
+  [placeholder]="placeholder"
+  [style.minHeight]="minHeight"
+  [style.resize]="resize"
+  [attr.autocorrect]="spellcheck"
+  [attr.autocomplete]="spellcheck"
+  [attr.autocapitalize]="spellcheck"
+  [attr.spellcheck]="spellcheck"
+  (keydown)="onKeydown($event)"
+></textarea>

@@ -1,0 +1,21 @@
+<svg:rect class="bounds" *ngIf="canvasBounds" [cdSVGRect]="canvasBounds" />
+<svg:rect
+  class="bounds inside"
+  *ngIf="canvasBoundsWithPadding"
+  [cdSVGRect]="canvasBoundsWithPadding"
+/>
+
+<svg:g
+  *ngIf="canvas"
+  [attr.x]="canvas?.position?.x"
+  [attr.y]="canvas?.position?.y"
+  [attr.transform]="canvasScale"
+>
+  <svg:path
+    class="registration-point"
+    transform="translate(-12,-12)"
+    d="M13 11h4v2h-4v4h-2v-4H7v-2h4V7h2v4zm-1 11C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z"
+    fill="#5F6369"
+    fill-rule="evenodd"
+  />
+</svg:g>

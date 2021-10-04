@@ -1,0 +1,170 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  color: rgb(190, 193, 202);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  overflow: hidden;
+}
+
+#master {
+  background: #3d414a;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}
+
+#detail {
+  overflow: hidden;
+  display: grid;
+}
+#content {
+  padding: 20px;
+  white-space: pre;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-size: 0.94em;
+  line-height: 1.4em;
+}
+#master footer,
+#content {
+  overflow: auto;
+}
+#master header {
+  border-bottom: rgba(0, 0, 0, 0.4);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  background: #4e535f;
+}
+#clear {
+  background: #b47cff;
+  border: none;
+  outline: none;
+  margin: 8px;
+  cursor: pointer;
+  border-radius: 2px;
+}
+#clear:hover {
+  background: #c49afc;
+}
+#search {
+  background: #4e535f;
+  height: 100%;
+  border: none;
+  outline: none;
+  color: #b3b6bd;
+  padding: 0 8px;
+}
+ul,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#detail {
+  background: #32363b;
+}
+
+#list {
+  display: grid;
+  align-items: center;
+  padding-bottom: 40px;
+}
+
+#list li {
+  display: grid;
+  align-items: center;
+  height: 26px;
+  user-select: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  grid-template-columns: auto 80px;
+  box-sizing: border-box;
+}
+
+#list li span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  padding: 0 8px;
+}
+
+.time {
+  opacity: 0.5;
+  text-align: right;
+  font-size: 10px;
+}
+
+#list li:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+#list li:last-child {
+  border-bottom: none;
+}
+
+#list li.active,
+li.active:hover {
+  border: none;
+  background: #b47cff;
+  color: #32363b;
+}
+
+#list li.same {
+  background: #b57cff52;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+#copy {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  background: #4e535f;
+  outline: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+#copy:before {
+  content: 'Copy';
+}
+
+#copy.active:before {
+  content: 'Copied';
+}
+
+#copy:hover {
+  background: #595f6b;
+}
+
+::selection {
+  color: rgba(255, 255, 255, 0.76);
+  background-color: #b57cff60;
+}

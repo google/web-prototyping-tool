@@ -1,0 +1,56 @@
+[
+  {
+    "name": "a-template",
+    "machineType": "1 vCPU, 3.75 GB",
+    "image": "backports-debian-7-wheezy-v20150818",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "instance-group-11, instance-group-7",
+    "creationTime": "Sep 11, 2015, 3:09:14 PM"
+  },
+  {
+    "name": "test-template1",
+    "machineType": "1 vCPU, 3.75 GB",
+    "image": "backports-debian-7-wheezy-v20141108",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "",
+    "creationTime": "Nov 20, 2014, 10:26:10 AM"
+  },
+  {
+    "name": "instance-template-2",
+    "machineType": "2 vCPUs, 7.5 GB",
+    "image": "backports-debian-7-wheezy-v20141021",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "instance-group-4",
+    "creationTime": "Nov 5, 2014, 9:26:04 AM"
+  },
+  {
+    "name": "instance-template-3",
+    "machineType": "1 vCPU, 3.75 GB",
+    "image": "debian-8-jessie-v20160923",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "instance-group-5",
+    "creationTime": "Oct 13, 2016, 2:03:24 PM"
+  },
+  {
+    "name": "instance-template-4",
+    "machineType": "1 vCPU, 3.75 GB",
+    "image": "debian-9-stretch-v20170918",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "",
+    "creationTime": "Oct 3, 2017, 2:50:57 PM"
+  },
+  {
+    "name": "template-f1-micro-nginx",
+    "machineType": "1 vCPU, 0.6 GB",
+    "image": "backports-debian-7-wheezy-v20150320",
+    "diskType": "Standard persistent disk",
+    "placementPolicy": "No policy",
+    "inUseBy": "instance-group-2, instance-group-3",
+    "creationTime": "Mar 24, 2015, 4:06:30 PM"
+  }
+]

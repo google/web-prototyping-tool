@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "../../",
+    "target": "es2015",
+    "module": "es6",
+    "lib": ["es2017", "es2015", "dom", "es6"],
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "declaration": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "strict": true,
+    "types": ["node"],
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "cd-interfaces": ["dist/cd-interfaces"]
+    }
+  },
+  "include": ["**.ts", "lib/**/*", "src/*.ts"],
+  "exclude": ["node_modules"]
+}

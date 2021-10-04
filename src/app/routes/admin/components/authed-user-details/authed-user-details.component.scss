@@ -1,0 +1,109 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@use 'sass-utils/cssvars' as *;
+@use 'sass-utils/font/font';
+
+$large-avatar-size: 96px;
+
+:host {
+  box-sizing: border-box;
+  display: grid;
+  justify-items: center;
+  row-gap: cssvar(spacing-6);
+  width: 100%;
+  max-width: 960px;
+  padding: cssvar(spacing-6) cssvar(spacing-2);
+}
+
+.user-details {
+  display: grid;
+  row-gap: cssvar(spacing-1);
+  justify-items: center;
+  justify-self: center;
+}
+
+.large-avatar {
+  width: $large-avatar-size;
+  height: $large-avatar-size;
+  border-radius: $large-avatar-size * 0.5;
+  overflow: hidden;
+  background-color: cssvar(background-color);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.name {
+  @include font.cd-font(headline3);
+
+  justify-self: center;
+}
+
+.granted-scopes-section {
+  display: grid;
+  row-gap: cssvar(spacing-2);
+}
+
+.granted-scopes-card {
+  display: grid;
+  row-gap: cssvar(spacing-2);
+  padding: cssvar(spacing-5) cssvar(spacing-5) 0 cssvar(spacing-5);
+  border-radius: cssvar(border-radius-1);
+  box-shadow: cssvar(depth-0);
+}
+
+.checking-scopes-text {
+  @include font.cd-font(body2);
+}
+
+.scopes-heading {
+  @include font.cd-font(headline6);
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: cssvar(spacing-2);
+  align-items: center;
+  color: cssvar(header-font-color);
+  justify-self: left;
+}
+
+.scope-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.scope-item {
+  @include font.cd-font(subhead1);
+
+  display: flex;
+  align-items: center;
+  height: cssvar(size-6);
+  border-bottom: 1px solid cssvar(border-color);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.revoke-button {
+  justify-self: right;
+  width: fit-content;
+}

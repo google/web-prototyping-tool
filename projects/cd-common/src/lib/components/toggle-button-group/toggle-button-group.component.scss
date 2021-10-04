@@ -1,0 +1,75 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+:host {
+  min-height: var(--cd-size-3);
+  overflow: hidden;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+
+:host:not(.separated-buttons) ::ng-deep button {
+  border-radius: initial !important;
+  min-height: var(--cd-size-3);
+
+  &:first-child {
+    &.small {
+      border-top-left-radius: var(--cd-border-radius-1) !important;
+      border-bottom-left-radius: var(--cd-border-radius-1) !important;
+    }
+
+    &.medium {
+      border-top-left-radius: var(--cd-border-radius-2) !important;
+      border-bottom-left-radius: var(--cd-border-radius-2) !important;
+    }
+
+    &.large {
+      border-top-left-radius: var(--cd-border-radius-3) !important;
+      border-bottom-left-radius: var(--cd-border-radius-3) !important;
+    }
+  }
+
+  &:last-child {
+    &.small {
+      border-top-right-radius: var(--cd-border-radius-1) !important;
+      border-bottom-right-radius: var(--cd-border-radius-1) !important;
+    }
+
+    &.medium {
+      border-top-right-radius: var(--cd-border-radius-2) !important;
+      border-bottom-right-radius: var(--cd-border-radius-2) !important;
+    }
+
+    &.large {
+      border-top-right-radius: var(--cd-border-radius-3) !important;
+      border-bottom-right-radius: var(--cd-border-radius-3) !important;
+    }
+  }
+}
+
+:host.show-bkd {
+  background: var(--cd-input-background-color);
+  border-radius: var(--cd-border-radius-1);
+
+  &::ng-deep button {
+    width: auto !important;
+  }
+}
+
+:host.separated-buttons {
+  justify-items: center;
+}

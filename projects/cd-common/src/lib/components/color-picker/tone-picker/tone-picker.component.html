@@ -1,0 +1,8 @@
+<div
+  *ngFor="let color of tonalPalette; let index = index"
+  class="swatch"
+  [style.backgroundColor]="color"
+  (click)="handleClick(index)"
+>
+  <div *ngIf="index === tonalPaletteIndex" class="selected-color-indicator"></div>
+</div>

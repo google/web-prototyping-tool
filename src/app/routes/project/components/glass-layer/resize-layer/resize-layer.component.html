@@ -1,0 +1,38 @@
+<ng-container *ngIf="isActive">
+  <!-- EDGES (lines) -->
+  <svg:line
+    *ngFor="let line of lines"
+    class="handle"
+    [attr.data-edge]="line.edge"
+    [appResizeEdge]="line.edge"
+    [cdSVGLine]="line"
+  ></svg:line>
+  <!-- ANCHORS (Corners) -->
+  <ng-container *ngFor="let anchor of anchors">
+    <svg:rect
+      class="anchor"
+      [appResizeEdge]="anchor.edge"
+      [attr.x]="anchor.x"
+      [attr.y]="anchor.y"
+      [attr.width]="edgeSize"
+      [attr.height]="edgeSize"
+    ></svg:rect>
+    <svg:rect
+      class="anchor hidden"
+      [appResizeEdge]="anchor.edge"
+      [attr.x]="anchor.x"
+      [attr.y]="anchor.y"
+      [attr.width]="edgeSize"
+      [attr.height]="edgeSize"
+      [attr.data-edge]="anchor.edge"
+    ></svg:rect>
+  </ng-container>
+
+  <svg:g
+    app-info-text
+    *ngIf="resizeText"
+    [text]="resizeText"
+    [zoom]="zoom"
+    [attr.transform]="infoTextPosition"
+  ></svg:g>
+</ng-container>

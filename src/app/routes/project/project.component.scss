@@ -1,0 +1,116 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@mixin gridSlot($colStart, $colEnd, $rowStart, $rowEnd) {
+  grid-column-start: $colStart;
+  grid-column-end: $colEnd;
+  grid-row-start: $rowStart;
+  grid-row-end: $rowEnd;
+}
+
+:host {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+
+  .hidden-panel {
+    display: none;
+  }
+}
+
+.panel-wrapper {
+  height: 100%;
+  margin-left: var(--cd-spacing-2);
+}
+
+.activity-bar {
+  @include gridSlot(1, 1, 1, 4);
+
+  z-index: 2;
+}
+
+.activity-panel {
+  @include gridSlot(2, 3, 1, 4);
+
+  z-index: 2;
+}
+
+.presence-indicators {
+  @include gridSlot(3, 4, 3, 4);
+
+  z-index: 2;
+}
+
+.properties-panel {
+  @include gridSlot(4, 5, 1, 4);
+}
+
+.overlays {
+  pointer-events: none;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  z-index: 999;
+  margin: 12px;
+  margin-left: 20px;
+  display: grid;
+  gap: var(--cd-spacing-2);
+  grid-template-columns: 1fr auto;
+  background: transparent;
+  contain: layout;
+}
+
+.banners {
+  display: grid;
+  grid-auto-flow: row;
+  gap: var(--cd-spacing-2);
+  height: fit-content;
+}
+
+.record {
+  display: grid;
+}
+
+// Used to show when a user has dragged some content (assets)
+// into the project in prep for upload
+
+@keyframes showzone {
+  0% {
+    opacity: 0;
+    border-width: 0;
+  }
+
+  100% {
+    border-width: 6px;
+    opacity: 1;
+  }
+}
+
+.dropzone {
+  position: fixed;
+  // pointer-events: none;
+  z-index: 9999;
+  box-sizing: border-box;
+  border: 4px solid var(--cd-primary-color);
+  background: transparent;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: showzone 300ms ease-in;
+}

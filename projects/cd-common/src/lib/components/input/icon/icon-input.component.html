@@ -1,0 +1,15 @@
+<cd-chip
+  *ngIf="value; else showInput"
+  [iconName]="value"
+  [iconClass]="iconClass"
+  [active]="pickerActive"
+  [cdTooltip]="value | iconNameFormatPipe"
+  [chipTitle]="value | iconNameFormatPipe"
+  (click)="createIconPicker()"
+  (remove)="onRemoveChip()"
+></cd-chip>
+<ng-template #showInput>
+  <button #btnRef class="button-cta" (click)="createIconPicker()">
+    <cd-input value="Add icon..." disabled="true"></cd-input>
+  </button>
+</ng-template>

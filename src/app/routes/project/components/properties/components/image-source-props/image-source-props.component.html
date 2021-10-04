@@ -1,0 +1,14 @@
+<!-- <cd-property-group> -->
+<cd-input-group label="Image">
+  <cd-select-input
+    placeholder="None"
+    [bindingId]="binding"
+    [data]="assetsMenu"
+    (change)="onSourceSelect($event)"
+  ></cd-select-input>
+</cd-input-group>
+
+<cd-input-group *ngIf="showRemoteURL" label="Remote URL" columns="1fr auto">
+  <cd-input [value]="url" (change)="onURLChange($event)" placeholder="https://"></cd-input>
+  <button cd-button iconName="open_in_new" (click)="onOpenURL()" [disabled]="!url"></button>
+</cd-input-group>

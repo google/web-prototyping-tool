@@ -1,0 +1,30 @@
+<div class="left" *ngIf="showLeft">
+  <cd-icon *ngIf="isCheck" name="checked" size="small"></cd-icon>
+  <cd-icon *ngIf="isIcon" [name]="item.icon || item.value" size="small"></cd-icon>
+  <cd-swatch
+    *ngIf="isColor"
+    [color]="item.color || item.value"
+    size="16"
+    borderRadius="16"
+  ></cd-swatch>
+  <img
+    *ngIf="isImage"
+    loading="lazy"
+    [src]="item.value | safeURL"
+    class="img"
+    width="20"
+    height="20"
+  />
+</div>
+
+<div
+  class="label"
+  [style.textAlign]="textAlign"
+  [style.fontStyle]="fontStyle"
+  [style.fontWeight]="fontWeight"
+  [style.fontFamily]="fontFamily"
+>
+  <span class="title">
+    {{ item.title }}
+  </span>
+</div>

@@ -1,0 +1,88 @@
+/*
+ * Copyright 2021 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import 'sass-utils/states/states.scss';
+@import '../resize-layer/edges.scss';
+
+$boardEdge: 12;
+$ctaWidth: 3;
+$selectionOffset: 6;
+
+:host {
+  buffered-rendering: dynamic;
+}
+
+.hidden-handle {
+  stroke: transparent;
+  stroke-width: $boardEdge;
+  vector-effect: non-scaling-stroke;
+  text-rendering: optimizeSpeed;
+  pointer-events: all;
+  fill: transparent;
+  visibility: hidden;
+
+  &.selected {
+    stroke-width: $boardEdge + $selectionOffset;
+  }
+}
+
+.board-handle {
+  stroke: var(--cd-font-color);
+  opacity: 0.4;
+  visibility: visible;
+  pointer-events: none;
+  stroke-width: $ctaWidth;
+  stroke-linecap: round;
+  shape-rendering: auto;
+  transition: opacity 200ms ease;
+  animation: show-handle 250ms ease-out backwards;
+}
+
+.board-rect {
+  fill: transparent;
+  vector-effect: non-scaling-stroke;
+  stroke: var(--cd-primary-color);
+  animation: cd-fadein 250ms ease-out backwards;
+  stroke-dasharray: 3 3;
+  @include for-desktop-hidpi {
+    shape-rendering: optimizeSpeed;
+  }
+}
+
+.board-text {
+  vector-effect: non-scaling-stroke;
+  animation: cd-fadein 250ms ease-out backwards;
+  fill: var(--cd-primary-color);
+  text-anchor: middle;
+}
+
+.board-sizes {
+  opacity: 0.5;
+}
+
+.group:hover .cta {
+  opacity: 0.6;
+}
+
+@keyframes show-handle {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0.4;
+  }
+}

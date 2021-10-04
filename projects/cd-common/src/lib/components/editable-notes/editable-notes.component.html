@@ -1,0 +1,41 @@
+<cd-property-group
+  [groupTitle]="title"
+  type="collapse"
+  [collapsed]="collapsed"
+  class="notes-property-group"
+>
+  <span cdPropertyGroupHeader class="notes-toolbar">
+    <button
+      cd-button
+      cdToggleButton
+      iconName="edit"
+      cdTooltip="Toggle edit mode"
+      [selected]="isEditMode"
+      (click)="onToggleEditMode()"
+    ></button>
+  </span>
+
+  <ng-container *ngIf="isEditMode; else defaultState">
+    <cd-rich-text-editor
+      onlyRichText
+      [alignmentEnabled]="false"
+      [mockTextEnabled]="false"
+      [richText]="true"
+      [value]="notes"
+      (valueChange)="onNotesChange($event)"
+    ></cd-rich-text-editor>
+  </ng-container>
+
+  <ng-template #defaultState>
+    <div *ngIf="!!notes; else emptyState" class="notes-plain-text">
+      <cd-injected-content [data]="notes"></cd-injected-content>
+    </div>
+    <ng-template #emptyState>
+      <div class="notes-empty-state" (click)="onToggleEditMode()">
+        {{ emptyStateMessage }}
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <ng-content></ng-content>
+</cd-property-group>

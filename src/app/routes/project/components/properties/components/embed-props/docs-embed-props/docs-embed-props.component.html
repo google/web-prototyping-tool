@@ -1,0 +1,14 @@
+<cd-input-group label="Id" columns="1fr auto">
+  <cd-input [value]="docId" (change)="onDocIdChange($event)"></cd-input>
+  <button
+    cd-button
+    iconName="open_in_new"
+    (click)="openDocs()"
+    [disabled]="!docId"
+    cdTooltip="Open in Docs"
+  ></button>
+</cd-input-group>
+
+<span class="helper-text">
+  * Ensure this document's share settings are visible for all of Google.
+</span>
