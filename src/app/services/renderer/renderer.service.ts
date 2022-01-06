@@ -217,6 +217,11 @@ export class RendererService implements OnDestroy {
     }
   }
 
+  toggleHotspots(disable?: boolean) {
+    const disabled = Boolean(disable) === true;
+    this._sendMessage(new services.PostMessageToggleHotspots(disabled));
+  }
+
   clearAllA11yRects() {
     this.rendererGreenlineResultsByBoard$.next({});
     this.rendererFocusedElementByBoard$.next(null);

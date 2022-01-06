@@ -17,7 +17,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import SVGO from 'svgo';
+import { optimize } from 'svgo';
 import { spawn } from 'child-process-promise';
 import { ObjectMetadata } from 'firebase-functions/lib/providers/storage';
 import { Bucket } from '@google-cloud/storage';
@@ -76,13 +76,16 @@ export const generateCropArgs = (width: number, aspectRatio: number, scale = 1):
   return [geo, min, ...crop, offset, thumb, geometry];
 };
 
-export const convertSVG = async (srcLocalPath: string, targets: cd.IImageConversionTarget[]) => {
-  const svgo = new SVGO();
+export const convertSVG = (
+  srcLocalPath: string,
+  targets: cd.IImageConversionTarget[]
+): Promise<void> => {
   const svg = fs.readFileSync(srcLocalPath, 'utf8');
-  const optimizedSVG = await svgo.optimize(svg);
+  const optimizedSVG = optimize(svg);
   for (const target of targets) {
     fs.writeFileSync(target.destPaths.local, optimizedSVG.data);
   }
+  return Promise.resolve();
 };
 
 export const getSourcePaths = (object: ObjectMetadata): cd.IPaths => {

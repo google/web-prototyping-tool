@@ -1,0 +1,39 @@
+:host {
+  box-sizing: border-box;
+  display: grid;
+  grid-auto-flow: row;
+  gap: var(--cd-spacing-4);
+  padding: var(--cd-spacing-4);
+  background: var(--cd-modal-background-color);
+  border-radius: var(--cd-border-radius-3);
+  box-shadow: var(--cd-depth-6);
+  overflow: hidden auto;
+  max-height: 206px;
+}
+
+.overflow-presence-indicator {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-2);
+  align-items: center;
+}
+
+.right {
+  display: grid;
+  grid-auto-flow: row;
+  gap: var(--cd-spacing-0);
+}
+
+.bottom {
+  display: grid;
+  grid-auto-flow: column;
+  gap: var(--cd-spacing-2);
+}
+
+.username {
+  font-weight: bold;
+}
+
+a {
+  cursor: pointer;
+}

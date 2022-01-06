@@ -56,6 +56,7 @@ export interface IPreviewParams {
   device?: string;
   embedMode?: boolean;
   fullscreen?: boolean;
+  disableHotspots?: boolean;
   showLeftPanel?: boolean;
   rotate?: boolean;
   accessibility?: boolean;

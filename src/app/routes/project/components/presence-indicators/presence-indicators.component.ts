@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { PresenceService } from 'src/app/services/presence/presence.service';
-import { IAppState } from 'src/app/store/reducers';
-import { getDarkTheme } from 'src/app/store/selectors';
+import type * as cd from 'cd-interfaces';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  ComponentRef,
+  ElementRef,
+  OnDestroy,
+  ChangeDetectorRef,
+  ViewChild,
+} from '@angular/core';
+import * as utils from 'src/app/utils/user.utils';
+import { OverflowIndicatorsComponent } from './overflow-indicators/overflow-indicators.component';
+import { OverlayService } from 'cd-common';
+
+const MAX_INDICATORS = 4;
 
 @Component({
   selector: 'app-presence-indicators',
@@ -27,10 +37,68 @@ import { getDarkTheme } from 'src/app/store/selectors';
   styleUrls: ['./presence-indicators.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PresenceIndicatorsComponent {
-  public darkTheme$: Observable<boolean>;
+export class PresenceIndicatorsComponent implements OnDestroy {
+  private _componentRef?: ComponentRef<OverflowIndicatorsComponent>;
 
-  constructor(public presenceService: PresenceService, private store: Store<IAppState>) {
-    this.darkTheme$ = this.store.pipe(select(getDarkTheme));
+  public MAX_INDICATORS = MAX_INDICATORS;
+  public visibleUsers: cd.IUserPresence[] = [];
+  public overflowUsers: cd.IUserPresence[] = [];
+  public userMenu: cd.IMenuConfig[] = utils.USER_ACTIONS_MENU;
+
+  @ViewChild('overflowIndicator') overflowIndicator?: ElementRef;
+
+  @Input() darkTheme = false;
+
+  @Input() set presentUsers(users: cd.IUserPresence[]) {
+    if (users.length > MAX_INDICATORS) {
+      this.visibleUsers = users.slice(0, MAX_INDICATORS - 1);
+      this.overflowUsers = users.slice(MAX_INDICATORS - 1);
+    } else {
+      this.visibleUsers = users;
+      this.overflowUsers = [];
+    }
+  }
+
+  constructor(private _overlayService: OverlayService, private _cdRef: ChangeDetectorRef) {}
+
+  cleanupComponentRef() {
+    if (!this._componentRef) return;
+    this._overlayService.close();
+    this._componentRef = undefined;
+  }
+
+  ngOnDestroy() {
+    this.cleanupComponentRef();
+  }
+
+  closeOverflowOverlay() {
+    this.cleanupComponentRef();
+  }
+
+  trackByFn(_index: number, presence: cd.IUserPresence): string {
+    return presence.sessionId;
+  }
+
+  onMenuSelect(item: cd.IMenuConfig, presence: cd.IUserPresence) {
+    const email = presence?.user?.email;
+    if (!email) return;
+    if (item.value === utils.UserMenuEvents.Projects) utils.openUserProjects(email);
+    if (item.value === utils.UserMenuEvents.Teams) utils.openUserTeamsPage(email);
+  }
+
+  onOverflowClick() {
+    if (this._componentRef || !this.overflowIndicator) return;
+    const parentRect = this.overflowIndicator.nativeElement.getBoundingClientRect();
+    const config = { parentRect, alignBottom: true, xOffset: 4, yOffset: 6 };
+    const componentRef = this._overlayService.attachComponent(OverflowIndicatorsComponent, config);
+    const { instance } = componentRef;
+    instance.darkTheme = this.darkTheme;
+    instance.overflowUsers = this.overflowUsers;
+    this._componentRef = componentRef;
+
+    componentRef.onDestroy(() => {
+      this._componentRef = undefined;
+      this._cdRef.markForCheck();
+    });
   }
 }

@@ -34,7 +34,6 @@ export class UndoRedoService {
   constructor(private _projectContentService: ProjectContentService) {}
 
   undo() {
-    console.log('Undo');
     const undoChange = this.undoStack.pop();
     if (!undoChange) return;
 
@@ -48,7 +47,6 @@ export class UndoRedoService {
   }
 
   redo() {
-    console.log('Redo');
     const redoChange = this.redoStack.pop();
     if (!redoChange) return;
 

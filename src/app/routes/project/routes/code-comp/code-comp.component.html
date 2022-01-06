@@ -60,6 +60,12 @@
         </div>
       </div>
     </div>
+
+    <app-presence-indicators
+      [presentUsers]="presenceService.otherPresentUsers$ | async"
+      [darkTheme]="darkTheme$ | async"
+      class="presence-indicators"
+    ></app-presence-indicators>
   </div>
 </ng-container>
 

@@ -56,7 +56,7 @@ export class BoardEffects {
       map(({ payload: { propertyModels } }) => {
         const elements = propertyModels || ([] as cd.PropertyModel[]);
         const lastElement = elements[elements.length - 1];
-        return new AppGoToPreview(lastElement.rootId);
+        return new AppGoToPreview(lastElement?.rootId);
       })
     )
   );

@@ -47,6 +47,7 @@ export const buildStateChange = (
 };
 
 export class RendererStateManager {
+  public showHotspots = true;
   public boardsMap: cd.IStringMap<cd.IBoardProperties> = {};
   public stylesMap: cd.IStringMap<cd.IStyleAttributes> = {};
   public propertiesLoaded = false;

@@ -99,6 +99,15 @@
     [templateRef]="showAccessibilityPanel ? accessibilityRef : commentsContainerRef"
     [size]="300"
   ></cd-side-panel>
+
+  <!-- Multi-editor  -->
+  <app-presence-indicators
+    *ngIf="!previewParams.fullscreen && !previewParams.embedMode"
+    [style.left]="canShowBoardList ? '212px' : '12px'"
+    [presentUsers]="presenceService.otherPresentUsers$ | async"
+    [darkTheme]="darkTheme$ | async"
+    class="presence-indicators"
+  ></app-presence-indicators>
 </div>
 
 <ng-template #accessibilityRef>

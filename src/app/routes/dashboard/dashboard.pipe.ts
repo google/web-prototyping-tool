@@ -16,14 +16,13 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 import { IProject, IScreenshotRef } from 'cd-interfaces';
-// import { TILE_THUMBNAIL_LIMIT } from 'cd-common/consts';
+import { TILE_THUMBNAIL_LIMIT } from 'cd-common/consts';
 
 @Pipe({ name: 'projectThumbnailPipe' })
 export class ProjectThumbnailPipe implements PipeTransform {
-  transform(_project: IProject, _thumbnails: Map<string, IScreenshotRef[]>): string[] {
-    // const thumbs = new Map(thumbnails.get(project.id)?.map((item) => [item.id, item.url]));
-    // return [...project.boardIds].slice(0, TILE_THUMBNAIL_LIMIT).map((id) => thumbs.get(id) || '');
-    // TODO: refactor to account for boardIds no longer being stored on project
-    return [];
+  transform(project: IProject, thumbnails: Map<string, IScreenshotRef[]>): string[] {
+    if (!thumbnails.has(project.id)) return [];
+    const thumbs = thumbnails.get(project.id) as IScreenshotRef[];
+    return thumbs.slice(0, TILE_THUMBNAIL_LIMIT).map((ref) => ref.url || '');
   }
 }

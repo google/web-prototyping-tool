@@ -72,7 +72,11 @@
   ></app-outlet-container>
 </app-canvas>
 
-<app-presence-indicators class="presence-indicators"></app-presence-indicators>
+<app-presence-indicators
+  [presentUsers]="presenceService.otherPresentUsers$ | async"
+  [darkTheme]="darkTheme$ | async"
+  class="presence-indicators"
+></app-presence-indicators>
 
 <cd-side-panel
   class="properties-panel"

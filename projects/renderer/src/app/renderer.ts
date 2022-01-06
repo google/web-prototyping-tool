@@ -649,9 +649,14 @@ const handleBoardDidAppearAfterReset = () => {
   outlet?.checkForBoardAppearance();
 };
 
+const handleHotspots = ({ disable }: services.PostMessageToggleHotspots) => {
+  rendererState.showHotspots = !disable;
+};
+
 const messageReducer: cd.IStringMap<Function> = {
   [services.MESSAGE_APPLY_ELEMENT_CHANGES]: handleApplyElementChanges,
   [services.MESSAGE_PROPERTIES_ADD]: handleAddProperties,
+  [services.MESSAGE_TOGGLE_HOTSPOTS]: handleHotspots,
   [services.MESSAGE_BOARD_DID_APPEAR_AFTER_RESET]: handleBoardDidAppearAfterReset,
   [services.MESSAGE_PROPERTIES_UPDATE]: handleUpdateProperties,
   [services.MESSAGE_PROPERTIES_REPLACE]: handleReplaceProperties,

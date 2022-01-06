@@ -56,6 +56,7 @@ import * as projectStore from '../../store';
 import * as appStore from '../../../../store';
 import * as utils from './utils/preview.utils';
 import * as cd from 'cd-interfaces';
+import { PresenceService } from 'src/app/services/presence/presence.service';
 
 @Component({
   selector: 'app-preview',
@@ -88,6 +89,7 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
   public user?: cd.IUser;
   public viewingComponent = false;
   public zoomScale = 0.5;
+  public darkTheme$: Observable<boolean>;
 
   @HostBinding('class.embed-mode')
   get isEmbedMode() {
@@ -97,6 +99,7 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('previewCanvas', { read: ElementRef, static: true }) _previewCanvas!: ElementRef;
 
   constructor(
+    public presenceService: PresenceService,
     @Optional() private _canvasService: CanvasService,
     private _analyticsService: AnalyticsService,
     private _propertiesService: PropertiesService,
@@ -108,13 +111,14 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     private _appStore: Store<appStore.IAppState>,
     private _renderer: RendererService,
     private _overlayService: OverlayService,
-
     private _previewService: PreviewService,
     private _activatedRoute: ActivatedRoute,
     private _cdRef: ChangeDetectorRef,
     private _router: Router,
     private _toastsService: ToastsService
   ) {
+    this.darkTheme$ = _appStore.pipe(select(appStore.getDarkTheme));
+
     this._subscriptions.add(this._activatedRoute.queryParams.subscribe(this.onQueryParams));
     this._subscriptions.add(this._activatedRoute.fragment.pipe(take(1)).subscribe(this.onFragment));
     this.commentCounts$ = this._projectStore.pipe(
@@ -338,7 +342,7 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     const preview = utils.paramsToPreviewParams(params, this.viewingComponent);
-
+    this._renderer.toggleHotspots(params?.disableHotspots);
     this.setA11yModeState(preview);
     this.previewParams = preview;
     this.update(preview);

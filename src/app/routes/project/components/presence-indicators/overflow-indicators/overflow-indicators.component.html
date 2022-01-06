@@ -1,0 +1,14 @@
+<div
+  *ngFor="let presence of overflowUsers; let i = index; trackBy: trackByFn"
+  class="overflow-presence-indicator"
+  [style.borderColor]="presence.sessionId | peerColorPipe: darkTheme"
+>
+  <cd-avatar [profileImgUrl]="presence.user?.photoUrl"></cd-avatar>
+  <div class="right">
+    <span class="username">{{ presence.user?.name }}</span>
+    <div class="bottom">
+      <a (click)="openProjects(presence)">Projects</a>
+      <a (click)="openTeams(presence)">Teams</a>
+    </div>
+  </div>
+</div>

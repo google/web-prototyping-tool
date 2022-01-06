@@ -49,12 +49,13 @@ import { AnalyticsEvent } from 'cd-common/analytics';
 import { OverlayService } from 'cd-common';
 import { Store, select } from '@ngrx/store';
 import { Dictionary } from '@ngrx/entity';
-import { getUser } from 'src/app/store';
+import { getDarkTheme, getUser } from 'src/app/store';
 import { deepCopy } from 'cd-utils/object';
 import { createId } from 'cd-utils/guid';
 import * as customConfig from '../../configs/custom-component.config';
 import * as config from './code-comp.config';
 import * as cd from 'cd-interfaces';
+import { PresenceService } from 'src/app/services/presence/presence.service';
 
 const INPUTS_CONFIG_FILENAME = 'inputs-config.json';
 const EVENTS_CONFIG_FILENAME = 'events-config.json';
@@ -94,10 +95,12 @@ export class CodeCompComponent implements OnDestroy {
   public testInstance?: cd.ICodeComponentInstance;
   public updatingJSBundle = false;
   public datasetsMenuItems: cd.ISelectItem[] = [];
+  public darkTheme$: Observable<boolean>;
 
   @ViewChild('renderOutletRef') renderOutletRef?: RenderOutletIFrameComponent;
 
   constructor(
+    public presenceService: PresenceService,
     private _appStore: Store<IAppState>,
     private _projectStore: Store<IProjectState>,
     private _overlayService: OverlayService,
@@ -112,6 +115,8 @@ export class CodeCompComponent implements OnDestroy {
     private _projectContentService: ProjectContentService
   ) {
     this.designSystem$ = this._projectContentService.designSystem$;
+
+    this.darkTheme$ = _appStore.pipe(select(getDarkTheme));
 
     this.userCanEditProject$ = this._projectContentService.currentUserIsProjectEditor$;
     // subscribe to route changes to get the current code component id

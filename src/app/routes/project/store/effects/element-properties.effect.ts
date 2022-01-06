@@ -25,9 +25,9 @@ import { ProjectContentService } from 'src/app/database/changes/project-content.
 import { RecordActionService } from '../../services/record-action/record-action.service';
 import { InteractionService } from '../../services/interaction/interaction.service';
 import { ClipboardService } from '../../services/clipboard/clipboard.service';
-import { getCurrentActivity } from '../selectors';
+import { getCurrentActivity, getIsolatedSymbolId } from '../selectors';
 import { unGroupElements, groupElements } from '../../utils/group.utils';
-import { SelectionToggleElements } from '../actions/selection.action';
+import { SelectionDeselectAll, SelectionToggleElements } from '../actions/selection.action';
 import { PanelConfig } from '../../configs/project.config';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { of, EMPTY } from 'rxjs';
@@ -51,7 +51,9 @@ import {
   buildPropertyUpdatePayload,
   getElementBaseStyles,
   mergeElementChangePayloads,
+  createElementChangePayload,
 } from 'cd-common/utils';
+import { computeSymbolInputUpdates } from '../../utils/symbol-input.utils';
 
 const ORDER_UP_KEY = ']';
 const CLONE_TOAST: cd.IToast = {
@@ -74,6 +76,23 @@ export class ElementPropertiesEffects {
     private _interactionService: InteractionService
   ) {}
 
+  /** Compute any symbol changes that are needed whenever an element is changed (if any) */
+  private dispatchElementChangeRequest = (
+    change: cd.IElementChangePayload,
+    isolatedSymbolId?: string
+  ) => {
+    if (!isolatedSymbolId) {
+      this._projectChangeCoordinator.dispatchChangeRequest([change]);
+      return;
+    }
+
+    const elementContent = this._projectContentService.elementContent$.getValue();
+    const symbolUpdates = computeSymbolInputUpdates(isolatedSymbolId, elementContent, change);
+    const symbolChange = createElementChangePayload(undefined, symbolUpdates);
+    const mergedChange = mergeElementChangePayloads([change, symbolChange]);
+    this._projectChangeCoordinator.dispatchChangeRequest([mergedChange]);
+  };
+
   /**
    *
    */
@@ -82,11 +101,12 @@ export class ElementPropertiesEffects {
       this.actions$.pipe(
         ofType<actions.ElementPropertiesChangeRequest>(actions.ELEMENT_PROPS_CHANGE_REQUEST),
         filter(() => this._recordSerivce.isRecording === false),
-        tap((action) => {
+        withLatestFrom(this._projectStore.pipe(select(getIsolatedSymbolId))),
+        tap(([action, isolatedSymbolId]) => {
           // merge all element changes into a single IElementChangePayload so that all get
           // applied in a single operation
-          const singleElementChange = mergeElementChangePayloads(action.payload);
-          this._projectChangeCoordinator.dispatchChangeRequest([singleElementChange]);
+          const mergedChange = mergeElementChangePayloads(action.payload);
+          this.dispatchElementChangeRequest(mergedChange, isolatedSymbolId);
         })
       ),
     { dispatch: false }
@@ -107,7 +127,7 @@ export class ElementPropertiesEffects {
           const changeRequestPayload: cd.IElementChangePayload = { type, sets };
           if (updates) changeRequestPayload.updates = convertPropsUpdateToUpdateChanges(updates);
           if (deletions) changeRequestPayload.deletes = deletions.map((d) => d.id);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
+          return this.dispatchElementChangeRequest(changeRequestPayload);
         })
       ),
     { dispatch: false }
@@ -129,7 +149,7 @@ export class ElementPropertiesEffects {
           const type = cd.EntityType.Element;
           const updates = convertPropsUpdateToUpdateChanges(action.payload);
           const changeRequestPayload: cd.ChangePayload = { type, updates };
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
+          return this.dispatchElementChangeRequest(changeRequestPayload);
         })
       ),
     { dispatch: false }
@@ -150,7 +170,7 @@ export class ElementPropertiesEffects {
           const deletes = payload.map((m) => m.id);
           const changeRequestPayload: cd.ChangePayload = { type, deletes };
           if (updates) changeRequestPayload.updates = convertPropsUpdateToUpdateChanges(updates);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
+          return this.dispatchElementChangeRequest(changeRequestPayload);
         }),
         retry(RETRY_ATTEMPTS),
         catchError(() => of(new actions.ElementPropertiesUpdateFailure()))
@@ -186,7 +206,7 @@ export class ElementPropertiesEffects {
         }
 
         /// Default behavior
-        return [deleteAction];
+        return [deleteAction, new SelectionDeselectAll()];
       })
     )
   );

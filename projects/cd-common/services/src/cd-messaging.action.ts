@@ -45,6 +45,7 @@ export const MESSAGE_PREVIEW_SHOW = 'Preview Show';
 export const MESSAGE_PREVIEW_CLEAR = 'Preview Clear';
 export const MESSAGE_RESET = 'Reset Renderer';
 export const MESSAGE_APPLY_ELEMENT_CHANGES = 'Apply Element Changes';
+export const MESSAGE_TOGGLE_HOTSPOTS = 'Hotspots';
 
 export const MESSAGE_SET_APP_THEME = 'Set Application Theme';
 export const MESSAGE_RECOMPILE = 'Recompile';
@@ -274,6 +275,13 @@ export class PostMessageReset extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_RESET;
 }
 
+export class PostMessageToggleHotspots extends BaseMessage implements IPostMessage {
+  readonly name = MESSAGE_TOGGLE_HOTSPOTS;
+  constructor(public disable: boolean) {
+    super();
+  }
+}
+
 export class PostMessageRecompile extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_RECOMPILE;
 }
@@ -493,4 +501,6 @@ export type CdPostMessage =
   | PostMessageSetPreviewMode
   | PostMessageToast
   | PostMessageURLNavigation
-  | PostMessageApplyElementChanges;
+  | PostMessageApplyElementChanges
+  | PostMessageToggleHotspots
+  | PostMessageURLNavigation;

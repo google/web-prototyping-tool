@@ -319,6 +319,7 @@ export default class InteractionManager {
     const actions = this.findActionsForTrigger(type, elementId, props, instanceId);
     const refs: IElementRefs = { elementId, instanceId, parentInstanceId, overlayInstanceIdx };
     this.addActionsToQueue(actions, refs);
+    if (!rendererState.showHotspots) return;
     generateActionHints(target, type, actions, elementId, instanceId);
   };
 

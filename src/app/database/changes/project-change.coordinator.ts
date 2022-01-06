@@ -77,6 +77,8 @@ export class ProjectChangeCoordinator {
   private _localDatabaseWriteRequest$ = new Subject<cd.IProjectContent>();
   private _receivedContentFromRemote = false;
 
+  public undoRedoChangeProcessed$ = new Subject<cd.ElementContent>();
+
   constructor(
     private afs: firestore.AngularFirestore,
     private store: Store<IAppState>,
@@ -259,12 +261,16 @@ export class ProjectChangeCoordinator {
     this._isProjectEditor = isProjectEditor;
   };
 
-  /** Handle a change request that was recieved from a peer via a WebRTC message */
-  // private handleChangeReqeustFromPeer() {}
-
   private handleUndoRedoChangeRequest = (changeRequest: cd.IChangeRequest) => {
-    // Simply dispatch the payload of the chagne request and mark as being from undo/redo
+    // Get value of elementContent before the undo/redo change is processed
+    const priorElementContent = this.projectContentService.elementContent$.getValue();
+
+    // Dispatch the payload of the change request and mark as not undoable
     this.dispatchChangeRequest(changeRequest.payload, false);
+
+    // Signal that an undo/redo change request has been processed, and pass the element content
+    // state prior to it being processed
+    this.undoRedoChangeProcessed$.next(priorElementContent);
   };
 
   /** Handle incoming changes from Firestore subscription to project document */

@@ -50,7 +50,7 @@ import { DndDirectorModule } from './dnd-director/dnd-director.module';
 import { DataPanelModule } from './components/panels/data-panel/data.module';
 import { PublishDetailsModule } from './components/publish-details/publish-details.module';
 import { LayoutPickerModule } from './components/layout-picker/layout-picker.module';
-import { PresenceIndicatorsComponent } from './components/presence-indicators/presence-indicators.component';
+import { PresenceIndicatorsModule } from './components/presence-indicators/presence-indicators.module';
 import { PipesModule } from './pipes/pipes.module';
 
 @NgModule({
@@ -66,6 +66,7 @@ import { PipesModule } from './pipes/pipes.module';
     DataPanelModule,
     ThemeModule,
     LayoutPickerModule,
+    PresenceIndicatorsModule,
     ActivityPanelHeaderModule,
     ComponentsPanelModule,
     ActivityBarModule,
@@ -92,7 +93,6 @@ import { PipesModule } from './pipes/pipes.module';
     ComponentImportPickerComponent,
     KeyboardShortcutsComponent,
     AboutPanelComponent,
-    PresenceIndicatorsComponent,
   ],
 })
 export class ProjectModule {}

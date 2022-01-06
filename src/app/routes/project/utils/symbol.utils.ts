@@ -398,6 +398,19 @@ const getUnpackParent = (
   return [parentId, newElements];
 };
 
+const assignParentIdToRootModels = (
+  parentId: string,
+  group: cd.IComponentInstanceGroup
+): cd.IComponentInstanceGroup => {
+  const { rootIds } = group;
+  const rootIdSet = new Set(rootIds);
+  const models = group.models.map((m) => {
+    if (!rootIdSet.has(m.id)) return m;
+    return { ...m, parentId };
+  });
+  return { models, rootIds };
+};
+
 export const unpackComponentInstance = (
   instance: cd.ISymbolInstanceProperties,
   symbol: cd.ISymbolProperties,
@@ -406,8 +419,9 @@ export const unpackComponentInstance = (
   const mergedInstanceProps = utils.mergeInstanceOverrides(instance, allElementProps);
   const propsCopy = _duplicateMergedInstanceProps(symbol.childIds, mergedInstanceProps);
   const [parentId, parentElements] = getUnpackParent(propsCopy, symbol, instance);
+  const updatedPropsGroup = assignParentIdToRootModels(parentId, propsCopy);
   const location = utils.buildInsertLocation(instance.id, cd.InsertRelation.Before);
-  const newElements = [...propsCopy.models, ...parentElements];
+  const newElements = [...updatedPropsGroup.models, ...parentElements];
   const change = mUtils.insertElements([parentId], location, allElementProps, newElements);
   return { change, rootId: parentId };
 };

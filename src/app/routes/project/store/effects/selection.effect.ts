@@ -16,7 +16,6 @@
 
 import { checkForRoots, filterRoots, isSymbolInstance, lookupElementIds } from 'cd-common/models';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { ElementPropertiesDelete, ELEMENT_PROPS_DELETE } from '../actions';
 import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { EntityType, IUserSelection } from 'cd-interfaces';
 import { getIsolatedSymbolId, getSelectedIds, getSelectionState } from '../selectors';
@@ -24,25 +23,28 @@ import { Injectable } from '@angular/core';
 import { IProjectState } from '../reducers';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { withLatestFrom, map, filter, tap, distinctUntilChanged } from 'rxjs/operators';
+import { withLatestFrom, map, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
 import * as actions from '../actions/selection.action';
 import { RtcService } from 'src/app/services/rtc/rtc.service';
 import { PresenceService } from 'src/app/services/presence/presence.service';
 import { areSetsEqual } from 'cd-utils/object';
+import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
+import { getSiblingIdOrParent } from '../../utils/element-properties.utils';
 
 @Injectable()
 export class SelectionEffects {
   constructor(
     private actions$: Actions,
     private projectStore: Store<IProjectState>,
+    private projectChangeCoordinator: ProjectChangeCoordinator,
     private projectContentService: ProjectContentService,
     private presenceService: PresenceService,
     private rtcService: RtcService
   ) {}
 
   /**
-   * Anytime and element is toggled add/remove it associated board
-   * Unless there are other elements still selected that have the same associated board
+   * Anytime and element is toggled add/remove its associated board
+   * unless there are other elements still selected that have the same associated board
    */
   toggleElement$: Observable<actions.SelectionSet> = createEffect(() =>
     this.actions$.pipe(
@@ -93,16 +95,40 @@ export class SelectionEffects {
   );
 
   /**
-   * When an element, make sure it cleared out of selection
+   * Anytime an element is recreated during undo/redo, select it.
+   * Anytime a selected element is deleted during undo, move selection to its sibling or parent
    */
+  updateSelectionOnUndoRedo$ = createEffect(() =>
+    this.projectChangeCoordinator.undoRedoChangeProcessed$.pipe(
+      withLatestFrom(this.projectStore.pipe(select(getSelectedIds))),
+      switchMap(([priorElementContent, selectedIds]) => {
+        const elementContent = this.projectContentService.elementContent$.getValue();
+        const { SelectionToggleElements } = actions;
+        const { idsCreatedInLastChange, idsDeletedInLastChange } = elementContent;
 
-  deletedSelection$: Observable<actions.SelectionSet | actions.SelectionDeselectAll> = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<ElementPropertiesDelete>(ELEMENT_PROPS_DELETE),
-        filter(({ ignoreDeselect }) => !ignoreDeselect),
-        map(() => new actions.SelectionDeselectAll())
-      )
+        if (idsCreatedInLastChange.size) {
+          const createdIds = Array.from(idsCreatedInLastChange);
+          return [new SelectionToggleElements(createdIds)];
+        }
+
+        if (!idsDeletedInLastChange.size) return [];
+
+        const currSelectedIds = Array.from(selectedIds);
+        const deletedSelection = currSelectedIds.filter((id) => idsDeletedInLastChange.has(id));
+        if (!deletedSelection.length) return [];
+
+        const [firstId] = deletedSelection;
+        const props = priorElementContent.records[firstId];
+        if (!props?.parentId) return [];
+        const { parentId } = props;
+        const parentProps = priorElementContent.records[parentId];
+        if (!parentProps) return [];
+        const { childIds } = parentProps;
+        const deletedIds = Array.from(idsDeletedInLastChange);
+        const selectionId = getSiblingIdOrParent(firstId, parentId, childIds, deletedIds);
+        return [new SelectionToggleElements([selectionId])];
+      })
+    )
   );
 
   broadcastSelectionToPeers$ = createEffect(

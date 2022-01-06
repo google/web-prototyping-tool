@@ -227,6 +227,16 @@ export class PreviewTopBarComponent
     this.openShareDialog();
   }
 
+  get hotspotsActive() {
+    if (this.previewParams?.disableHotspots) return false;
+    return true;
+  }
+
+  onToggleTargets() {
+    const disableHotspots = !this.previewParams?.disableHotspots;
+    this.paramChange.emit({ disableHotspots });
+  }
+
   openShareDialog() {
     const { project } = this;
     if (!project) return;

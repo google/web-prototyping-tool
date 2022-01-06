@@ -39,6 +39,7 @@ import * as utils from './utils/project.utils';
 import * as appStore from 'src/app/store';
 import * as projectStore from './store';
 import * as cd from 'cd-interfaces';
+import { PresenceService } from 'src/app/services/presence/presence.service';
 
 @Component({
   selector: 'app-project',
@@ -73,6 +74,7 @@ export class ProjectComponent
   public projectHomeBoardId$?: Observable<string | undefined>;
   public commentCounts$: Observable<Map<string, number>>;
   public initialLoad$: Observable<boolean>;
+  public darkTheme$: Observable<boolean>;
   public isolatedSymbolId?: string;
   public showDropZone = false;
   public isRecording = false;
@@ -82,6 +84,7 @@ export class ProjectComponent
 
   constructor(
     public overlayService: OverlayService,
+    public presenceService: PresenceService,
     private _cdRef: ChangeDetectorRef,
     private _canvasService: CanvasService,
     private _dragUploadService: DragUploadService,
@@ -96,6 +99,8 @@ export class ProjectComponent
     private readonly _appStore: Store<appStore.IAppState>
   ) {
     super(overlayService);
+
+    this.darkTheme$ = _appStore.pipe(select(appStore.getDarkTheme));
 
     this.breakGlass$ = this._appStore.pipe(
       select(appStore.getBreakGlass),

@@ -51,6 +51,8 @@ export class TemplateService {
 
     const projectTemplates$: Observable<cd.ILoadedTemplate[]> = publishEntries$.pipe(
       switchMap((publishEntries) => {
+        if (!publishEntries.length) return of([]);
+
         const projectRequests: Observable<PublishEntryWithProject>[] = publishEntries.map(
           (entry) => {
             const latestVersion = entry.versions[0];
@@ -61,7 +63,7 @@ export class TemplateService {
             return forkJoin([of(entry), project$]);
           }
         );
-        return forkJoin([...projectRequests]);
+        return forkJoin(projectRequests);
       }),
       // filter out any undefined
       map((results: PublishEntryWithProject[]) => results.filter((r) => !!r[1])),
@@ -79,9 +81,11 @@ export class TemplateService {
 
           // get other images, and don't duplicate request for home board image
           const boards$ = this._databaseService.getProjectBoards(project, TEMPLATE_IMAGES_LIMIT);
+
           const otherImages$ = boards$.pipe(
             switchMap((boards) => {
               const otherBoardIds = boards.map((b) => b.id).filter((id) => id !== homeBoardId);
+              if (!otherBoardIds.length) return of([]);
               const otherBoardImages$ = otherBoardIds.map(this._getImageUrl);
               return forkJoin(otherBoardImages$);
             })
@@ -90,7 +94,8 @@ export class TemplateService {
           const withImages$ = forkJoin([of(publishEntry), of(project), homeImage$, otherImages$]);
           resultsWithImages.push(withImages$);
         }
-        return forkJoin([...resultsWithImages]) as Observable<PublishEntryWithImages[]>;
+
+        return resultsWithImages.length ? forkJoin(resultsWithImages) : of([]);
       }),
       map((resultsWithImages) => {
         const loadedTemplates: cd.ILoadedTemplate[] = resultsWithImages.map((res) => {

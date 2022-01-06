@@ -95,11 +95,7 @@ export class ElementPropertiesCreate implements IUndoableAction {
 
 export class ElementPropertiesUpdate implements IUndoableAction {
   readonly type = ELEMENT_PROPS_UPDATE;
-  constructor(
-    public payload: cd.IPropertiesUpdatePayload[],
-    public undoable = true,
-    public symbolInputsUpdate = false
-  ) {}
+  constructor(public payload: cd.IPropertiesUpdatePayload[], public undoable = true) {}
 }
 
 export class ElementPropertiesUpdateFailure implements Action {

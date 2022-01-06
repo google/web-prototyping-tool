@@ -70,6 +70,7 @@ export const paramsToPreviewParams = (
   const includesBadge = Object.values(cd.EmbedBadgePosition).includes(params.showBadge);
   const showBadge = includesBadge ? params.showBadge : coerceBooleanProperty(params.showBadge);
   const fullscreen = viewingComponent ? false : coerceBooleanProperty(params.fullscreen);
+  const disableHotspots = params.disableHotspots || '';
   const showLeftPanel = coerceBooleanProperty(params.showLeftPanel);
   const rotate = viewingComponent ? false : coerceBooleanProperty(params.rotate);
   const id = params.id || '';
@@ -91,6 +92,7 @@ export const paramsToPreviewParams = (
   return cleanupParams({
     comments,
     embedMode,
+    disableHotspots,
     fullscreen,
     showLeftPanel,
     rotate,

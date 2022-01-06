@@ -42,6 +42,7 @@ import {
   BubbleLabelOffsetPipe,
   OverlayMaskBackgroundPipe,
 } from './components/preview-canvas/preview-glass-layer/preview-glass-layer.pipe';
+import { PresenceIndicatorsModule } from '../../components/presence-indicators/presence-indicators.module';
 
 const ROUTES: Routes = [
   {
@@ -62,6 +63,7 @@ const ROUTES: Routes = [
     PreviewTopBarModule,
     EmbedBadgeModule,
     RenderOutletIFrameModule,
+    PresenceIndicatorsModule,
     RouterModule.forChild(ROUTES),
     GlassModule,
   ],

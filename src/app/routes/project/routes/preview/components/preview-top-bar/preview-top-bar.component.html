@@ -89,6 +89,18 @@
     <button
       cd-button
       cdToggleButton
+      iconSize="medium"
+      size="medium"
+      iconName="touch_app"
+      cdTooltip="Toggle tap hints"
+      cdTooltipDirection="bottom"
+      [selected]="hotspotsActive"
+      (click)="onToggleTargets()"
+    ></button>
+
+    <button
+      cd-button
+      cdToggleButton
       iconName="screen_rotation"
       iconSize="medium"
       size="medium"

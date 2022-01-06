@@ -34,6 +34,7 @@ import { PublishPanelModule } from 'src/app/routes/project/components/publish-pa
 import { OwnerDetailsModule } from '../../components/owner-details/owner-details.module';
 import { DynamicPropertiesModule } from '../../components/properties/dynamic-properties/dynamic-properties.module';
 import { CodeCompFontsComponent } from './components/code-comp-fonts/code-comp-fonts.component';
+import { PresenceIndicatorsModule } from '../../components/presence-indicators/presence-indicators.module';
 
 const ROUTES: Routes = [
   {
@@ -64,6 +65,7 @@ const ROUTES: Routes = [
     DynamicPropertiesModule,
     PublishPanelModule,
     RenderOutletIFrameModule,
+    PresenceIndicatorsModule,
     RouterModule.forChild(ROUTES),
   ],
   providers: [],

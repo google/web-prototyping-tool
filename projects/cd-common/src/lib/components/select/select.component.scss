@@ -28,10 +28,12 @@ $totalPadding: 12px;
 .list {
   overflow: hidden;
   overflow-y: auto;
+  overflow-y: overlay;
   margin: 0;
   padding: cssvar(spacing-1) 0;
   max-height: $maxHeight;
   width: -webkit-fill-available;
+  min-width: max-content;
 }
 
 .wrapper {
