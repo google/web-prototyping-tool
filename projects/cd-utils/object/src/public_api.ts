@@ -33,10 +33,6 @@ export const isObject = (obj: any): boolean => {
   return obj !== null && typeof obj === DataType.Object && !isMap(obj) && !isSet(obj);
 };
 
-export const isEmptyObject = (obj: any): boolean => {
-  return isObject(obj) && Object.keys(obj).length === 0;
-};
-
 /**
  * @deprecated
  * Checks if a value is an object, however a null value will return true
@@ -126,9 +122,9 @@ export const isObjectEmpty = (...objs: any[]): boolean => {
 
 export const simpleClone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
 
-// TODO: This limited-purpose function is intended to deep-copy PropertyModel only ---
+// TODO , : This limited-purpose function is intended to deep-copy PropertyModel only ---
 // (There is no cycle detection either, accordingly.)
-// TODO: Do a formal benchmark on best implementation
+// TODO , : Do a formal benchmark on best implementation
 export const deepCopy = <T>(obj: T): T => {
   if (obj === null || !isObject(obj)) return obj;
 

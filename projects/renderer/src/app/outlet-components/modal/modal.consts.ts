@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// TODO: share these with properties of main app
+// TODO: , : share these with properties of main app
 
 export const DEFAULT_BACKDROP_COLOR = 'rgba(0,0,0,0.32)';
 export const DEFAULT_MODAL_WIDTH = 500;

@@ -17,8 +17,10 @@
 import * as cd from 'cd-interfaces';
 import { Injectable, NgZone } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
+import { Store, select } from '@ngrx/store';
+import { IProjectState } from '../../store/reducers';
+import { getCurrentOutletFrames, getHomeBoardId } from '../../store/selectors';
 import { PropertiesService } from '../properties/properties.service';
-import { ProjectContentService } from '../../../../database/changes/project-content.service';
 import { distinctUntilChanged, filter } from 'rxjs/operators';
 import { areObjectsEqual } from 'cd-utils/object';
 import { ILayersNode } from '../../interfaces/layers.interface';
@@ -38,13 +40,14 @@ export class LayersTreeService {
   public treeNodes$ = new BehaviorSubject<ILayersNode[]>([]);
 
   constructor(
+    private readonly _projectStore: Store<IProjectState>,
     private _propertiesService: PropertiesService,
-    private _projectContentService: ProjectContentService,
     private _zone: NgZone
   ) {
-    const homeBoardId$ = this._projectContentService.homeBoardId$;
+    const homeBoardId$ = this._projectStore.pipe(select(getHomeBoardId));
 
-    const outletFrames$ = this._propertiesService.currentOutletFrames$.pipe(
+    const outletFrames$ = this._projectStore.pipe(
+      select(getCurrentOutletFrames),
       distinctUntilChanged((x, y) => haveIdsOrNamesChanged(x, y)),
       filter((values) => values.length > 0)
     );
@@ -66,10 +69,12 @@ export class LayersTreeService {
 
   public updateTreeNodes() {
     this._zone.runOutsideAngular(() => {
-      const { _currentOutletFrameIds, _currentHomeBoardId } = this;
-      const { records } = this._projectContentService.elementContent$.value;
-      const nodes = generateLayersTreeNodes(_currentOutletFrameIds, records, _currentHomeBoardId);
-      this.treeNodes = nodes;
+      const elementProperties = this._propertiesService.getElementProperties();
+      this.treeNodes = generateLayersTreeNodes(
+        this._currentOutletFrameIds,
+        elementProperties,
+        this._currentHomeBoardId
+      );
     });
   }
 

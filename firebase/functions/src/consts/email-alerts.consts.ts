@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-export const NAME = 'WebPrototypingTool';
+export const APP_NAME = 'WebPrototypingTool';

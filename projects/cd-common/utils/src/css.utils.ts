@@ -146,7 +146,7 @@ export const cssToString = (styles: cd.IStyleList) => {
 
 export const createProjectBindings = (
   designSystem?: cd.IDesignSystem,
-  assets: cd.AssetMap | undefined = {}
+  assets: cd.IProjectAssets | undefined = {}
 ): cd.IProjectBindings => {
   const ds = designSystem ?? ({ colors: {}, fonts: {}, typography: {} } as cd.IDesignSystem);
   return { designSystem: ds, assets };
@@ -155,7 +155,7 @@ export const createProjectBindings = (
 export const generateComputedCSS = (
   styles: cd.IStyleAttributes,
   designSystem?: cd.IDesignSystem,
-  assets?: cd.AssetMap
+  assets?: cd.IProjectAssets
 ) => {
   const bindings = createProjectBindings(designSystem, assets);
 

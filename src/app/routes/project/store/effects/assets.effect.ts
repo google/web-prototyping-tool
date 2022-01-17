@@ -20,15 +20,17 @@ import * as elementPropertiesActions from '../actions/element-properties.action'
 import { AssetsService } from '../../services/assets/assets.service';
 import { AssetsUploadService } from '../../services/assets/assets-upload.service';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
+import { getElementProperties } from '../selectors';
 import { Injectable } from '@angular/core';
+import { IProjectState } from '../reducers';
 import { replaceAsset } from '../../utils/design-system.utils';
 import { replaceAssets } from '../../utils/assets.utils';
-import { tap, withLatestFrom, map, filter } from 'rxjs/operators';
+import { Store, select } from '@ngrx/store';
+import { tap, withLatestFrom, map, switchMap } from 'rxjs/operators';
+import { from } from 'rxjs';
 import { getModelEntries } from 'cd-common/models';
 import { DISCONNECT_PROJECT } from '../actions';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { createAssetChangePayload } from 'cd-common/utils';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
+import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
 
 /**
  * Effects for Assets are minimal --- State management for asset uploads is
@@ -43,10 +45,10 @@ import { ProjectChangeCoordinator } from 'src/app/database/changes/project-chang
 export class AssetsEffects {
   constructor(
     private actions$: Actions,
+    private _projectStore: Store<IProjectState>,
     private _assetsUploadService: AssetsUploadService,
     private _assetsService: AssetsService,
-    private _projectContentService: ProjectContentService,
-    private _projectChangeCoordinator: ProjectChangeCoordinator
+    private _databaseChangesService: DatabaseChangesService
   ) {}
 
   onSelectFiles$ = createEffect(
@@ -58,15 +60,11 @@ export class AssetsEffects {
     { dispatch: false }
   );
 
-  onAssetAdded$ = createEffect(
+  onRemoteAdded$ = createEffect(
     () =>
-      this._projectContentService.assetArray$.pipe(
-        map((assets) => {
-          // filter out any assets we've already loaded into the asset service
-          return assets.filter((d) => !this._assetsService.hasAsset(d));
-        }),
-        filter((assets) => !!assets.length),
-        tap((assets) => this._assetsService.addAssetDocuments(assets))
+      this.actions$.pipe(
+        ofType<assetsActions.AssetsRemoteAdded>(assetsActions.ASSETS_REMOTE_ADDED),
+        tap(({ payload }) => this._assetsService.addAssetDocuments(payload))
       ),
     { dispatch: false }
   );
@@ -74,7 +72,7 @@ export class AssetsEffects {
   onDeleted$ = createEffect(() =>
     this.actions$.pipe(
       ofType<assetsActions.AssetsDeleted>(assetsActions.ASSETS_DELETED),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       map(([{ id }, elementProperties]) => {
         const propEntries = getModelEntries(elementProperties);
         const propertiesUpdates = propEntries.reduce((acc: cd.IPropertiesUpdatePayload[], curr) => {
@@ -95,7 +93,7 @@ export class AssetsEffects {
   onReplace$ = createEffect(() =>
     this.actions$.pipe(
       ofType<assetsActions.AssetReplace>(assetsActions.ASSETS_REPLACE),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       map(([{ oldId, replacementId }, elementProperties]) => {
         const propertiesUpdates = replaceAssets(oldId, replacementId, elementProperties);
         return new elementPropertiesActions.ElementPropertiesUpdate(propertiesUpdates);
@@ -107,11 +105,7 @@ export class AssetsEffects {
     () =>
       this.actions$.pipe(
         ofType<assetsActions.AssetsNameChanged>(assetsActions.ASSETS_NAME_CHANGED),
-        tap(({ id, name }) => {
-          const update: cd.IUpdateChange<cd.IProjectAsset> = { id, update: { name } };
-          const payload = createAssetChangePayload(undefined, [update]);
-          this._projectChangeCoordinator.dispatchChangeRequest([payload]);
-        })
+        map(({ id, name }) => this._databaseChangesService.updateAsset(id, { name }))
       ),
     { dispatch: false }
   );
@@ -120,9 +114,9 @@ export class AssetsEffects {
     () =>
       this.actions$.pipe(
         ofType<assetsActions.AssetsCreateDocuments>(assetsActions.ASSETS_CREATE_DOCS),
-        tap(({ payload }) => {
-          const changePayload = createAssetChangePayload(payload);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changePayload]);
+        switchMap(({ payload }) => {
+          this._assetsService.addAssetDocuments(payload);
+          return from(this._databaseChangesService.createAssets(payload));
         })
       ),
     { dispatch: false }

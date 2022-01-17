@@ -24,7 +24,6 @@ $bkdColor: #fff;
   position: fixed;
   background: $bkdColor;
   z-index: 1;
-  // b/185484352
   // will-change is causing the app to run out of GPU memory
   // when the user has large boards
   // will-change: transform;

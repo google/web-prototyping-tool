@@ -26,18 +26,18 @@ import {
   ElementRef,
 } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { fromEvent, Subject, Subscription } from 'rxjs';
-import { auditTime, debounceTime, distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
-import { ILockingRect, ICanvas, IScrollbar, ICanvasPosition, IUserCursor } from 'cd-interfaces';
+import { fromEvent, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, map, tap } from 'rxjs/operators';
+import { ILockingRect } from 'cd-interfaces';
 import { matrix2d, translate } from 'cd-utils/css';
 import { IPanelsState } from '../../interfaces/panel.interface';
 import { MarqueeService } from '../../services/marquee/marquee.service';
+import { ICanvas, IScrollbar, ICanvasPosition } from '../../interfaces/canvas.interface';
 import { KeyboardService } from '../../services/keyboard/keyboard.service';
 import { CanvasService } from '../../services/canvas/canvas.service';
 import { InteractionService } from '../../services/interaction/interaction.service';
 import { generateBounds, calculateScrollbars } from '../../utils/canvas.utils';
 import { ViewportService } from '../../services/viewport/viewport.service';
-import { PropertiesService } from '../../services/properties/properties.service';
 import { deselectActiveElement } from 'cd-utils/selection';
 import * as projectStoreModule from '../../store';
 import { areObjectsEqual } from 'cd-utils/object';
@@ -45,12 +45,8 @@ import { IPoint, createPoint } from 'cd-utils/geometry';
 import { KEYS, MouseButton } from 'cd-utils/keycodes';
 import { toPercent } from 'cd-utils/numeric';
 import { BODY_TAG } from 'cd-common/consts';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { RtcService } from 'src/app/services/rtc/rtc.service';
-import { PresenceService } from 'src/app/services/presence/presence.service';
 
 const SCROLL_TIMEOUT = 1000;
-const MOUSE_MOVE_BUFFER_TIME = 50;
 const A_KEY = 'a';
 
 @Component({
@@ -62,13 +58,10 @@ const A_KEY = 'a';
 export class CanvasComponent implements AfterViewInit, OnDestroy {
   private _dragStart: IPoint = createPoint();
   private _dragging = false;
-  private _marqueeActive = false;
   private _subscriptions = new Subscription();
   private _cursorSubscription = new Subscription();
   private _currentPanelState?: IPanelsState;
   private _canvas!: ICanvas;
-  private _cursorUpdates$ = new Subject<IUserCursor | null>();
-
   public position?: string;
   public scrollPosY?: string;
   public scrollPosX?: string;
@@ -101,18 +94,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     private _interactionService: InteractionService,
     private _keyboardService: KeyboardService,
     private _viewportService: ViewportService,
-    private _projectStore: Store<projectStoreModule.IProjectState>,
-    private _propsService: PropertiesService,
-    private _projectContentService: ProjectContentService,
-    private _rtcService: RtcService,
-    private _presenceService: PresenceService
+    private _projectStore: Store<projectStoreModule.IProjectState>
   ) {}
 
   ngOnDestroy(): void {
     this.clearDragEvents();
     this._marqueeSerivce.resetMode();
     this._subscriptions.unsubscribe();
-    this.broadcastCursorUpdate(null);
   }
 
   positionChanged(position: ICanvasPosition): boolean {
@@ -172,7 +160,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       // when a user is interacting with an input field for example
       filter((e) => (e.target as HTMLElement).tagName === BODY_TAG)
     );
-    const outletFrames$ = this._propsService.currentOutletFrames$.pipe(
+    const outletFrames$ = this._projectStore.pipe(
+      select(projectStoreModule.getCurrentOutletFrames),
       map((outletFrames) => outletFrames.map((outlet) => outlet.frame)),
       distinctUntilChanged((x, y) => areObjectsEqual(x, y))
     );
@@ -183,15 +172,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       debounceTime(SCROLL_TIMEOUT)
     );
 
-    const mousemoveAudit$ = this._cursorUpdates$.pipe(auditTime(MOUSE_MOVE_BUFFER_TIME));
-
     this._subscriptions.add(_panelState$.subscribe(this.onPanelStateSubscription));
     this._subscriptions.add(wheelEvent$.subscribe(this.onWheel));
     this._subscriptions.add(windowKeydown$.subscribe(this.onWindowKeyDown));
     this._subscriptions.add(outletFrames$.subscribe(this.onOutletFramesSubscription));
     this._subscriptions.add(this._viewportService.windowSize$.subscribe(this.updateViewport));
     this._subscriptions.add(_scroll$.subscribe(this.onCanvasMove));
-    this._subscriptions.add(mousemoveAudit$.subscribe(this.broadcastCursorUpdate));
   }
 
   tapCanvasMove = (moving: boolean) => {
@@ -207,9 +193,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     // wait until properties are loaded before performing other calculations
     this._subscriptions.add(
-      this._projectContentService.projectLoaded$.subscribe(
-        (loaded) => loaded && this.initStateListeners()
-      )
+      this._projectStore
+        .pipe(select(projectStoreModule.getElementPropertiesLoaded))
+        .subscribe((loaded) => loaded && this.initStateListeners())
     );
     this._subscriptions.add(this._keyboardService.spaceBarDown$.subscribe(this.onSpacebar));
   }
@@ -230,7 +216,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   onWheel = (e: WheelEvent) => {
     // e.preventDefault();
-    const { deltaX, deltaY, ctrlKey, metaKey, clientX, clientY, pageX, pageY } = e;
+    const { deltaX, deltaY, ctrlKey, metaKey, clientX, clientY } = e;
     const zoomKey = ctrlKey || metaKey;
     /** Pinch and Zoom on macOS or holding the CTRL key */
     if (zoomKey === true) {
@@ -238,7 +224,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     } else {
       this._canvasService.pan(deltaX, deltaY);
     }
-    this.calcCursorUpdate(pageX, pageY);
   };
 
   isTargetCanvas(e: MouseEvent): boolean {
@@ -291,7 +276,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!canvas) return;
     const { clientX, clientY } = e;
     this._dragging = true;
-    this._marqueeActive = true;
     this._dragStart = { x: clientX, y: clientY };
     this._marqueeSerivce.updateMarqueeSelection(clientX, clientY);
     this.addCusorEvents(this.onMarquee);
@@ -344,7 +328,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   onMouseUp = () => {
     this.grabbing = false;
-    this._marqueeActive = false;
     this.clearDragEvents();
     this._marqueeSerivce.finishMarqueeSelection(this.canvasPosition);
   };
@@ -387,29 +370,4 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     element.scrollLeft = 0;
     element.scrollTop = 0;
   }
-
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(e: MouseEvent) {
-    this.calcCursorUpdate(e.pageX, e.pageY);
-  }
-
-  @HostListener('mouseleave')
-  onMouseLeave() {
-    this._cursorUpdates$.next(null);
-  }
-
-  private calcCursorUpdate(x: number, y: number) {
-    const { canvas } = this._canvasService;
-    const { sessionId } = this._presenceService;
-    const isolatedSymbolId = this._currentPanelState?.isolatedSymbolId;
-    const cursor: IUserCursor = { x, y, canvas, sessionId, isolatedSymbolId };
-    const { marqueeRect } = this._marqueeSerivce;
-    if (this._marqueeActive) cursor.marqueeRect = marqueeRect;
-    this._cursorUpdates$.next(cursor);
-  }
-
-  private broadcastCursorUpdate = (cursor: IUserCursor | null) => {
-    if (cursor) this._rtcService.broadcastCursorPositionMessage(cursor);
-    else this._rtcService.broadcastHideCursorMessage();
-  };
 }

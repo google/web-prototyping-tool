@@ -30,7 +30,7 @@ export const calculateFitAspectRatioForAsset = (
   element: cd.IImageProperties,
   renderResult: cd.IRenderResult | undefined
 ): cd.IPropertiesUpdatePayload[] | undefined => {
-  // TODO: Determine based on width > height vs height > width
+  // TODO:  Determine based on width > height vs height > width
   // TODO: Aspect ratio calc should be a cd-common/util
   if (!utils.getElementBaseStyles(element)) return;
   const w = utils.getElementBaseStyles(element)?.width;

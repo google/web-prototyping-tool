@@ -50,7 +50,7 @@ export class AFStorageUploadHelper {
   };
 
   private onPercentageChanges = (percentage = 0) => {
-    // Percentage is number | undefined even though AngularFire
+    // XXX : percentage is number | undefined even though AngularFire
     // documentation says it's always a number, and doesn't say when it can be
     // undefined. Assuming undefined = 0%.
     const progress = toDecimal(percentage);

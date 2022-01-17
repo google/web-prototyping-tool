@@ -19,18 +19,20 @@
 import type * as cd from 'cd-interfaces';
 import { setIdbData } from './indexed-db.utils';
 import { fromEvent } from 'rxjs';
-import { distinctUntilChanged, map, bufferTime, filter } from 'rxjs/operators';
+import { distinctUntilChanged, map, auditTime } from 'rxjs/operators';
 
 fromEvent<MessageEvent>(globalThis, 'message')
   .pipe(
-    bufferTime(100),
-    filter((items) => items.length > 0),
-    map((items) => items[items.length - 1]?.data), // always just write last item in buffer
-    map((data: cd.IProjectContent) => [data.project.id, JSON.stringify(data)]),
+    auditTime(100),
+    map((item) => item?.data),
+    map((data: cd.IOfflineProjectStateMessage) => [
+      data.projectId,
+      JSON.stringify(data.offlineState),
+    ]),
     distinctUntilChanged((x, y) => x[1] === y[1])
   )
-  .subscribe(([projectId, projectContent]) => {
-    if (!projectId || !projectContent) return;
+  .subscribe(([projectId, offlineState]) => {
+    if (!projectId || !offlineState) return;
 
-    setIdbData(projectId, projectContent);
+    setIdbData(projectId, offlineState);
   });

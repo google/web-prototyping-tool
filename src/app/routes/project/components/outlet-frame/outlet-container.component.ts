@@ -30,7 +30,7 @@ import { ISelectionState } from '../../store/reducers/selection.reducer';
 import { AppGoToPreview } from 'src/app/store/actions/router.action';
 import { RenderOutletIFrameComponent } from 'src/app/components/render-outlet-iframe/render-outlet-iframe.component';
 import { OutletLabelComponent } from './outlet-label.component';
-import { ElementPropertiesUpdate, IProjectState } from '../../store';
+import { ElementPropertiesUpdate, getCurrentOutletFrames, IProjectState } from '../../store';
 import { CanvasService } from '../../services/canvas/canvas.service';
 import { getShowingBoardIds, IAppState } from 'src/app/store';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -41,7 +41,6 @@ import { select, Store } from '@ngrx/store';
 import { EMPTY, Subscription } from 'rxjs';
 import * as cd from 'cd-interfaces';
 import { half } from 'cd-utils/numeric';
-import { PropertiesService } from '../../services/properties/properties.service';
 
 @Component({
   selector: 'app-outlet-container',
@@ -84,14 +83,13 @@ export class OutletContainerComponent implements OnInit, OnDestroy {
     private _cdRef: ChangeDetectorRef,
     private _interactionService: InteractionService,
     private _canvasService: CanvasService,
-    private _propsService: PropertiesService,
     private readonly _appStore: Store<IAppState>,
     private readonly _projectStore: Store<IProjectState>
   ) {}
 
   ngOnInit(): void {
     const showBoardIds$ = this._appStore.pipe(select(getShowingBoardIds));
-    const outletFrames$ = this._propsService.currentOutletFrames$;
+    const outletFrames$ = this._projectStore.pipe(select(getCurrentOutletFrames));
     const { outletFrameRects$, outletFrameOrder$, visibleBoards$ } = this._interactionService;
     this._subscription.add(showBoardIds$.subscribe(this.onShowBoardIds));
     this._subscription.add(outletFrames$.subscribe(this.onOutletFrames));

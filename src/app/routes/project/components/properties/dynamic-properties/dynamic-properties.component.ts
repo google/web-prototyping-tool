@@ -31,18 +31,17 @@ import {
 import { SelectionContextService } from '../../../services/selection-context/selection.context.service';
 import { configFromActionString } from '../../../services/selection-context/selection.context.utils';
 import { OUTLET_FRAME_MAX_SIZE, OUTLET_FRAME_MIN_SIZE } from '../../../configs/outlet-frame.config';
-import { areSymbolInputsExposedForElement, generateTrackBy } from './dynamic-properties.utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { bkdSizeConfig, sizeConfig } from '../../../configs/root-element.properties.config';
 import { ContextBindingPipe, ITemplateContext, StyleBindingPipe } from '../properties.pipe';
 import { InteractionService } from '../../../services/interaction/interaction.service';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
 import { AssetsService } from '../../../services/assets/assets.service';
-import { IProjectState } from '../../../store';
+import { getElementProperties, IProjectState } from '../../../store';
+import { areSymbolInputsExposedForElement, generateTrackBy } from './dynamic-properties.utils';
 import { DataPickerService } from 'cd-common';
 import { Subscription } from 'rxjs';
 import { toDecimal } from 'cd-utils/numeric';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import * as config from '../../../configs/properties.config';
 import * as actions from '../../../store/actions';
 import * as utils from '../properties.utils';
@@ -105,14 +104,13 @@ export class DynamicPropertiesComponent implements OnInit, OnChanges, OnDestroy 
     private _projectStore: Store<IProjectState>,
     private _assetService: AssetsService,
     private _selectionContextService: SelectionContextService,
-    private _projectContentService: ProjectContentService,
     private _cdRef: ChangeDetectorRef,
     private _toastsService: ToastsService,
     public dataPickerService: DataPickerService
   ) {}
 
   ngOnInit() {
-    const { elementProperties$ } = this._projectContentService;
+    const elementProperties$ = this._projectStore.pipe(select(getElementProperties));
     const { loadedData$ } = this.dataPickerService;
 
     this.subscriptions.add(elementProperties$.subscribe(this.onElementPropsSubscription));
@@ -227,7 +225,7 @@ export class DynamicPropertiesComponent implements OnInit, OnChanges, OnDestroy 
     const { mergedProps, mergedParentProps } = this;
     const state = mergedProps.state || cd.State.Default;
     this.styles = mergedProps.styles[state]?.style || {};
-    this.parentStyles = mergedParentProps?.styles?.[state]?.style || {};
+    this.parentStyles = mergedParentProps?.styles[state]?.style || {};
   }
 
   generateImageAssetProps(imgProps?: cd.IImageInputs) {
@@ -244,6 +242,7 @@ export class DynamicPropertiesComponent implements OnInit, OnChanges, OnDestroy 
 
   /** Write to the inputs object on a model. */
   writeInputsValue(value: any, prop?: cd.IPropertyGroup) {
+    // TODO
     // Currently using targetId instead of inputId for dirty tracking
     const overrideTarget = prop && prop.targetId;
     const inputs = { inputs: value };
@@ -262,6 +261,7 @@ export class DynamicPropertiesComponent implements OnInit, OnChanges, OnDestroy 
    * Use writeInputs to write to the { inputs } object or writeActiveStyle for active style
    */
   writeRootValue(value: any, prop?: cd.IPropertyGroup) {
+    // TODO
     // currently using targetId instead of inputId for dirty tracking
     const overrideTarget = prop && prop.targetId;
     const output = this.buildOutput(overrideTarget, value);

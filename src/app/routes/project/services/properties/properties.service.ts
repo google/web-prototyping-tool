@@ -15,7 +15,7 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, Subscription, BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { IProjectState } from '../../store/reducers';
 import { Store, select } from '@ngrx/store';
 import { map, distinctUntilChanged } from 'rxjs/operators';
@@ -23,7 +23,6 @@ import * as selectors from '../../store/selectors';
 import * as actions from '../../store/actions';
 import { areArraysEqual } from 'cd-utils/array';
 import { getActiveStyleFromProperty, insertElements, lookupElementIds } from 'cd-common/models';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { getUser } from 'src/app/store/selectors';
 import { constructCodeComponentPath } from 'src/app/utils/route.utils';
 import { AppGo } from 'src/app/store/actions';
@@ -32,7 +31,7 @@ import * as cd from 'cd-interfaces';
 import { DataPickerService } from 'cd-common';
 import { buildInsertLocation } from 'cd-common/utils';
 
-// TODO _propertyModelService should dispose
+// TODO  _propertyModelService should dispose
 @Injectable({
   providedIn: 'root',
 })
@@ -47,41 +46,32 @@ export class PropertiesService implements OnDestroy {
   private _designSystem?: cd.IDesignSystem;
   private _codeComponents?: Dictionary<cd.ICodeComponentDocument>;
   public boardIds$ = new BehaviorSubject<string[]>([]);
-  public currentOutletFrames$: Observable<cd.RootElement[]>;
 
   constructor(
     private readonly _projectStore: Store<IProjectState>,
-    private _dataPickerService: DataPickerService,
-    private _projectContentService: ProjectContentService
+    private _dataPickerService: DataPickerService
   ) {
-    this._elementProperties$ = this._projectContentService.elementProperties$;
-
-    // Compute which outlet frames are currently in view based off of Symbol isolation mode
-    const panelsState$ = this._projectStore.pipe(select(selectors.getPanelsState));
-    const { boardsArray$, symbolsArray$ } = this._projectContentService;
-    this.currentOutletFrames$ = combineLatest([panelsState$, boardsArray$, symbolsArray$]).pipe(
-      map(([panelsState, boards, symbols]) => {
-        const { symbolMode, isolatedSymbolId } = panelsState;
-        if (!symbolMode) return boards;
-        if (!isolatedSymbolId) return symbols;
-        const isolatedSymbol = symbols.find((s) => s.id === isolatedSymbolId);
-        return isolatedSymbol ? [isolatedSymbol] : [];
-      }),
-      distinctUntilChanged((x, y) => areArraysEqual(x, y))
-    );
+    this._elementProperties$ = this._projectStore.pipe(select(selectors.getElementProperties));
 
     const user$ = this._projectStore.pipe(select(getUser));
-    const project$ = this._projectContentService.project$;
-    const boards$ = this._projectContentService.boardsArray$;
-    const boardIds$ = this._projectContentService.boardIds$;
-    const designSystem$ = this._projectContentService.designSystem$;
-    const codeComponents$ = this._projectContentService.codeCmpMap$;
+    const project$ = this._projectStore.pipe(select(selectors.getProject));
+    const boards$ = this._projectStore.pipe(select(selectors.getAllBoards));
+    const boardIds$ = this._projectStore.pipe(
+      select(selectors.getBoardsIds),
+      distinctUntilChanged((x, y) => areArraysEqual(x, y))
+    );
+    const outletFrames$ = this._projectStore.pipe(
+      select(selectors.getCurrentOutletFrames),
+      distinctUntilChanged((x, y) => areArraysEqual(x, y))
+    );
+    const designSystem$ = this._projectStore.pipe(select(selectors.getDesignSystem));
+    const codeComponents$ = this._projectStore.pipe(select(selectors.selectCodeComponents));
 
     this._subscriptions.add(this._elementProperties$.subscribe(this.onElementProperties));
     this._subscriptions.add(project$.subscribe(this._onProject));
     this._subscriptions.add(boardIds$.subscribe(this.onBoardIds));
     this._subscriptions.add(boards$.subscribe(this.onBoards));
-    this._subscriptions.add(this.currentOutletFrames$.subscribe(this.onCurrentOutletFrames));
+    this._subscriptions.add(outletFrames$.subscribe(this.onCurrentOutletFrames));
     this._subscriptions.add(user$.subscribe(this._onUserSubscription));
     this._subscriptions.add(designSystem$.subscribe(this._onDesignSystemSubscription));
     this._subscriptions.add(codeComponents$.subscribe(this._onCodeComponentSubscription));
@@ -211,18 +201,19 @@ export class PropertiesService implements OnDestroy {
   }
 
   subscribeToProperties(...ids: string[]): Observable<cd.PropertyModel[]> {
-    return this._projectContentService.elementContent$.pipe(
-      distinctUntilChanged((_prev, curr) => {
-        // Only update if the ids subscribed to have changed
-        const idsUpdated = ids.some((id) => curr.idsUpdatedInLastChange.has(id));
-        const idsDeleted = ids.some((id) => curr.idsDeletedInLastChange.has(id));
-        const equalToPrev = !(idsUpdated || idsDeleted);
-        return equalToPrev;
-      }),
-      map((content) => {
-        // prevent looking up ids that have been deleted
-        const filteredIds = ids.filter((id) => !content.idsDeletedInLastChange.has(id));
-        return lookupElementIds(filteredIds, content.records);
+    let previousResults: cd.PropertyModel[] | undefined;
+
+    return this._projectStore.pipe(
+      select(selectors.getElementPropertiesState),
+      map((state) => {
+        const { lastUpdatedIds, elementProperties } = state;
+        const idsUpdated = ids.some((id) => lastUpdatedIds.has(id));
+
+        if (!previousResults || idsUpdated) {
+          previousResults = lookupElementIds(ids, elementProperties);
+        }
+
+        return previousResults;
       })
     );
   }
@@ -235,20 +226,15 @@ export class PropertiesService implements OnDestroy {
     const { _elementProperties } = this;
     const dropLocation = buildInsertLocation(selectedElementId, relation);
     const elemIds = elements.map((elem) => elem.id);
-    const changePayload = insertElements(elemIds, dropLocation, _elementProperties, elements);
-    this.updatePropertiesAndSelect([changePayload], elemIds);
+    const update = insertElements(elemIds, dropLocation, _elementProperties, elements);
+    this.updatePropertiesAndSelect(update, elemIds);
   }
 
-  updatePropertiesAndSelect(changes: cd.IElementChangePayload[], elemIds: string[]) {
-    this._projectStore.dispatch(new actions.ElementPropertiesChangeRequest(changes));
+  updatePropertiesAndSelect(update: cd.IPropertiesUpdatePayload[], elemIds: string[]) {
+    this._projectStore.dispatch(new actions.ElementPropertiesUpdate(update));
     this._projectStore.dispatch(new actions.SelectionToggleElements(elemIds));
     this._projectStore.dispatch(
       new actions.PanelSetPropertyPanelState(cd.PropertyPanelState.Default)
     );
-  }
-
-  sendChangeRequestAndSelect(payload: cd.IElementChangePayload[], elemIds: string[]) {
-    this._projectStore.dispatch(new actions.ElementPropertiesChangeRequest(payload));
-    this._projectStore.dispatch(new actions.SelectionToggleElements(elemIds));
   }
 }

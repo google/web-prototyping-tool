@@ -62,7 +62,7 @@ export class DrawerComponent implements IRenderComponent, OnDestroy {
   @Input() shadow: string | undefined = '';
   @Input() size = 300;
 
-  // TODO: remember to add user option to remove focus trap
+  // TODO (inline drawer): remember to add user option to remove focus trap
   @Input() hasFocusTrap = true;
   @Input() initialFocusElementId?: string;
   @Input() drawerTriggerElement?: HTMLElement;

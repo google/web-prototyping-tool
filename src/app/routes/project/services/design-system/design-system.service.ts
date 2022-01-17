@@ -15,16 +15,20 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { Store, select } from '@ngrx/store';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
 import { IProjectState } from '../../store/reducers';
 import { DesignSystemReplace } from '../../store/actions';
+import { getDesignSystem } from '../../store/selectors';
 import { downloadJsonAsFile, downloadStringAsFile } from 'cd-utils/files';
+import { createDesignSystemDocument } from 'src/app/database/changes/change.utils';
 import { generateCSSVars } from 'cd-common/utils';
+import { take } from 'rxjs/operators';
 import { FontKind } from 'cd-metadata/fonts';
+import { createId } from 'cd-utils/guid';
+import { Theme } from 'cd-themes';
 import * as cd from 'cd-interfaces';
-import { firstValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';
 
 const DESIGN_SYSTEM_VARS_FILE = 'design-system-vars.css';
 const DESIGN_SYSTEM_JSON_FILE = 'design-system.json';
@@ -38,11 +42,7 @@ const IMPORT_TOAST = {
   providedIn: 'root',
 })
 export class DesignSystemService {
-  constructor(
-    private _projectStore: Store<IProjectState>,
-    private _toastService: ToastsService,
-    private _projectContentService: ProjectContentService
-  ) {}
+  constructor(private _projectStore: Store<IProjectState>, private _toastService: ToastsService) {}
 
   import(file: File) {
     const reader = new FileReader();
@@ -59,7 +59,7 @@ export class DesignSystemService {
   }
 
   getTheme() {
-    return firstValueFrom(this._projectContentService.designSystem$);
+    return lastValueFrom(this._projectStore.pipe(select(getDesignSystem), take(1)));
   }
 
   isThemeValid(theme: any): boolean {
@@ -87,6 +87,14 @@ export class DesignSystemService {
       return acc;
     }, {});
   }
+
+  createNewDesignSystem = (
+    projectId: string,
+    themeId = Theme.AngularMaterial
+  ): cd.IDesignSystemDocument => {
+    const id = createId();
+    return createDesignSystemDocument(id, projectId, themeId);
+  };
 
   async exportAsJSON() {
     const theme = await this.getTheme();

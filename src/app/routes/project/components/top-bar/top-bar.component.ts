@@ -48,7 +48,6 @@ import * as cd from 'cd-interfaces';
 import * as projectStore from '../../store';
 import * as utils from 'cd-common/utils';
 import * as models from 'cd-common/models';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 enum SelectionContext {
   Project,
@@ -91,7 +90,6 @@ export class TopBarComponent
   public showLayoutDropdown = false;
   public imageMatchesAspectRatio = false;
   public saving = false;
-  public boardIds$: Observable<string[]>;
 
   @Input() isRecording = false;
   @Input() initialLoad = false;
@@ -101,6 +99,11 @@ export class TopBarComponent
   set project(project: cd.IProject) {
     this._project = project;
     this.projectName = project?.name || '';
+  }
+
+  get boardCount(): number {
+    if (!this._project) return 0;
+    return this._project.boardIds.length;
   }
 
   @Input()
@@ -123,30 +126,24 @@ export class TopBarComponent
     private _selectionContext: SelectionContextService,
     private _cdRef: ChangeDetectorRef,
     private _projectStore: Store<projectStore.IProjectState>,
-    private _projectContentService: ProjectContentService,
     private _propertiesService: PropertiesService,
     private _publishService: PublishService,
     private _peopleService: PeopleService,
     private _dbService: DatabaseService
   ) {
     super(overlayService);
-    const { elementProperties$, boardIds$ } = this._projectContentService;
-    this.boardIds$ = boardIds$;
-    this.isUserOwnerOfIsolatedSymbol$ = getIsoloatedSymbolObservable(
-      _projectStore,
-      elementProperties$
-    );
+    this.isUserOwnerOfIsolatedSymbol$ = getIsoloatedSymbolObservable(_projectStore);
   }
 
   ngOnInit(): void {
-    const boards$ = this._projectContentService.boardsArray$;
+    const outlets$ = this._projectStore.pipe(select(projectStore.getAllOutletFrames));
     const selectionState = this._projectStore.pipe(select(projectStore.getSelectionState));
 
     this._subscription = selectionState.subscribe(this.onSelectionStateSubscription);
     this._subscription.add(
       this._selectionContext.selectedProperties.subscribe(this.onSelectedPropsUpdate)
     );
-    this._subscription.add(boards$.subscribe(this.onBoardsSubscriptions));
+    this._subscription.add(outlets$.subscribe(this.onOutletsSubscription));
     this._subscription.add(
       this._dbService.batchQueue.active$
         .pipe(auditTime(250), distinctUntilChanged())
@@ -196,7 +193,8 @@ export class TopBarComponent
     this._cdRef.markForCheck();
   };
 
-  onBoardsSubscriptions = (boards: cd.IBoardProperties[]) => (this._boards = boards);
+  onOutletsSubscription = ({ boards }: projectStore.IOutletFrameSubscription) =>
+    (this._boards = boards);
 
   buildGroupMenu() {
     const ungroupDisabled = !this._selectionContext.canUngroup();

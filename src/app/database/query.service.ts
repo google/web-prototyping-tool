@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import { map, first, take, takeUntil, retry, switchMap } from 'rxjs/operators';
+import { map, first, take, takeUntil, retry } from 'rxjs/operators';
 import { Subscription, BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { ScreenshotService } from 'src/app/services/screenshot-lookup/screenshot-lookup.service';
 import * as firestore from '@angular/fire/firestore';
-import * as cd from 'cd-interfaces';
+import type * as cd from 'cd-interfaces';
 import { OnDestroy, Injectable } from '@angular/core';
 import { stringMatchesRegex } from 'cd-utils/string';
 import type firebase from 'firebase/app';
@@ -30,7 +30,6 @@ import {
   TILE_THUMBNAIL_LIMIT,
   UNICODE_RANGE_MAX,
 } from 'cd-common/consts';
-import { DatabaseService } from './database.service';
 
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const OWNER_REGEX = /^owner:/;
@@ -49,7 +48,7 @@ export type IPublishEntryQueryResult = IQueryResult<cd.IPublishEntry>;
 @Injectable({
   providedIn: 'root',
 })
-export class QueryService implements OnDestroy {
+export class AbstractQueryService implements OnDestroy {
   static BATCH_SIZE = 36;
 
   private _loading = false;
@@ -64,8 +63,7 @@ export class QueryService implements OnDestroy {
 
   constructor(
     protected _screenshotService: ScreenshotService,
-    protected _afs: firestore.AngularFirestore,
-    protected _databaseService: DatabaseService
+    protected _afs: firestore.AngularFirestore
   ) {}
 
   getCollection<T extends cd.IBaseDocument>(
@@ -75,7 +73,7 @@ export class QueryService implements OnDestroy {
     return (
       this._afs
         .collection(ref, queryFn)
-        // Fix for cached results from firebase b/154047381
+        // Fix for cached results from firebase
         // .snapshotChanges()
         .get({ source: 'server' })
         .pipe(
@@ -122,22 +120,16 @@ export class QueryService implements OnDestroy {
     this._screenshotSubscription = new Subscription();
 
     for (const proj of data) {
-      const boards$ = this._databaseService.getProjectBoards(proj, TILE_THUMBNAIL_LIMIT);
-      const screenshots$ = boards$.pipe(
-        switchMap((boards) => {
-          const boardIds = boards.map((b) => b.id);
-          return this._screenshotService.getScreenshotUrl(boardIds);
-        }),
-        take(1),
-        takeUntil(this.destroyed)
-      );
-
+      const boards = proj.boardIds.slice(0, TILE_THUMBNAIL_LIMIT);
       this._screenshotSubscription.add(
-        screenshots$.subscribe((ref) => {
-          const thumbnails = this.boardThumbnails$.getValue();
-          thumbnails.set(proj.id, ref);
-          this.boardThumbnails$.next(thumbnails);
-        })
+        this._screenshotService
+          .getScreenshotUrl(boards)
+          .pipe(take(1), takeUntil(this.destroyed))
+          .subscribe((ref) => {
+            const thumbnails = this.boardThumbnails$.getValue();
+            thumbnails.set(proj.id, ref);
+            this.boardThumbnails$.next(thumbnails);
+          })
       );
     }
   }
@@ -161,7 +153,7 @@ export class QueryService implements OnDestroy {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 
   usernameFromQuery = (query: string): string | undefined => {

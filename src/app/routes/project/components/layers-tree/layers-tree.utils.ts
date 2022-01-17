@@ -19,7 +19,12 @@ import { isIcon, isText, iconForComponent, getComponent } from 'cd-common/models
 import { ILayersNode, FlatLayersNode } from '../../interfaces/layers.interface';
 import { areSetsEqual } from 'cd-utils/object';
 import { stripHTMLTags, toSentenceCase, truncateText } from 'cd-utils/string';
-import { isDataBoundValue, isIValue, sortElementsByName, isMaterialIcon } from 'cd-common/utils';
+import {
+  isIcon,
+  isDataBoundValue,
+  isIValue,
+  sortElementsByName,
+} from 'cd-common/utils';
 
 const enum TreeCellClass {
   ExpandArrow = '.arrow',
@@ -76,7 +81,7 @@ export const buildNameMap = (
     if (isIcon(curr)) {
       const prefixIsDefault = prefix === DEFAULT_ICON_NAME;
       const iconName = (curr as cd.IIconProperties).inputs.iconName;
-      const nameValue = isMaterialIcon(iconName) ? iconName : toSentenceCase(iconName.name);
+      const nameValue = isIcon(iconName) ? toSentenceCase(iconName.name) : iconName;
       const textString = prefixIsDefault ? nameValue : prefix;
       acc.set(curr.id, [textString]);
     } else if (isText(curr)) {

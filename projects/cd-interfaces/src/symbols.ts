@@ -21,9 +21,8 @@ import {
 } from './component-instances';
 import { ElementEntitySubType } from './entity-types';
 import { IStringMap, RecursivePartial } from './index';
-import { PropertyModel } from './property-models';
+import { PropertyModel, IPropertiesUpdatePayload } from './property-models';
 import { IPublishable } from './publish';
-import { IElementChangePayload } from './project-changes';
 
 // TODO: Move to models
 
@@ -100,6 +99,8 @@ export interface ISymbolProperties extends IRootElementProperties, IPublishable 
   defaultInputs?: SymbolInstanceInputs;
   /** Map of components and if their properties are exposed */
   exposedInputs?: Record<string, boolean>;
+
+  orderedElemIds: string[]; // Used by grouping inputs
 }
 
 export type SymbolInstanceInputs = IStringMap<RecursivePartial<PropertyModel>>;
@@ -115,10 +116,11 @@ export type ISymbolMap = IStringMap<ISymbolProperties>;
 export interface ICreateSymbolResult {
   symbol: ISymbolProperties;
   symbolInstance: ISymbolInstanceProperties;
-  change: IElementChangePayload;
+  updates: IPropertiesUpdatePayload[];
+  deletions: PropertyModel[];
 }
 
 export interface IUnpackSymbolInstanceResult {
-  change: IElementChangePayload;
+  updates: IPropertiesUpdatePayload[];
   rootId: string;
 }

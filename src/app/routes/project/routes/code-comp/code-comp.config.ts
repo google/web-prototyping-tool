@@ -19,7 +19,7 @@ import { generateIDWithLength } from 'cd-utils/guid';
 import { incrementedName, toCamelCase } from 'cd-utils/string';
 
 const CSS_VAR_LINK = 'https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties';
-const INPUTS_LINK = '';
+const APP_INPUTS_LINK = '';
 const LEARN_MORE_TEXT = 'Learn more';
 
 /**
@@ -118,7 +118,7 @@ export const CC_BKG_MENU_ITEMS: cd.IMenuConfig[] = [
 export const NO_INPUT_NAME_ERROR_TEXT: cd.IRichTooltip = {
   text: `Input name is required.`,
   linkText: LEARN_MORE_TEXT,
-  link: INPUTS_LINK,
+  link: APP_INPUTS_LINK,
 };
 
 export const NO_CSS_VAR_NAME_ERROR_TEXT: cd.IRichTooltip = {
@@ -130,7 +130,7 @@ export const NO_CSS_VAR_NAME_ERROR_TEXT: cd.IRichTooltip = {
 export const DATA_BOUND_TO_ATTRIBUTE_ERROR_TEXT: cd.IRichTooltip = {
   text: `Invalid configuration. Data cannot be set on an attribute.`,
   linkText: LEARN_MORE_TEXT,
-  link: INPUTS_LINK,
+  link: APP_INPUTS_LINK,
 };
 
 export enum NameErrorType {
@@ -146,7 +146,7 @@ export const getDuplicateNameErrorText = (
   return {
     text: `${type} name must be unique. '${duplicatedName}' has already been used as an input or event name.`,
     linkText: LEARN_MORE_TEXT,
-    link: INPUTS_LINK,
+    link: APP_INPUTS_LINK,
   };
 };
 
@@ -162,7 +162,7 @@ export const getInvalidNameErrorText = (name: string, type: NameErrorType): cd.I
       </ul>
     `,
     linkText: LEARN_MORE_TEXT,
-    link: isCssVar ? CSS_VAR_LINK : INPUTS_LINK,
+    link: isCssVar ? CSS_VAR_LINK : APP_INPUTS_LINK,
   };
 };
 
@@ -174,7 +174,7 @@ export const INPUT_TYPE_TEXT = `
     <li>Properties are values on element objects</li>
     <li>CSS variables are custom properties for styles</li>
   </ul>
-  <a href="${INPUT_TYPE_LINK}">Learn more</a>
+  <a href="${INPUT_TYPE_LINK}">Lean more</a>
 `;
 
 export const INPUT_CSS_NAME_TEXT = 'The CSS variable name<br>Example: --foo-bar';

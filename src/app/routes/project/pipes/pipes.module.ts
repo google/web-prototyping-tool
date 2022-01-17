@@ -17,10 +17,9 @@
 import { NgModule } from '@angular/core';
 import { OutletIconPipe } from './outlet-icon.pipe';
 import { IsCodeComponentPipe } from './code-component.pipe';
-import { PeerColorPipe } from './peer-color.pipe';
 
 @NgModule({
-  declarations: [OutletIconPipe, IsCodeComponentPipe, PeerColorPipe],
-  exports: [OutletIconPipe, IsCodeComponentPipe, PeerColorPipe],
+  declarations: [OutletIconPipe, IsCodeComponentPipe],
+  exports: [OutletIconPipe, IsCodeComponentPipe],
 })
 export class PipesModule {}

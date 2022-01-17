@@ -117,7 +117,6 @@ export class PeopleService {
   }
 
   getListOfUsersAsObservable(q: string) {
-    if (!environment.databaseEnabled) return of([]);
     return this._authenticated$.pipe(
       filter((value) => value === true),
       switchMap(() => from(utils.lookupUserByQuery(q))),
@@ -150,7 +149,7 @@ export class PeopleService {
   }
 
   get ignoreAuthState() {
-    return this.isEmbeddedPreview || this.authTokenPresentInRoute || !environment.databaseEnabled;
+    return this.isEmbeddedPreview || this.authTokenPresentInRoute;
   }
 
   private onUserSubscription = async (_user: cd.IUser | undefined) => {

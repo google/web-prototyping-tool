@@ -87,5 +87,6 @@ export * from './instance.utils';
 export {
   DROP_GUTTER_WIDTH,
   LAYERS_NODE_DROP_GUTTER_WIDTH,
+  removePreviewStyles,
   insertElements,
 } from './properties.insert.utils';

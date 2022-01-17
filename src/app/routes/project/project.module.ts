@@ -48,10 +48,9 @@ import { PublishPanelModule } from './components/publish-panel/publish-panel.mod
 import { OwnerDetailsModule } from './components/owner-details/owner-details.module';
 import { DndDirectorModule } from './dnd-director/dnd-director.module';
 import { DataPanelModule } from './components/panels/data-panel/data.module';
+import { registerComponentDefinitions } from 'cd-definitions';
 import { PublishDetailsModule } from './components/publish-details/publish-details.module';
 import { LayoutPickerModule } from './components/layout-picker/layout-picker.module';
-import { PresenceIndicatorsModule } from './components/presence-indicators/presence-indicators.module';
-import { PipesModule } from './pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -66,7 +65,6 @@ import { PipesModule } from './pipes/pipes.module';
     DataPanelModule,
     ThemeModule,
     LayoutPickerModule,
-    PresenceIndicatorsModule,
     ActivityPanelHeaderModule,
     ComponentsPanelModule,
     ActivityBarModule,
@@ -81,7 +79,6 @@ import { PipesModule } from './pipes/pipes.module';
     PublishPanelModule,
     PublishEntryTileModule,
     AssetsImporterModule,
-    PipesModule,
   ],
   declarations: [
     DebugStatsComponent,
@@ -95,4 +92,9 @@ import { PipesModule } from './pipes/pipes.module';
     AboutPanelComponent,
   ],
 })
-export class ProjectModule {}
+export class ProjectModule {
+  constructor() {
+    // Load all built-in component definitions - this will populate components panel
+    registerComponentDefinitions();
+  }
+}

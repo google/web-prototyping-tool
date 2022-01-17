@@ -49,7 +49,7 @@ export const replaceStringsInDocs = <T>(srcDocs: T[], replacementMap: Map<string
     // In both cases, use of id starts with a quotation mark.
     // This check is to prevent replacing an id inside a download url /12341234/original.png
     // since an asset (and its download url) can be used in multiple projects
-    // TODO: assets should have totally unique ids that are not contained in this
+    // TODO : assets should have totally unique ids that are not contained in this
     // replacement map.
     const regexWithQuote = `"${regexString}`;
     const newStringWithQuote = `"${newString}`;
@@ -87,6 +87,9 @@ export const duplicateProjectDoc = (
 
   // reset numComments to 0 since comments don't get duplicated with project
   newDoc.numComments = 0;
+
+  // remove any linked zipline project
+  delete newDoc.ziplineData;
 
   return newDoc;
 };
@@ -191,8 +194,9 @@ export const filterProjectToSymbol = (
   project: cd.IProject,
   contents: cd.IProjectContentDocument[]
 ): [cd.IProject, cd.IProjectContentDocument[]] => {
+  const projectIncludesSymbol = project.symbolIds.includes(symbolId);
   const symbol = contents.find((doc) => doc.id === symbolId) as cd.ISymbolProperties;
-  if (!symbol) throw new Error('Symbol not contained in project contents');
+  if (!projectIncludesSymbol || !symbol) throw new Error('Symbol not contained in project');
 
   const contentMap = mapContents(contents);
   const childSymbolIds = getChildSymbolIdsOfSymbol(symbol, contents);
@@ -204,7 +208,7 @@ export const filterProjectToSymbol = (
   const codeComponentDocs = getSymbolCodeComponentDependencies(symbolElements, contentMap);
   if (!designSystemDoc) throw new Error('Project does not contain a design system');
 
-  const filteredProject: cd.IProject = { ...project };
+  const filteredProject = { ...project, symbolIds: allSymbolIds, boardIds: [] };
   const filteredContents = [
     designSystemDoc,
     ...symbolElements,

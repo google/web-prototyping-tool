@@ -28,9 +28,9 @@ import { IAppState, AppGoToPreview, getUser } from 'src/app/store';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { ProjectExportService } from '../../../services/project-export/project-export.service';
-import { IProjectState, ProjectDataUpdate } from '../../../store';
+import { getUserIsProjectOwner, IProjectState, ProjectDataUpdate } from '../../../store';
 import { DuplicateService } from 'src/app/services/duplicate/duplicate.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { environment } from 'src/environments/environment';
 
 const DOWNLOAD_ZIP_MENU_ITEM_ID = 'Download project zip';
 
@@ -83,10 +83,9 @@ export class ProjectPropertiesComponent implements OnInit, OnDestroy {
     private _duplicateService: DuplicateService,
     private _projectStore: Store<IProjectState>,
     private _cdRef: ChangeDetectorRef,
-    private _appStore: Store<IAppState>,
-    private _projectContentService: ProjectContentService
+    private _appStore: Store<IAppState>
   ) {
-    this.isUserProjectOwner$ = this._projectContentService.currentUserIsProjectOwner$;
+    this.isUserProjectOwner$ = this._projectStore.pipe(select(getUserIsProjectOwner));
   }
 
   ngOnInit(): void {
@@ -100,10 +99,8 @@ export class ProjectPropertiesComponent implements OnInit, OnDestroy {
     this._cdRef.markForCheck();
   };
 
-  // TODO: remove this check once we're sure it is not needed anymore
   get showEditors() {
-    return true;
-    // return this.isAdmin || environment?.showEditors === true;
+    return this.isAdmin || environment?.showEditors === true;
   }
 
   onUserRole = (isAdmin: boolean) => {
@@ -128,6 +125,10 @@ export class ProjectPropertiesComponent implements OnInit, OnDestroy {
   onEllipsisMenuSelect = ({ id }: cd.IMenuListItem): void => {
     if (id === ProjectMenu.DownloadZip) this.exportService.exportProjectAsZip();
     if (id === ProjectMenu.Clone) this.cloneProject();
+  };
+
+  onExportToZipline = () => {
+    this.exportService.exportProjectToZipline();
   };
 
   onEditorsUpdate(editors: string[]) {

@@ -21,7 +21,6 @@ import { ASSETS_PATH_PREFIX } from 'cd-common/consts';
 import { getModelEntries } from 'cd-common/models';
 import { UnitTypes } from 'cd-metadata/units';
 import { kebabToSentenceStyle } from 'cd-utils/string';
-import { createChangeMarker } from 'cd-common/utils';
 
 const DEFAULT_ICON_VARIANT = 'flat';
 const GENERIC_ID = 'id';
@@ -42,7 +41,6 @@ export const generateAssetFromMetadata = (
   const { name, density, width, height, imageType, blobUrl } = metadata;
   const type = cd.EntityType.Asset;
   const created = Date.now();
-  const changeMarker = createChangeMarker();
   const urls = {
     [cd.AssetSizes.Original]: blobUrl,
     [cd.AssetSizes.BigThumbnail]: blobUrl,
@@ -51,20 +49,7 @@ export const generateAssetFromMetadata = (
     [cd.AssetSizes.SmallThumbnailXHDPI]: blobUrl,
   };
 
-  return {
-    id,
-    changeMarker,
-    projectId,
-    owner,
-    type,
-    created,
-    name,
-    density,
-    width,
-    height,
-    imageType,
-    urls,
-  };
+  return { id, projectId, owner, type, created, name, density, width, height, imageType, urls };
 };
 
 export const doesImageMatchAspectRatio = (
@@ -150,7 +135,7 @@ export const downloadFilesAndReturnImageBlobs = (assets: string[]): Promise<File
   );
 };
 
-export const assetsContainBlobUrls = (projectAssets: cd.AssetMap): boolean => {
+export const assetsContainBlobUrls = (projectAssets: cd.IProjectAssets): boolean => {
   const assetsList = Object.values(projectAssets);
   return assetsList.some((asset) => {
     const urlValues = Object.values(asset.urls);

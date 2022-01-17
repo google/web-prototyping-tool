@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-import { mockModules, mockProviders } from './config';
-
+import { AngularFirestore } from '@angular/fire/firestore';
+import { FIREBASE_OPTIONS } from '@angular/fire';
+import { AngularFireStorage } from '@angular/fire/storage';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestoreMock } from '../services/mocks/angular-firestore.mock.service';
+import { AngularFireAuthMock } from '../database/test/angular-fire-auth.mock.service';
+import { AngularFireStorageMock } from '../database/test/angular-fire-storage.mock.service';
+import { environment } from 'src/environments/environment';
 // Protractor (our e2e framework) does not support mocking modules for Angular 2+
 // (https://stackoverflow.com/a/36457515),
 // So we'll be injecting mocks by ourselves.
-export const extModules = mockModules;
-export const exProviders = mockProviders;
+export const extModules = [];
+export const exProviders = [
+  { provide: AngularFirestore, useClass: AngularFirestoreMock },
+  { provide: AngularFireAuth, useClass: AngularFireAuthMock },
+  { provide: AngularFireStorage, useClass: AngularFireStorageMock },
+  { provide: FIREBASE_OPTIONS, useValue: environment.firebase },
+];

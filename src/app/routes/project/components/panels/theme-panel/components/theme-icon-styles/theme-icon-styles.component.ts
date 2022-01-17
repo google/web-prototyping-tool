@@ -21,9 +21,9 @@ import {
   IconStyle,
   ORDERED_ICON_STYLES,
   ICON_STYLE_CLASSES,
+  GOOGLE_MATERIAL_ICONS,
   ICON_FONT_FAMILY_CLASS_MAP,
   ICON_FONT_FAMILY_STYLE_MAP,
-  MATERIAL_ICONS,
 } from 'cd-themes';
 
 @Component({
@@ -33,7 +33,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeIconStylesComponent {
-  private _fontFamily: cd.IFontFamily = MATERIAL_ICONS;
+  private _fontFamily: cd.IFontFamily = GOOGLE_MATERIAL_ICONS;
   private _selectedStyle: IconStyle = IconStyle.MATERIAL_ICONS_FILLED;
   public orderedIconStyles = ORDERED_ICON_STYLES;
   public iconStyleClasses = ICON_STYLE_CLASSES;

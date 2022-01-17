@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { QueryService, IPublishEntryQueryResult } from './query.service';
+import { AbstractQueryService, IPublishEntryQueryResult } from './query.service';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { mergePublishEntryData } from './query.service.utils';
 import {
@@ -29,7 +29,7 @@ import * as cd from 'cd-interfaces';
 import firebase from 'firebase/app';
 
 @Injectable()
-export class ComponentSearchService extends QueryService {
+export class ComponentSearchService extends AbstractQueryService {
   private _activeQuery = '';
   private _userRequestSubscription = Subscription.EMPTY;
 
@@ -148,6 +148,6 @@ export class ComponentSearchService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 }

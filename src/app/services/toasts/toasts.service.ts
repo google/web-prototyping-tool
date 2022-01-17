@@ -16,8 +16,9 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { createId } from 'cd-utils/guid';
 import type { IToast } from 'cd-interfaces';
+
+const generateGUID = (): string => Date.now() + Math.random().toString(32);
 
 const DISMISS_LABEL = 'Dismiss';
 const WORD_COUNT_REGEX = /[^\s]+/g;
@@ -63,7 +64,7 @@ export class ToastsService {
       delete toast.dismissLabel;
     }
 
-    const id = toastId || toast.id || createId();
+    const id = toastId || toast.id || generateGUID();
     const added: IToast = { ...toast, id } as IToast;
     const newToasts = [...this.toasts$.getValue(), added];
     this.toasts$.next(newToasts);

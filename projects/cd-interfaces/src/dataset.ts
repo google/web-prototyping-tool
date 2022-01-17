@@ -35,7 +35,6 @@ export interface IBaseDataset {
 export interface IBuiltInDataset extends IBaseDataset {
   /**
    * Url from where to load the JSON payload of the dataset
-   * For the Cloud Platform table this data is assumed to be an array of Objects
    * */
   url: string;
 }

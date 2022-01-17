@@ -145,7 +145,7 @@
         [autocompleteMenu]="SIZE_MENU"
         [value]="rowGapValue"
         innerLabel="px"
-        max="100"
+        [max]="gapMax ?? DEFAULT_MAX_GAP"
         min="0"
         type="number"
       ></cd-range-input>
@@ -156,7 +156,7 @@
         [autocompleteMenu]="SIZE_MENU"
         [value]="colGapValue"
         innerLabel="px"
-        max="100"
+        [max]="gapMax ?? DEFAULT_MAX_GAP"
         min="0"
         type="number"
       ></cd-range-input>
@@ -171,7 +171,7 @@
       [autocompleteMenu]="SIZE_MENU"
       [value]="gapValue"
       innerLabel="px"
-      max="100"
+      [max]="gapMax ?? DEFAULT_MAX_GAP"
       min="0"
       type="number"
     ></cd-range-input>

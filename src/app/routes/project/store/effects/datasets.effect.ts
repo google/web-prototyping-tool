@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import { switchMap, withLatestFrom, filter, map, tap } from 'rxjs/operators';
+import { switchMap, withLatestFrom, filter, retry, map, tap } from 'rxjs/operators';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { Injectable, OnDestroy } from '@angular/core';
 import { IProjectState } from '../reducers/index';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { RecordActionService } from '../../services/record-action/record-action.service';
+import { RETRY_ATTEMPTS } from 'src/app/database/database.utils';
 import { forkJoin, from, Observable, of, Subscription } from 'rxjs';
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { DataPickerService } from 'cd-common';
@@ -29,83 +30,100 @@ import { getModels } from 'cd-common/models';
 import { DisconnectProject, DISCONNECT_PROJECT, ElementPropertiesUpdate } from '../actions';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { AnalyticsEvent, DIRECT_INPUT } from 'cd-common/analytics';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
+import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
 import * as actions from '../actions/datasets.action';
 import * as utils from 'cd-common/utils';
 import type * as cd from 'cd-interfaces';
+import * as sel from '../selectors';
 
 @Injectable()
 export class DatasetEffects implements OnDestroy {
   private subscriptions = new Subscription();
   constructor(
     private actions$: Actions,
+    private _databaseChangesService: DatabaseChangesService,
     private _recordSerivce: RecordActionService,
     private _projectStore: Store<IProjectState>,
     private _rendererService: RendererService,
     private _dataPickerService: DataPickerService,
     private _datasetService: DatasetService,
     private _uploadService: UploadService,
-    private _analyticsService: AnalyticsService,
-    private _projectContentService: ProjectContentService,
-    private _projectChangeCoordinator: ProjectChangeCoordinator
+    private _analyticsService: AnalyticsService
   ) {
     const { updateData$, openAddDatasetMenu$ } = this._dataPickerService;
     this.subscriptions.add(updateData$.subscribe(this.onDataUpdatedFromDataPicker));
     this.subscriptions.add(openAddDatasetMenu$.subscribe(this.onOpenDatasetMenu));
   }
 
-  createDataset$ = createEffect(
+  createInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.DatasetCreate>(actions.DATASET_CREATE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(sel.getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const change = utils.createDatasetChangePayload(action.datasets);
-          this._projectChangeCoordinator.dispatchChangeRequest([change]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(sel.getProject))),
+        filter(([, proj]) => proj !== undefined),
+        withLatestFrom(this._projectStore.pipe(select(sel.selectDatasets))),
+        switchMap(([[action], datasetsDictionary]) => {
+          const { datasets } = action;
+          const datasetLookups = datasets.map((d) => datasetsDictionary[d.id]);
+          const filteredDatasets = datasetLookups.filter((d) => !!d) as cd.ProjectDataset[];
+          return this._databaseChangesService.createDatasets(filteredDatasets);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
 
-  updateDataset$ = createEffect(
+  updateInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.DatasetUpdate>(actions.DATASET_UPDATE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(sel.getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const { id, changes } = action;
-          const update = { id, update: changes };
-          const change = utils.createDatasetChangePayload(undefined, [update]);
-          this._projectChangeCoordinator.dispatchChangeRequest([change]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(sel.getProject))),
+        filter(([, proj]) => proj !== undefined),
+        withLatestFrom(this._projectStore.pipe(select(sel.selectDatasets))),
+        switchMap(([[action], datasetsDictionary]) => {
+          const dataset = datasetsDictionary[action.id];
+          if (!dataset) return of();
+          return this._databaseChangesService.updateDataset(dataset);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
 
-  deleteDataset$ = createEffect(
+  deleteInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.DatasetDelete>(actions.DATASET_DELETE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(sel.getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const deletes = [action.dataset.id];
-          const change = utils.createDatasetChangePayload(undefined, undefined, deletes);
-          this._projectChangeCoordinator.dispatchChangeRequest([change]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(sel.getProject))),
+        filter(([, proj]) => proj !== undefined),
+        switchMap(([action]) => {
+          return this._databaseChangesService.deleteDataset(action.dataset);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
 
   fetchDatasetData$ = createEffect(
     () =>
-      this._projectContentService.datasetArray$.pipe(
-        map((datasets) => {
+      this.actions$.pipe(
+        ofType<actions.DatasetRemoteAdd | actions.DatasetCreate>(
+          actions.DATASET_REMOTE_ADD,
+          actions.DATASET_CREATE
+        ),
+        map((action) => {
+          const { datasets } = action;
           // filter out any datasets we've already loaded into the picker
-          return datasets.filter((d) => !this._dataPickerService.hasDatasetData(d));
+          return datasets.filter((d) => !this._dataPickerService.hasDatasetData(d.id));
         }),
         filter((datasets) => !!datasets.length),
         switchMap((datasets) => {
@@ -127,13 +145,14 @@ export class DatasetEffects implements OnDestroy {
   );
 
   /** Anytime that a dataset is deleted remove any data-bindings to it */
+
   removeDataBindingsOnDatasetDelete$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DatasetDelete>(actions.DATASET_DELETE),
-      withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+      withLatestFrom(this._projectStore.pipe(select(sel.getUserIsProjectEditor))),
       filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
       map(([action]) => action),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(sel.getElementProperties))),
       map(([action, elementProperties]) => {
         const { dataset } = action;
         const elementModels = getModels(elementProperties);

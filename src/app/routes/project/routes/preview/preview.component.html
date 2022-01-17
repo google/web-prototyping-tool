@@ -71,7 +71,7 @@
           Init process is different for code component render outlet, 
           so when chaning between normal outlet and code component outlet, this ngSwitch
           this will completely recreate iframe so that it gets initialized correctly 
-          TODO - perform this logic inside app-render-outlet-iframe component
+          TODO  - perform this logic inside app-render-outlet-iframe component
         -->
         <ng-container [ngSwitch]="id | isCodeComponentPipe: codeComponents">
           <ng-container
@@ -99,15 +99,6 @@
     [templateRef]="showAccessibilityPanel ? accessibilityRef : commentsContainerRef"
     [size]="300"
   ></cd-side-panel>
-
-  <!-- Multi-editor  -->
-  <app-presence-indicators
-    *ngIf="!previewParams.fullscreen && !previewParams.embedMode"
-    [style.left]="canShowBoardList ? '212px' : '12px'"
-    [presentUsers]="presenceService.otherPresentUsers$ | async"
-    [darkTheme]="darkTheme$ | async"
-    class="presence-indicators"
-  ></app-presence-indicators>
 </div>
 
 <ng-template #accessibilityRef>

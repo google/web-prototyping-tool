@@ -71,10 +71,10 @@ export interface IIconOptionsConfig {
   /** Set whether using Material Icons, Cloud Icons or both (default is both) */
   iconPickerMode?: IconPickerMode;
 
-  /** Sizes allowed for cloud platform icons */
+  /** Sizes allowed for icons */
   iconSizesAllowed?: IconSize[];
 
-  /** Iconsets allowed for cloud platform icons */
+  /** Iconsets allowed for icons */
   allowedIconSets?: string[];
 }
 

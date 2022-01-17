@@ -30,7 +30,11 @@
     [flowEnabled]="flowEnabled"
   ></app-preview-glass-layer>
 
-  <div *ngIf="showOpenInBadge" class="embed-badge-container" [style.transform]="scaleTransform">
+  <div
+    *ngIf="showOpenInWebPrototypingToolBadge"
+    class="embed-badge-container"
+    [style.transform]="scaleTransform"
+  >
     <app-embed-badge
       [projectLink]="previewURL"
       [position]="embedBadgePosition"

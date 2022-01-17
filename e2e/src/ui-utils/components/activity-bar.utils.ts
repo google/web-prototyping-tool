@@ -30,7 +30,7 @@ export const isButtonActive = async (
   return active;
 };
 
-// TODO to testing actual dimensions/visibility
+// TODO : Change waitFor(PANEL_TOGGLE_DELAY) to testing actual dimensions/visibility
 export const showHidePanel = async (page: Page, buttonSelector: string, show: boolean) => {
   const button = await page.waitForSelector(buttonSelector);
   const active = await isButtonActive(page, button);

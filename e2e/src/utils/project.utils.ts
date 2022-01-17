@@ -16,33 +16,14 @@
 
 import { Page } from 'puppeteer';
 import * as cd from 'cd-interfaces';
-import { getModels, isBoard } from 'cd-common/models';
+import { IProjectDataState } from '../../../src/app/routes/project/store/reducers/project-data.reducer';
+import { getModels } from 'cd-common/models';
 
-export const getProjectContent = (page: Page): Promise<cd.IProjectContent | undefined> =>
-  page.evaluate(() => {
-    const content: cd.IProjectContent | undefined = (window as any).app.getProjectContent();
-    return content;
-  });
-
-export const getProject = (page: Page): Promise<cd.IProject | undefined> =>
-  page.evaluate(() => {
-    const content: cd.IProjectContent | undefined = (window as any).app.getProjectContent();
-    return content?.project;
-  });
+export const getProjectData = (page: Page): Promise<IProjectDataState> =>
+  page.evaluate(() => (window as any).app.appState.project.projectData);
 
 export const getElementPropertiesData = (page: Page): Promise<cd.ElementPropertiesMap> =>
-  page.evaluate(() => {
-    const content: cd.IProjectContent | undefined = (window as any).app.getProjectContent();
-    return content?.elementContent.records || {};
-  });
-
-export const getBoardIds = (projectContent?: cd.IProjectContent) => {
-  if (!projectContent) return [];
-  const elementProps = projectContent.elementContent.records;
-  const elements = getModels(elementProps);
-  const boardIds = elements.filter(isBoard).map((b) => b.id);
-  return boardIds;
-};
+  page.evaluate(() => (window as any).app.appState.project.elementProperties.elementProperties);
 
 export const getDataForId = async (id: string, page: Page): Promise<cd.IComponentInstance> => {
   const data = await getElementPropertiesData(page);
@@ -55,11 +36,9 @@ export const getDataForBoardAtIndex = async (
   index: number,
   page: Page
 ): Promise<cd.IRootElementProperties | undefined> => {
-  const project = await getProject(page);
+  const { project } = await getProjectData(page);
   if (!project) return;
-  const elementProps = await getElementPropertiesData(page);
-  const elements = getModels(elementProps);
-  const boardIds = elements.filter(isBoard).map((b) => b.id);
+  const { boardIds } = project;
   const boardId = boardIds[index];
   const elementProperties = await getElementPropertiesData(page);
 

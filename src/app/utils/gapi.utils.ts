@@ -79,8 +79,8 @@ export const signInWithGapi = (): Promise<string> => {
 
       return authToken;
     })
-    .catch((error: any) => {
-      console.error('Failed to sign-in', error);
+    .catch((_error: any) => {
+      // Swallows the error if a user closes the auth/consent window
     });
 };
 

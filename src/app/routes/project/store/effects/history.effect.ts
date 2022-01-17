@@ -14,51 +14,31 @@
  * limitations under the License.
  */
 
-import { filter, tap } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { ofType, Actions, createEffect } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import * as actions from '../actions';
 import { RouterRequestAction, ROUTER_REQUEST } from '@ngrx/router-store';
 import { RoutePath } from 'src/app/configs/routes.config';
-import { UndoRedoService } from 'src/app/database/changes/undo-redo.service';
 
 @Injectable()
 export class HistoryEffects {
-  constructor(private actions$: Actions, private undoRedoService: UndoRedoService) {}
-
-  undo$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(actions.HISTORY_UNDO),
-        tap(() => this.undoRedoService.undo())
-      ),
-    { dispatch: false }
-  );
-
-  redo$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(actions.HISTORY_REDO),
-        tap(() => this.undoRedoService.redo())
-      ),
-    { dispatch: false }
-  );
+  constructor(private actions$: Actions) {}
 
   /**
    * Clear the undo/redo stack whenever a user enter or exists symbol isolation mode or the code
    * component editor
    */
-  resetUndoRedoHistory$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(
-          actions.CODE_COMPONENT_OPEN_EDITOR,
-          actions.PANEL_SET_ISOLATION_MODE,
-          actions.PANEL_EXIT_SYMBOL_MODE
-        ),
-        tap(() => this.undoRedoService.resetStack())
+
+  resetUndoRedoHistory$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(
+        actions.CODE_COMPONENT_OPEN_EDITOR,
+        actions.PANEL_SET_ISOLATION_MODE,
+        actions.PANEL_EXIT_SYMBOL_MODE
       ),
-    { dispatch: false }
+      map(() => new actions.HistoryReset())
+    )
   );
 
   /**
@@ -67,18 +47,16 @@ export class HistoryEffects {
    * There is no unique action for this (can also occur from browser back button),
    * so just checking route changes
    */
-  resetUndoRedoHistoryOnCodeComponentExit$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<RouterRequestAction>(ROUTER_REQUEST),
-        filter(({ payload }) => {
-          const { routerState, event } = payload;
-          const currentlyInCodeComponentEditor = routerState.url.includes(RoutePath.CodeComponent);
-          const leavingEditor = !event.url.includes(RoutePath.CodeComponent);
-          return currentlyInCodeComponentEditor && leavingEditor;
-        }),
-        tap(() => this.undoRedoService.resetStack())
-      ),
-    { dispatch: false }
+  resetUndoRedoHistoryOnCodeComponentExit$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType<RouterRequestAction>(ROUTER_REQUEST),
+      filter(({ payload }) => {
+        const { routerState, event } = payload;
+        const currentlyInCodeComponentEditor = routerState.url.includes(RoutePath.CodeComponent);
+        const leavingEditor = !event.url.includes(RoutePath.CodeComponent);
+        return currentlyInCodeComponentEditor && leavingEditor;
+      }),
+      map(() => new actions.HistoryReset())
+    )
   );
 }

@@ -121,7 +121,7 @@ export class PreviewCanvasComponent implements OnChanges, OnInit, AfterViewInit,
     return `${this.projectUrl}/${Route.Preview}`;
   }
 
-  get showOpenInBadge() {
+  get showOpenInWebPrototypingToolBadge() {
     const { showBadge, embedMode } = this;
     return embedMode && !!showBadge;
   }

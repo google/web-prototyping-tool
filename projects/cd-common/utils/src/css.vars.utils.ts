@@ -21,7 +21,7 @@ import { FontWeight, FontStyle } from 'cd-metadata/fonts';
 import { rgbFromColorString } from 'cd-utils/color';
 import { isIValue } from './ivalue.utils';
 
-// TODO Move this list into cd-metadata
+// TODO (worsofld) Move this list into cd-metadata
 const CSS_VAR_NAMESPACE = 'co';
 const CSS_VAR_VARIANT_RGB_SUFFIX = 'rgb';
 

@@ -32,6 +32,7 @@ export class SyncLocalDatabase implements Action {
 
 export * from './assets.action';
 export * from './board.action';
+export * from './bundled-undoable.action';
 export * from './canvas.action';
 export * from './clipboard.action';
 export * from './code-component.action';

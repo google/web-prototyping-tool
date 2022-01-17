@@ -34,12 +34,10 @@ import { IconPickerDemoComponent } from './demos/icon-picker-demo/icon-picker-de
 import { ToggleButtonGroupDemoComponent } from './demos/toggle-button-group-demo/toggle-button-group-demo.component';
 import { LayoutPickerDemoComponent } from './demos/layout-picker-demo/layout-picker-demo.component';
 import { LayoutEngineDemoComponent } from './demos/layout-engine-demo/layout-engine-demo.component';
-import { PresenceIndicatorsDemoComponent } from './demos/presence-indicators-demo/presence-indicators-demo.component';
 
 export const routes: Routes = [
   { path: 'layout-engine', component: LayoutEngineDemoComponent },
   { path: 'layout-picker', component: LayoutPickerDemoComponent },
-  { path: 'presence-indicators', component: PresenceIndicatorsDemoComponent },
   { path: 'dynamic-props', component: DynamicPropsDemoComponent },
   { path: 'data-inputs', component: InputDemoComponent },
   { path: 'drag-n-drop', component: DndDemoComponent },

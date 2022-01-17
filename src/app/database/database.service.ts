@@ -21,7 +21,7 @@ import {
   FirebaseField,
   FirebaseQueryOperation,
 } from 'cd-common/consts';
-import { map, first, takeUntil, switchMap, retry, filter, take } from 'rxjs/operators';
+import { map, first, takeUntil, switchMap, retry, filter } from 'rxjs/operators';
 import { BatchQueue, detectUndefinedObjects, RETRY_ATTEMPTS } from './database.utils';
 import { Observable, Subject, from, fromEvent } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -29,7 +29,7 @@ import firebase from 'firebase/app';
 import { Injectable } from '@angular/core';
 import * as dbPathUtils from './path.utils';
 import * as firestore from '@angular/fire/firestore';
-import * as cd from 'cd-interfaces';
+import type * as cd from 'cd-interfaces';
 
 /**
  * Handles the most common database operations for the app. This service is
@@ -107,27 +107,6 @@ export class DatabaseService {
         map((snapshot) => snapshot.docs.map((doc) => doc.data() as cd.IProjectContentDocument))
       );
   }
-
-  getProjectBoards = (project: cd.IProject, limit?: number): Observable<cd.IBoardProperties[]> => {
-    const projectContentsRef = this._afs.collection(FirebaseCollection.ProjectContents).ref;
-    const boardsQuery = projectContentsRef
-      .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, project.id)
-      .where(
-        FirebaseField.ElementType,
-        FirebaseQueryOperation.Equals,
-        cd.ElementEntitySubType.Board
-      );
-    const queryWithLimit = limit ? boardsQuery.limit(limit) : boardsQuery;
-    const snapshot$ = from(queryWithLimit.get());
-    const boards$ = snapshot$.pipe(
-      map((snapshot) => {
-        return snapshot.docs.map((d) => d.data() as cd.IBoardProperties);
-      }),
-      take(1)
-    );
-
-    return boards$;
-  };
 
   writeProjectAndContents = (project: cd.IProject, contents: cd.IProjectContentDocument[]) => {
     const projectPath = dbPathUtils.projectPathForId(project.id);

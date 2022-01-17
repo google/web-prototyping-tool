@@ -49,7 +49,7 @@ export abstract class InputCollectionDirective {
   }
 
   getPickerPosition(): [number, number] {
-    // TODO: cleanup
+    // TODO:  cleanup
     const { innerWidth, innerHeight } = window;
     const { top, left } = this._elemRef.nativeElement.getBoundingClientRect();
     const x = left - OVERLAY_WIDTH;

@@ -144,7 +144,7 @@ export class PreviewTopBarComponent
   }
 
   get isCommentToggleDisabled() {
-    const boardCount = this.boards.length ?? 0;
+    const boardCount = this.project?.boardIds.length ?? 0;
     return boardCount === 0;
   }
 

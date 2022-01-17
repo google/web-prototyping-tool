@@ -59,8 +59,6 @@ export interface ICodeComponentDocument
   fontList?: IFontFamily[];
 }
 
-export type CodeComponentMap = Record<string, ICodeComponentDocument>;
-
 export interface ICodeComponentInstanceInputs extends IBaseElementInputs {
   [key: string]: PropertyValue;
 }

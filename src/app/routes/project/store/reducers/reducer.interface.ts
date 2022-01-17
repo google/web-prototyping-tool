@@ -15,16 +15,28 @@
  */
 
 import { ActionReducer, Action } from '@ngrx/store';
+import { IHistoryState } from '../../interfaces/history.interface';
 import { IPanelsState } from '../../interfaces/panel.interface';
+import * as designSystem from './design-system.reducer';
 import * as commentThreads from './comment-threads.reducer';
+import * as projectDataReducer from './project-data.reducer';
+import * as elementPropertiesReducer from './element-properties.reducer';
 import * as selectionReducer from './selection.reducer';
 import * as publishReducer from './publish.reducer';
 import * as interactionReducer from './interaction.reducer';
+import * as codeComponentsReducer from './code-component.reducer';
+import * as datasetsReducer from './datasets.reducer';
 
 export interface IProjectState {
+  codeComponents: codeComponentsReducer.ICodeComponentState;
   commentsState: commentThreads.ICommentsState;
+  datasets: datasetsReducer.IDatasetsState;
+  designSystem: designSystem.IDesignSystemState;
+  elementProperties: elementPropertiesReducer.IComponentInstanceState;
+  history: IHistoryState;
   interactions?: interactionReducer.IInteractionState;
   panels: IPanelsState;
+  projectData: projectDataReducer.IProjectDataState;
   publish: publishReducer.IPublishState;
   selection: selectionReducer.ISelectionState;
 }

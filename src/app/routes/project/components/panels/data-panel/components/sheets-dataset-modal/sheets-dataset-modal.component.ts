@@ -30,8 +30,8 @@ import { AbstractOverlayContentDirective, InputComponent, OverlayInitService } f
 import * as consts from './sheets-dataset-modal.consts';
 import * as cd from 'cd-interfaces';
 
-const SHEETS_ENDPOINT_SHEET_ID = 'sheetId';
-const SHEETS_ENDPOINT_TAB_ID = 'tabId';
+const SHEETS_JETWAY_ENDPOINT_SHEET_ID = 'sheetId';
+const SHEETS_JETWAY_ENDPOINT_TAB_ID = 'tabId';
 
 @Component({
   selector: 'app-sheets-dataset-modal',
@@ -118,18 +118,18 @@ export class SheetsDatasetModalComponent
   }
 
   private _getData(sheetId: string, tabId: string) {
-    const url = new URL(consts.SHEETS_ENDPOINT_BASE);
-    url.searchParams.append(SHEETS_ENDPOINT_SHEET_ID, sheetId);
-    url.searchParams.append(SHEETS_ENDPOINT_TAB_ID, tabId);
+    const url = new URL(consts.SHEETS_JETWAY_ENDPOINT_BASE);
+    url.searchParams.append(SHEETS_JETWAY_ENDPOINT_SHEET_ID, sheetId);
+    url.searchParams.append(SHEETS_JETWAY_ENDPOINT_TAB_ID, tabId);
 
     this._subscriptions.add(
       this._httpClient
-        .get<consts.SheetsResponse>(url.toString(), { withCredentials: true })
+        .get<consts.SheetsJetwayResponse>(url.toString(), { withCredentials: true })
         .subscribe(this._onDataResponse, this._onError)
     );
   }
 
-  private _onDataResponse = (results: consts.SheetsResponse) => {
+  private _onDataResponse = (results: consts.SheetsJetwayResponse) => {
     if (!results.ok) return this._onError(results.error);
     this.results = results.data;
     this.requestState = consts.RequestState.Default;
@@ -137,7 +137,7 @@ export class SheetsDatasetModalComponent
     this._cdRef.markForCheck();
   };
 
-  private _onError = (error: consts.SheetsError) => {
+  private _onError = (error: consts.SheetsJetwayError) => {
     this.requestState = consts.RequestState.Error;
     this.errorMessage = error.statusMessage;
     this._cdRef.markForCheck();

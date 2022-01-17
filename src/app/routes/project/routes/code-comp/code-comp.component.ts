@@ -16,7 +16,15 @@
 
 /* eslint-disable max-lines */
 
-import { IProjectState, CodeComponentUpdate, selectPublishEntries } from '../../store';
+import {
+  IProjectState,
+  getDesignSystem,
+  CodeComponentUpdate,
+  selectCodeComponents,
+  selectPublishEntries,
+  selectDatasetsArray,
+  getUserIsProjectEditor,
+} from '../../store';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -27,7 +35,6 @@ import {
 } from '@angular/core';
 import { RenderOutletIFrameComponent } from 'src/app/components/render-outlet-iframe/render-outlet-iframe.component';
 import { SelectionContextService } from '../../services/selection-context/selection.context.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { CODE_COMPONENT_ID_ROUTE_PARAM } from 'src/app/configs/routes.config';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
@@ -40,7 +47,7 @@ import { ErrorService } from 'src/app/services/error/error.service';
 import { IAppState, getRouterState } from 'src/app/store/reducers';
 import { isConfigActionPassive } from '../../utils/project.utils';
 import { downloadBlobAsFile, selectFiles } from 'cd-utils/files';
-import { map, debounceTime } from 'rxjs/operators';
+import { shareReplay, map, debounceTime } from 'rxjs/operators';
 import { createCodeComponentInstance } from 'cd-common/models';
 import { PanelSizeConfig } from '../../configs/panel.config';
 import { menuFromProjectDatasets } from 'cd-common/utils';
@@ -49,13 +56,12 @@ import { AnalyticsEvent } from 'cd-common/analytics';
 import { OverlayService } from 'cd-common';
 import { Store, select } from '@ngrx/store';
 import { Dictionary } from '@ngrx/entity';
-import { getDarkTheme, getUser } from 'src/app/store';
+import { getUser } from 'src/app/store';
 import { deepCopy } from 'cd-utils/object';
 import { createId } from 'cd-utils/guid';
 import * as customConfig from '../../configs/custom-component.config';
 import * as config from './code-comp.config';
 import * as cd from 'cd-interfaces';
-import { PresenceService } from 'src/app/services/presence/presence.service';
 
 const INPUTS_CONFIG_FILENAME = 'inputs-config.json';
 const EVENTS_CONFIG_FILENAME = 'events-config.json';
@@ -95,12 +101,10 @@ export class CodeCompComponent implements OnDestroy {
   public testInstance?: cd.ICodeComponentInstance;
   public updatingJSBundle = false;
   public datasetsMenuItems: cd.ISelectItem[] = [];
-  public darkTheme$: Observable<boolean>;
 
   @ViewChild('renderOutletRef') renderOutletRef?: RenderOutletIFrameComponent;
 
   constructor(
-    public presenceService: PresenceService,
     private _appStore: Store<IAppState>,
     private _projectStore: Store<IProjectState>,
     private _overlayService: OverlayService,
@@ -111,14 +115,13 @@ export class CodeCompComponent implements OnDestroy {
     private _errorService: ErrorService,
     private _cdRef: ChangeDetectorRef,
     private _analyticsService: AnalyticsService,
-    private _toastsService: ToastsService,
-    private _projectContentService: ProjectContentService
+    private _toastsService: ToastsService
   ) {
-    this.designSystem$ = this._projectContentService.designSystem$;
-
-    this.darkTheme$ = _appStore.pipe(select(getDarkTheme));
-
-    this.userCanEditProject$ = this._projectContentService.currentUserIsProjectEditor$;
+    this.designSystem$ = this._projectStore.pipe(
+      select(getDesignSystem),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+    this.userCanEditProject$ = this._projectStore.pipe(select(getUserIsProjectEditor));
     // subscribe to route changes to get the current code component id
     const idFromRouterState$ = this._appStore
       .pipe(select(getRouterState))
@@ -127,11 +130,11 @@ export class CodeCompComponent implements OnDestroy {
     this._subscriptions.add(idFromRouterState$.subscribe(this.onCodeComponentId));
 
     // subscribe to code component definitions that have been added to the project
-    const codeComponents$ = this._projectContentService.codeCmpMap$;
+    const codeComponents$ = this._projectStore.pipe(select(selectCodeComponents));
     this._subscriptions.add(codeComponents$.subscribe(this.onCodeComponentsSubscription));
 
     // subscribe to datasets that have been added to the project
-    const datasets$ = this._projectContentService.datasetArray$;
+    const datasets$ = this._projectStore.pipe(select(selectDatasetsArray));
     this._subscriptions.add(datasets$.subscribe(this.onDatasetsSubscription));
 
     // setup stream to debounce updates to the store / database
@@ -335,7 +338,7 @@ export class CodeCompComponent implements OnDestroy {
     downloadBlobAsFile(jsBundleFile, jsBundleMetadata.name);
   };
 
-  // TODO: We could send file directly to renderer without waiting for upload to complete
+  // TODO : We could send file directly to renderer without waiting for upload to complete
   // Need to do validiation first
   onUpdateJSBundle(file: File) {
     const isValid = file.size <= customConfig.FILE_SIZE_LIMIT;

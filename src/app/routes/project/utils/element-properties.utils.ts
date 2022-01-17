@@ -16,6 +16,7 @@
 
 import { createInstance, insertElements, StyleFactory } from 'cd-common/models';
 import { removeValueFromArrayAtIndex } from 'cd-utils/array';
+import { ElementPropertiesUpdate } from '../store/actions/element-properties.action';
 import { deepCopy } from 'cd-utils/object';
 import { cssProperties } from 'cd-metadata/css';
 import { toCamelCase } from 'cd-utils/string';
@@ -23,7 +24,6 @@ import { KEYS } from 'cd-utils/keycodes';
 import { createId } from 'cd-utils/guid';
 import * as utils from 'cd-common/utils';
 import * as cd from 'cd-interfaces';
-import { convertPropsUpdateToUpdateChanges, createElementChangePayload } from 'cd-common/utils';
 
 /**
  * Given an array of propertyModels determine if any are visible
@@ -215,7 +215,7 @@ export const moveElementsRelative = (
   elementProperties: cd.ElementPropertiesMap,
   element: cd.PropertyModel,
   evt: KeyboardEvent
-): cd.IElementChangePayload[] => {
+): ElementPropertiesUpdate[] => {
   const { id, parentId } = element;
   const parent = parentId && elementProperties[parentId];
   if (!parent) return [];
@@ -232,7 +232,7 @@ export const moveElementsRelative = (
   const relation = after ? cd.InsertRelation.After : cd.InsertRelation.Before;
   const dropLocation = { relation, elementId: dropTargetId };
   const update = insertElements([id], dropLocation, elementProperties);
-  return [update];
+  return [new ElementPropertiesUpdate(update)];
 };
 
 export const moveElementsAbsolute = (
@@ -240,7 +240,7 @@ export const moveElementsAbsolute = (
   evt: KeyboardEvent,
   shiftIncrement = 10,
   defaultIncrement = 1
-): cd.IElementChangePayload[] => {
+): ElementPropertiesUpdate[] => {
   const baseStyle = utils.getElementBaseStyles(element);
   if (!baseStyle) return [];
   const { key, shiftKey } = evt;
@@ -271,9 +271,7 @@ export const moveElementsAbsolute = (
   }
 
   const update = utils.buildBaseStylePropsUpdate(element.id, style);
-  const updateChanges = convertPropsUpdateToUpdateChanges([update]);
-  const payload = createElementChangePayload(undefined, updateChanges);
-  return [payload];
+  return [new ElementPropertiesUpdate([update])];
 };
 
 const calculatePosition = (

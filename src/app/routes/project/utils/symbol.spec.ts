@@ -20,7 +20,6 @@ import * as utils from './symbol-overrides';
 import * as inputUtils from './symbol-input.utils';
 import * as symUtils from './symbol.utils';
 import * as cd from 'cd-interfaces';
-import { applyChangeToElementContent, createContentSection } from 'cd-common/utils';
 
 describe('Create Symbol - ', () => {
   const { before, after } = data.create;
@@ -28,7 +27,6 @@ describe('Create Symbol - ', () => {
   const symbolID = after.symbolId;
   const symbolMap: cd.ISymbolMap = {};
   const elementProperties = before.elementProperties as cd.ElementPropertiesMap;
-  const elementContent = createContentSection(elementProperties, true);
   const afterProperties = after.elementProperties as cd.ElementPropertiesMap;
   const selected = before.selected as string[];
   const elements = selected.map((id) => elementProperties[id]) as cd.PropertyModel[];
@@ -37,7 +35,7 @@ describe('Create Symbol - ', () => {
   const name = symUtils.incrementedSymbolName(symbolMap, firstRootName);
   const dimension = afterProperties[symbolID]?.frame as cd.Dimensions;
   const renderRects: cd.RenderRectMap = new Map(Object.entries(before.renderRects));
-  const { symbol, symbolInstance, change } = symUtils.createSymbolFromElements(
+  const { symbol, symbolInstance } = symUtils.createSymbolFromElements(
     name,
     project.id,
     rootElements,
@@ -47,38 +45,32 @@ describe('Create Symbol - ', () => {
     symbolMap
   );
 
-  const contentAfterChange = applyChangeToElementContent(change, elementContent);
-  const { records } = contentAfterChange;
-  const testSymbol = {
-    ...records[symbol.id],
-    id: symbolID,
-    rootId: symbolID,
-  } as cd.ISymbolProperties;
-  (testSymbol as any).position = []; // legacy requirement
+  symbol.id = symbolID;
+  symbol.rootId = symbolID;
+  (symbol as any).position = []; // legacy requirement
 
   const expectedSymbol = afterProperties[symbolID] as cd.ISymbolProperties;
-  const testInstance = records[symbolInstance.id] as cd.ISymbolInstanceProperties;
 
   it('Should not create legacy symbolInputs', () => {
-    expect(testSymbol.symbolInputs).toEqual({});
+    expect(symbol.symbolInputs).toEqual({});
   });
 
   it('Did generate symbol', () => {
-    expect(testSymbol).toEqual(expectedSymbol);
+    expect(symbol).toEqual(expectedSymbol);
   });
 
   it('Did generate symbol instance', () => {
-    expect(testInstance).toBeDefined();
-    const symbolChildren = new Set(testSymbol.childIds);
-    const inputKeys = Object.keys(testInstance.instanceInputs);
+    expect(symbolInstance).toBeDefined();
+    const symbolChildren = new Set(symbol.orderedElemIds);
+    const inputKeys = Object.keys(symbolInstance.instanceInputs);
     const validInputsOnInstance = inputKeys.every((id) => symbolChildren.has(id));
     // Checks to see if every symbol instances's inputs are exist on the symbol
     expect(validInputsOnInstance).toBeTrue();
 
     // The inital state of a symbol instance instanceInputs should match defaultInputs
-    expect(testSymbol.defaultInputs).toEqual(testInstance.instanceInputs);
+    expect(symbol.defaultInputs).toEqual(symbolInstance.instanceInputs);
 
-    const validDirectChildren = testSymbol.childIds.every((id) => symbolChildren.has(id));
+    const validDirectChildren = symbol.childIds.every((id) => symbolChildren.has(id));
     expect(validDirectChildren).toBeTrue();
   });
 });
@@ -89,11 +81,14 @@ describe('Convert Legacy Symbol Overrides - ', () => {
   const elementProperties = overrides.legacy as cd.ElementPropertiesMap;
   const symbol = elementProperties[symbolID] as cd.ISymbolProperties;
   const symbolChildren = models.getChildren(symbol.id, elementProperties);
+  const rootChildren = models.sortAndFilterElements(symbolChildren, elementProperties);
+  const rootIds = rootChildren.map((child) => child.id);
+  const orderedElemIds = models.getAllIdsDepthFirst(elementProperties, rootIds);
   const instanceInputs = utils.generateSymbolInstanceDefaults(symbolChildren);
   const prevInputs = inputUtils.processPrevSymbolInputs(symbol, instanceInputs);
   const changes = inputUtils.processInstanceToNullifyChanges(instanceInputs, prevInputs);
   const exposedInputs = symUtils.updateExposedSymbolInputs(symbol, symbolChildren);
-  const updatePayload = symUtils.getSymInstUpdate(symbolID, changes, exposedInputs);
+  const updatePayload = symUtils.getSymInstUpdate(symbolID, changes, exposedInputs, orderedElemIds);
   const symUpdate = updatePayload.properties as cd.ISymbolProperties;
   const expected = overrides.expected as cd.ElementPropertiesMap;
   const expectedSymbol = expected[symbolID] as cd.ISymbolProperties;

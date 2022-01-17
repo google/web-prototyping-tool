@@ -123,44 +123,5 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isVerified();
     }
-
-    // Users can create new change requests, but they cannot be modified after the fact
-    // Our Firebase functions (which has admin permissions) will handle removing change requests
-    // after they have been processed
-    match /change_requests/{contents} {
-      allow read: if true;
-      allow write: if isVerified();
-    }
-
-     match /change_requests/{contents}/payload/{payloadContents} {
-      allow read: if true;
-      allow write: if isVerified();
-    }
-
-    match /change_requests/{contents}/payload/{payloadContents}/sets/{setContents} {
-      allow read: if true;
-      allow write: if isVerified();
-    }
-
-    match /change_requests/{contents}/payload/{payloadContents}/updates/{updateContents} {
-      allow read: if true;
-      allow write: if isVerified();
-    }
-
-    match /user_presence/{contents} {
-      allow read, write: if isVerified() || isScreenshotService();
-    }
-
-    match /rtc_connections/{contents} {
-      allow read, write: if isVerified();
-    }
-
-    match /rtc_connections/{contents}/fromUserIceCandidates/{fromContents} {
-      allow read, write: if isVerified();
-    }
-
-    match /rtc_connections/{contents}/toUserIceCandidates/{toContents} {
-      allow read, write: if isVerified();
-    }
   }
 }

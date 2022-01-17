@@ -180,7 +180,6 @@ export class KeyValueRowComponent implements OnInit, OnDestroy, OnChanges {
     const { name, value } = this.keyValue;
     const colorValue = String(value) || TRANSPARENT;
     // Don't show the color picker if we detect multiple backgrounds
-    // b/145316265
     const multipleBackground = colorValue.match(MULTI_BKD_REGEX);
     if (multipleBackground && multipleBackground.length > 1) return;
 

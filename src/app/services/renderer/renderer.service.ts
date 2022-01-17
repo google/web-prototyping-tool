@@ -20,11 +20,10 @@ import { DebugService } from '../debug/debug.service';
 import { ErrorType } from 'src/app/routes/project/interfaces/error.interface';
 import { ErrorService } from '../error/error.service';
 import { getGlassColorFromCSSVars } from './renderer.utils';
-// import { convertElementChangePayloadToUpdates } from 'cd-common/utils';
+import { PropertiesService } from 'src/app/routes/project/services/properties/properties.service';
 import { DEFAULT_DATASETS } from 'cd-common/datasets';
 import { DataPickerService } from 'cd-common';
 import { ToastsService } from '../toasts/toasts.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import * as services from 'cd-common/services';
 import * as utils from 'cd-common/utils';
 import type * as cd from 'cd-interfaces';
@@ -52,10 +51,10 @@ export class RendererService implements OnDestroy {
   constructor(
     private _debugService: DebugService,
     private _toast: ToastsService,
+    private _propertiesService: PropertiesService,
     private _messagingService: services.CdMessagingService,
     private _errorService: ErrorService,
-    private _dataPickerService: DataPickerService,
-    private _projectContentService: ProjectContentService
+    private _dataPickerService: DataPickerService
   ) {
     this._subscriptions = this._messagingService.messages$.subscribe(this._handleMessage);
   }
@@ -72,28 +71,14 @@ export class RendererService implements OnDestroy {
     this.reloadRenderOutlets$.next();
   }
 
-  addElementProperties(propertyModels: cd.PropertyModel[]) {
-    this._sendMessage(new services.PostMessagePropertiesAdd(propertyModels));
-  }
-
-  applyElementChanges(
-    createdElements: cd.PropertyModel[] = [],
-    updatedElements: cd.PropertyModel[] = [],
-    deletedElementIds: string[] = []
-  ) {
-    this._sendMessage(
-      new services.PostMessageApplyElementChanges(
-        createdElements,
-        updatedElements,
-        deletedElementIds
-      )
-    );
+  addElementProperties(propertyModels: cd.PropertyModel[], propagateChanges = true) {
+    this._sendMessage(new services.PostMessagePropertiesAdd(propertyModels, propagateChanges));
   }
 
   resetState = () => {
     // Send element properties
-    const props = this._projectContentService.elementProperties;
-    this._sendMessage(new services.PostMessagePropertiesUpdate(props, true));
+    const props = this._propertiesService.getElementProperties();
+    this._sendMessage(new services.PostMessagePropertiesUpdate(props, true, true));
 
     // Send dataset data
     const loadedData = this._dataPickerService.getLoadedDataBlobs();
@@ -101,13 +86,17 @@ export class RendererService implements OnDestroy {
     this._sendMessage(new services.PostMessageBoardDidAppearAfterReset());
   };
 
-  updateElementProperties(updates: cd.ElementPropertiesMap, recompile = false) {
-    const msg = new services.PostMessagePropertiesUpdate(updates, recompile);
+  updateElementProperties(
+    updates: cd.ElementPropertiesMap,
+    recompile = false,
+    propagateChanges = true
+  ) {
+    const msg = new services.PostMessagePropertiesUpdate(updates, recompile, propagateChanges);
     this._sendMessage(msg);
   }
 
-  updateElementPropertiesPartial(updates: cd.IPropertiesUpdatePayload[]) {
-    const msg = new services.PostMessagePropertiesUpdatePartial(updates);
+  updateElementPropertiesPartial(updates: cd.IPropertiesUpdatePayload[], propagateChanges = true) {
+    const msg = new services.PostMessagePropertiesUpdatePartial(updates, propagateChanges);
     this._sendMessage(msg);
   }
 
@@ -123,8 +112,8 @@ export class RendererService implements OnDestroy {
     this.renderResultsByBoard$.next(this._renderResultsByBoard);
   }
 
-  deleteElementProperties(ids: string[]) {
-    this._sendMessage(new services.PostMessagePropertiesDelete(ids));
+  deleteElementProperties(ids: string[], propagateChangesToDependents = true) {
+    this._sendMessage(new services.PostMessagePropertiesDelete(ids, propagateChangesToDependents));
     this.removeRenderResultsWhoseBoardIdsMatchesId(ids);
   }
 
@@ -140,7 +129,7 @@ export class RendererService implements OnDestroy {
     this._sendMessage(new services.PostMessageDesignSystemUpdate(update));
   }
 
-  showPreview(preview: cd.IElementChangePayload[]) {
+  showPreview(preview: cd.IPropertiesUpdatePayload[]) {
     this._sendMessage(new services.PostMessagePreviewShow(preview));
   }
 
@@ -272,7 +261,7 @@ export class RendererService implements OnDestroy {
    *  This can occur when switching between projects while still loading
    */
   hasRootId(rootId: string): boolean {
-    return rootId in this._projectContentService.elementProperties;
+    return rootId in this._propertiesService.getElementProperties();
   }
 
   private _handleRenderResults = (msg: services.PostMessageRenderResults) => {
@@ -381,7 +370,7 @@ export class RendererService implements OnDestroy {
 
   /**
    * Forwards messages from the renderer to the parent
-   * This is used when a project is embeded in another site.
+   * This is used when a app project is embeded in another site.
    */
   private _dispatchExternalPostAction(message: services.PostMessageExternalPostAction) {
     window.parent.postMessage(message.text, '*');
@@ -391,10 +380,10 @@ export class RendererService implements OnDestroy {
     elementId,
     children,
   }: services.PostMessageResetElementState) => {
-    const { elementProperties } = this._projectContentService;
+    const elementProps = this._propertiesService.getElementProperties();
     const payload = children
-      ? utils.getElementAndChildrenUpdatePayloadForId(elementId, elementProperties)
-      : utils.getElementUpdatePayloadForId(elementId, elementProperties);
+      ? utils.getElementAndChildrenUpdatePayloadForId(elementId, elementProps)
+      : utils.getElementUpdatePayloadForId(elementId, elementProps);
 
     if (!payload.length) return;
     const msg = new services.PostMessagePropertiesReplace(payload);

@@ -40,10 +40,7 @@ import { DndDirectorModule } from '../../dnd-director/dnd-director.module';
 import { HighlightLabelTransform } from './highlight-layer/highlight.pipe';
 import { DragLayerComponent } from './drag-layer/drag-layer.component';
 import { MarqueeLayerComponent } from './marquee-layer/marquee-layer.component';
-import { PeerMarqueeRectPositionPipe } from './marquee-layer/marquee.pipe';
 import { ContextMenuBarModule } from './context-menu-bar/context-menu-bar.module';
-import { CursorLayerModule } from './cursor-layer/cursor-layer.module';
-import { PipesModule } from '../../pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -53,8 +50,6 @@ import { PipesModule } from '../../pipes/pipes.module';
     CdCommonPipeModule,
     OutletFrameModule,
     DndDirectorModule,
-    CursorLayerModule,
-    PipesModule,
   ],
   declarations: [
     GlassLayerComponent,
@@ -77,7 +72,6 @@ import { PipesModule } from '../../pipes/pipes.module';
     HighlightLabelTransform,
     DragLayerComponent,
     MarqueeLayerComponent,
-    PeerMarqueeRectPositionPipe,
   ],
   exports: [GlassLayerComponent, InfoTextComponent],
 })

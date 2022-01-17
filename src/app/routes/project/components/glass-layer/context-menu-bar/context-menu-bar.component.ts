@@ -33,6 +33,7 @@ import {
   ConfirmationDialogComponent,
   OverlayService,
 } from 'cd-common';
+import { ICanvas } from '../../../interfaces/canvas.interface';
 import { applyDefaultUnits } from 'cd-common/utils';
 import { matrix2d } from 'cd-utils/css';
 import { SelectionContextService } from '../../../services/selection-context/selection.context.service';
@@ -41,6 +42,7 @@ import { AssetsService } from '../../../services/assets/assets.service';
 import { Store, Action, select } from '@ngrx/store';
 import { ConfigAction } from '../../../interfaces/action.interface';
 import { areObjectsEqual } from 'cd-utils/object';
+import { Rect } from 'cd-utils/geometry';
 import { fromEvent, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 import * as utils from './context-menu-bar.utils';
@@ -76,11 +78,11 @@ export class ContextMenuBarComponent
   public barWidth = cmb.BAR_MENU_ITEM_SIZE;
   public shown = false;
   public isSelectedHidden = false;
-  public selectionBounds?: cd.Rect;
+  public selectionBounds?: Rect;
   public isolatedSymbolId?: string;
 
   @Input() moving = false;
-  @Input() canvas!: cd.ICanvas;
+  @Input() canvas!: ICanvas;
   @Input() outletFrames: ReadonlyArray<cd.IRenderResult> = [];
   @Input() renderRects: cd.RenderRectMap = new Map();
   @Input() selectionMap: cd.RenderElementMap = new Map();
@@ -234,7 +236,7 @@ export class ContextMenuBarComponent
     const { selectedProperties } = this;
     if (selectedProperties.length === 0) return;
     const [selectedElementProperties] = selectedProperties;
-    // TODO: Re-enable this later when we want to tackle multi-select again
+    // TODO : Re-enable this later when we want to tackle multi-select again
     // const newActions =
     //   selectedProperties.length > 1
     //     ? utils.getMultiSelectContextActions()

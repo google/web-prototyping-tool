@@ -27,7 +27,7 @@ export const findComponentFromList = async (
   page: Page,
   label: string
 ): Promise<ElementHandle<Element> | null> => {
-  // TODO -- Waiting for processing of library data -> component UIs available in the panel
+  // TODO  -- Waiting for processing of library data -> component UIs available in the panel
   //                  Should be a better mechanism than a hardcoded interval
   await page.waitForTimeout(INTERACTION_INTERVAL);
 

@@ -18,7 +18,7 @@ import * as cd from 'cd-interfaces';
 
 export const MOCK_USER: cd.IUser = {
   id: 'abc123',
-  email: 'leroyjenkins@google.com',
+  email: 'leroyjenkins',
   name: 'Leroy Jenkins',
   photoUrl: 'https://media.timeout.com/images/105633873/630/472/image.jpg',
   profileUrl: '',

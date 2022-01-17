@@ -25,9 +25,6 @@ import {
 import { areObjectsEqual } from 'cd-utils/object';
 import { cloneOutletAndRemoveCoordinates } from '../glass.utils';
 import * as cd from 'cd-interfaces';
-import { select, Store } from '@ngrx/store';
-import { getDarkTheme, IAppState } from 'src/app/store';
-import { Observable } from 'rxjs';
 
 const BORDER_SIZE = 1;
 
@@ -40,29 +37,25 @@ const BORDER_SIZE = 1;
 export class SelectionLayerComponent implements OnChanges {
   public borderSize = BORDER_SIZE;
   public selection: ReadonlyArray<cd.IRenderResult> = [];
-  public darkTheme$: Observable<boolean>;
-  public peerRects: cd.IUserRect[] = [];
 
   @Input() outletFrame?: cd.IRenderResult;
   @Input() values: ReadonlyArray<string> = [];
   @Input() renderRects: cd.RenderRectMap = new Map();
   @Input() rootId = '';
-  @Input() peerSelectionRects: cd.IUserRect[] = [];
 
-  constructor(private _cdRef: ChangeDetectorRef, private store: Store<IAppState>) {
-    this.darkTheme$ = this.store.pipe(select(getDarkTheme));
+  constructor(private _cdRef: ChangeDetectorRef) {
     this._cdRef.detach();
   }
 
-  // Returns true if change detection should be called
-  private buildSelection(): boolean {
+  buildSelection() {
     const { values, renderRects, outletFrame } = this;
-    if (!values?.length) {
-      if (!this.selection.length) return false;
+    if (!values) {
+      if (!this.selection.length) return;
       this.selection = [];
-      return true;
+      this._cdRef.detectChanges();
+      return;
     }
-    if (!outletFrame) return false;
+    if (!outletFrame) return;
 
     const outletClone = cloneOutletAndRemoveCoordinates(outletFrame);
     const selection = values.reduce<cd.IRenderResult[]>((acc, id) => {
@@ -72,40 +65,18 @@ export class SelectionLayerComponent implements OnChanges {
       return acc;
     }, []);
 
-    if (areObjectsEqual(selection, this.selection)) return false;
+    if (areObjectsEqual(selection, this.selection)) return;
     this.selection = selection;
-    return true;
-  }
-
-  // Returns true if change detection should be called
-  private checkPeerSelection(): boolean {
-    const { peerSelectionRects, peerRects } = this;
-    if (areObjectsEqual(peerRects, peerSelectionRects)) return false;
-    this.peerRects = peerSelectionRects;
-    return true;
+    this._cdRef.detectChanges();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    let selectionChanged = false;
-    let peerSelectionChanged = false;
-
     if (changes.renderRects || changes.values || changes.outletFrame) {
-      selectionChanged = this.buildSelection();
+      this.buildSelection();
     }
-    if (changes.renderRects || changes.peerSelectionRects || changes.outletFrame) {
-      peerSelectionChanged = this.checkPeerSelection();
-    }
-
-    if (selectionChanged || peerSelectionChanged) this._cdRef.detectChanges();
   }
 
   public trackFn(_index: number, item: cd.IRenderResult): string {
     return item.id;
-  }
-
-  public peerTrackFn(_index: number, item: cd.IUserRect): string {
-    const { sessionId, renderResult } = item;
-    const { x, y, width, height } = renderResult.frame;
-    return `${sessionId}-${renderResult.id}-${x}-${y}-${width}-${height}`;
   }
 }

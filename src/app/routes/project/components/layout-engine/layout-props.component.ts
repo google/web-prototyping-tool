@@ -30,6 +30,8 @@ import * as consts from './layout-engine.consts';
 import * as utils from './layout-engine.utils';
 import * as cd from 'cd-interfaces';
 
+const DEFAULT_MAX_GAP = 100;
+
 @Component({
   selector: 'app-layout-props',
   templateUrl: './layout-props.component.html',
@@ -39,6 +41,7 @@ import * as cd from 'cd-interfaces';
 export class LayoutPropsComponent implements OnChanges {
   private _layoutMode = cd.LayoutMode.Auto;
 
+  public DEFAULT_MAX_GAP = DEFAULT_MAX_GAP;
   public SIZE_MENU = sizeMenuConfig;
   public DISPLAY_MODE = cd.Display;
   public LAYOUT_MODE = cd.LayoutMode;
@@ -58,6 +61,7 @@ export class LayoutPropsComponent implements OnChanges {
   @Input() advancedMode = false;
   @Input() showAdvancedToggleBtn = false;
   @Input() model: cd.IStyleDeclaration = {};
+  @Input() gapMax: number = DEFAULT_MAX_GAP;
 
   @Output() modelChange = new EventEmitter<Partial<cd.IStyleDeclaration>>();
   @Output() advancedModeChange = new EventEmitter<boolean>();

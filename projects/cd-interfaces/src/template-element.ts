@@ -23,7 +23,7 @@ export interface ITemplateTextNode {
 
 export interface ITemplateElement {
   tagName: string;
-  // TODO: This should always be in with this element's property map in the project store, see b/122900592
+  // TODO , : This should always be in with this element's property map in the project store, see b/122900592
   attrs?: IStringMap<string>;
   children?: TemplateTreeItem[];
   markForDelete?: boolean;

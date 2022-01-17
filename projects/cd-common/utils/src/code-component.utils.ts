@@ -17,7 +17,6 @@
 import * as cd from 'cd-interfaces';
 import { wrapCodeComponentCode } from './code-component-bundle-wrapper';
 import { stringMatchesRegex } from 'cd-utils/string';
-import { createChangeMarker } from './change.utils';
 
 export const DEFAULT_CODE_COMPONENT_FRAME: cd.ILockingRect = {
   x: 0,
@@ -59,12 +58,10 @@ export const createCodeComponent = (
   jsBundleStoragePath: string
 ): cd.ICodeComponentDocument => {
   const type = cd.EntityType.CodeComponent;
-  const changeMarker = createChangeMarker();
 
   const codeComponent: cd.ICodeComponentDocument = {
     id,
     projectId,
-    changeMarker,
     type,
     title,
     tagName,

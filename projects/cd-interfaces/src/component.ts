@@ -175,7 +175,7 @@ export interface ICssBinding {
   binding: string;
 }
 
-// TODO Add support for resize types
+// TODO,  Add support for resize types
 /**
  * Defines how and in what directions the component can be resized. For instance,
  * The icon is resize uniformly, as the width/height should always be equal.

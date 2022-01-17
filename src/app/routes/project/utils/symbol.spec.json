@@ -77,11 +77,11 @@
         "name": "",
         "owner": {
           "id": "u3bJ6iERsqV8IsBYVMDBt6PVhAj1",
-          "email": "test@google.com"
+          "email": "google.com"
         },
         "creator": {
           "id": "u3bJ6iERsqV8IsBYVMDBt6PVhAj1",
-          "email": "test@google.com"
+          "email": "google.com"
         },
         "createdAt": {
           "seconds": 1626456286,
@@ -778,6 +778,13 @@
           "elementType": "Symbol",
           "type": "Element",
           "id": "SdLhjViRdIEEiiUDn2cF",
+          "orderedElemIds": [
+            "SdLgqTCL7aD6CG5u5fDJ",
+            "SdLgr0VeddqsGejVX8zH",
+            "SdLgrVkKm3AjnLu5lb3s",
+            "SdLgppeC3t57Gv6pIXz7",
+            "SdLgtv2AnK1dQZvRTpR9"
+          ],
           "childIds": [
             "SdLgqTCL7aD6CG5u5fDJ",
             "SdLgr0VeddqsGejVX8zH",

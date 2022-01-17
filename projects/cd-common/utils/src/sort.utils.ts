@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import type { ElementPropertiesMap } from 'cd-interfaces';
-
 interface ISortableItem {
   id: string;
   name: string;
@@ -31,16 +29,4 @@ export const sortElementsByName = <T extends ISortableItem>(
   const homeIdx = homeBoardId ? elements.findIndex((item) => item.id === homeBoardId) : -1;
   const home = homeIdx !== -1 ? elements.splice(homeIdx, 1) : [];
   return [...home, ...elements];
-};
-
-export const sortElementIdsByName = (
-  ids: string[],
-  elementProps: ElementPropertiesMap
-): string[] => {
-  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-  return [...ids].sort((a, b) => {
-    const aName = elementProps[a]?.name || '';
-    const bName = elementProps[b]?.name || '';
-    return collator.compare(aName, bName);
-  });
 };

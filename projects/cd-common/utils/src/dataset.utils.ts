@@ -15,7 +15,6 @@
  */
 
 import { BUILT_IN_DATASET_LOOKUP } from 'cd-common/datasets';
-import { createChangeMarker } from './change.utils';
 import { isObject, isPrimitive } from 'cd-utils/object';
 import { isString } from 'cd-utils/string';
 import * as consts from 'cd-common/consts';
@@ -33,10 +32,6 @@ export const isJsonDataset = (dataset: cd.ProjectDataset): dataset is cd.IJsonDa
   return dataset.datasetType === cd.DatasetType.Json;
 };
 
-export const isStoredDataset = (dataset: cd.IDataset): dataset is cd.IStoredDataset => {
-  return !!(dataset as cd.IStoredDataset).storagePath;
-};
-
 export const createJsonDataset = (
   id: string,
   projectId: string,
@@ -45,8 +40,7 @@ export const createJsonDataset = (
 ): cd.IJsonDataset => {
   const type = cd.EntityType.Dataset;
   const datasetType = cd.DatasetType.Json;
-  const changeMarker = createChangeMarker();
-  return { id, projectId, changeMarker, type, datasetType, name, storagePath };
+  return { id, projectId, type, datasetType, name, storagePath };
 };
 
 export const createGenericEndpointDataset = (

@@ -22,7 +22,7 @@ import { KEYS } from 'cd-utils/keycodes';
 import { CHIP_ELEMENT_NAME } from '../comments.consts';
 import { LINK_REGEX } from 'cd-utils/url';
 
-// Since the browser wraps text content in divs for single line breaks,
+// : Since the browser wraps text content in divs for single line breaks,
 // and <br> tags in divs for multi-line breaks. Because of this, we normalize to
 // non-wrapped <br> tags. We also remove non-breaking spaces because we only need them
 // when a user is editing text.

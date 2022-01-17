@@ -70,6 +70,7 @@ export interface IProperty {
   step?: number;
   stepBinding?: string;
   innerLabel?: string;
+  gapMax?: number;
   /** Function that is called when a property changes that can modify typically inputs and styles on the model*/
   propertyTransformer?: PropertyTransformerFn;
   /** Function that is called when a property changes to modify properties on a different element */
@@ -104,6 +105,9 @@ export interface IProperty {
 
   /** Message to use inside empty portal */
   portalZeroStateMessage?: string;
+
+  /** Hide the zero state for a portal */
+  hidePortalZeroState?: boolean;
 }
 
 // TODO: IPropertyGroup probably shouldn't extend IProperty.
@@ -266,7 +270,7 @@ export interface IOutputProperty {
    *
    * For example on datepicker value change, a user would have to enter Equals 2020-06-15
    * for action to trigger. This format is not documented.
-   * Also dates are off by one day due to b/159480812
+   * Also dates are off by one day
    */
   disableAsActionTrigger?: boolean;
 

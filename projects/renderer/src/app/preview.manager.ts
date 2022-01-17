@@ -19,7 +19,7 @@ import { fromEvent, Subscription } from 'rxjs';
 import { auditTime, debounceTime, map } from 'rxjs/operators';
 import { TooltipManager } from './utils/tooltip-manager';
 import { rendererState } from './state.manager';
-import { RendererAPI, StateAPIBoardNavEvt } from './utils/state.api';
+import { WebPrototypingToolRendererAPI, StateAPIBoardNavEvt } from './utils/state.api';
 import OutletService from './outlet.service';
 import ModalOutlet from './outlet-components/modal/modal.outlet';
 import DrawerOutlet from './outlet-components/drawer/drawer.outlet';
@@ -55,7 +55,7 @@ export default class PreviewManager {
   private _a11yManager: AccessibilityManager;
   private _tooltipManager = new TooltipManager();
   private _subscription = Subscription.EMPTY;
-  private _api: RendererAPI;
+  private _api: WebPrototypingToolRendererAPI;
   private _previewMode = false;
   public prevRenderResults = '';
 
@@ -66,7 +66,7 @@ export default class PreviewManager {
     private _outletService: OutletService | null
   ) {
     const win = outletDocument.defaultView;
-    this._api = new RendererAPI(win);
+    this._api = new WebPrototypingToolRendererAPI(win);
     this._interactionManager = new InteractionManager(_outletService);
     this._a11yManager = new AccessibilityManager(_id);
   }

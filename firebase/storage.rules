@@ -8,7 +8,7 @@ service firebase.storage {
       }
 
       function isVerified(){
-        return request.auth.token.email_verified == true && request.auth.token.email.matches(".*@google.com");
+        return request.auth.token.email_verified == true && request.auth.token.email.matches(".*");
       }
 
       // allow read: if isScreenshotService() || isVerified();

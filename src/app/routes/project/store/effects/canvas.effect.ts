@@ -16,13 +16,18 @@
 
 import { CanvasService } from '../../services/canvas/canvas.service';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { getSymbolMode } from '../selectors';
+import {
+  getElementProperties,
+  getElementPropertiesLoaded,
+  getProject,
+  getSymbolMode,
+} from '../selectors';
 import { IBoardProperties, PropertyModel, IProject } from 'cd-interfaces';
 import { Injectable } from '@angular/core';
+import { IProjectState } from '../reducers';
 import { DISCONNECT_PROJECT } from '../actions';
 import { Store, select } from '@ngrx/store';
 import { tap, map, withLatestFrom, filter, switchMap, skipWhile, take } from 'rxjs/operators';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import * as actions from '../actions/canvas.action';
 import { RouterNavigationAction, ROUTER_NAVIGATED } from '@ngrx/router-store';
 import { IAppState, getRouterState } from 'src/app/store/reducers';
@@ -31,7 +36,6 @@ import { canvasHasBounds } from '../../utils/canvas.utils';
 import { forkJoin, Observable, of } from 'rxjs';
 import { isBoard } from 'cd-common/models';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IProjectState } from '../reducers/reducer.interface';
 
 export const NO_CANVAS_ANIMATION_EVENT = 'no-animate';
 const FIT_TO_BOUNDS_BOARD_LIMIT = 8;
@@ -50,8 +54,6 @@ export class CanvasEffects {
 
   constructor(
     private actions$: Actions,
-    private canvasService: CanvasService,
-    private projectContentService: ProjectContentService,
     private _canvasService: CanvasService,
     private _activatedRoute: ActivatedRoute,
     private _projectStore: Store<IProjectState>,
@@ -63,7 +65,7 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType(actions.CANVAS_FIT_TO_BOUNDS),
-        tap(() => this.canvasService.fitToBounds())
+        tap(() => this._canvasService.fitToBounds())
       ),
     { dispatch: false }
   );
@@ -92,6 +94,7 @@ export class CanvasEffects {
    * The canvas service will ignore fitToBounds if bounds is empty, so the additional
    * call will have no effect.
    */
+
   centerCanvasOnNavigateToProject$ = createEffect(() => {
     return this.actions$.pipe(
       ofType<RouterNavigationAction>(ROUTER_NAVIGATED),
@@ -102,18 +105,19 @@ export class CanvasEffects {
         return url.includes(Route.Project) && !url.includes(Route.Preview);
       }),
       switchMap(() => {
-        return this.projectContentService.elementsLoaded$.pipe(
+        return this._projectStore.pipe(
+          select(getElementPropertiesLoaded),
           skipWhile((loaded) => loaded === false)
         );
       }),
-      withLatestFrom(this.projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       map(([, proj]) => proj),
       filter((proj): proj is IProject => proj !== undefined),
       filter((proj) => proj.id !== this._currentProjectId),
       switchMap((proj) => {
         // Ensure bounds have been determined before dispatching action to fit to bounds.
         // If action is dispatched before canvas has calculated bounds, it will be ignored
-        const { canvas$ } = this.canvasService; // subscribe to changes in canvas object
+        const { canvas$ } = this._canvasService; // subscribe to changes in canvas object
         const canvasHasBounds$ = canvas$.pipe(
           map((canvas) => canvasHasBounds(canvas)), // check if canvasHasBounds on changes to canvas
           skipWhile((hasBounds) => hasBounds === false), // ignore events until hasBounds is true
@@ -123,7 +127,7 @@ export class CanvasEffects {
       }),
       withLatestFrom(this._projectStore.pipe(select(getSymbolMode))),
       map(([[proj], symbolMode]) => [proj, symbolMode]),
-      withLatestFrom(this.projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       map(([[proj, symbolMode], elementProps]) => {
         this._currentProjectId = proj.id;
         const boardId = this._activatedRoute.snapshot.queryParams?.id;
@@ -154,21 +158,21 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType<actions.CanvasSnapToHomeBoard>(actions.CANVAS_SNAP_TO_HOME_BOARD),
-        withLatestFrom(this.projectContentService.project$),
+        withLatestFrom(this._projectStore.pipe(select(getProject))),
         map(([, proj]) => proj),
         filter((proj): proj is IProject => proj !== undefined),
-        withLatestFrom(this.projectContentService.elementProperties$),
-        withLatestFrom(this.projectContentService.boardIds$),
-        tap(([[proj, props], boardIds]) => {
+        withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
+        tap(([proj, props]) => {
           const homeId = proj.homeBoardId;
-          const homeBoard =
-            homeId && boardIds.includes(homeId) && (props[homeId] as IBoardProperties);
+          const boardIds = proj.boardIds ?? [];
+          const homeBoard = homeId && boardIds.includes(homeId) && props[homeId];
           if (!homeBoard) {
             // Fall back if home board breaks for some reason
-            this.canvasService.fitToBounds();
+            this._canvasService.fitToBounds();
             return;
           }
-          this.canvasService.snapToBoard([homeBoard], false, LARGE_PROJECT_INITAL_ZOOM);
+          const payload = homeBoard as IBoardProperties;
+          this._canvasService.snapToBoard([payload], false, LARGE_PROJECT_INITAL_ZOOM);
         })
       ),
     { dispatch: false }
@@ -184,7 +188,7 @@ export class CanvasEffects {
           return [action, propModels, zoom];
         }),
         filter(([, propertyModels]) => propertyModels.length > 0),
-        withLatestFrom(this.projectContentService.elementProperties$),
+        withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
         tap(([[action, propertyModels, zoom], props]) => {
           const { event } = action;
           const areBoards = propertyModels.every(isBoard);
@@ -192,7 +196,7 @@ export class CanvasEffects {
             ? propertyModels
             : propertyModels.map((item) => props[item.rootId]);
           const animate = !(event && event.type === NO_CANVAS_ANIMATION_EVENT);
-          this.canvasService.snapToBoard(boards as IBoardProperties[], animate, zoom);
+          this._canvasService.snapToBoard(boards as IBoardProperties[], animate, zoom);
         })
       ),
     { dispatch: false }
@@ -202,7 +206,7 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType<actions.CanvasPan>(actions.CANVAS_PAN),
-        tap(({ event }: actions.CanvasPan) => this.canvasService.panTo(event as KeyboardEvent))
+        tap(({ event }: actions.CanvasPan) => this._canvasService.panTo(event as KeyboardEvent))
       ),
     { dispatch: false }
   );
@@ -213,7 +217,7 @@ export class CanvasEffects {
         ofType(actions.CANVAS_ZOOM_IN, actions.CANVAS_ZOOM_OUT),
         tap(({ type }) => {
           const zoomIn = type === actions.CANVAS_ZOOM_IN;
-          this.canvasService.zoomInOut(zoomIn);
+          this._canvasService.zoomInOut(zoomIn);
         })
       ),
     { dispatch: false }
@@ -223,7 +227,7 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType(actions.CANVAS_ZOOM_RESET),
-        tap(() => this.canvasService.resetZoom())
+        tap(() => this._canvasService.resetZoom())
       ),
     { dispatch: false }
   );
@@ -234,7 +238,7 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType(actions.CANVAS_SAVE_STATE),
-        tap(() => this.canvasService.saveState())
+        tap(() => this._canvasService.saveState())
       ),
     { dispatch: false }
   );
@@ -245,7 +249,7 @@ export class CanvasEffects {
     () =>
       this.actions$.pipe(
         ofType(actions.CANVAS_RESTORE_STATE),
-        tap(() => this.canvasService.restoreSavedState())
+        tap(() => this._canvasService.restoreSavedState())
       ),
     { dispatch: false }
   );

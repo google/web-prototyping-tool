@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { IBoardProperties, ICanvas, ICanvasPosition, Rect } from 'cd-interfaces';
+import { IBoardProperties } from 'cd-interfaces';
+import { ICanvas, ICanvasPosition } from '../../interfaces/canvas.interface';
 import { Injectable } from '@angular/core';
 import { IPanelsState } from '../../interfaces/panel.interface';
 import { movePoint } from '../../utils/store.utils';
 import { clamp, isBetween, roundToDecimal } from 'cd-utils/numeric';
+import { Rect } from 'cd-utils/geometry';
 import * as config from '../../configs/canvas.config';
 import * as utils from '../../utils/canvas.utils';
 import { BehaviorSubject } from 'rxjs';

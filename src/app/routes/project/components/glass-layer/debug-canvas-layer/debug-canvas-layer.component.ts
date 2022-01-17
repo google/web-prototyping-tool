@@ -23,8 +23,9 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CanvasService } from '../../../services/canvas/canvas.service';
+import { ICanvas } from '../../../interfaces/canvas.interface';
 import { BOUNDS_PADDING } from '../../../configs/canvas.config';
-import { IRect, ICanvas } from 'cd-interfaces';
+import { IRect } from 'cd-interfaces';
 import { clamp } from 'cd-utils/numeric';
 import { generateFrame } from 'cd-common/utils';
 

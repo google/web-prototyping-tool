@@ -107,7 +107,7 @@ export class MenuGroupComponent {
     e.stopPropagation();
   }
 
-  // TODO: allow selection on right click but currently breaks e2e
+  // TODO:  allow selection on right click but currently breaks e2e
   // onRightClick(e: MouseEvent, item: IMenuConfig): void {
   //   if (e.button === 2) {
   //     this.clicked.emit(item);

@@ -25,15 +25,14 @@ import {
   ChangeDetectorRef,
   HostListener,
 } from '@angular/core';
-import { IProjectState, PanelSetPropertyPanelState } from '../../../store';
+import { IProjectState, getElementProperties, PanelSetPropertyPanelState } from '../../../store';
 import { InteractionService } from '../../../services/interaction/interaction.service';
 import { CanvasService } from '../../../services/canvas/canvas.service';
 import { PropertiesService } from '../../../services/properties/properties.service';
 import { Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import * as utils from './action-layer.utils';
 import * as cd from 'cd-interfaces';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 const STROKE_WIDTH = 1.5;
 const END_FRAME_PADDING = 10;
@@ -78,7 +77,6 @@ export class ActionLayerComponent implements OnChanges, OnInit, OnDestroy {
   constructor(
     private _cdRef: ChangeDetectorRef,
     private _projectStore: Store<IProjectState>,
-    private _projectContentService: ProjectContentService,
     private _interactionService: InteractionService,
     private _propertiesService: PropertiesService,
     private _canvasService: CanvasService
@@ -89,8 +87,8 @@ export class ActionLayerComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const { elementProperties$ } = this._projectContentService;
-    this._subscriptions = elementProperties$.subscribe(this.onActionElements);
+    const elemProps$ = this._projectStore.pipe(select(getElementProperties));
+    this._subscriptions = elemProps$.subscribe(this.onActionElements);
   }
 
   onActionElements = (elements: cd.ElementPropertiesMap) => {

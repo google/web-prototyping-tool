@@ -20,4 +20,3 @@ export const BOARD_3 = 'Board 3';
 export const PORTAL_NAME = 'Portal';
 export const BUTTON_SYMBOL_NAME = 'Button';
 export const SYMBOL_NAME_1 = 'My Component';
-export const ICON_SYMBOL_NAME = 'Icon';

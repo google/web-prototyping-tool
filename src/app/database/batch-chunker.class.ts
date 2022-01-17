@@ -39,13 +39,6 @@ export class BatchChunker {
     this.currentBatch.set(documentRef, data);
   }
 
-  public update(
-    documentRef: firebase.firestore.DocumentReference<any>,
-    data: firebase.firestore.UpdateData
-  ) {
-    this.currentBatch.update(documentRef, data);
-  }
-
   public delete(documentRef: firebase.firestore.DocumentReference) {
     this.currentBatch.delete(documentRef);
   }

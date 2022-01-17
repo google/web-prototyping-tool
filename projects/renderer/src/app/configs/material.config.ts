@@ -46,7 +46,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { PortalModule } from '@angular/cdk/portal';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 
-// Configure which Material Modules are used in the  renderer
+// Configure which Material Modules are used in the WebPrototypingTool renderer
 const exports = [
   // A11yModule,
   CdkStepperModule,

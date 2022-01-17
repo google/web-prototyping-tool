@@ -17,6 +17,7 @@
 import { OUTLET_FRAME_INSERT_OFFSET } from 'src/app/routes/project/configs/outlet-frame.config';
 import { generateFrame } from 'cd-common/utils';
 import { filterBoardsList, getModels } from 'cd-common/models';
+import { Rect } from 'cd-utils/geometry';
 import * as cd from 'cd-interfaces';
 import * as utils from 'src/app/routes/project/utils/board.utils';
 
@@ -134,7 +135,7 @@ const getHybridApproachFrame = (
   if (!canvas) return getOldFrame(frame, canvas);
   const selectedIdsSet = new Set(lastSelectedBoardId ? [lastSelectedBoardId] : []);
   const { x, y, width, height } = canvas;
-  const bounds: cd.Rect = [x, y, width, height];
+  const bounds: Rect = [x, y, width, height];
   return utils.updateBoardFramePosition(frame, elemPropsMap, selectedIdsSet, bounds);
 };
 

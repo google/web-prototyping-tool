@@ -51,4 +51,13 @@
     [showBottomLine]="!!projectData"
     zeroStateMsg="Publish project as a template"
   ></app-publish-panel>
+
+  <app-zipline-exporter
+    *ngIf="isUserProjectOwner$ | async"
+    [ziplineData]="projectData?.ziplineData"
+    [ziplineProjectUrl]="exportService.getZiplineProjectUrl$(projectData?.ziplineData) | async"
+    [disabled]="exportService.exportInProgress$ | async"
+    (export)="onExportToZipline()"
+    (exportNewVersion)="onExportToZipline()"
+  ></app-zipline-exporter>
 </cd-properties>

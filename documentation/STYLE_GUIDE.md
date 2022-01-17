@@ -191,19 +191,19 @@ import * as cd from ‘cd-interfaces’
 Commit Format
 
 ```
-<type>(<scope>): <subject> (<b/xxxxxx>)
+<type>(<scope>): <subject>
 ```
 
 Example:
 
 ```
-fix(selection): Fit to bounds off when x || y are zero for the left bounds (b/117433911)
+fix(selection): Fit to bounds off when x || y are zero for the left bounds
 ```
 
 Types:
 
 - `Feat (feature) <subject>`
-- `Fix (bug fix) <subject> b/131416284`
+- `Fix (bug fix) <subject>`
 - `Docs (documentation) <subject>`
 - `Style (formatting, missing semi colons, …) <subject>`
 - `Refactor () <subject>`

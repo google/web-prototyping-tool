@@ -15,8 +15,8 @@
  */
 
 import { Action } from '@ngrx/store';
-import { IDesignSystem, IDesignSystemDocument, FirestoreChangeType } from 'cd-interfaces';
-import { remoteActionTag } from 'src/app/database/path.utils';
+import { IDesignSystem, IDesignSystemDocument } from 'cd-interfaces';
+import { FirestoreChangeType, remoteActionTag } from 'src/app/database/path.utils';
 import { IUndoableAction } from '../../interfaces/action.interface';
 
 export const DESIGN_SYSTEM = '[DesignSystem]';
@@ -56,8 +56,7 @@ export class DesignSystemDocumentCreate implements Action {
 export class DesignSystemUpdate implements IUndoableAction {
   readonly type = DESIGN_SYSTEM_UPDATE;
   constructor(
-    public id: string,
-    public update: Partial<IDesignSystemDocument>,
+    public update: Partial<IDesignSystem>,
     public replace = false,
     public undoable = true
   ) {}

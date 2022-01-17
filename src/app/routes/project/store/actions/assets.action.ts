@@ -15,8 +15,8 @@
  */
 
 import { Action } from '@ngrx/store';
-import { remoteActionTag } from 'src/app/database/path.utils';
-import { FirestoreChangeType, IProjectAsset } from 'cd-interfaces';
+import { FirestoreChangeType, remoteActionTag } from 'src/app/database/path.utils';
+import { IProjectAsset } from 'cd-interfaces';
 
 export const ASSETS = '[Assets]';
 

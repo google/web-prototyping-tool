@@ -27,7 +27,7 @@ import {
 
 import { ComponentSize, SelectedIcon } from 'cd-interfaces';
 import { Subscription } from 'rxjs';
-import { AUTO_VALUE } from 'cd-common/consts';
+import { AUTO_VALUE, GOOGLE_MATERIAL_ICONS_CLASS } from 'cd-common/consts';
 import { ICON_DIMENSIONS, SVG_SUFFIX } from './icon.utils';
 import { IconService } from './icon.service';
 import { isString } from 'cd-utils/string';
@@ -86,7 +86,7 @@ export class IconComponent implements OnDestroy, AfterViewInit {
     this._iconClass = value;
   }
   get iconClass() {
-    return this._iconClass || 'google-material-icons';
+    return this._iconClass || GOOGLE_MATERIAL_ICONS_CLASS;
   }
 
   get svgUrl(): string | undefined {

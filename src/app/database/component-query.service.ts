@@ -17,7 +17,7 @@
 import * as cd from 'cd-interfaces';
 import firestore from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
-import { QueryService, IPublishEntryQueryResult } from './query.service';
+import { AbstractQueryService, IPublishEntryQueryResult } from './query.service';
 import { BehaviorSubject } from 'rxjs';
 import { mergePublishEntryData } from './query.service.utils';
 import { removeValueFromArrayAtIndex } from 'cd-utils/array';
@@ -30,7 +30,7 @@ import {
 } from 'cd-common/consts';
 
 @Injectable()
-export class ComponentQueryService extends QueryService {
+export class ComponentQueryService extends AbstractQueryService {
   public publishedComponents$ = new BehaviorSubject<IPublishEntryQueryResult[]>([]);
 
   reset() {
@@ -63,7 +63,7 @@ export class ComponentQueryService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 
   loadAllSortedByDateWithLimit() {

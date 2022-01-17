@@ -111,7 +111,7 @@ export class AppComponent implements OnDestroy {
     if (!this.exportedProject) return;
     const { elementProperties, datasets } = this.exportedProject;
     // reload project state
-    const propsMsg = new services.PostMessagePropertiesUpdate(elementProperties, true);
+    const propsMsg = new services.PostMessagePropertiesUpdate(elementProperties, true, true);
     this._postMessage(propsMsg);
 
     // reload data

@@ -13,6 +13,7 @@ Web based prototyping tool built using Angular and Firestore. Build high-fidelit
   - [Storybook](documentation/STYLE_GUIDE.md#storybook-style-guide)
   - [NodeJS](documentation/STYLE_GUIDE.md#nodejs-style-guide)
 - [Testing](documentation/TESTING.md)
+
   - [Firebase](documentation/TESTING.md#firebase-tests)
   - [E2E](documentation/TESTING.md#e2e-tests)
   - [Unit](documentation/TESTING.md#unit-tests)
@@ -92,4 +93,3 @@ Web based prototyping tool built using Angular and Firestore. Build high-fidelit
       - [Fonts](src/README.md#app-design-system-fonts)
       - [Variables](src/README.md#app-design-system-variables)
       - [Icons](src/README.md#app-design-system-icons)
-

@@ -16,41 +16,31 @@
 
 import { checkForRoots, filterRoots, isSymbolInstance, lookupElementIds } from 'cd-common/models';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { EntityType, IUserSelection } from 'cd-interfaces';
-import { getIsolatedSymbolId, getSelectedIds, getSelectionState } from '../selectors';
+import { ElementPropertiesDelete, ELEMENT_PROPS_DELETE } from '../actions';
+import { EntityType } from 'cd-interfaces';
+import { getSelectedIds } from '../selectors';
 import { Injectable } from '@angular/core';
 import { IProjectState } from '../reducers';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { withLatestFrom, map, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { withLatestFrom, map, filter } from 'rxjs/operators';
 import * as actions from '../actions/selection.action';
-import { RtcService } from 'src/app/services/rtc/rtc.service';
-import { PresenceService } from 'src/app/services/presence/presence.service';
-import { areSetsEqual } from 'cd-utils/object';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
-import { getSiblingIdOrParent } from '../../utils/element-properties.utils';
+import * as propertiesSelectors from '../selectors/element-properties.selector';
 
 @Injectable()
 export class SelectionEffects {
-  constructor(
-    private actions$: Actions,
-    private projectStore: Store<IProjectState>,
-    private projectChangeCoordinator: ProjectChangeCoordinator,
-    private projectContentService: ProjectContentService,
-    private presenceService: PresenceService,
-    private rtcService: RtcService
-  ) {}
+  constructor(private actions$: Actions, private projectStore: Store<IProjectState>) {}
 
   /**
-   * Anytime and element is toggled add/remove its associated board
-   * unless there are other elements still selected that have the same associated board
+   * Anytime and element is toggled add/remove it associated board
+   * Unless there are other elements still selected that have the same associated board
    */
+
   toggleElement$: Observable<actions.SelectionSet> = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.SelectionToggleElements>(actions.SELECTION_TOGGLE_ELEMENTS),
       withLatestFrom(this.projectStore.pipe(select(getSelectedIds))),
-      withLatestFrom(this.projectContentService.elementProperties$),
+      withLatestFrom(this.projectStore.pipe(select(propertiesSelectors.getElementProperties))),
       map(([[action, selectedIds], elementProperties]) => {
         const { ids, appendToSelection, allowToggleDeselect } = action;
         const hasRootElements = checkForRoots(new Set(ids), elementProperties);
@@ -95,76 +85,15 @@ export class SelectionEffects {
   );
 
   /**
-   * Anytime an element is recreated during undo/redo, select it.
-   * Anytime a selected element is deleted during undo, move selection to its sibling or parent
+   * When an element, make sure it cleared out of selection
    */
-  updateSelectionOnUndoRedo$ = createEffect(() =>
-    this.projectChangeCoordinator.undoRedoChangeProcessed$.pipe(
-      withLatestFrom(this.projectStore.pipe(select(getSelectedIds))),
-      switchMap(([priorElementContent, selectedIds]) => {
-        const elementContent = this.projectContentService.elementContent$.getValue();
-        const { SelectionToggleElements } = actions;
-        const { idsCreatedInLastChange, idsDeletedInLastChange } = elementContent;
 
-        if (idsCreatedInLastChange.size) {
-          const createdIds = Array.from(idsCreatedInLastChange);
-          return [new SelectionToggleElements(createdIds)];
-        }
-
-        if (!idsDeletedInLastChange.size) return [];
-
-        const currSelectedIds = Array.from(selectedIds);
-        const deletedSelection = currSelectedIds.filter((id) => idsDeletedInLastChange.has(id));
-        if (!deletedSelection.length) return [];
-
-        const [firstId] = deletedSelection;
-        const props = priorElementContent.records[firstId];
-        if (!props?.parentId) return [];
-        const { parentId } = props;
-        const parentProps = priorElementContent.records[parentId];
-        if (!parentProps) return [];
-        const { childIds } = parentProps;
-        const deletedIds = Array.from(idsDeletedInLastChange);
-        const selectionId = getSiblingIdOrParent(firstId, parentId, childIds, deletedIds);
-        return [new SelectionToggleElements([selectionId])];
-      })
-    )
-  );
-
-  broadcastSelectionToPeers$ = createEffect(
+  deletedSelection$: Observable<actions.SelectionSet | actions.SelectionDeselectAll> = createEffect(
     () =>
-      this.projectStore.pipe(
-        select(getSelectionState),
-        withLatestFrom(this.projectStore.pipe(select(getIsolatedSymbolId))),
-        withLatestFrom(this.projectContentService.elementProperties$),
-        distinctUntilChanged((prev, curr) => {
-          const [[prevSelectionState]] = prev;
-          const [[currSelectionState]] = curr;
-          return areSetsEqual(prevSelectionState.ids, currSelectionState.ids);
-        }),
-        tap(([[selectionState, isolatedSymbolId], elementProperties]) => {
-          const { ids, outletFramesSelected } = selectionState;
-          const { sessionId } = this.presenceService;
-          const selectedIds = Array.from(ids);
-
-          const selectedIdsByOutlet = selectedIds.reduce<Record<string, string[]>>((acc, id) => {
-            const rootId = elementProperties[id]?.rootId;
-            if (!rootId) return acc;
-            const outletIds = acc[rootId] || [];
-            const updatedIds = [...outletIds, id];
-            acc[rootId] = updatedIds;
-            return acc;
-          }, {});
-
-          const selection: IUserSelection = {
-            sessionId,
-            selectedIdsByOutlet,
-            outletFramesSelected,
-            isolatedSymbolId,
-          };
-          this.rtcService.broadcastSelectionMessage(selection);
-        })
-      ),
-    { dispatch: false }
+      this.actions$.pipe(
+        ofType<ElementPropertiesDelete>(ELEMENT_PROPS_DELETE),
+        filter(({ ignoreDeselect }) => !ignoreDeselect),
+        map(() => new actions.SelectionDeselectAll())
+      )
   );
 }

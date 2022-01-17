@@ -76,6 +76,7 @@ export class SelectComponent implements OnDestroy, AfterViewInit, OnInit {
   set data(value: ReadonlyArray<ISelectItem>) {
     this._data = value;
     // Fix: For filtering data, do not remove
+    // (TODO) 
     this._cdRef.markForCheck();
   }
   get data(): ReadonlyArray<ISelectItem> {

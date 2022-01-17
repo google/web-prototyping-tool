@@ -16,12 +16,12 @@
 
 import { Injectable, OnDestroy, ComponentRef } from '@angular/core';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { initialState, ISelectionState } from '../../store/reducers/selection.reducer';
-import { IProjectState, getSelectionState, getPanelsState } from '../../store';
+import { ISelectionState } from '../../store/reducers/selection.reducer';
+import { IProjectState, getSelectionState, getProjectState, getPanelsState } from '../../store';
 import { Store, select } from '@ngrx/store';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { PropertiesService } from '../properties/properties.service';
 import { areObjectsEqual } from 'cd-utils/object';
+import { ICanvas } from '../../interfaces/canvas.interface';
 import { IConfigAction } from '../../interfaces/action.interface';
 import { OverlayService, MenuComponent } from 'cd-common';
 import * as utils from './selection.context.utils';
@@ -30,28 +30,37 @@ import { IPanelsState } from '../../interfaces/panel.interface';
 
 @Injectable({ providedIn: 'root' })
 export class SelectionContextService implements OnDestroy {
+  private _projectState?: IProjectState;
   private _panelsState?: IPanelsState;
   private _subscriptions = new Subscription();
   private _propsSubscription = new Subscription();
-  public selectionState = new BehaviorSubject<ISelectionState>(initialState);
+  public selectionState = new BehaviorSubject<utils.SelectionState>(undefined);
   public selectedProperties = new BehaviorSubject<cd.PropertyModel[]>([]);
 
   constructor(
     private _projectStore: Store<IProjectState>,
     private _propertiesService: PropertiesService,
-    private _overlayService: OverlayService,
-    private _projectContentService: ProjectContentService
+    private _overlayService: OverlayService
   ) {
     const selectionState$ = this._projectStore.pipe(select(getSelectionState));
+    const projectState$ = this._projectStore.pipe(select(getProjectState));
     const panelsState$ = this._projectStore.pipe(select(getPanelsState));
-
     this._subscriptions.add(selectionState$.subscribe(this.onSelectionStateSubscription));
+    this._subscriptions.add(projectState$.subscribe(this.onProjectStateSubscription));
     this._subscriptions.add(panelsState$.subscribe(this.onPanelsStateSubscription));
   }
+
+  onProjectStateSubscription = (projectState: IProjectState) => {
+    this._projectState = projectState;
+  };
 
   onPanelsStateSubscription = (panelsState: IPanelsState) => {
     this._panelsState = panelsState;
   };
+
+  get projectState() {
+    return this._projectState;
+  }
 
   get panelsState() {
     return this._panelsState;
@@ -61,7 +70,7 @@ export class SelectionContextService implements OnDestroy {
     return this.selectedProperties.getValue();
   }
 
-  get selection(): ISelectionState {
+  get selection(): utils.SelectionState {
     return this.selectionState.getValue();
   }
 
@@ -90,23 +99,18 @@ export class SelectionContextService implements OnDestroy {
   };
 
   menuForCurrentContext(
-    canvas?: cd.ICanvas,
+    canvas?: ICanvas,
     targetType?: cd.ConfigTargetType
   ): cd.IConfig[][] | undefined {
-    const { selection } = this;
-    const { project, elementProperties } = this._projectContentService;
+    const { projectState } = this;
     const selectedPropertyModels = this.selectedProperties.getValue();
-    return utils.getMenuFromConfig(
-      selection,
-      project,
-      elementProperties,
-      selectedPropertyModels,
-      canvas,
-      targetType
+    return (
+      projectState &&
+      utils.getMenuFromConfig(projectState, selectedPropertyModels, canvas, targetType)
     );
   }
 
-  payloadAndTargetForContext(canvas?: cd.ICanvas): utils.TargetContextPayload {
+  payloadAndTargetForContext(canvas?: ICanvas): utils.TargetContextPayload {
     const propertyModels = this.selectedProperties.getValue();
     const payload = { propertyModels, canvas };
     const symbolMode = Boolean(this._panelsState?.symbolMode);
@@ -123,22 +127,26 @@ export class SelectionContextService implements OnDestroy {
     return utils.actionFromConfig(config, payload, targetType);
   }
 
-  actionForKeyboardShortcut(e: KeyboardEvent, canvas?: cd.ICanvas): IConfigAction | null {
+  actionForKeyboardShortcut(e: KeyboardEvent, canvas?: ICanvas): IConfigAction | null {
+    const { projectState } = this;
+    if (!projectState) return null;
     const [payload, targetType] = this.payloadAndTargetForContext(canvas);
     return utils.actionFromKeyboard(e, payload, targetType);
   }
 
   // Lookup for keyboard shortcuts on code component page
   actionForCodeComponentKeyboardShortcut(e: KeyboardEvent): IConfigAction | null {
+    const { projectState } = this;
+    if (!projectState) return null;
     const targetType = cd.ConfigTargetType.CodeComponent;
     const payload = {}; // empty payload
     return utils.actionFromKeyboard(e, payload, targetType);
   }
 
-  isActionEnabled(action: IConfigAction, canvas?: cd.ICanvas): boolean {
-    const { selection } = this;
-    const { project, elementProperties } = this._projectContentService;
-    return utils.shouldEnableAction(action, selection, project, elementProperties, canvas);
+  isActionEnabled(action: IConfigAction, canvas?: ICanvas): boolean {
+    const { projectState } = this;
+    if (!projectState) return false;
+    return utils.shouldEnableAction(action, projectState, canvas);
   }
 
   canCreateComponent(): boolean {
@@ -163,7 +171,7 @@ export class SelectionContextService implements OnDestroy {
 
   createMenuForCurrentContext(
     e: MouseEvent,
-    canvas?: cd.ICanvas
+    canvas?: ICanvas
   ): ComponentRef<MenuComponent> | undefined {
     const [, targetType] = this.payloadAndTargetForContext(canvas);
     const menu = this.menuForCurrentContext(canvas, targetType);

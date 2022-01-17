@@ -63,7 +63,7 @@ export const createFooter = () => {
     <div style="box-sizing: border-box; padding: 0 12px; text-align: center;">
       <div style="display: inline-block; padding: 40px 0 20px 0; height: 24px;" >
         <img style="width: 29px; height: 20px;" src="${EMAIL_GRAYSCALE_LOGO_URL}" />
-        <div style="display: inline-block; font-weight: 400; font-size: 15px; font-family: 'Google Sans',Roboto,RobotoDraft,Helvetica,Arial,sans-serif; color: #717171; vertical-align: top;"></div>
+        <div style="display: inline-block; font-weight: 400; font-size: 15px; font-family: 'Google Sans',Roboto,RobotoDraft,Helvetica,Arial,sans-serif; color: #717171; vertical-align: top;">WebPrototypingTool</div>
       </div>
       <p style="margin: 0; font-size: 13px; font-weight: 400; line-height: 18px; font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif; color: #aaa; text-align: center;">Google LLC</p>
       <p style="margin: 0; font-size: 13px; font-weight: 400; line-height: 18px; font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif; color: #aaa; text-align: center">1600 Amphitheater Parkway, Mountain View, CA 94043, USA</p>

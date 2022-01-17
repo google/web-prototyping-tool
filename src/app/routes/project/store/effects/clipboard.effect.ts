@@ -21,11 +21,14 @@ import { switchMap, map, withLatestFrom } from 'rxjs/operators';
 import { ClipboardService } from '../../services/clipboard/clipboard.service';
 import { EditConfig } from '../../configs/project.config';
 import * as action from '../actions';
+import { Store, select } from '@ngrx/store';
+import { IProjectState } from '../reducers';
 import { copyToClipboard } from 'cd-utils/clipboard';
 import { generateComputedCSS, cssToString } from 'cd-common/utils';
+import { withDesignSystem } from '../../utils/operators.utils';
 import { AssetsService } from '../../services/assets/assets.service';
 import { ToastsService } from '../../../../services/toasts/toasts.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { getElementProperties } from '../selectors';
 import { assembleTemplatesWithCSSForExport } from 'cd-common/models';
 
 @Injectable()
@@ -35,7 +38,7 @@ export class ClipboardEffects {
     private _clipboardService: ClipboardService,
     private _toastService: ToastsService,
     private _assetService: AssetsService,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>
   ) {}
 
   // On cut, copy to clipboard and delete
@@ -101,9 +104,9 @@ export class ClipboardEffects {
     () =>
       this.actions$.pipe(
         ofType<action.ClipboardCopyHtml>(action.CLIPBOARD_COPY_HTML),
-        withLatestFrom(this._projectContentService.elementProperties$),
+        withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
         withLatestFrom(this._assetService.assets$),
-        withLatestFrom(this._projectContentService.designSystem$),
+        withDesignSystem(this._projectStore),
         map(([[[act, elementProperties], assets], designSystem]) => {
           const { payload } = act;
           const { propertyModels } = payload;
@@ -133,7 +136,7 @@ export class ClipboardEffects {
     () =>
       this.actions$.pipe(
         ofType<action.ClipboardCopyCss>(action.CLIPBOARD_COPY_CSS),
-        withLatestFrom(this._projectContentService.designSystem$),
+        withDesignSystem(this._projectStore),
         withLatestFrom(this._assetService.assets$),
         map(([[{ payload }, designSystem], assets]) => {
           const { propertyModels } = payload;

@@ -24,7 +24,14 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import * as cd from 'cd-interfaces';
-// import { DataPickerService } from 'cd-common';
+import { DataPickerService } from 'cd-common';
+import {
+  getCellTypeMenuItems,
+  getCurrencyCodeMenuItems,
+  getTableColumnDataMenuItems,
+  getTableColumnProps,
+  TableColumnInputs,
+} from 'cd-definitions';
 
 @Component({
   selector: 'app-table-column-props',
@@ -35,9 +42,11 @@ import * as cd from 'cd-interfaces';
 export class TableColumnPropsComponent implements OnChanges {
   public dataFieldItems: cd.ISelectItem[] = [];
   public dynamicPropsSchema: cd.IPropertyGroup[] = [];
-  public currencyItems = [];
-  public cellTypeItems = [];
+  public currencyItems = getCurrencyCodeMenuItems();
+  public cellTypeItems = getCellTypeMenuItems();
   public optionsConfig: cd.IGenericListConfig = {
+    listItemLabelModelKey: TableColumnInputs.name,
+    listItemLabelFallbackModelKey: TableColumnInputs.cellType,
     valueType: cd.GenericListValueType.String,
     supportsSelection: false,
     addButtonLabel: 'Add column',
@@ -48,14 +57,14 @@ export class TableColumnPropsComponent implements OnChanges {
   @Input() parentMergedProps?: cd.PropertyModel;
 
   @Input()
-  set datasetId(_datasetId: string) {
-    // const { value } = this.dataPickerService.loadedData$;
-    this.dataFieldItems = [];
+  set datasetId(datasetId: string) {
+    const { value } = this.dataPickerService.loadedData$;
+    this.dataFieldItems = getTableColumnDataMenuItems(datasetId, value);
   }
 
   @Output() dataChange = new EventEmitter<cd.IGenericConfig[]>();
 
-  // constructor(private dataPickerService: DataPickerService) {}
+  constructor(private dataPickerService: DataPickerService) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.prop || changes.options || changes.datasetId) this._setSchema();
@@ -66,7 +75,7 @@ export class TableColumnPropsComponent implements OnChanges {
   }
 
   private _setSchema() {
-    // const { dataFieldItems, cellTypeItems, currencyItems } = this;
-    this.dynamicPropsSchema = [];
+    const { dataFieldItems, cellTypeItems, currencyItems } = this;
+    this.dynamicPropsSchema = getTableColumnProps(dataFieldItems, cellTypeItems, currencyItems);
   }
 }

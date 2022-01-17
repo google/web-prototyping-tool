@@ -24,8 +24,9 @@ import {
 } from '@angular/core';
 import * as cd from 'cd-interfaces';
 import { RecordActionService } from '../../services/record-action/record-action.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { Subscription, Observable, fromEvent } from 'rxjs';
+import * as projectStore from '../../store';
+import { select, Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
 import { sortElementsByName } from 'cd-common/utils';
 
@@ -52,10 +53,10 @@ export class RecordingsComponent implements OnDestroy, OnInit {
   constructor(
     private _cdRef: ChangeDetectorRef,
     private _elemRef: ElementRef,
-    private _recordActionService: RecordActionService,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<projectStore.IProjectState>,
+    private _recordActionService: RecordActionService
   ) {
-    this.designSystem$ = this._projectContentService.designSystem$;
+    this.designSystem$ = this._projectStore.pipe(select(projectStore.getDesignSystem));
   }
 
   get element() {
@@ -68,7 +69,7 @@ export class RecordingsComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this._subscriptions = this._recordActionService.stateChanges$.subscribe(this.onListUpdate);
-    const boards$ = this._projectContentService.boardsArray$;
+    const boards$ = this._projectStore.pipe(select(projectStore.getAllBoards));
     this._subscriptions.add(boards$.subscribe(this.onBoardUpdate));
   }
 

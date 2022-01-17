@@ -20,9 +20,10 @@ import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firest
 import { AssetsService } from './assets.service';
 import { IAppState, getUser } from 'src/app/store';
 import { filter, first } from 'rxjs/operators';
+import { getProject } from '../../store/selectors';
 import { DatabaseService } from 'src/app/database/database.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { Injectable } from '@angular/core';
+import { IProjectState } from '../../store/reducers';
 import { Observable, Subscription, BehaviorSubject, lastValueFrom } from 'rxjs';
 import { projectContentsPathForId } from 'src/app/database/path.utils';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
@@ -64,11 +65,11 @@ export class AssetsUploadService {
     private readonly _afs: AngularFirestore,
     private readonly _databaseService: DatabaseService,
     private readonly _appStore: Store<IAppState>,
-    private _projectContentService: ProjectContentService,
+    private readonly _projectStore: Store<IProjectState>,
     private _toastService: ToastsService,
     private _analyticsService: AnalyticsService
   ) {
-    this._project$ = this._projectContentService.project$;
+    this._project$ = this._projectStore.pipe(select(getProject));
     this._subscriptions.add(this._project$.subscribe(this.onProjectSubscription));
     const getUser$ = this._appStore.pipe(select(getUser));
     this._subscriptions.add(getUser$.subscribe(this.onUserSubscription));

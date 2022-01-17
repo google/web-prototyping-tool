@@ -16,7 +16,7 @@
 
 import { Pipe, PipeTransform } from '@angular/core';
 import { isIValue } from 'cd-common/utils';
-// TODO Consolidate with KeyValue Pipe
+// TODO  Consolidate with KeyValue Pipe
 @Pipe({
   name: 'ColorValue',
 })

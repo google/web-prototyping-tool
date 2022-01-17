@@ -25,7 +25,7 @@
 //
 // Modelling UI is also why opacity is opacityPercentage here.
 
-// TODO: How do we do a more elaborate color-picker test?
+// TODO : How do we do a more elaborate color-picker test?
 export interface IHexColor {
   hex: string; // '#rrggbb (7 chars in total)
   opacityPercentage?: number;

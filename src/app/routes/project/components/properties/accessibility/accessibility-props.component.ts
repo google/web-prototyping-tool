@@ -116,7 +116,7 @@ export class AccessibilityPropsComponent {
   }
 
   onAriaAttrChange(updatedAttr: IA11yAttr, deleteAttr = false) {
-    // TODO:() cleanup
+    // TODO: cleanup
     const { ariaAttrs } = this.a11yInputs;
     let updatedAriaAttrs: IA11yAttr[] | undefined = [];
 

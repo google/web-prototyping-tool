@@ -144,7 +144,7 @@
       routerLink="preview"
       cdTooltip="Run prototype - {{ previewActionTooltip }}"
       cdTooltipDirection="bottom"
-      [disabled]="(boardIds$ | async)?.length === 0"
+      [disabled]="boardCount === 0"
       [queryParams]="{ id: isolatedSymbolId }"
       [fragment]="isolatedSymbolId"
     >

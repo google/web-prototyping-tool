@@ -27,8 +27,6 @@ type ImageUrlResult = string | undefined;
 type PublishEntryWithProject = [cd.IPublishEntry, cd.IProject | undefined];
 type PublishEntryWithImages = [cd.IPublishEntry, cd.IProject, ImageUrlResult, ImageUrlResult[]];
 
-const TEMPLATE_IMAGES_LIMIT = 20;
-
 @Injectable({
   providedIn: 'root',
 })
@@ -51,8 +49,6 @@ export class TemplateService {
 
     const projectTemplates$: Observable<cd.ILoadedTemplate[]> = publishEntries$.pipe(
       switchMap((publishEntries) => {
-        if (!publishEntries.length) return of([]);
-
         const projectRequests: Observable<PublishEntryWithProject>[] = publishEntries.map(
           (entry) => {
             const latestVersion = entry.versions[0];
@@ -63,7 +59,7 @@ export class TemplateService {
             return forkJoin([of(entry), project$]);
           }
         );
-        return forkJoin(projectRequests);
+        return forkJoin([...projectRequests]);
       }),
       // filter out any undefined
       map((results: PublishEntryWithProject[]) => results.filter((r) => !!r[1])),
@@ -74,28 +70,22 @@ export class TemplateService {
         for (const res of results) {
           const [publishEntry, proj] = res;
           const project = proj as cd.IProject; // null check occurred in map above
-          const { homeBoardId } = project;
+          const { homeBoardId, boardIds } = project;
 
           // get image for home board
           const homeImage$ = this._getImageUrl(homeBoardId);
 
           // get other images, and don't duplicate request for home board image
-          const boards$ = this._databaseService.getProjectBoards(project, TEMPLATE_IMAGES_LIMIT);
-
-          const otherImages$ = boards$.pipe(
-            switchMap((boards) => {
-              const otherBoardIds = boards.map((b) => b.id).filter((id) => id !== homeBoardId);
-              if (!otherBoardIds.length) return of([]);
-              const otherBoardImages$ = otherBoardIds.map(this._getImageUrl);
-              return forkJoin(otherBoardImages$);
-            })
-          );
+          const otherImageRequests = boardIds
+            .filter((id) => id !== homeBoardId)
+            .map((id) => this._getImageUrl(id));
+          const otherImages$: Observable<ImageUrlResult[]> =
+            otherImageRequests.length > 0 ? forkJoin([...otherImageRequests]) : of([]);
 
           const withImages$ = forkJoin([of(publishEntry), of(project), homeImage$, otherImages$]);
           resultsWithImages.push(withImages$);
         }
-
-        return resultsWithImages.length ? forkJoin(resultsWithImages) : of([]);
+        return forkJoin([...resultsWithImages]) as Observable<PublishEntryWithImages[]>;
       }),
       map((resultsWithImages) => {
         const loadedTemplates: cd.ILoadedTemplate[] = resultsWithImages.map((res) => {

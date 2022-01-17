@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import { select, Store } from '@ngrx/store';
 import { switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { getElementProperties } from '../selectors/element-properties.selector';
 import {
-  ElementPropertiesChangeRequest,
+  ElementPropertiesUpdate,
   LayoutApplyPresetToSelection,
   LayoutConvertSelection,
   LAYOUT_APPLY_PRESET_TO_SELECTION,
@@ -25,13 +27,13 @@ import {
 } from '../actions';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { applyLayoutPreset, generateLayout } from '../../utils/layout.utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
 import { isGeneric, isBoard } from 'cd-common/models';
 import { copyToClipboard } from 'cd-utils/clipboard';
 import { AnalyticsEvent } from 'cd-common/analytics';
 import { Injectable } from '@angular/core';
+import { IProjectState } from '../reducers';
 import * as cd from 'cd-interfaces';
 
 @Injectable()
@@ -39,19 +41,19 @@ export class LayoutEffects {
   constructor(
     private actions$: Actions,
     private _analyticsService: AnalyticsService,
-    private _toastService: ToastsService,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>,
+    private _toastService: ToastsService
   ) {}
 
   applyLayoutPreset$ = createEffect(() =>
     this.actions$.pipe(
       ofType<LayoutApplyPresetToSelection>(LAYOUT_APPLY_PRESET_TO_SELECTION),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       switchMap(([action, props]) => {
         const selected = action.selectedIds.map((itemId) => props[itemId]) as cd.PropertyModel[];
-        const { changes, insertPointId } = applyLayoutPreset(selected, action.preset, props);
+        const { updates, insertPointId } = applyLayoutPreset(selected, action.preset, props);
         const actions = [];
-        if (changes.length) actions.push(new ElementPropertiesChangeRequest(changes));
+        if (updates.length) actions.push(new ElementPropertiesUpdate(updates));
         if (insertPointId) actions.push(new SelectionToggleElements([insertPointId])); // Select the insertion location
         this._analyticsService.logEvent(AnalyticsEvent.LayoutPreset, { name: action.preset.label });
         return actions;
@@ -63,7 +65,7 @@ export class LayoutEffects {
     () =>
       this.actions$.pipe(
         ofType<LayoutConvertSelection>(LAYOUT_CONVERT_SELECTION),
-        withLatestFrom(this._projectContentService.elementProperties$),
+        withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
         tap(async ([action, props]) => {
           const { payload } = action;
           const models = payload.propertyModels || [];

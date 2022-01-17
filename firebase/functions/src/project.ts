@@ -20,14 +20,11 @@ import { firebaseFunctions, firebaseApp } from './utils/firebase.utils';
 
 const SCREENSHOTS = 'screenshots';
 
-/**
- * Delete all project contents on project document delete
- */
 export const onProjectDelete = firebaseFunctions.firestore
   .document(`${FirebaseCollection.Projects}/{docId}`)
   .onDelete(async (change) => {
-    const { id } = change.data() as cd.IProject;
-
+    const { id, boardIds, symbolIds } = change.data() as cd.IProject;
+    const screenshotIds = [...boardIds, ...symbolIds];
     const firestore = firebaseApp.firestore();
 
     try {
@@ -36,18 +33,10 @@ export const onProjectDelete = firebaseFunctions.firestore
         .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, id)
         .get();
 
-      const screenshotIds: string[] = [];
-
       // Delete project contents
       for (const doc of docsToDelete.docs) {
-        const docData = doc.data() as cd.IComponentInstance;
-        const { id: docId, type, elementType } = docData;
-        const { Element } = cd.EntityType;
-        const { Board, Symbol } = cd.ElementEntitySubType;
-        if (type === Element && (elementType === Board || elementType === Symbol)) {
-          screenshotIds.push(id);
-        }
-        await firestore.doc(`${FirebaseCollection.ProjectContents}/${docId}`).delete();
+        const docData = doc.data() as cd.IProjectContentDocument;
+        await firestore.doc(`${FirebaseCollection.ProjectContents}/${docData.id}`).delete();
       }
 
       // Delete all project screenshots
@@ -64,7 +53,7 @@ export const onProjectDelete = firebaseFunctions.firestore
         .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, id)
         .get();
 
-      // Delete project comments
+      // Delete project contents
       for (const doc of commentsToDelete.docs) {
         const docData = doc.data() as any;
         await firestore.doc(`${FirebaseCollection.Comments}/${docData.id}`).delete();

@@ -17,21 +17,29 @@
 import type JSZip from 'jszip';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
 import { downloadBlobAsFile, isBlobUrl, getBlobFromBlobUrl } from 'cd-utils/files';
 import { PropertiesService } from '../properties/properties.service';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { AssetsService } from '../assets/assets.service';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
-import { BehaviorSubject, lastValueFrom } from 'rxjs';
+import { IProjectState } from '../../store/reducers';
+import { ProjectDataUpdate } from '../../store';
+import { BehaviorSubject, from, lastValueFrom, Observable } from 'rxjs';
 import { UploadService } from '../upload/upload.service';
+import { openLinkInNewTab } from 'cd-utils/url';
+import { map, shareReplay } from 'rxjs/operators';
 import { AnalyticsEvent } from 'cd-common/analytics';
 import { DatasetService } from '../dataset/dataset.service';
 import { DataPickerService } from 'cd-common';
 import { isJsonDataset } from 'cd-common/utils';
 import * as cd from 'cd-interfaces';
 import * as consts from 'cd-common/consts';
+import * as zipline from '../../utils/internal-apis/zipline.utils';
 
 const TOAST_MESSAGE_GENERATING_EXPORT = 'Generating project bundle';
+const TOAST_MESSAGE_PUBLISHING_TO_ZIPLINE = 'Publishing to Zipline';
+const TOAST_MESSAGE_ZIPLINE_SUCCESS = 'Publish to Zipline succeeded.';
 const EXPORT_ERROR_PREFIX = 'Failed to ';
 
 @Injectable({
@@ -39,6 +47,7 @@ const EXPORT_ERROR_PREFIX = 'Failed to ';
 })
 export class ProjectExportService {
   private _currentToastId?: string;
+  private _ziplineProjectUrls$ = new Map<string, Observable<string | null>>();
   public exportInProgress$ = new BehaviorSubject(false);
 
   constructor(
@@ -48,9 +57,34 @@ export class ProjectExportService {
     private assetsService: AssetsService,
     private httpClient: HttpClient,
     private toastService: ToastsService,
+    private projectStore: Store<IProjectState>,
     private analyticsService: AnalyticsService,
     private uploadService: UploadService
   ) {}
+
+  getZiplineProjectUrl$ = (ziplineData?: cd.IZiplinePublishData): Observable<string | null> => {
+    if (!ziplineData) return new BehaviorSubject(null);
+
+    const { projectId } = ziplineData;
+    const cachedProjectUrl$ = this._ziplineProjectUrls$.get(projectId);
+    if (cachedProjectUrl$) return cachedProjectUrl$;
+
+    const projectLookup$ = from(zipline.findProjectById(projectId));
+    const ziplineProjectUrl$ = projectLookup$.pipe(
+      map((response) => {
+        if ((response as cd.IZiplineNotFoundResponse).errors) {
+          return null;
+        }
+        const ziplineProject = response as cd.IZiplineProject;
+        const ziplineProjectUrl = zipline.constuctZiplineProjectUrlFromSlug(ziplineProject.slug);
+        return ziplineProjectUrl;
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+    this._ziplineProjectUrls$.set(projectId, ziplineProjectUrl$);
+    return ziplineProjectUrl$;
+  };
 
   exportProjectAsZip = async () => {
     if (this.exportInProgress$.value) return;
@@ -71,6 +105,99 @@ export class ProjectExportService {
       this._reset();
     } catch (err) {
       this._onError('download project zip', err);
+    }
+  };
+
+  exportProjectToZipline = async () => {
+    if (this.exportInProgress$.value) return;
+    this.exportInProgress$.next(true);
+
+    this._showLoadingToast(TOAST_MESSAGE_GENERATING_EXPORT);
+
+    const project = this.propertiesService.getProjectProperties();
+    const cdExport = await this._createExportBundle();
+    if (!project || !cdExport) return;
+
+    this._showPublishingToZiplineToast();
+
+    // if never published to zipline before, create new zipline project and export
+    const { ziplineData } = project;
+    if (!ziplineData) return this._exportToNewZiplineProject(project, cdExport);
+
+    try {
+      // If previously published to zipline, check to make sure previous zipline project still exists
+      const { projectId } = ziplineData;
+      const ziplineProjectExists = await zipline.checkZiplineProjectExists(projectId);
+      if (!ziplineProjectExists) return this._exportToNewZiplineProject(project, cdExport);
+
+      // Check to make sure previous prototype within zipline project still exists
+      const ziplinePrototypeExists = await zipline.checkZiplinePrototypeExists(ziplineData);
+      if (!ziplinePrototypeExists)
+        return this._exportToNewPrototype(project, ziplineData, cdExport);
+
+      this._exportToNewZiplineVersion(ziplineData, cdExport);
+    } catch (err) {
+      this._onError('publish to Zipline', err);
+    }
+  };
+
+  private _exportToNewZiplineProject = async (project: cd.IProject, exportBundle: JSZip) => {
+    const user = this.propertiesService.getCurrentUser();
+    if (!user) return this._reset();
+
+    try {
+      const ziplineData = await zipline.exportToNewZiplineProject(project, exportBundle, user);
+      const ziplineProjectUrl = await lastValueFrom(this.getZiplineProjectUrl$(ziplineData));
+      this.projectStore.dispatch(new ProjectDataUpdate({ ziplineData }, false));
+      this.analyticsService.logEvent(AnalyticsEvent.ProjectPublishToZipline);
+      this._showZiplineSuccessToast(ziplineProjectUrl);
+      this._reset(false);
+    } catch (err) {
+      this._onError('create new Zipline project', err);
+    }
+  };
+
+  private _exportToNewPrototype = async (
+    project: cd.IProject,
+    currentZiplineData: cd.IZiplinePublishData,
+    exportBundle: JSZip
+  ) => {
+    try {
+      const { projectId } = currentZiplineData;
+      const displayName = zipline.createZiplineProjectDisplayName(project);
+      const ziplineProto = await zipline.exportToNewPrototype(projectId, displayName, exportBundle);
+      const ziplineProjectUrl = await lastValueFrom(this.getZiplineProjectUrl$(currentZiplineData));
+      const { id: prototypeId, timestamp } = ziplineProto;
+      const ziplineData = { ...currentZiplineData, prototypeId, timestamp, numVersions: 1 };
+      this.projectStore.dispatch(new ProjectDataUpdate({ ziplineData }, false));
+
+      // Creating a new prototype only occurs if intial prototype within Zipline project was deleted
+      // So we can just track this as publishing a new version
+      this.analyticsService.logEvent(AnalyticsEvent.ProjectPublishNewVersionToZipline);
+
+      this._showZiplineSuccessToast(ziplineProjectUrl);
+      this._reset(false);
+    } catch (err) {
+      this._onError('create new Zipline prototype', err);
+    }
+  };
+
+  private _exportToNewZiplineVersion = async (
+    currentZiplineData: cd.IZiplinePublishData,
+    exportBundle: JSZip
+  ) => {
+    try {
+      const { projectId, prototypeId } = currentZiplineData;
+      const timestamp = await zipline.exportToNewVersion(projectId, prototypeId, exportBundle);
+      const ziplineProjectUrl = await lastValueFrom(this.getZiplineProjectUrl$(currentZiplineData));
+      const numVersions = currentZiplineData.numVersions + 1;
+      const ziplineData = { ...currentZiplineData, timestamp, numVersions };
+      this.projectStore.dispatch(new ProjectDataUpdate({ ziplineData }, false));
+      this.analyticsService.logEvent(AnalyticsEvent.ProjectPublishNewVersionToZipline);
+      this._showZiplineSuccessToast(ziplineProjectUrl);
+      this._reset(false);
+    } catch (err) {
+      this._onError('create new Zipline version', err);
     }
   };
 
@@ -141,7 +268,7 @@ export class ProjectExportService {
       // save the json for each dataset to a separate file in assets directory of zip file
       // And update storagePath dataset document to point to this location
       for (const [dataset, dataBlob] of datasetsWithBlobs) {
-        if (!dataBlob) continue;
+        if (!dataBlob || dataset.datasetType === cd.DatasetType.Jetway) continue;
         const datasetFileName = `${dataset.id}.json`;
 
         // The dataset json is placed in the /assets directory, but it will be injected
@@ -227,6 +354,23 @@ export class ProjectExportService {
       duration: 100000,
       hideDismiss: true,
     });
+  };
+
+  private _showPublishingToZiplineToast = () => {
+    const message = TOAST_MESSAGE_PUBLISHING_TO_ZIPLINE;
+    const { _currentToastId } = this;
+    if (_currentToastId) this.toastService.updateToastMessage(_currentToastId, message);
+  };
+
+  private _showZiplineSuccessToast = (ziplineProjectUrl: string | null) => {
+    this._hideToast();
+    const message = TOAST_MESSAGE_ZIPLINE_SUCCESS;
+    const toast: Partial<cd.IToast> = { message };
+    if (ziplineProjectUrl) {
+      toast.confirmLabel = 'View';
+      toast.callback = () => openLinkInNewTab(ziplineProjectUrl);
+    }
+    this._currentToastId = this.toastService.addToast(toast);
   };
 
   private _hideToast = () => {

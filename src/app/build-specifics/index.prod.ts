@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
+import { AngularFireModule } from '@angular/fire';
 import { environment } from 'src/environments/environment';
-import { mockModules, mockProviders, prodModules, prodProviders } from './config';
+import { AbstractStorageService } from '../services/storage/abstract-storage.service';
+import { FireStorageService } from '../services/storage/fire-storage.service';
 
-const { databaseEnabled } = environment;
-
-export const extModules = databaseEnabled ? prodModules : mockModules;
-export const exProviders = databaseEnabled ? prodProviders : mockProviders;
+export const extModules = [AngularFireModule.initializeApp(environment.firebase)];
+export const exProviders = [{ provide: AbstractStorageService, useClass: FireStorageService }];

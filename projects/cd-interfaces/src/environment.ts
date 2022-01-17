@@ -14,6 +14,17 @@
  * limitations under the License.
  */
 
+interface IMoonbaseAPI {
+  clientId: string;
+  url: string;
+  key: string;
+}
+
+interface IZiplineAPI {
+  url: string;
+  apiUrl: string;
+}
+
 interface IFontsAPI {
   apiKey: string;
   url: string;
@@ -27,7 +38,7 @@ interface IFirebaseAPI {
   apiKey: string;
   appId: string;
   authDomain: string;
-  databaseURL?: string;
+  databaseURL: string;
   measurementId: string;
   messagingSenderId: string;
   projectId: string;
@@ -38,17 +49,17 @@ export interface IEnvironment {
   analyticsEnabled: boolean;
   clientId: string;
   e2e: boolean;
-  databaseEnabled: boolean;
   firebase: IFirebaseAPI;
   gapiEnabled: boolean;
   googleFonts: IFontsAPI;
   googleMaps: IMapsAPI;
+  moonbase: IMoonbaseAPI;
   peopleApiUrl: string;
   production: boolean;
   pwa: boolean;
   rendererUrl: string;
   renderOutletUrl: string;
   stackLoggingEnabled: boolean;
+  zipline: IZiplineAPI;
   showEditors?: boolean;
-  presenceServiceUrl: string;
 }

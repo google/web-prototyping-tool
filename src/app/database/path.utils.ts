@@ -19,6 +19,12 @@ import { FirebaseCollection } from 'cd-common/consts';
 
 export const remoteActionTag = '(from remote)';
 
+export enum FirestoreChangeType {
+  Added = 'added',
+  Modified = 'modified',
+  Removed = 'removed',
+}
+
 export const typeForEntity = (entity: string, action: string, remote: boolean): string => {
   return remote ? `${entity} ${remoteActionTag} ${action}` : `${entity} ${action}`;
 };
@@ -65,10 +71,6 @@ export const exceptionsPathForId = (id: string = ''): string => {
 
 export const maintenanceModePathForId = (id: string = ''): string => {
   return documentRefForId(FirebaseCollection.MaintenanceMode, id);
-};
-
-export const presencePathForId = (id: string = ''): string => {
-  return documentRefForId(FirebaseCollection.UserPresence, id);
 };
 
 export const pathForEntityType = (id: string, entityType: cd.EntityType): string => {

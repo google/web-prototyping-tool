@@ -51,7 +51,7 @@ export const evaluateActionForSymbolInstanceChanges = (
   if (!isSymbolInstance) return action;
   // This takes the elementId and moves it into symbolChildId,
   // Then takes makes the symbol instance the elementId to ensure actions are only applied
-  // to the symbol instance the user wanted. Fixes b/154568585
+  // to the symbol instance the user wanted.
   const cloneActions = deepCopy(action);
   cloneActions.stateChanges = updateStateChangesForSymbolInstance(
     instanceId,

@@ -15,7 +15,7 @@
  */
 
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MATERIAL_ICONS_CLASS } from 'cd-common/consts';
+import { GOOGLE_MATERIAL_ICONS_CLASS } from 'cd-common/consts';
 import * as cd from 'cd-interfaces';
 
 const TEST_DATA = [
@@ -50,7 +50,7 @@ const TEST_OPTIONS = [
 })
 export class GenericListPropsDemoComponent {
   public selectedIndex = -1;
-  public iconClass = MATERIAL_ICONS_CLASS;
+  public iconClass = GOOGLE_MATERIAL_ICONS_CLASS;
   public data: cd.IGenericConfig[] = TEST_DATA;
   public config: Partial<cd.IGenericListConfig> = TEST_CONFIG;
   public options: cd.ISelectItem[] = TEST_OPTIONS;

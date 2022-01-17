@@ -47,5 +47,6 @@ export const MATERIAL_COLOR_VARIANTS = [
   'A400',
   'A700',
 ];
+export const GOOGLE_MATERIAL_ICONS_CLASS = 'google-material-icons';
 export const MATERIAL_ICONS_CLASS = 'material-icons';
 export const FONT_SMOOTHING = '-webkit-font-smoothing';

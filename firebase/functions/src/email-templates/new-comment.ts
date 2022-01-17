@@ -57,5 +57,5 @@ const generateHeadingText = (
   const project = projectName || defaultProjectText;
   const content = isReply ? 'replied to your' : 'made a';
 
-  return `${user} ${content} comment in ${project} on ${consts.NAME}`;
+  return `${user} ${content} comment in ${project} on ${consts.APP_NAME}`;
 };

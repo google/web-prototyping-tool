@@ -25,8 +25,12 @@ import { DatabaseService } from 'src/app/database/database.service';
 import { publishEntryPathForId } from 'src/app/database/path.utils';
 import { Store, select, Action } from '@ngrx/store';
 import { IProjectState } from '../reducers';
-import { selectPublishEntries } from '../selectors';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import {
+  selectPublishEntries,
+  getElementProperties,
+  getProject,
+  selectCodeComponentsArray,
+} from '../selectors';
 import { buildPropertyUpdatePayload } from 'cd-common/utils';
 
 @Injectable()
@@ -35,18 +39,21 @@ export class PublishEffect {
     private actions$: Actions,
     private _projectStore: Store<IProjectState>,
     private _databaseChangesService: DatabaseChangesService,
-    private _databaseService: DatabaseService,
-    private _projectContentService: ProjectContentService
+    private _databaseService: DatabaseService
   ) {}
 
   // When project first loads, lookup up publish entries for all symbols and code components in project
   loadComponentPublishEntries$ = createEffect(() => {
-    return this._projectContentService.elementsLoaded$.pipe(
-      filter((loaded) => loaded),
-      withLatestFrom(this._projectContentService.elementProperties$),
-      withLatestFrom(this._projectContentService.codeCmpArray$),
-      withLatestFrom(this._projectContentService.symbolIds$),
-      map(([[[_loaded, elementProperties], codeComponents], symbolIds]) => {
+    return this.actions$.pipe(
+      ofType(actions.PROJECT_DATA_QUERY_SUCCESS, actions.PROJECT_CONTENT_QUERY_SUCCESS),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
+      filter(([, proj]) => proj !== undefined),
+      map(([, proj]) => proj as cd.IProject),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
+      withLatestFrom(this._projectStore.pipe(select(selectCodeComponentsArray))),
+      map(([[project, elementProperties], codeComponents]) => {
+        const { symbolIds } = project;
+
         // get all symbol models
         const symbols = symbolIds
           .map((id) => elementProperties[id])
@@ -75,10 +82,11 @@ export class PublishEffect {
 
   // If this project has been published as a template, get it's publish entry
   getProjectPublishEntry$ = createEffect(() =>
-    this._projectContentService.project$.pipe(
-      filter((project) => !!project?.publishId),
-      switchMap((project) => {
-        const publishId = project?.publishId as cd.IPublishId;
+    this.actions$.pipe(
+      ofType<actions.ProjectDataQuerySuccess>(actions.PROJECT_DATA_QUERY_SUCCESS),
+      filter(({ projectData }) => !!projectData.publishId),
+      switchMap(({ projectData }) => {
+        const publishId = projectData.publishId as cd.IPublishId;
         return this._getPublishEntry(publishId);
       }),
       filter((publishEntry) => !!publishEntry),

@@ -19,5 +19,6 @@ import { IDesignSystem } from './design';
 export interface ITheme {
   readonly id: string;
   readonly name: string;
+  readonly internal: boolean;
   readonly theme: IDesignSystem;
 }

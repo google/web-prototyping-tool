@@ -54,7 +54,7 @@ $inputHeight: 30px;
 }
 
 .footer {
-  // The default CD Avatar Details component has padding set on itself
+  // : The default CD Avatar Details component has padding set on itself
   // rather than letting the container set the padding. --cd-avatar-details-padding
   // allows us to pierce view encapsulation to prevent padding in this instance.
   --cd-avatar-details-padding: 0;

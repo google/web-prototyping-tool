@@ -76,7 +76,7 @@ export const designValueLookup = (
   return value || '';
 };
 
-const assetUrlLookup = (ivalue: cd.IValue, projectAssets: cd.AssetMap) => {
+const assetUrlLookup = (ivalue: cd.IValue, projectAssets: cd.IProjectAssets) => {
   const id = ivalue?.id;
   const value = ivalue?.value || '';
   if (!id) return value;

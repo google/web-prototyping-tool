@@ -28,7 +28,6 @@ import elemProps from '../data-picker-demo/data/element-properties.json';
 import demoData from '../data-picker-demo/data/demo-data.json';
 import { ELEMENT_PROPS_DATASET_KEY } from 'cd-common/consts';
 import { Subscription } from 'rxjs';
-import { createDemoDataset } from '../data-picker-demo/data-picker-demo.component';
 
 @Component({
   selector: 'app-input-demo',
@@ -110,21 +109,18 @@ export class InputDemoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._dataService.setElementProperties(elemProps as ElementPropertiesMap);
-    this._dataService.addDataSource(createDemoDataset('demo-qshTXF0M', 'Demo data'), demoData);
+    this._dataService.addDataSource({ id: 'demo-qshTXF0M', name: 'Demo data' }, demoData);
     this._dataService.addDataSource(
-      createDemoDataset('table-2gNKKt4m', 'Table Sample'),
+      { id: 'table-2gNKKt4m', name: 'Table Sample' },
+      tableSampleData
+    );
+    this._dataService.addDataSource({ id: 'table-2233', name: 'Table Sample B' }, tableSampleData);
+    this._dataService.addDataSource(
+      { id: 'table-223333', name: 'Table Sample C' },
       tableSampleData
     );
     this._dataService.addDataSource(
-      createDemoDataset('table-2233', 'Table Sample B'),
-      tableSampleData
-    );
-    this._dataService.addDataSource(
-      createDemoDataset('table-223333', 'Table Sample C'),
-      tableSampleData
-    );
-    this._dataService.addDataSource(
-      createDemoDataset('table-223333', 'Table Sample E'),
+      { id: 'table-223333', name: 'Table Sample E' },
       tableSampleData
     );
     // Note this needs to happen after inital data has been added
@@ -133,7 +129,7 @@ export class InputDemoComponent implements OnInit, OnDestroy {
 
   onDataSourceUpdate = (data: IPickerDataset) => {
     const value = data.value ? JSON.parse(data.value) : {};
-    this._dataService.addDataSource(createDemoDataset(data.id, data.name), value);
+    this._dataService.addDataSource({ id: data.id, name: data.name }, value);
     this._cdRef.markForCheck();
   };
 }

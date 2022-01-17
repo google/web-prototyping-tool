@@ -50,7 +50,7 @@ export class TestPanelComponent {
   set designSystem(value: cd.IDesignSystem | undefined) {
     if (!value) return;
     this._designSystem = value;
-    this._generateColorMenu(value); // TODO do this in a reusable pipe
+    this._generateColorMenu(value); // TODO ,  do this in a reusable pipe
   }
 
   @Output() testPropsChange = new EventEmitter<cd.ICodeComponentInstance>();

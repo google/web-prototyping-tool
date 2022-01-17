@@ -15,12 +15,12 @@
  */
 
 import { Pipe, PipeTransform } from '@angular/core';
-import type { AssetMap, IValue } from 'cd-interfaces';
+import type { IProjectAssets, IValue } from 'cd-interfaces';
 import { isBlobUrl } from 'cd-utils/files';
 
 @Pipe({ name: 'imageLookupPipe', pure: false })
 export class ImageLookupPipe implements PipeTransform {
-  transform(source: IValue | undefined, assets: AssetMap, imageFallbackUrl: string): string {
+  transform(source: IValue | undefined, assets: IProjectAssets, imageFallbackUrl: string): string {
     const id = source?.id;
     const idLookup = id ? assets[id]?.urls?.original : undefined;
     if (idLookup) return idLookup;

@@ -748,91 +748,88 @@
         }
       ]
     ],
-    "expectedChildStyles": {
-      "type": "Element",
-      "updates": [
-        {
-          "id": "WYgNuaNRFfXvXP3fYAOm",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": null,
-                  "left": null,
-                  "bottom": { "value": 262, "units": "px" },
-                  "right": { "value": 567, "units": "px" },
-                  "position": "absolute"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "PLxf413M0lqkO6EwkiFQ",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": { "value": 140, "units": "px" },
-                  "left": null,
-                  "bottom": null,
-                  "right": { "value": 126, "units": "px" },
-                  "position": "absolute"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "vx6TcioeOn085GEraIC9",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": null,
-                  "left": null,
-                  "bottom": { "value": 173, "units": "px" },
-                  "right": { "value": 232, "units": "px" },
-                  "position": "absolute"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "RJ2wvql3qVuqusmuUTbY",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": { "value": 102, "units": "px" },
-                  "left": { "value": 329, "units": "px" },
-                  "bottom": { "value": 398, "units": "px" },
-                  "right": { "value": 371, "units": "px" },
-                  "position": "absolute"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "GFy4bWI6LR64U4Ermt4B",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": { "value": 267, "units": "px" },
-                  "left": { "value": 298, "units": "px" },
-                  "bottom": null,
-                  "right": null,
-                  "position": "absolute"
-                }
+    "expectedChildStyles": [
+      {
+        "elementId": "WYgNuaNRFfXvXP3fYAOm",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": null,
+                "left": null,
+                "bottom": { "value": 262, "units": "px" },
+                "right": { "value": 567, "units": "px" },
+                "position": "absolute"
               }
             }
           }
         }
-      ]
-    }
+      },
+      {
+        "elementId": "PLxf413M0lqkO6EwkiFQ",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": { "value": 140, "units": "px" },
+                "left": null,
+                "bottom": null,
+                "right": { "value": 126, "units": "px" },
+                "position": "absolute"
+              }
+            }
+          }
+        }
+      },
+      {
+        "elementId": "vx6TcioeOn085GEraIC9",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": null,
+                "left": null,
+                "bottom": { "value": 173, "units": "px" },
+                "right": { "value": 232, "units": "px" },
+                "position": "absolute"
+              }
+            }
+          }
+        }
+      },
+      {
+        "elementId": "RJ2wvql3qVuqusmuUTbY",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": { "value": 102, "units": "px" },
+                "left": { "value": 329, "units": "px" },
+                "bottom": { "value": 398, "units": "px" },
+                "right": { "value": 371, "units": "px" },
+                "position": "absolute"
+              }
+            }
+          }
+        }
+      },
+      {
+        "elementId": "GFy4bWI6LR64U4Ermt4B",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": { "value": 267, "units": "px" },
+                "left": { "value": 298, "units": "px" },
+                "bottom": null,
+                "right": null,
+                "position": "absolute"
+              }
+            }
+          }
+        }
+      }
+    ]
   },
   "groupInsideGroup": {
     "elementProps": {
@@ -1341,42 +1338,39 @@
         }
       ]
     ],
-    "expectedChildStyles": {
-      "type": "Element",
-      "updates": [
-        {
-          "id": "PLxf413M0lqkO6EwkiFQ",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": { "value": 42, "units": "px" },
-                  "left": null,
-                  "bottom": null,
-                  "right": { "value": 207, "units": "px" },
-                  "position": "absolute"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "vx6TcioeOn085GEraIC9",
-          "update": {
-            "styles": {
-              "base": {
-                "style": {
-                  "top": null,
-                  "left": null,
-                  "bottom": { "value": 72, "units": "px" },
-                  "right": { "value": 241, "units": "px" },
-                  "position": "absolute"
-                }
+    "expectedChildStyles": [
+      {
+        "elementId": "PLxf413M0lqkO6EwkiFQ",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": { "value": 42, "units": "px" },
+                "left": null,
+                "bottom": null,
+                "right": { "value": 207, "units": "px" },
+                "position": "absolute"
               }
             }
           }
         }
-      ]
-    }
+      },
+      {
+        "elementId": "vx6TcioeOn085GEraIC9",
+        "properties": {
+          "styles": {
+            "base": {
+              "style": {
+                "top": null,
+                "left": null,
+                "bottom": { "value": 72, "units": "px" },
+                "right": { "value": 241, "units": "px" },
+                "position": "absolute"
+              }
+            }
+          }
+        }
+      }
+    ]
   }
 }

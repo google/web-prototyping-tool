@@ -162,6 +162,7 @@
   <app-layout-props
     [model]="value.target | styleBinding"
     [childCount]="value.target?.childIds?.length"
+    [gapMax]="value.prop?.gapMax"
     (modelChange)="writeActiveStyle($event, value.prop)"
   ></app-layout-props>
 </ng-template>
@@ -737,7 +738,7 @@
 </ng-template>
 
 <!-- TABLE COLUMNS -->
-<!-- TODO: how to properly specify datasetId? -->
+<!-- TODO : how to properly specify datasetId? -->
 <ng-template #tableColumnsRef let-value>
   <app-table-column-props
     [prop]="value.prop"

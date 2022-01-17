@@ -394,7 +394,7 @@ export class TreeController {
   }
 
   // DRAG & DROP GROUP PARENT //////////////////////////////////
-  // TODO Refactor with DND service
+  // TODO  Refactor with DND service
 
   getLastChildForNode({ children }: FlatLayersNode): FlatLayersNode | undefined {
     const lastChildId = children && children[children.length - 1];

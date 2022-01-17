@@ -15,10 +15,15 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
+import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Subscription, Observable, of } from 'rxjs';
 import { ScreenshotService } from 'src/app/services/screenshot-lookup/screenshot-lookup.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { areArraysEqual } from 'cd-utils/array';
 import { distinctUntilChanged, tap, take, filter, map } from 'rxjs/operators';
+import { IProjectState } from '../../store/reducers';
+import { getProject } from '../../store/selectors';
+import { FirebaseCollection, FirebaseField, FirebaseQueryOperation } from 'cd-common/consts';
 import * as cd from 'cd-interfaces';
 import firebase from 'firebase/app';
 
@@ -28,22 +33,31 @@ import firebase from 'firebase/app';
 export class SymbolScreenshotsService implements OnDestroy {
   private _subscriptions = new Subscription();
   private _screenshotSubscription = new Subscription();
+  private _symbolUnsubscriber?: Function;
+  private _codeComponentUnsubscriber?: Function;
 
   public componentScreenshots$ = new BehaviorSubject<Map<string, cd.IScreenshotLookup>>(new Map());
 
   constructor(
     private _screenshotService: ScreenshotService,
-    private _projectContentService: ProjectContentService
+    private readonly _projectStore: Store<IProjectState>,
+    private _afs: AngularFirestore
   ) {
-    const { symbolsArray$, codeCmpArray$ } = this._projectContentService;
-    this._subscriptions.add(symbolsArray$.subscribe(this._onComponents));
-    this._subscriptions.add(codeCmpArray$.subscribe(this._onComponents));
+    const project$ = this._projectStore.pipe(
+      select(getProject),
+      distinctUntilChanged((x, y) => {
+        if (!x || !y) return false;
+        return areArraysEqual(x.symbolIds, y.symbolIds);
+      })
+    );
+    this._subscriptions.add(project$.subscribe(this._onProjectSubscription));
   }
 
   ngOnDestroy() {
     // Warning: this is never called
     this._screenshotSubscription.unsubscribe();
     this._subscriptions.unsubscribe();
+    this._unsubsribeSymbols();
   }
 
   lookupSymbolScreenshot = (symbolId: string): Observable<cd.IScreenshotRef> => {
@@ -81,14 +95,43 @@ export class SymbolScreenshotsService implements OnDestroy {
     this._screenshotService.triggerCreateScreenshot(symbolId, projectId);
   }
 
-  private _onComponents = (components: cd.CustomComponent[]) => {
-    for (const component of components) {
-      this._componentUpdated(component);
-    }
+  private _unsubsribeSymbols = () => {
+    if (this._symbolUnsubscriber) this._symbolUnsubscriber();
+    if (this._codeComponentUnsubscriber) this._codeComponentUnsubscriber();
+  };
+
+  private _onProjectSubscription = (project?: cd.IProject) => {
+    this._unsubsribeSymbols();
+    if (!project) return;
+
+    // clear previous subscription and subscribe to updated set of symbol ids
+    this._symbolUnsubscriber = this._afs.firestore
+      .collection(FirebaseCollection.ProjectContents)
+      .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, project.id)
+      .where(
+        FirebaseField.ElementType,
+        FirebaseQueryOperation.Equals,
+        cd.ElementEntitySubType.Symbol
+      )
+      .onSnapshot(this._onComponentSnapshot);
+
+    // Also subscribe to code components in the project
+    this._codeComponentUnsubscriber = this._afs.firestore
+      .collection(FirebaseCollection.ProjectContents)
+      .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, project.id)
+      .where(FirebaseField.DocumentType, FirebaseQueryOperation.Equals, cd.EntityType.CodeComponent)
+      .onSnapshot(this._onComponentSnapshot);
   };
 
   // if the symbol doc change was an update to the lastScreenshotTime property
   // or if we don't have a screenshot for this symbol yet. request a new screenshot
+  private _onComponentSnapshot = (snapshot: firebase.firestore.QuerySnapshot) => {
+    for (const doc of snapshot.docs) {
+      const component = doc.data() as cd.CustomComponent;
+      this._componentUpdated(component);
+    }
+  };
+
   private _componentUpdated = (component: cd.CustomComponent) => {
     const { id, lastScreenshotTime } = component;
     const currentLookup = this.screenshotForId(id);

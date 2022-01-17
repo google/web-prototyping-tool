@@ -130,7 +130,7 @@ export const CanvasKeyEvents: IConfig[] = [
   config.EditConfig.Redo,
 ];
 
-// TODO: are there any different canvas hotkeys in symbol mode?
+// TODO , : are there any different canvas hotkeys in symbol mode?
 export const CanvasSymbolModeKeyEvents: IConfig[] = [...CanvasKeyEvents];
 
 export const BoardKeyEvents: IConfig[] = [

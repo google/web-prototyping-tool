@@ -1,6 +1,6 @@
 # cd-utils
 
-Generic reusable utilities, these are pure functions with no dependencies.
+Generic reusable utilities, these are pure functions not dependent on app.
 
 ## cd-utils/array
 
@@ -68,7 +68,7 @@ import * as domUtils from 'cd-utils/dom';
 
 ## cd-utils/drag
 
-Utils to handle DragEvent which is used when dragging and dropping assets / data. ( Unrelated to our synthetic drag and drop service in the app )
+Utils to handle DragEvent which is used when dragging and dropping assets / data into app. ( Unrelated to our synthetic drag and drop service in the app )
 
 ```ts
 import * as dragUtils from 'cd-utils/dom';
@@ -94,7 +94,7 @@ import * as geoUtils from 'cd-utils/geometry';
 
 Used to parse keyboard event codes.
 
-`TODO: @` consolidate with `cd-metadata`
+`TODO: ` consolidate with `cd-metadata`
 
 ```ts
 import * as keyUtils from 'cd-utils/keycodes';

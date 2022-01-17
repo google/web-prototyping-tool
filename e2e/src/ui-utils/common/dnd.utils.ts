@@ -30,7 +30,7 @@ export const dragAndDropBySel = async (
   await dragAndDrop(page, sourceElem, targetElem);
 };
 
-// TODO: We probably need "offset" positions for target.
+// TODO : We probably need "offset" positions for target.
 export const dragAndDrop = async (
   page: Page,
   source: ElementHandle<Element>,

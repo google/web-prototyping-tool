@@ -21,7 +21,7 @@ import {
   FirebaseOrderBy,
   FirebaseQueryOperation,
 } from 'cd-common/consts';
-import { QueryService, IProjectQueryResult } from 'src/app/database/query.service';
+import { AbstractQueryService, IProjectQueryResult } from 'src/app/database/query.service';
 import { mergeProjects } from 'src/app/database/query.service.utils';
 import { removeValueFromArrayAtIndex } from 'cd-utils/array';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
@@ -30,10 +30,9 @@ import firebase from 'firebase/app';
 import * as firestore from '@angular/fire/firestore';
 import type * as cd from 'cd-interfaces';
 import { getLastQueryResultContainingKeywords } from './search.service.utils';
-import { environment } from 'src/environments/environment';
 
 @Injectable()
-export class ProjectSearchService extends QueryService {
+export class ProjectSearchService extends AbstractQueryService {
   private _userRequestSubscription = Subscription.EMPTY;
   public userProjects$ = new BehaviorSubject<cd.IProject[]>([]);
   public otherProjects$ = new BehaviorSubject<cd.IProject[]>([]);
@@ -50,7 +49,7 @@ export class ProjectSearchService extends QueryService {
   }
 
   searchForProjects(user: cd.IUser | undefined, query: string) {
-    if (!user || !environment.databaseEnabled) return;
+    if (!user) return;
     const { id: uid } = user;
     const lowercaseQuery = query.toLowerCase();
     const username = this.usernameFromQuery(lowercaseQuery);
@@ -68,7 +67,6 @@ export class ProjectSearchService extends QueryService {
     if (this._activeQuery !== username) {
       this.reset(username);
     }
-    if (!environment.databaseEnabled) return;
     const { loading, _latestEntry, _end } = this;
     if (_end || loading) return;
     this.loading = true;
@@ -96,7 +94,6 @@ export class ProjectSearchService extends QueryService {
   }
 
   searchOwnProjects(query: string, uid: string) {
-    if (!environment.databaseEnabled) return;
     this.userLoading$.next(true);
     this._userRequestSubscription.unsubscribe();
     const ownProjects$ = this.getCollection<cd.IProject>(FirebaseCollection.Projects, (ref) => {
@@ -121,7 +118,6 @@ export class ProjectSearchService extends QueryService {
   };
 
   searchOthersProjects(query: string, uid: string) {
-    if (!environment.databaseEnabled) return;
     const { loading, _latestEntry, _end } = this;
     if (_end || loading) return;
     this.loading = true;
@@ -167,6 +163,6 @@ export class ProjectSearchService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 }

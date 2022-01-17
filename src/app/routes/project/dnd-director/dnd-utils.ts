@@ -20,7 +20,7 @@ import { approxDist, createPoint, IPoint } from 'cd-utils/geometry';
 import { incrementedName } from 'cd-utils/string';
 import { FlatLayersNode } from '../interfaces/layers.interface';
 import { CHILD_INDENT_AMOUNT, INDENT_PER_LEVEL } from '../components/layers-tree/layers.config';
-import { buildInsertLocation, convertPropsUpdateToUpdateChanges } from 'cd-common/utils';
+import { buildInsertLocation, deepMerge } from 'cd-common/utils';
 
 const CANVAS_CLASSNAME = 'app-canvas';
 const MULTIPLE_ITEMS_LABEL = 'items';
@@ -315,42 +315,22 @@ export class DndMouseCursor {
   }
 }
 
-const removePreviewStyleFromModel = (model: cd.PropertyModel): cd.PropertyModel => {
-  const { showPreviewStyles, ...otherProperties } = model;
-  return otherProperties;
-};
-
-const removePreviewStyleFromUpdate = (
-  updateChange: cd.IUpdateChange<cd.PropertyModel>
-): cd.IUpdateChange<cd.PropertyModel> => {
-  const { id, update } = updateChange;
-  const { showPreviewStyles, ...otherUpdates } = update;
-  return { id, update: otherUpdates };
-};
-
-const removePreviewStyles = (changes: cd.IElementChangePayload[]) => {
-  return changes.map((change) => {
-    const newChange = { ...change };
-    const { sets, updates } = newChange;
-    if (sets) newChange.sets = sets.map(removePreviewStyleFromModel);
-    if (updates) newChange.updates = updates.map(removePreviewStyleFromUpdate);
-    return newChange;
-  });
-};
-
-/**
- * Review the previewStyles (puruple dotted outline) from dropPreview and combine with any
- * absolute positioning updates on drop
- */
-export const generateDropChange = (
-  dropPreview: cd.IElementChangePayload[] = [],
+export const generateDropUpdate = (
+  dropPreview: cd.IPropertiesUpdatePayload[] = [],
   absStyleUpdates: ReadonlyArray<cd.IPropertiesUpdatePayload>
-): cd.IElementChangePayload[] => {
-  const removePreview = removePreviewStyles(dropPreview);
-  const absStyleUpdateChanges = convertPropsUpdateToUpdateChanges([...absStyleUpdates]);
-  const type = cd.EntityType.Element;
-  const absChangePayload: cd.IElementChangePayload[] = [{ type, updates: absStyleUpdateChanges }];
+): cd.IPropertiesUpdatePayload[] => {
+  const removePreview = models.removePreviewStyles(dropPreview);
+  const merged = [...removePreview, ...absStyleUpdates];
+  const mergeMap: Map<string, cd.UpdatePayloadProperties> = new Map();
 
-  const merged = [...removePreview, ...absChangePayload];
-  return merged;
+  for (const { elementId, properties } of merged) {
+    const existing = mergeMap.get(elementId);
+    if (!existing) mergeMap.set(elementId, properties);
+    const props = deepMerge(existing, properties);
+    mergeMap.set(elementId, props);
+  }
+
+  return Array.from(mergeMap.entries()).map(([elementId, properties]) => {
+    return { elementId, properties };
+  });
 };

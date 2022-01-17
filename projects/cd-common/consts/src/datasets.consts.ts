@@ -18,7 +18,7 @@ export const DATASETS_STORAGE_PATH_PREFIX = 'datasets';
 export const ELEMENT_PROPS_DATASET_KEY = 'cd-element-props';
 export const DATASET_SIZE_LIMIT_ERROR = 'Dataset size limit exceeded. Limit is 512 KB';
 
-// TODO: increase limit once data-tree can handle it
+// TODO , : increase limit once data-tree can handle it
 export const DATASET_SIZE_LIMIT = 512000; // 512 KB
 
 export const DATA_CHIP_TAG = 'cd-data-chip';

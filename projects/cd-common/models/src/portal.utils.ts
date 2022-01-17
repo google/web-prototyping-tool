@@ -81,7 +81,8 @@ export const generatePortalZeroState = (
   isChild: boolean = false,
   slotName?: string,
   addNgForIndexToSlotName = false,
-  zeroStateMessage?: string
+  zeroStateMessage?: string,
+  hidePortalZeroState = false
 ) => {
   const HAS_REFERENCE_MODEL_CONDITION = `${referenceIdLookup} ${HAS_VALUE_PIPE}`;
 
@@ -96,7 +97,8 @@ export const generatePortalZeroState = (
   }
   if (zeroStateMessage) zeroState.addCssVar(PORTAL_ZERO_STATE_MESSAGE_VAR, zeroStateMessage, true);
 
-  return `<ng-template #${portalErrorRef}>${zeroState.build()}</ng-template>`;
+  const zeroStateContent = hidePortalZeroState ? '' : zeroState.build();
+  return `<ng-template #${portalErrorRef}>${zeroStateContent}</ng-template>`;
 };
 
 export const buildChildPortal = (
@@ -104,7 +106,8 @@ export const buildChildPortal = (
   addNgForIndexToId = true,
   slotName?: string,
   addNgForIndexToSlotName = false,
-  zeroStateMessage?: string
+  zeroStateMessage?: string,
+  hidePortalZeroState = false
 ): string => {
   const isValidPortal = circularOutletGuard(portalRefBinding);
   const portalErrorRef = slotName
@@ -126,7 +129,8 @@ export const buildChildPortal = (
     true,
     slotName,
     addNgForIndexToSlotName,
-    zeroStateMessage
+    zeroStateMessage,
+    hidePortalZeroState
   );
   return [portalFactory.build(), portalZeroState].join('');
 };

@@ -384,7 +384,6 @@ export default class InteractionManager {
    * This occurs when something like a radiobutton group,
    * checkbox, switch, etc updates state inside a symbol instance.
    * We DO NOT set the child element's value, instead we set an instanceInput on the symbol instance.
-   * Fixes b/153748238
    * */
   updateBindingInsideSymbolInstance(
     instanceId: string,

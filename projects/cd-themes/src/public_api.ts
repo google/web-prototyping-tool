@@ -30,6 +30,7 @@ export * from './tools/tonal-palette';
 export * from './tools/utils';
 export * from './themes/consts';
 
+
 export const themeFromId: ReadonlyRecord<Theme, () => ITheme> = {
   [Theme.AngularMaterial]: buildAngularMaterial,
   [Theme.AngularMaterialDark]: buildAngularMaterialDark,

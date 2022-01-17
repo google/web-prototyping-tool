@@ -20,33 +20,21 @@
         highlight: highlight.get(outletFrame.id),
         selection: selectionState.get(outletFrame.id),
         scrollRect: outletFrameScrollRect.get(outletFrame.id),
-        boardElements: elements.get(outletFrame.id),
-        peerSelectionRects: peerRectsPerOutlet[outletFrame.id]
+        boardElements: elements.get(outletFrame.id)
       }"
     ></ng-container>
     <!-- Overlays -->
     <g app-line-layer></g>
     <g app-drag-layer *ngIf="dragging" [renderRects]="renderRects"></g>
     <g app-debug-canvas-layer *ngIf="debugCanvas"></g>
-
-    <!-- Multi-editor: Other users cursors -->
-    <g
-      app-cursor-layer
-      *ngIf="peerCursors.length"
-      [cursors]="peerCursors"
-      [zoom]="zoom"
-      [darkTheme]="darkTheme"
-    ></g>
   </g>
 
   <g
     app-marquee-layer
-    *ngIf="showMarquee || peerCursorsWithMarquee.length"
+    *ngIf="showMarquee"
     [zoom]="zoom"
-    [canvas]="canvas"
     [marqueeRect]="marqueeRect"
     [createBoard]="createBoard"
-    [peerMarqueeCursors]="peerCursorsWithMarquee"
   ></g>
 </svg>
 
@@ -57,7 +45,6 @@
   let-highlight="highlight"
   let-scrollRect="scrollRect"
   let-boardElements="boardElements"
-  let-peerSelectionRects="peerSelectionRects"
 >
   <svg:g [attr.transform]="outletFrame?.frame | TranslateSVGFrame" cd-e2e-label="outlet-frame">
     <!-- Layer for capturing mouse events -->
@@ -95,7 +82,6 @@
         [renderRects]="renderRects"
         [outletFrame]="outletFrame"
         [values]="selection"
-        [peerSelectionRects]="peerSelectionRects"
       ></g>
 
       <!-- Layer for showing Highlight -->

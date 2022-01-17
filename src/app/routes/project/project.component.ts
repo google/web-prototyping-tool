@@ -19,7 +19,6 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, E
 import { KeyboardShortcutsComponent } from './components/keyboard-shortcuts/keyboard-shortcuts.component';
 import { SelectionContextService } from './services/selection-context/selection.context.service';
 import { shareReplay, filter, map, switchMap, distinctUntilChanged } from 'rxjs/operators';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { OverlayService, AbstractOverlayControllerDirective } from 'cd-common';
 import { AssetsUploadService } from './services/assets/assets-upload.service';
 import { DragUploadService } from './services/drag-upload/drag-upload.service';
@@ -34,12 +33,12 @@ import { Observable, Subscription, fromEvent, of } from 'rxjs';
 import { IPanelsState } from './interfaces/panel.interface';
 import { PanelActivity } from './interfaces/activity.interface';
 import { PanelSizeConfig } from './configs/panel.config';
+import { ICanvas } from './interfaces/canvas.interface';
 import { Store, select, Action } from '@ngrx/store';
 import * as utils from './utils/project.utils';
 import * as appStore from 'src/app/store';
 import * as projectStore from './store';
 import * as cd from 'cd-interfaces';
-import { PresenceService } from 'src/app/services/presence/presence.service';
 
 @Component({
   selector: 'app-project',
@@ -59,8 +58,8 @@ export class ProjectComponent
   public project?: cd.IProject;
   public Activities = PanelActivity;
   public selectedIds = new Set<string>();
-  public projectLoaded$: Observable<boolean>;
-  public canvas!: cd.ICanvas;
+  public propertiesLoaded$: Observable<boolean>;
+  public canvas!: ICanvas;
   public currentBoardDropTarget?: string;
   public PanelSize = PanelSizeConfig;
   public panelState$: Observable<IPanelsState>;
@@ -74,7 +73,6 @@ export class ProjectComponent
   public projectHomeBoardId$?: Observable<string | undefined>;
   public commentCounts$: Observable<Map<string, number>>;
   public initialLoad$: Observable<boolean>;
-  public darkTheme$: Observable<boolean>;
   public isolatedSymbolId?: string;
   public showDropZone = false;
   public isRecording = false;
@@ -84,7 +82,6 @@ export class ProjectComponent
 
   constructor(
     public overlayService: OverlayService,
-    public presenceService: PresenceService,
     private _cdRef: ChangeDetectorRef,
     private _canvasService: CanvasService,
     private _dragUploadService: DragUploadService,
@@ -94,13 +91,10 @@ export class ProjectComponent
     private _clipboardService: ClipboardService,
     private _toastService: ToastsService,
     private _dndDirector: DndDirectorService,
-    private _projectContentService: ProjectContentService,
     private readonly _projectStore: Store<projectStore.IProjectState>,
     private readonly _appStore: Store<appStore.IAppState>
   ) {
     super(overlayService);
-
-    this.darkTheme$ = _appStore.pipe(select(appStore.getDarkTheme));
 
     this.breakGlass$ = this._appStore.pipe(
       select(appStore.getBreakGlass),
@@ -112,7 +106,7 @@ export class ProjectComponent
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    this.projectData$ = this._projectContentService.project$.pipe(
+    this.projectData$ = _projectStore.pipe(select(projectStore.getProject)).pipe(
       filter((project) => project !== undefined),
       map((value) => value as cd.IProject),
       shareReplay({ bufferSize: 1, refCount: true })
@@ -123,20 +117,21 @@ export class ProjectComponent
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    this.canvas = this._canvasService.canvas;
     this.isolatedSymbolId$ = _projectStore.pipe(select(projectStore.getIsolatedSymbolId));
-    this.propertiesMap$ = this._projectContentService.elementProperties$;
-    this.projectLoaded$ = this._projectContentService.projectLoaded$;
-    this.projectHomeBoardId$ = this._projectContentService.homeBoardId$;
+
+    this.canvas = this._canvasService.canvas;
+
+    this.propertiesMap$ = _projectStore.pipe(select(projectStore.getElementProperties));
+    this.propertiesLoaded$ = _projectStore.pipe(select(projectStore.getElementPropertiesLoaded));
     this.propertyMode$ = _projectStore.pipe(select(projectStore.getPropertyMode));
+    this.projectHomeBoardId$ = _projectStore.pipe(select(projectStore.getHomeBoardId));
     this.commentCounts$ = _projectStore.pipe(select(projectStore.getCommentCounts));
 
     // Wait for Render Results before setting initial load to true
     // If a project has 0 boards instantly load as true
     this.initialLoad$ = this.projectData$.pipe(
-      switchMap(() => this._projectContentService.boardIds$),
-      switchMap((boardIds) =>
-        boardIds.length === 0
+      switchMap((project) =>
+        project.boardIds.length === 0
           ? of(true)
           : this._renderService.activatedEditorRects$.pipe(filter((value) => value === true))
       )
@@ -159,7 +154,7 @@ export class ProjectComponent
     this._subscriptions.add(this.isolatedSymbolId$.subscribe(this.onIsolatedSymbolIdSubscription));
     this._subscriptions.add(this._dragUploadService.showDropZone$.subscribe(this.onDropZone));
 
-    const isEditor$ = this._projectContentService.currentUserIsProjectEditor$;
+    const isEditor$ = this._projectStore.pipe(select(projectStore.getUserIsProjectEditor));
     this._subscriptions.add(isEditor$.subscribe(this.onProjectEditor));
 
     const shortcutModal$ = this.panelState$.pipe(
@@ -229,7 +224,7 @@ export class ProjectComponent
     this.project = project;
   };
 
-  canvasUpdate = (canvas: cd.ICanvas) => {
+  canvasUpdate = (canvas: ICanvas) => {
     this.canvas = canvas;
     this._cdRef.markForCheck();
   };
@@ -311,7 +306,7 @@ export class ProjectComponent
     this._toastService.addToast({
       id: 'save',
       iconName: 'cloud',
-      message: ' auto-saves in the cloud',
+      message: 'WebPrototypingTool auto-saves in the cloud',
     });
   }
 

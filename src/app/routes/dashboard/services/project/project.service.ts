@@ -24,21 +24,19 @@ import {
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, Observable } from 'rxjs';
 import {
-  QueryService,
+  AbstractQueryService,
   FirestoreDocSnapshot,
   IProjectQueryResult,
 } from 'src/app/database/query.service';
-import { ScreenshotService } from '../../../../services/screenshot-lookup/screenshot-lookup.service';
 import { combineProjectsAndSortByDate, mergeProjects } from 'src/app/database/query.service.utils';
-import { DatabaseService } from 'src/app/database/database.service';
-import { projectPathForId } from '../../../../database/path.utils';
 import { removeValueFromArrayAtIndex } from 'cd-utils/array';
 import { filter, finalize, map, tap } from 'rxjs/operators';
+import { projectPathForId } from '../../../../database/path.utils';
+import { ScreenshotService } from '../../../../services/screenshot-lookup/screenshot-lookup.service';
+import { Store } from '@ngrx/store';
 import { IAppState, SettingsUpdate } from 'src/app/store';
 import * as firestore from '@angular/fire/firestore';
 import type * as cd from 'cd-interfaces';
-import { Store } from '@ngrx/store';
-import { environment } from 'src/environments/environment';
 
 export enum ProjectQueryState {
   Mine,
@@ -47,7 +45,7 @@ export enum ProjectQueryState {
 }
 
 @Injectable()
-export class ProjectService extends QueryService {
+export class ProjectService extends AbstractQueryService {
   private _latestEditorEntry?: FirestoreDocSnapshot;
   private _editorEnd = false;
   public queryState = ProjectQueryState.Mine;
@@ -56,10 +54,9 @@ export class ProjectService extends QueryService {
   constructor(
     protected _screenshotService: ScreenshotService,
     protected _afs: firestore.AngularFirestore,
-    protected _databaseService: DatabaseService,
     private _appStore: Store<IAppState>
   ) {
-    super(_screenshotService, _afs, _databaseService);
+    super(_screenshotService, _afs);
   }
 
   reset() {
@@ -87,7 +84,7 @@ export class ProjectService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 
   buildProjectOwnerQuery(
@@ -102,7 +99,7 @@ export class ProjectService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 
   buildProjectEditorQuery(
@@ -120,7 +117,7 @@ export class ProjectService extends QueryService {
 
     if (lastEntry) reference = reference.startAfter(lastEntry);
 
-    return reference.limit(QueryService.BATCH_SIZE);
+    return reference.limit(AbstractQueryService.BATCH_SIZE);
   }
 
   mapProjectQueryResults = (results: IProjectQueryResult[]): cd.IProject[] => {
@@ -142,7 +139,6 @@ export class ProjectService extends QueryService {
   };
 
   loadRecentProjectsForAllUsers() {
-    if (!environment.databaseEnabled) return;
     const { loading, _latestEntry, _end } = this;
     if (_end || loading) return;
     this.loading = true;
@@ -161,7 +157,6 @@ export class ProjectService extends QueryService {
   }
 
   loadStarredProjects(starred: string[]) {
-    if (!environment.databaseEnabled) return;
     const { loading, _end } = this;
     if (_end || loading || !starred.length) return;
     this.loading = true;
@@ -206,7 +201,6 @@ export class ProjectService extends QueryService {
   };
 
   loadAllSortedByDateWithLimit(user: cd.IUser | undefined, starred: string[] = []) {
-    if (!environment.databaseEnabled) return;
     const { queryState } = this;
     if (queryState === ProjectQueryState.All) return this.loadRecentProjectsForAllUsers();
     if (queryState === ProjectQueryState.Starred) return this.loadStarredProjects(starred);

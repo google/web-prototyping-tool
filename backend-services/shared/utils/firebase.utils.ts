@@ -22,8 +22,3 @@ const credential = admin.credential.applicationDefault();
 export const firebaseAdmin = admin.initializeApp({ credential, databaseURL });
 export const firestoreDb = firebaseAdmin.firestore();
 export const bucket = firebaseAdmin.storage().bucket(BUCKET_URL);
-
-export const getTimestamp = (millseconds?: number): admin.firestore.Timestamp => {
-  if (!millseconds) return admin.firestore.Timestamp.now();
-  return admin.firestore.Timestamp.fromMillis(millseconds);
-};

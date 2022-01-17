@@ -59,12 +59,12 @@ export interface IProjectAsset extends IProjectContentDocument {
   imageType: ImageMime;
   name: string;
   owner: string;
-  readonly type: EntityType.Asset;
+  type: EntityType.Asset;
   urls: ProjectAssetUrls;
   width: number;
 }
 
-export type AssetMap = Record<string, IProjectAsset>;
+export type IProjectAssets = Record<string, IProjectAsset>;
 export type IOrderedProjectAssets = ReadonlyArray<IProjectAsset>;
 
 export type AssetConversionArgsConfig = Record<

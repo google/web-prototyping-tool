@@ -52,7 +52,7 @@ export class DndDirectorService implements OnDestroy {
   private _dragAdditions?: cd.PropertyModel[];
   private _dragIds: string[] = [];
   private _dragSubscription = Subscription.EMPTY;
-  private _dropPreview?: cd.IElementChangePayload[];
+  private _dropPreview?: cd.IPropertiesUpdatePayload[];
   private _selectedElementIds = new Set<string>();
   private _subscriptions = new Subscription();
   private _isRecordingAction = false;
@@ -156,7 +156,7 @@ export class DndDirectorService implements OnDestroy {
     const fromAssetsPanel = !!newDragItems;
     const element = fromAssetsPanel ? newDragItems : elementProperties[_dragIds[0]];
     const assetId = element && dndUtils.assetIdFromProperties(element);
-    // TODO: handle remote urls ghost items
+    // TODO:  handle remote urls ghost items
     if (!assetId) return;
     if (fromAssetsPanel) {
       this._ghostService.setAsImageThumbnail(assetId);
@@ -254,7 +254,7 @@ export class DndDirectorService implements OnDestroy {
     const showPreview = this._surfaceService.isAbsoluteDrag === false;
     const dropPreview = mUtils.insertElements(ids, dropLocation, props, additions, showPreview);
     if (areObjectsEqual(dropPreview, this._dropPreview)) return;
-    this._dropPreview = [dropPreview];
+    this._dropPreview = dropPreview;
     this._rendererService.showPreview(this._dropPreview);
     const elem = props[dropLocation.elementId];
     if (elem) this._interactionService.bringOutletFrameToFront(elem.rootId);
@@ -264,13 +264,13 @@ export class DndDirectorService implements OnDestroy {
   handleDrop = () => {
     const { _dropPreview, _projectStore, _dragIds } = this;
 
-    if (_projectStore && _dragIds && _dropPreview) {
+    if (_projectStore && _dragIds) {
       // If dragActive is not set immediately to false, it will re-activate the listeners
       // on JIT compile which causes the tree to rebuild
       this.dragActive = false;
       const absoluteUpdate = this._surfaceService.getAbsoluteStoreUpdate();
-      const payload = dndUtils.generateDropChange(_dropPreview, absoluteUpdate);
-      this._propertiesService.sendChangeRequestAndSelect(payload, _dragIds);
+      const update = dndUtils.generateDropUpdate(_dropPreview, absoluteUpdate);
+      this._propertiesService.updatePropertiesAndSelect(update, _dragIds);
     }
 
     this._panelService.switchToPreviousView();

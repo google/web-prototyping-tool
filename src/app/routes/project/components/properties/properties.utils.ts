@@ -221,7 +221,7 @@ export const generateSymbolOverrideProp = (
   instanceInputs: cd.SymbolInstanceInputs,
   targetId: string
 ): cd.IPropertyGroup | undefined => {
-  // Fix for b/183105562
+  // Fix for
   // If instanceInput has a undefined hidden property, look at the targetProperties
   const target = instanceInputs[targetId];
   if (target) {

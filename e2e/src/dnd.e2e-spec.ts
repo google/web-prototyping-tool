@@ -99,7 +99,7 @@ describe('Drag-n-drop', () => {
     );
   });
 
-  it('b/123757246 - copied-pasted element should be dragged-and-dropped to another board correctly', async () => {
+  it('copied-pasted element should be dragged-and-dropped to another board correctly', async () => {
     const BGCOLOR: IHexColor = { hex: '#ff0000' };
 
     await addNewBoard(page);

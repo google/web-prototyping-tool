@@ -16,7 +16,7 @@
 
 import * as https from 'https';
 
-/** Room: " Image Tests" */
+/** Room: "WebPrototypingTool Image Tests" */
 const IMAGE_TEST_CHAT_ROOM = 'AAAA0zLmtbo';
 const IMAGE_TEST_CHAT_KEY = 'AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI';
 const IMAGE_TEST_CHAT_TOKEN = 'zrWL17a-jv5OEV5mDPi-eDcKjtNRvnLxZrj3BfW-cMY%3D';

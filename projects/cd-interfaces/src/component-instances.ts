@@ -53,7 +53,6 @@ export interface IComponentInstance extends IProjectContentDocument {
   isCodeComponentInstance?: boolean;
   metadata?: IElementMetadata;
   parentId?: string;
-  fractionalIndex?: string | null;
   projectId: string;
   readonly childrenAllowed?: boolean;
   readonly elementType: ComponentIdentity;

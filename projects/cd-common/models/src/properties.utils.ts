@@ -536,19 +536,3 @@ export const isNumberProperty = (prop: cd.IProperty): boolean => {
     isNumber(prop.defaultValue)
   );
 };
-
-/** Given an elementId, return a list of all nested childIds*/
-export const getAllChildIdsRecursive = (
-  elementId: string,
-  props: cd.ElementPropertiesMap,
-  includeParent = true // Should include the elementId
-): ReadonlyArray<string> => {
-  const element = props[elementId];
-  const idList: string[] = includeParent ? [elementId] : [];
-  const childIds = element?.childIds || [];
-  if (childIds.length) {
-    const ids = childIds.flatMap((childId) => getAllChildIdsRecursive(childId, props));
-    if (ids.length) idList.push(...ids);
-  }
-  return idList;
-};

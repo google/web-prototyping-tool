@@ -15,11 +15,9 @@
  */
 
 export * from './assets';
-export * from './change-requests';
 export * from './comment-count';
 export * from './comment-email-alerts';
 export * from './exceptions';
-export * from './presence';
 export * from './project';
-export * from './publish-entry';
 export * from './screenshots';
+export * from './publish-entry';

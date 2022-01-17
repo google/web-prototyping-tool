@@ -14,97 +14,119 @@
  * limitations under the License.
  */
 
-import * as cd from 'cd-interfaces';
-import { switchMap, withLatestFrom, filter, map, tap } from 'rxjs/operators';
+import type * as cd from 'cd-interfaces';
+import { switchMap, withLatestFrom, filter, retry, map, tap } from 'rxjs/operators';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
+import { IProjectState } from '../reducers/index';
+import { Store, select } from '@ngrx/store';
 import { RecordActionService } from '../../services/record-action/record-action.service';
-import * as actions from '../actions/code-component.action';
-import { PropertiesService } from '../../services/properties/properties.service';
 import {
-  getModels,
-  getModelsAndChildren,
-  registerCodeComponent,
-  unRegisterCodeComponent,
-} from 'cd-common/models';
+  getProject,
+  getElementProperties,
+  selectCodeComponents,
+  getUserIsProjectEditor,
+} from '../selectors';
+import * as actions from '../actions/code-component.action';
+import { RETRY_ATTEMPTS } from 'src/app/database/database.utils';
+import { PropertiesService } from '../../services/properties/properties.service';
+import { getModels, getModelsAndChildren } from 'cd-common/models';
 import { ElementPropertiesDelete, ElementPropertiesUpdate } from '../actions';
 import {
   mergeInputUpdatesIntoCodeComponentInstance,
   getInstancesOfCodeComponent,
-  createCodeCmpChangePayload,
 } from 'cd-common/utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
-import { RendererService } from 'src/app/services/renderer/renderer.service';
-import { forkJoin, from, Observable, of } from 'rxjs';
-import { UploadService } from '../../services/upload/upload.service';
+import { of } from 'rxjs';
+import { ofUndoRedo } from '../../utils/history-ngrx.utils';
+import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
 
 @Injectable()
 export class CodeComponentEffects {
-  // Track of what code component JavaScript bundles have been downloaded and sent to the renderer
-  private _loadedBundles = new Set<string>();
-
   constructor(
     private actions$: Actions,
+    private _databaseChangesService: DatabaseChangesService,
     private _propsService: PropertiesService,
     private _recordSerivce: RecordActionService,
-    private _projectContentService: ProjectContentService,
-    private _projectChangeCoordinator: ProjectChangeCoordinator,
-    private _rendererService: RendererService,
-    private _uploadService: UploadService
+    private _projectStore: Store<IProjectState>
   ) {}
 
-  /**
-   * Construct change request for creating a new code component definition
-   */
-  create$ = createEffect(
+  createInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.CodeComponentCreate>(actions.CODE_COMPONENT_CREATE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const sets = action.codeComponents;
-          const changeRequestPayload = createCodeCmpChangePayload(sets);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(getProject))),
+        filter(([, proj]) => proj !== undefined),
+        withLatestFrom(this._projectStore.pipe(select(selectCodeComponents))),
+        switchMap(([[action], codeComponentDictionary]) => {
+          const { codeComponents } = action;
+          // Ensure all components are present in the Store before creating
+          const codeCmpLookups = codeComponents.map((c) => codeComponentDictionary[c.id]);
+          const filteredCodeCmps = codeCmpLookups.filter((c) => !!c) as cd.ICodeComponentDocument[];
+          return this._databaseChangesService.createCodeComponents(filteredCodeCmps);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
 
-  /**
-   * Construct change request for updating a code component
-   */
-  update$ = createEffect(
+  updateInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.CodeComponentUpdate>(actions.CODE_COMPONENT_UPDATE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const { id, update } = action;
-          const updates: cd.IUpdateChange<cd.ICodeComponentDocument>[] = [{ id, update }];
-          const changeRequestPayload = createCodeCmpChangePayload(undefined, updates);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(getProject))),
+        filter(([, proj]) => proj !== undefined),
+        withLatestFrom(this._projectStore.pipe(select(selectCodeComponents))),
+        switchMap(([[action], codeComponentDictionary]) => {
+          const codeComponent = codeComponentDictionary[action.id];
+          if (!codeComponent) return of();
+          return this._databaseChangesService.updateCodeComponent(codeComponent);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
 
-  /**
-   * Construct change request for updating a code component
-   */
-  delete$ = createEffect(
+  deleteInDB$ = createEffect(
     () =>
       this.actions$.pipe(
         ofType<actions.CodeComponentDelete>(actions.CODE_COMPONENT_DELETE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
-        tap(([action]) => {
-          const deletes = [action.codeComponent.id];
-          const changeRequestPayload = createCodeCmpChangePayload(undefined, undefined, deletes);
-          return this._projectChangeCoordinator.dispatchChangeRequest([changeRequestPayload]);
-        })
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(getProject))),
+        filter(([, proj]) => proj !== undefined),
+        switchMap(([action]) => {
+          return this._databaseChangesService.deleteCodeComponent(action.codeComponent);
+        }),
+        retry(RETRY_ATTEMPTS)
+      ),
+    { dispatch: false }
+  );
+
+  undoRedoInDB$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofUndoRedo<actions.CodeComponentUpdate>(this._projectStore, actions.CODE_COMPONENT_UPDATE),
+        withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
+        filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
+        map(([action]) => action),
+        withLatestFrom(this._projectStore.pipe(select(getProject))),
+        filter(([, proj]) => proj !== undefined),
+        withLatestFrom(this._projectStore.pipe(select(selectCodeComponents))),
+        switchMap(([[historyPayload], codeComponentDictionary]) => {
+          const [, , [undoneUpdate]] = historyPayload;
+          if (!undoneUpdate) return of();
+          const codeComponent = codeComponentDictionary[undoneUpdate.id];
+          if (!codeComponent) return of();
+          return this._databaseChangesService.updateCodeComponent(codeComponent);
+        }),
+        retry(RETRY_ATTEMPTS)
       ),
     { dispatch: false }
   );
@@ -117,18 +139,18 @@ export class CodeComponentEffects {
   updateAllInstances$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.CodeComponentUpdate>(actions.CODE_COMPONENT_UPDATE),
-      withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+      withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
       filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
       map(([action]) => action),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       switchMap(([[action], elementProperties]) => {
         const { id, update } = action;
         const { properties, ...otherUpdates } = update;
         const instances = getInstancesOfCodeComponent(id, elementProperties);
 
-        // TODO: Also need to merge in other properties: allowChildren, fitContent, etc
+        // TODO : Also need to merge in other properties: allowChildren, fitContent, etc
         const updates = instances.reduce<cd.IPropertiesUpdatePayload[]>((acc, curr) => {
           const { id: elementId } = curr;
           const propertyUpdates = { ...otherUpdates } as Partial<cd.ICodeComponentInstance>;
@@ -157,12 +179,12 @@ export class CodeComponentEffects {
   deleteAllInstances$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.CodeComponentDelete>(actions.CODE_COMPONENT_DELETE),
-      withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+      withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
       filter(([, editor]) => editor && this._recordSerivce.isRecording === false),
       map(([action]) => action),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       map(([[action], elementProperties]) => {
         const { codeComponent } = action;
         const elementModels = getModels(elementProperties);
@@ -186,127 +208,4 @@ export class CodeComponentEffects {
       ),
     { dispatch: false }
   );
-
-  /**
-   * Anytime code components are updated, update the component registry also
-   */
-  registerCodeComponents$ = createEffect(
-    () =>
-      this._projectContentService.codeCmpContent$.pipe(
-        tap((codeCmpContent) => {
-          const {
-            idsCreatedInLastChange,
-            idsUpdatedInLastChange,
-            idsDeletedInLastChange,
-            records,
-          } = codeCmpContent;
-          const registerIds = [...idsCreatedInLastChange, ...idsUpdatedInLastChange];
-          const unRegisterIds = [...idsDeletedInLastChange];
-
-          for (const id of registerIds) {
-            const cmp = records[id];
-            if (cmp) registerCodeComponent(cmp);
-          }
-
-          for (const id of unRegisterIds) {
-            unRegisterCodeComponent(id);
-          }
-        })
-      ),
-    { dispatch: false }
-  );
-
-  /**
-   * Add code components to renderer anytime one is created
-   */
-  addCodeCmpsInRenderer$ = createEffect(
-    () =>
-      this._projectContentService.codeCmpContent$.pipe(
-        filter((content) => !!content.idsCreatedInLastChange.size),
-        switchMap((content) => {
-          const idsCreated = Array.from(content.idsCreatedInLastChange);
-          const codeCmps = idsCreated.map((id) => content.records[id]);
-          const storagePaths = codeCmps.map((c) => c.jsBundleStoragePath);
-
-          // Record the bundles that we are about to download and send to renderer
-          this._loadedBundles = new Set([...this._loadedBundles, ...storagePaths]);
-
-          const jsBlob$ = this._getCodeComponentJsBlobs(codeCmps);
-          return forkJoin([of(codeCmps), jsBlob$]);
-        }),
-        tap(([codeComponents, jsBlobs]) =>
-          this._rendererService.addCodeComponents(codeComponents, jsBlobs)
-        )
-      ),
-    { dispatch: false }
-  );
-
-  /**
-   * Send any code component updates to renderer.
-   * If the update includes new js bundle, download it and send it also
-   */
-  updateCodeCmpsInRenderer$ = createEffect(
-    () =>
-      this._projectContentService.codeCmpContent$.pipe(
-        filter((content) => !!content.idsUpdatedInLastChange.size),
-        switchMap((content) => {
-          // Record the bundles that we are about to download and send to renderer
-          const idsUpdates = Array.from(content.idsUpdatedInLastChange);
-          const updatedCodeCmps = idsUpdates.map((id) => content.records[id]);
-
-          // Add updated bundles (as needed) together with updated code component documents
-          const updates = updatedCodeCmps.map((codeCmp) => {
-            const { jsBundleStoragePath } = codeCmp;
-            const bundleLoaded = this._loadedBundles.has(jsBundleStoragePath);
-            const updatedJS$ = bundleLoaded
-              ? of(undefined)
-              : this._getCodeComponentJsBlobs([codeCmp]);
-
-            return forkJoin([of(codeCmp), updatedJS$]);
-          });
-
-          return forkJoin(updates);
-        }),
-        tap((updates) => {
-          for (const [codeCmp, updatedJsBlobs] of updates) {
-            const jsBlob = updatedJsBlobs ? updatedJsBlobs[codeCmp.id] : undefined;
-            this._rendererService.updateCodeComponent(codeCmp, jsBlob);
-          }
-        })
-      ),
-    { dispatch: false }
-  );
-
-  /**
-   * Delete code components from renderer anytime they are deleted
-   */
-  deleteCodeCmpsInRenderer = createEffect(
-    () =>
-      this._projectContentService.codeCmpContent$.pipe(
-        filter((content) => !!content.idsDeletedInLastChange.size),
-        tap((content) => {
-          const deletedIds = Array.from(content.idsDeletedInLastChange);
-          return this._rendererService.deleteCodeComponents(deletedIds);
-        })
-      ),
-    { dispatch: false }
-  );
-
-  private _getCodeComponentJsBlobs = (
-    codeComponents: cd.ICodeComponentDocument[]
-  ): Observable<Record<string, Blob>> => {
-    const codeComponentIds = codeComponents.map((c) => c.id);
-    const bundleStoragePaths = codeComponents.map((c) => c.jsBundleStoragePath);
-    const downloadedBundles$ = from(this._uploadService.downloadMultipleFiles(bundleStoragePaths));
-    const downloadMap$ = downloadedBundles$.pipe(
-      map((blobs) => {
-        return blobs.reduce<Record<string, Blob>>((acc, curr, idx) => {
-          const id = codeComponentIds[idx];
-          acc[id] = curr;
-          return acc;
-        }, {});
-      })
-    );
-    return downloadMap$;
-  };
 }

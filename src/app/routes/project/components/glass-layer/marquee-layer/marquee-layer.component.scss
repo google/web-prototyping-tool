@@ -30,11 +30,3 @@
   stroke: var(--cd-primary-color);
   fill: var(--cd-focus-fill);
 }
-
-.peer-marquee {
-  text-rendering: optimizeSpeed;
-
-  @include for-desktop-hidpi {
-    shape-rendering: optimizeSpeed;
-  }
-}

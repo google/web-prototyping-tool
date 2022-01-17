@@ -56,7 +56,7 @@ export class StyleDirective implements OnInit, OnDestroy {
 
   updateClassName(id?: string) {
     if (!id) return;
-    const className = StyleManager.generateClassStylePrefix(id, this._classPrefix);
+    const className = StyleManager.generateWebPrototypingToolClassStylePrefix(id, this._classPrefix);
     if (this._className === className) return;
     if (this._className) this.classList.remove(this._className);
     this._className = className;

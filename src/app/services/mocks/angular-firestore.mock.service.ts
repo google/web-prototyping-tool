@@ -27,87 +27,68 @@ const getObservableResponse = <T>(response: T): Observable<T> => of(response).pi
 
 const getEmptyPromiseResponse = () => new Promise((resolve) => setTimeout(resolve));
 
+const emptyCollectionAccessor = () => ({
+  where: emptyCollectionAccessor,
+
+  stateChanges: () => {
+    // Not modeling any collection results
+    return getObservableResponse([]);
+  },
+  valueChanges: () => {
+    return getObservableResponse([]);
+  },
+  get: () => {
+    return getObservableResponse({
+      docs: [],
+    });
+  },
+  snapshotChanges: () => {
+    return getObservableResponse([]);
+  },
+  onSnapshot: () => {},
+});
+
 @Injectable({
   providedIn: 'root',
 })
 export class AngularFirestoreMock {
   private _storedData: Record<string, any> = {};
-
-  constructor() {}
-
-  firestore = {
+  public firestore = {
     settings: () => {},
 
     batch: () => ({
       set: (path: string, data: any) => {
         this._updateFirstLevelMockDataForPath(path, data);
       },
-      update: (path: string, data: any) => {
-        this._updateFirstLevelMockDataForPath(path, data);
-      },
       delete: () => {},
       commit: () => getEmptyPromiseResponse(),
     }),
-    collection: () => {
-      return this.collection();
-    },
-    doc: (path?: string) => {
-      return this.doc(path);
-    },
+    collection: emptyCollectionAccessor,
   };
 
-  collection = () => ({
-    where: this.collection,
+  collection = emptyCollectionAccessor;
 
-    stateChanges: () => {
-      // Not modeling any collection results
-      return getObservableResponse([]);
-    },
-    valueChanges: () => {
-      return getObservableResponse([]);
-    },
-    get: () => {
-      return getObservableResponse({
-        docs: [],
-      });
-    },
-    snapshotChanges: () => {
-      return getObservableResponse([]);
-    },
-    onSnapshot: () => {},
-    doc: () => {
-      return this.doc();
-    },
-  });
+  constructor() {}
 
-  doc = (path?: string) => {
-    const definedPath = path || generateIDWithLength();
-
+  doc = (path: string) => {
     return {
-      ref: definedPath,
+      ref: path,
       get: () => {
-        const ret = this._getMockDataForPath(definedPath);
+        const ret = this._getMockDataForPath(path);
         const { id } = ret;
         return getObservableResponse({ data: () => ret, id, exists: true });
       },
       set: (data: any) => {
-        this._setMockDataForPath(definedPath, data);
+        this._setMockDataForPath(path, data);
         return getEmptyPromiseResponse();
       },
       update: (data: any) => {
-        // TODO: This only mimicks merging first level of data
-        this._updateFirstLevelMockDataForPath(definedPath, data);
+        // TODO : This only mimicks merging first level of data
+        this._updateFirstLevelMockDataForPath(path, data);
         return getEmptyPromiseResponse();
       },
       delete: () => {
         return getEmptyPromiseResponse();
-      },
-      valueChanges: () => {
-        const data = this._getMockDataForPath(definedPath);
-        return getObservableResponse(data);
-      },
-      collection: () => {
-        return this.collection();
       },
     };
   };
@@ -132,7 +113,7 @@ export class AngularFirestoreMock {
     return {};
   };
 
-  // TODO: This only mimicks merging first level of data
+  // TODO : This only mimicks merging first level of data
   private _updateFirstLevelMockDataForPath = (path: string, data: any) => {
     const pathFirstLevel = path.split('/', 1)[0];
     if (enableStorageFor.includes(pathFirstLevel)) {

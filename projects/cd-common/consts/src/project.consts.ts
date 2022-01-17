@@ -19,5 +19,3 @@ import { DefaultProjectType } from 'cd-interfaces';
 export const UNTITLED_PROJECT_NAME = 'Untitled project';
 
 export const DEFAULT_PROJECT_TYPE: typeof DefaultProjectType = DefaultProjectType;
-
-export const DEFAULT_OUTLET_FRAME_NAME = 'Board';

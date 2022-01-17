@@ -28,11 +28,17 @@ export class PreviewInteractionService {
   public hoveredGreenLine$ = new BehaviorSubject<cd.IGreenlineRenderResult | undefined>(undefined);
   public hoveredCommentThreadId$ = new BehaviorSubject<string | undefined>(undefined);
 
+  /**
+   * TODO:  add a description
+   */
   setSelectionActive(value: boolean) {
     if (this.selectionActive$.value === value) return;
     this.selectionActive$.next(value);
   }
 
+  /**
+   * TODO:  add a description
+   */
   setHoveredCommentThreadId(id?: string) {
     if (this.hoveredCommentThreadId$.value === id) return;
     this.hoveredCommentThreadId$.next(id);
@@ -42,6 +48,9 @@ export class PreviewInteractionService {
     this.setHoveredCommentThreadId(undefined);
   }
 
+  /**
+   * TODO:  add a description
+   */
   setSelectedElementId(id?: string) {
     if (this.selectedElementId$.value === id) return;
     this.selectedElementId$.next(id);
@@ -51,16 +60,25 @@ export class PreviewInteractionService {
     this.setSelectedElementId(undefined);
   }
 
+  /**
+   * TODO:  add a description
+   */
   setHoveredGreenLine(greenline?: cd.IGreenlineRenderResult) {
     if (areObjectsEqual(greenline, this.hoveredGreenLine$.value)) return;
     this.hoveredGreenLine$.next(greenline);
   }
 
+  /**
+   * TODO:  add a description
+   */
   setHoverBoardId(id?: string) {
     if (this.hoveredTopLevelElementId$.value === id) return;
     this.hoveredTopLevelElementId$.next(id);
   }
 
+  /**
+   * TODO:  add a description
+   */
   setHighlightedElementId(id?: string) {
     if (this.currentHighlightedElementId$.value === id) return;
     this.currentHighlightedElementId$.next(id);

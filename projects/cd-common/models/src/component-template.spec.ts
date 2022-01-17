@@ -1069,5 +1069,6 @@ function templateFunction(mode: TemplateBuildMode, props: any = {}) {
       me.addAttribute('value', props.inputs['value']).addChild(props.inputs['text']);
     })
     .build();
+  console.log(html);
   return html;
 }

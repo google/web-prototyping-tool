@@ -40,7 +40,7 @@ describe('Preview', () => {
 
   setupSuite(newTestPageCallback, beforeAll, afterAll, beforeEach, afterEach);
 
-  // TODO: These following two functions are really just written to reduce code duplication,
+  // TODO : These following two functions are really just written to reduce code duplication,
   //                and need quite some love to become a reusable util.
   const produceElement = async (
     position: IElementPosition,
@@ -112,7 +112,7 @@ describe('Preview', () => {
     await routes.waitForPreview(page);
     await preview.waitForIFrame(page);
 
-    // // TODO: Look into this more:
+    // // TODO : Look into this more:
     // //                We're wait for styles to be applied so we need a signal/trigger.
     await page.waitForTimeout(PREVIEW_LAUNCH_DELAY);
 

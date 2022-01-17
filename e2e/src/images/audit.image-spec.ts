@@ -51,7 +51,9 @@ const EXCLUDED_COMPONENTS: cd.ComponentIdentity[] = [
   cd.ElementEntitySubType.Media,
 ];
 
-const THEMES_TO_TEST: Theme[] = [Theme.AngularMaterialDark];
+const THEMES_TO_TEST: Theme[] = [
+  Theme.AngularMaterialDark,
+];
 
 /** Gets a list of all registered component IDs, exclusive of core components. */
 const getAuditTestComponents = (): cd.ComponentIdentity[] => {

@@ -18,7 +18,7 @@ import { CdCommonModule } from 'cd-common';
 import * as models from 'cd-common/models';
 ```
 
-Components rendered in the renderer, not to be confused with components that make up the UI of the main app: `cdCommonModule`
+Components rendered by app in the renderer, not to be confused with components that make up the UI of app: `cdCommonModule`
 
 See documentation [here](projects/cd-common/models/README.md)
 
@@ -90,3 +90,4 @@ Utils used in both the renderer and main app.
 
 - Transforming the design system into CSS Vars in the renderer
 - Transforming component properties into CSS
+- `[TODO]: `

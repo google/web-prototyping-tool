@@ -51,12 +51,6 @@
   z-index: 2;
 }
 
-.presence-indicators {
-  @include gridSlot(3, 4, 3, 4);
-
-  z-index: 2;
-}
-
 .properties-panel {
   @include gridSlot(4, 5, 1, 4);
 }

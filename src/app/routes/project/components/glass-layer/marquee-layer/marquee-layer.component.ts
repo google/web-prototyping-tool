@@ -37,14 +37,6 @@ const TEXT_OFFSET = 10;
       zoom="1"
       [attr.transform]="infoTextPosition"
     ></svg:g>
-
-    <svg:rect
-      *ngFor="let cursor of peerMarqueeCursors; trackBy: trackByFn"
-      class="peer-marquee"
-      [attr.stroke]="cursor.sessionId | peerColorPipe: darkTheme:0.4"
-      [attr.fill]="cursor.sessionId | peerColorPipe: darkTheme:0.1"
-      [cdSVGRect]="cursor | peerMarqueeRectPositionPipe: zoom:canvas"
-    ></svg:rect>
   `,
   styleUrls: ['./marquee-layer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,9 +51,6 @@ export class MarqueeLayerComponent {
   createBoard = false;
 
   @Input() zoom = 1;
-  @Input() darkTheme = false;
-  @Input() canvas?: cd.ICanvas;
-  @Input() peerMarqueeCursors: cd.IUserCursor[] = [];
 
   @Input()
   set marqueeRect(rect: cd.IRect | undefined) {
@@ -83,12 +72,5 @@ export class MarqueeLayerComponent {
   @HostListener('window:mousemove', ['$event'])
   onMouseMove({ pageX, pageY }: MouseEvent) {
     this.infoTextPosition = svgTranslate(pageX + TEXT_OFFSET, pageY + TEXT_OFFSET);
-  }
-
-  trackByFn(_index: number, cursor: cd.IUserCursor) {
-    if (!cursor.marqueeRect) return undefined;
-    const { zoom } = this;
-    const { x, y, width, height } = cursor.marqueeRect;
-    return `${x}-${y}-${width}-${height}-${zoom}`;
   }
 }

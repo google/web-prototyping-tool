@@ -17,11 +17,9 @@
 import { createId } from 'cd-utils/guid';
 import {
   buildInsertLocation,
-  createElementChangePayload,
-  createElementUpdate,
+  buildPropertyUpdatePayload,
   deepMerge,
   getElementBaseStyles,
-  mergeChangeIntoProperties,
 } from 'cd-common/utils';
 import * as models from 'cd-common/models';
 import * as cd from 'cd-interfaces';
@@ -83,10 +81,10 @@ const indexOfInsertLocation = (def: cd.ILayoutDefinition): number => {
 const mergeRootStyleUpdates = (
   root: cd.PropertyModel,
   selected: cd.PropertyModel
-): cd.IElementChangePayload => {
+): cd.IPropertiesUpdatePayload[] => {
   const styles = deepMerge(selected.styles, root.styles);
-  const update = createElementUpdate(selected.id, { styles });
-  return createElementChangePayload(undefined, [update]);
+  const update = buildPropertyUpdatePayload(selected.id, { styles });
+  return [update];
 };
 
 /** When we create a layout from a defintion an id
@@ -117,15 +115,14 @@ const moveSelectedChildren = (
   insertPointId: string | undefined,
   firstSelected: cd.PropertyModel,
   elementProps: cd.ElementPropertiesMap
-): cd.IElementChangePayload[] => {
+): cd.IPropertiesUpdatePayload[] => {
   if (!insertPointId) return [];
   const elements = firstSelected.childIds.map((id) => elementProps[id]) as cd.PropertyModel[];
   const positionMap = models.buildPositionMapForElements(elements, elementProps);
   const sortedElements = models.sortElementsByPosition(elements, positionMap);
   const sortedIds = sortedElements.map((el) => el.id);
   const insertLocation = buildInsertLocation(insertPointId, cd.InsertRelation.Append);
-  const change = models.insertElements(sortedIds, insertLocation, elementProps);
-  return [change];
+  return models.insertElements(sortedIds, insertLocation, elementProps);
 };
 
 export const applyLayoutPreset = (
@@ -134,24 +131,24 @@ export const applyLayoutPreset = (
   elementProps: cd.ElementPropertiesMap
 ): {
   insertPointId?: string;
-  changes: cd.IElementChangePayload[];
+  updates: cd.IPropertiesUpdatePayload[];
 } => {
   const [firstSelected] = selected;
-  if (!firstSelected) return { changes: [] };
+  if (!firstSelected) return { updates: [] };
   const { projectId, rootId, id } = firstSelected as cd.PropertyModel;
   const elements = elementsFromLayoutDef(preset, projectId, rootId, id, firstSelected);
   const [base, ...created] = elements;
   const [processed, insertIds] = remapParentId(base.id, id, created);
-  const styleChange = mergeRootStyleUpdates(base, firstSelected);
+  const styleUpdates = mergeRootStyleUpdates(base, firstSelected);
   const insertIdx = indexOfInsertLocation(preset);
   const insertElem = elements[insertIdx];
   const insertPointId = insertElem?.id;
   const insertLocation = buildInsertLocation(id, cd.InsertRelation.Append);
-  const insertChange = models.insertElements(insertIds, insertLocation, elementProps, processed);
-  const updatedProps = mergeChangeIntoProperties(elementProps, insertChange);
+  const insertUpdates = models.insertElements(insertIds, insertLocation, elementProps, processed);
+  const updatedProps = models.mergeUpdatesIntoProperties(elementProps, insertUpdates);
   const moveChildren = moveSelectedChildren(insertPointId, firstSelected, updatedProps);
-  const changes = [insertChange, ...moveChildren, styleChange];
-  return { changes, insertPointId };
+  const updates = [...insertUpdates, ...moveChildren, ...styleUpdates];
+  return { updates, insertPointId };
 };
 
 export const generateLayout = (

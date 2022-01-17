@@ -24,11 +24,11 @@ import {
 import { IAppState, getDebugStats, getDebugCanvas, getDebugDragAndDrop } from 'src/app/store';
 import { Store, select } from '@ngrx/store';
 import { Subscription, Observable } from 'rxjs';
+import { IProjectState, getElementProperties } from '../../store';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { isBoard, isSymbol, getModels } from 'cd-common/models';
 import { CanvasService } from '../../services/canvas/canvas.service';
-import { ICanvas } from 'cd-interfaces';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { ICanvas } from '../../interfaces/canvas.interface';
 
 @Component({
   selector: 'app-debug-stats',
@@ -52,7 +52,7 @@ export class DebugStatsComponent implements OnInit, OnDestroy {
     private _cdRef: ChangeDetectorRef,
     private _canvasService: CanvasService,
     private _appStore: Store<IAppState>,
-    private projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>
   ) {}
 
   ngOnInit() {
@@ -60,7 +60,10 @@ export class DebugStatsComponent implements OnInit, OnDestroy {
       this.debugStats$
         .pipe(
           switchMap((value) =>
-            this.projectContentService.elementProperties$.pipe(takeWhile(() => value === true))
+            this._projectStore.pipe(
+              select(getElementProperties),
+              takeWhile(() => value === true)
+            )
           )
         )
         .subscribe((items) => {

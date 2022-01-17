@@ -102,12 +102,19 @@ export const addPortalSlots = (
   const allProps = getPropsRecursive(component.properties);
 
   for (const prop of allProps) {
-    const { name, inputType, portalZeroStateMessage } = prop;
+    const { name, inputType, portalZeroStateMessage, hidePortalZeroState } = prop;
     if (!name) continue;
     if (inputType === cd.PropertyInput.DynamicList) return addDynamicPortalSlots(prop, factory);
     if (inputType !== cd.PropertyInput.PortalSlot) continue;
     const portalLookup = inputPropsBinding(name);
-    const portal = buildChildPortal(portalLookup, false, name, false, portalZeroStateMessage);
+    const portal = buildChildPortal(
+      portalLookup,
+      false,
+      name,
+      false,
+      portalZeroStateMessage,
+      hidePortalZeroState
+    );
     factory.addChild(portal);
   }
 };

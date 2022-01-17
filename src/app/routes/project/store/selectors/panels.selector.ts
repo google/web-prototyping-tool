@@ -17,6 +17,9 @@
 import { createSelector } from '@ngrx/store';
 import { IProjectState, getProjectState } from '../reducers';
 import { IPanelsState } from '../../interfaces/panel.interface';
+import { getAllBoards } from './board.selector';
+import { getAllSymbols } from './symbols.selector';
+import { IBoardProperties, ISymbolProperties, RootElement } from 'cd-interfaces';
 import { initialPanel } from '../../configs/panel.config';
 
 export const getPanelsState = createSelector(
@@ -67,4 +70,29 @@ export const getIsolatedSymbolId = createSelector(
 export const getIsRecordingStateChanges = createSelector(
   getPanelsState,
   (state: IPanelsState) => state.recordStateChanges
+);
+
+export const getCurrentOutletFrames = createSelector(
+  getAllBoards,
+  getAllSymbols,
+  getSymbolMode,
+  getIsolatedSymbolId,
+  (
+    boards: IBoardProperties[],
+    symbols: ISymbolProperties[],
+    symbolMode: boolean,
+    isolatedSymbolId?: string
+  ): RootElement[] => {
+    if (!symbolMode) return boards;
+    if (!isolatedSymbolId) return symbols;
+    const isolatedSymbol = symbols.find((s) => s.id === isolatedSymbolId);
+    return isolatedSymbol ? [isolatedSymbol] : [];
+  }
+);
+
+export const getCurrentOutletFrameIds = createSelector(
+  getCurrentOutletFrames,
+  (rootElements: RootElement[]): string[] => {
+    return rootElements.map((r) => r.id);
+  }
 );

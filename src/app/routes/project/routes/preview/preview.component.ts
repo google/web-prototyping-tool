@@ -43,12 +43,11 @@ import { CanvasService } from '../../services/canvas/canvas.service';
 import { OverlayService } from 'cd-common';
 import { PreviewService } from './preview.service';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
-import { Subscription, Observable, firstValueFrom } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { filter, shareReplay, take } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { KEYS } from 'cd-utils/keycodes';
 import { environment } from 'src/environments/environment';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { PreviewInteractionService } from './services/preview-interaction.service';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { areObjectsEqual } from 'cd-utils/object';
@@ -56,7 +55,6 @@ import * as projectStore from '../../store';
 import * as appStore from '../../../../store';
 import * as utils from './utils/preview.utils';
 import * as cd from 'cd-interfaces';
-import { PresenceService } from 'src/app/services/presence/presence.service';
 
 @Component({
   selector: 'app-preview',
@@ -89,7 +87,6 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
   public user?: cd.IUser;
   public viewingComponent = false;
   public zoomScale = 0.5;
-  public darkTheme$: Observable<boolean>;
 
   @HostBinding('class.embed-mode')
   get isEmbedMode() {
@@ -99,7 +96,6 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('previewCanvas', { read: ElementRef, static: true }) _previewCanvas!: ElementRef;
 
   constructor(
-    public presenceService: PresenceService,
     @Optional() private _canvasService: CanvasService,
     private _analyticsService: AnalyticsService,
     private _propertiesService: PropertiesService,
@@ -107,18 +103,16 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     private _duplicateService: DuplicateService,
     private _interactionService: PreviewInteractionService,
     private _projectStore: Store<projectStore.IProjectState>,
-    private _projectContentService: ProjectContentService,
     private _appStore: Store<appStore.IAppState>,
     private _renderer: RendererService,
     private _overlayService: OverlayService,
+
     private _previewService: PreviewService,
     private _activatedRoute: ActivatedRoute,
     private _cdRef: ChangeDetectorRef,
     private _router: Router,
     private _toastsService: ToastsService
   ) {
-    this.darkTheme$ = _appStore.pipe(select(appStore.getDarkTheme));
-
     this._subscriptions.add(this._activatedRoute.queryParams.subscribe(this.onQueryParams));
     this._subscriptions.add(this._activatedRoute.fragment.pipe(take(1)).subscribe(this.onFragment));
     this.commentCounts$ = this._projectStore.pipe(
@@ -140,13 +134,13 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     const { _projectStore, _appStore, _subscriptions, _router, _renderer } = this;
     this._projectId = this.getProjectIdFromRoute();
 
-    const codeComps$ = this._projectContentService.codeCmpArray$;
-    const project$ = this._projectContentService.project$;
-    const outlets$ = this._projectContentService.outletFrames$;
+    const codeComps$ = this._projectStore.pipe(select(projectStore.selectCodeComponentsArray));
+    const project$ = _projectStore.pipe(select(projectStore.getProject));
+    const outlets$ = _projectStore.pipe(select(projectStore.getAllOutletFrames));
     const comments$ = _projectStore.pipe(select(projectStore.getCommentsState));
     const user$ = _appStore.pipe(select(appStore.getUser));
-    const projectLoaded$ = this._projectContentService.projectLoaded$;
-    const elemProps$ = this._projectContentService.elementProperties$;
+    const propsLoaded$ = _projectStore.pipe(select(projectStore.getElementPropertiesLoaded));
+    const elemProps$ = _projectStore.pipe(select(projectStore.getElementProperties));
     // Fixes an issue where navigating from preview to the dashboard fires unecissary query events
     const onNavigateFromPreview$ = _router.events.pipe(
       filter((e) => e instanceof NavigationStart && !e.url.includes(Route.Preview))
@@ -162,7 +156,7 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     _subscriptions.add(_renderer.navigationEvent$.subscribe(this.onRendererNavigationEvent));
     _subscriptions.add(navigateHomeEvents$.subscribe(this.handlePostMessage));
     _subscriptions.add(codeComps$.subscribe(this.onCodeComponentsSubscription));
-    _subscriptions.add(projectLoaded$.subscribe(this.onPropertiesLoaded));
+    _subscriptions.add(propsLoaded$.subscribe(this.onPropertiesLoaded));
     _subscriptions.add(selectedElementId$.subscribe(this.onSelectedElementChanged));
     _subscriptions.add(onNavigateFromPreview$.subscribe(this.clearSubscriptions));
 
@@ -358,7 +352,7 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     this._cdRef.markForCheck();
   };
 
-  onOutletsSubscription = ({ symbols, boards }: cd.IOutletFrameSubscription) => {
+  onOutletsSubscription = ({ symbols, boards }: projectStore.IOutletFrameSubscription) => {
     this.symbols = symbols;
     this.boards = boards;
     this.viewingComponent = this.isComponent(this.previewParams.id);
@@ -436,11 +430,10 @@ export class PreviewComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  onProjectSubscription = async (project: cd.IProject | undefined) => {
+  onProjectSubscription = (project: cd.IProject | undefined) => {
     if (!project) return;
     this.project = project;
-    const boardIds = await firstValueFrom(this._projectContentService.boardIds$);
-    const homeboard = project?.homeBoardId || boardIds[0];
+    const homeboard = project?.homeBoardId || project.boardIds[0];
     this.updateHomeboard(homeboard);
     this._cdRef.markForCheck();
   };

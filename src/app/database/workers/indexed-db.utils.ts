@@ -17,13 +17,13 @@
 import { get, set, del, clear, createStore } from 'idb-keyval';
 
 /**
- * Name of  local IndexedDB.
+ * Name of WebPrototypingTool local IndexedDB.
  *
  * Note:
  * Anytime we need to do a database migration, version should be incremented. This will
  * effectively abandon any data stored in older versions of IndexedDB in user's browsers
  **/
-const CD_DATABASE_NAME = 'IndexedDB - v3';
+const CD_DATABASE_NAME = 'WebPrototypingTool IndexedDB - v2';
 const CD_DATABASE_STORE_NAME = 'app';
 const idbStore = createStore(CD_DATABASE_NAME, CD_DATABASE_STORE_NAME);
 

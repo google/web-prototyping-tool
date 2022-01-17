@@ -15,7 +15,8 @@
  */
 
 import { Action } from '@ngrx/store';
-import { ConfigTargetType, IConfig, PropertyModel, LayoutMode, ICanvas } from 'cd-interfaces';
+import { ConfigTargetType, IConfig, PropertyModel, LayoutMode } from 'cd-interfaces';
+import { ICanvas } from './canvas.interface';
 
 export interface IConfigPayload {
   propertyModels?: PropertyModel[];
@@ -38,7 +39,7 @@ export interface IUndoableAction extends Action {
 }
 
 export class ConfigAction implements IConfigAction, IUndoableAction {
-  // TODO: These props should have default values or be initialized in ctor
+  // TODO , : These props should have default values or be initialized in ctor
   public type!: string;
   public targetType!: ConfigTargetType;
   constructor(

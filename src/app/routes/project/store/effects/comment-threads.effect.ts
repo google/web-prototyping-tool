@@ -15,7 +15,7 @@
  */
 
 import { DocumentChangeAction } from '@angular/fire/firestore';
-import { getCommentsState, getComments, getCommentThreads } from '../selectors';
+import { getCommentsState, getComments, getCommentThreads, getProject } from '../selectors';
 import { IAppState, getRouterState } from 'src/app/store';
 import * as cd from 'cd-interfaces';
 import { Injectable } from '@angular/core';
@@ -34,8 +34,6 @@ import { dbContentTypeToActionMap } from '../../configs/project.config';
 import { DatabaseService } from 'src/app/database/database.service';
 import { createId } from 'cd-utils/guid';
 import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
-import { createChangeMarker } from 'cd-common/utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 @Injectable()
 export class CommentThreadsEffects {
@@ -44,8 +42,7 @@ export class CommentThreadsEffects {
     private projectStore: Store<IProjectState>,
     private appStore: Store<IAppState>,
     private _databaseService: DatabaseService,
-    private _databaseChangesService: DatabaseChangesService,
-    private _projectContentService: ProjectContentService
+    private _databaseChangesService: DatabaseChangesService
   ) {}
 
   /*
@@ -78,7 +75,7 @@ export class CommentThreadsEffects {
   createCommentThread$ = createEffect(() =>
     this.actions$.pipe(
       ofType<commentActions.CommentThreadCreate>(commentActions.COMMENT_THREAD_CREATE),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this.projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
       withUser(this.appStore),
       switchMap(([[action, project], user]) => {
@@ -90,10 +87,8 @@ export class CommentThreadsEffects {
           const resolved = false;
           const owner: cd.IUserIdentity = { id: user.id, email: user.email };
           const elementTargetPayload = elementTargetId ? { elementTargetId } : {};
-          const changeMarker = createChangeMarker();
           const payload: cd.ICommentThreadDocument = {
             id,
-            changeMarker,
             owner,
             type,
             targetId,
@@ -114,7 +109,7 @@ export class CommentThreadsEffects {
   createComment$ = createEffect(() =>
     this.actions$.pipe(
       ofType<commentActions.CommentCreate>(commentActions.COMMENT_CREATE),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this.projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
       withUser(this.appStore),
       map(([[action, project], user]) => {
@@ -129,18 +124,7 @@ export class CommentThreadsEffects {
             id: user.id,
             email: user.email,
           };
-          const changeMarker = createChangeMarker();
-          const payload = {
-            id,
-            changeMarker,
-            projectId,
-            owner,
-            threadId,
-            createdAt,
-            updatedAt,
-            type,
-            body,
-          };
+          const payload = { id, projectId, owner, threadId, createdAt, updatedAt, type, body };
           return new commentActions.CommentCreateSuccess(payload);
         }
         throw new Error('Adding comment without a project or user');

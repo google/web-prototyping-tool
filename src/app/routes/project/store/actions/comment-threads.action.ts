@@ -15,13 +15,8 @@
  */
 
 import { Action } from '@ngrx/store';
-import {
-  ICommentThreadDocument,
-  FirestoreChangeType,
-  ICommentDocument,
-  ITaggableTextFieldNode,
-} from 'cd-interfaces';
-import { remoteActionTag } from 'src/app/database/path.utils';
+import { ICommentThreadDocument, ICommentDocument, ITaggableTextFieldNode } from 'cd-interfaces';
+import { FirestoreChangeType, remoteActionTag } from 'src/app/database/path.utils';
 
 export const COMMENT_THREAD = '[Comment Thread]';
 export const COMMENT = '[Comment]';

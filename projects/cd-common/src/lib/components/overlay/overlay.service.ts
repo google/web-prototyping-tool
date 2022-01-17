@@ -47,11 +47,6 @@ export interface IOverlayConfig {
    */
   parentRect?: DOMRect;
   alignRight?: boolean;
-  alignBottom?: boolean;
-
-  // x, y spacing from the parent rect when auto positioning the overlay
-  xOffset?: number;
-  yOffset?: number;
   /**
    * Match the width of the parent Rect when creating the overlay
    */

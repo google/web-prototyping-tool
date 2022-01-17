@@ -44,7 +44,7 @@ import * as store from '../../../store';
 import * as cd from 'cd-interfaces';
 import { IPanelZeroStateItem } from '../../zero-state-menu/zero-state.interface';
 
-const DATA_DOCS_LINK = '';
+const DATA_DOCS_GO_LINK = '';
 const CONFIG_OVERLAY_CONFIG = { x: 260, y: 40, alignRight: false };
 
 @Component({
@@ -250,7 +250,7 @@ export class DataPanelComponent
   };
 
   onHelp() {
-    openLinkInNewTab(DATA_DOCS_LINK);
+    openLinkInNewTab(DATA_DOCS_GO_LINK);
   }
 
   // Blurs the add button so the focus styles do not persist once menu is open

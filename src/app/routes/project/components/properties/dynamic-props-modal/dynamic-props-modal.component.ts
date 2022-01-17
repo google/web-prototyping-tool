@@ -26,7 +26,7 @@ import { OverlayInitService } from 'cd-common';
 import * as consts from './dynamic-props-modal.consts';
 import * as cd from 'cd-interfaces';
 
-// TODO: DRY up
+// TODO : DRY up
 interface IInstanceInputs extends cd.IBaseElementInputs {
   [key: string]: cd.PropertyValue;
 }

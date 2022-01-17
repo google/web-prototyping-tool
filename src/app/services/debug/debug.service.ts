@@ -17,20 +17,29 @@
 import { Injectable, NgZone } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { CdPostMessage } from 'cd-common/services';
+import { DesignSystemService } from 'src/app/routes/project/services/design-system/design-system.service';
 import { projectContentsPathForId, projectPathForId } from 'src/app/database/path.utils';
 import { getLocalProjectDataForId } from 'src/app/routes/project/utils/offline.helper.utils';
 import { compareData, IDataComparison } from './data-compare.utils';
 import { DatabaseService } from '../../database/database.service';
 import { AnalyticsService } from '../analytics/analytics.service';
+import { IProjectState } from 'src/app/routes/project/store';
 import { Store } from '@ngrx/store';
-import { fromEvent, lastValueFrom, firstValueFrom } from 'rxjs';
-import { createDesignSystemDocument } from 'cd-common/utils';
-import { Global, setGlobal } from './debug.utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { take } from 'rxjs/operators';
+import { fromEvent, lastValueFrom } from 'rxjs';
 import * as utils from 'src/app/routes/project/store/reducers/health.metareducer';
 import * as offlineUtils from '../../database/workers/offline.utils';
 import * as actions from 'src/app/routes/project/store/actions';
 import * as cd from 'cd-interfaces';
+
+const GLOBAL_NAMESPACE = 'app';
+
+const enum WebPrototypingToolGlobal {
+  Doctor = 'doctor',
+  Repair = 'repair',
+  DeleteElement = 'deleteElement',
+  CheckDataSync = 'checkDataSync',
+}
 
 const enum Channel {
   Inbound = 'in-channel',
@@ -46,12 +55,19 @@ export class DebugService {
   private _channelOutbound?: BroadcastChannel;
   private _channelGraph?: BroadcastChannel;
 
-  get isDevMode() {
-    return environment.production === false;
+  static setGlobal(key: string, value: any) {
+    const win = window as any;
+    if (!win[GLOBAL_NAMESPACE]) win[GLOBAL_NAMESPACE] = {};
+    win[GLOBAL_NAMESPACE][key] = value;
   }
 
-  get projectId() {
-    return this._projectContentService.project$.value?.id;
+  static removeGlobal(key: string) {
+    const win = window as any;
+    delete win[GLOBAL_NAMESPACE][key];
+  }
+
+  get isDevMode() {
+    return environment.production === false;
   }
 
   constructor(
@@ -59,13 +75,12 @@ export class DebugService {
     private _zone: NgZone,
     private _analyticsService: AnalyticsService,
     private _databaseService: DatabaseService,
-    private _projectContentService: ProjectContentService
+    private _designSystemService: DesignSystemService
   ) {
-    setGlobal(Global.Doctor, this.healthCheck);
-    setGlobal(Global.Repair, this.repairIssues);
-    setGlobal(Global.DeleteElement, this.deleteElement);
-    setGlobal(Global.CheckDataSync, this.checkDataSync);
-    setGlobal(Global.GetProjectContent, this.getProjectContent);
+    DebugService.setGlobal(WebPrototypingToolGlobal.Doctor, this.healthCheck);
+    DebugService.setGlobal(WebPrototypingToolGlobal.Repair, this.repairIssues);
+    DebugService.setGlobal(WebPrototypingToolGlobal.DeleteElement, this.deleteElement);
+    DebugService.setGlobal(WebPrototypingToolGlobal.CheckDataSync, this.checkDataSync);
 
     this._channelGraph = new BroadcastChannel(Channel.Graph);
     fromEvent<MessageEvent>(this._channelGraph, 'message').subscribe(this._handleGraphMessage);
@@ -89,11 +104,12 @@ export class DebugService {
     this.broadcastMessage(this._channelOutbound, message);
   };
 
-  public sendProjectDataToGraph = () => {
+  public sendProjectDataToGraph = async () => {
     if (this._channelGraph === undefined) return;
-    const project = this._projectContentService.project$.value;
-    const elementProperties = this._projectContentService.elementContent$.value.records;
+    const storeValue = await this.getCurrentProjectState();
+    const elementProperties = storeValue?.project?.elementProperties?.elementProperties;
     if (!elementProperties) return;
+    const { project } = storeValue.project.projectData;
     this.broadcastMessage(this._channelGraph, { project, elementProperties });
   };
 
@@ -113,57 +129,44 @@ export class DebugService {
     });
   };
 
-  reportHealthIssues(issues: string[]) {
-    const { projectId } = this;
+  async reportHealthIssues(issues: string[]) {
+    const storeValue = await this.getCurrentProjectState();
+    const projectId = storeValue.project?.projectData?.project.id;
     if (!projectId || !issues.length) return;
     const message = `${issues.length} Health check Errors in project: ${projectId}`;
     this._analyticsService.sendError(message);
   }
 
-  getProjectContent = () => {
-    return this._projectContentService.getCurrentContent();
-  };
-
-  getElementProperties() {
-    return firstValueFrom(this._projectContentService.elementProperties$);
+  getCurrentProjectState() {
+    return lastValueFrom(this._store.pipe(take(1)));
   }
 
-  getBoardIds() {
-    return firstValueFrom(this._projectContentService.boardIds$);
-  }
-
-  getSymbolIds() {
-    return firstValueFrom(this._projectContentService.symbolIds$);
-  }
-
-  getDesignSystem() {
-    return firstValueFrom(this._projectContentService.designSystem$);
+  hasDesignSystem(project: IProjectState) {
+    const designSystem = project?.designSystem;
+    return designSystem.loaded && designSystem.designSystem !== undefined;
   }
 
   repairIssues = () => {
     return this._zone.runOutsideAngular(async () => {
-      const currElementProps = await this.getElementProperties();
-      const currDesignSys = await this.getDesignSystem();
-      const currBoardIds = await this.getBoardIds();
-      const repairs = utils.repairHealthIssues(currElementProps, currBoardIds, currDesignSys);
-      const { elementProperties, designSystem } = repairs;
-      const deleted = utils.getIdsForDeletedElements(currElementProps, elementProperties);
+      const data = await this.getCurrentProjectState();
+      const project = data.project as IProjectState;
+      const oldProps = project.elementProperties.elementProperties;
+      const { elementProperties, designSystem } = utils.repairHealthIssues(project);
+      const deleted = utils.getIdsForDeletedElements(oldProps, elementProperties);
       const action = new actions.ElementPropertiesSetAll(elementProperties, deleted);
-      const hasDesignSystem = !!currDesignSys;
+      const hasDesignSystem = this.hasDesignSystem(project);
       // Actions must be dispatched within ngZone to correctly trigger change detection
       // https://ngrx.io/guide/store/configuration/runtime-checks#strictactionwithinngzone
       this._zone.run(() => {
         this._store.dispatch(action);
-        const projectId = this._projectContentService.project$.value?.id;
+        const projectId = project?.projectData?.project?.id;
         // If design system was repaired, dispatch action to update
         if (designSystem) {
-          this._store.dispatch(
-            new actions.DesignSystemUpdate(designSystem.id, designSystem, true, false)
-          );
+          this._store.dispatch(new actions.DesignSystemUpdate(designSystem, true, false));
         }
         // else if design system does not exist, dispatch action to create
         else if (!hasDesignSystem && projectId) {
-          const newDesignSystem = createDesignSystemDocument(projectId);
+          const newDesignSystem = this._designSystemService.createNewDesignSystem(projectId);
           this._store.dispatch(new actions.DesignSystemDocumentCreate(newDesignSystem));
         }
         console.log('Health check repairs completed');
@@ -172,12 +175,11 @@ export class DebugService {
   };
 
   runHealthCheck = async (): Promise<string[]> => {
+    const storeValue = await this.getCurrentProjectState();
     const { isDevMode } = this;
-    const elementProps = await this.getElementProperties();
-    const designSys = await this.getDesignSystem();
-    const boardIds = await this.getBoardIds();
-    const symbolIds = await this.getSymbolIds();
-    return utils.runAllHealthChecks(elementProps, designSys, boardIds, symbolIds, isDevMode);
+    return storeValue.project.elementProperties.loaded
+      ? utils.runAllHealthChecks(storeValue.project, isDevMode)
+      : [];
   };
 
   runHealthCheckAndRepairs = () => {
@@ -201,7 +203,8 @@ export class DebugService {
 
   /** Checks data synchronization between store/local/online sources. */
   async checkDataSync(): Promise<IDataComparison | undefined> {
-    const { projectId } = this;
+    const storeValue = await this.getCurrentProjectState();
+    const projectId = storeValue.project?.projectData?.project.id;
     if (!projectId) return;
 
     // Retrieve remote/local data and convert to `IOfflineProjectState` interface

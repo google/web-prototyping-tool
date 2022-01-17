@@ -48,6 +48,6 @@ export class AriaOutputComponent {
     const content = keyValueAttrsToString(this.visibleAttrs);
     copyToClipboard(content);
 
-    // TODO: add a snackbar to confirm successful copy?
+    // TODO (Lydia): add a snackbar to confirm successful copy?
   }
 }

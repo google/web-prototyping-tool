@@ -18,7 +18,7 @@ import { Component, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 
-import AssetsManifest from 'src/assets/assets-gallery/catalog/assets.json';
+import AssetsManifest from 'src/assets/assets-gallery/cloud-catalog/cloud-assets.json';
 import { copyToClipboard } from 'cd-utils/clipboard';
 import * as appStore from '../../store';
 import * as cd from 'cd-interfaces';

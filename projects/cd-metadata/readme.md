@@ -161,7 +161,7 @@ import { htmlAttributeMap } from 'cd-metadata/html';
 import * as metaFile from 'cd-metadata/file';
 ```
 
-**Responsible for:** Defines a list of accepted mimetypes
+**Responsible for:** Defines a list of accepted mimetypes (currently limited to app)
 
 ### cd-metadata/fonts
 

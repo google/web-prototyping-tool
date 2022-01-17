@@ -108,7 +108,7 @@ export class ProjectTileComponent implements OnDestroy, OnChanges, OnInit {
 
   /** If a project has more than 1 board, show the layers tree by default */
   get urlFragment() {
-    return this.boardThumbnails.length > 1 ? LAYERS_PANEL_FRAGMENT : undefined;
+    return this.project?.boardIds?.length > 1 ? LAYERS_PANEL_FRAGMENT : undefined;
   }
 
   ngOnChanges(changes: SimpleChanges): void {

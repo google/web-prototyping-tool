@@ -21,7 +21,6 @@ import * as cd from 'cd-interfaces';
 import { isObject } from 'cd-utils/object';
 import { createJsonBlob } from 'cd-utils/files';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { isStoredDataset } from 'cd-common/utils';
 
 const ELEMENT_PROPS_CONFIG: cd.IPickerDataset = {
   id: ELEMENT_PROPS_DATASET_KEY,
@@ -35,13 +34,14 @@ const SYMBOL_PROPS_CONFIG: cd.IPickerDataset = {
   pickerType: cd.DataPickerType.ProjectElements,
 };
 
+type PartialDataset = Pick<cd.IDataset, 'name' | 'id'>;
+
 @Injectable({ providedIn: 'root' })
 export class DataPickerService {
   private _isoloatedSymbolId?: string;
   private _elementProperties?: cd.ElementPropertiesMap | null;
   private _datasets = new Map<string, cd.IPickerDataset>();
   private _data = new Map<string, any>();
-  private _loadedStoragePaths = new Set<string>();
   public loadedData$ = new BehaviorSubject<Record<string, any>>({});
   public updateData$ = new Subject<cd.IPickerDataset>();
   public openAddDatasetMenu$ = new Subject<void>();
@@ -58,11 +58,10 @@ export class DataPickerService {
     this._elementProperties = props;
   }
 
-  addDataSource(dataset: cd.IDataset, value: any, pickerType = cd.DataPickerType.Default) {
+  addDataSource(dataset: PartialDataset, value: any, pickerType = cd.DataPickerType.Default) {
     const { id, name } = dataset;
     this._datasets.set(id, { id, name, pickerType });
     this._data.set(id, value);
-    if (isStoredDataset(dataset)) this._loadedStoragePaths.add(dataset.storagePath);
     this.emitLoadedDataChange();
   }
 
@@ -72,7 +71,7 @@ export class DataPickerService {
     this._datasets.set(datasetId, { ...currentValue, name });
   }
 
-  addDataSourceWithBlobValue = async (dataset: cd.IDataset, blobValue: Blob) => {
+  addDataSourceWithBlobValue = async (dataset: PartialDataset, blobValue: Blob) => {
     try {
       const pickerType = cd.DataPickerType.Default;
       const blobText = await blobValue.text();
@@ -105,14 +104,8 @@ export class DataPickerService {
     this._data.delete(id);
   }
 
-  hasDatasetData(dataset: cd.ProjectDataset): boolean {
-    // For a stored dataset, we lookup if the storage path to its JSON file is loaded.
-    // This path can change as edits are made, so don't rely on just the dataset id
-    if (utils.isStoredDataset(dataset)) return this._loadedStoragePaths.has(dataset.storagePath);
-
-    // For other types of datasets, we just use the id
-    // return this._data.has(dataset.id);
-    return false;
+  hasDatasetData(datasetId: string): boolean {
+    return this._data.has(datasetId);
   }
 
   get elemPropsConfig() {

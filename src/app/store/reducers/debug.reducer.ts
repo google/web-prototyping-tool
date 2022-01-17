@@ -15,8 +15,8 @@
  */
 
 import { ActionReducer, Action } from '@ngrx/store';
-import { setGlobal } from 'src/app/services/debug/debug.utils';
 import { IAppState } from './';
+import { DebugService } from 'src/app/services/debug/debug.service';
 
 const EXPOSED_STATE = 'appState';
 
@@ -25,7 +25,7 @@ export function exposeState(
 ): ActionReducer<IAppState, Action> {
   return (state: IAppState | undefined, action: Action): IAppState => {
     const result = reducer(state, action);
-    setGlobal(EXPOSED_STATE, result);
+    DebugService.setGlobal(EXPOSED_STATE, result);
     return result;
   };
 }

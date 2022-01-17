@@ -15,8 +15,8 @@
  */
 
 import { ReadonlyRenderResultsExArray } from './dnd-interfaces';
+import { ICanvas } from '../interfaces/canvas.interface';
 import { createPoint, IPoint } from 'cd-utils/geometry';
-import { getAllChildIdsRecursive } from 'cd-common/models';
 import * as cd from 'cd-interfaces';
 
 /**
@@ -68,6 +68,22 @@ export const areRectsTheSameWidthOrHeight = (a: cd.IRect, b: cd.IRect): boolean 
 
 export const isSecondRectSmaller = (first: cd.IRect, second: cd.IRect): boolean => {
   return first.height * first.width > second.height * second.width;
+};
+
+/** Given an elementId, return a list of all nested childIds*/
+export const getAllChildIdsRecursive = (
+  elementId: string,
+  props: cd.ElementPropertiesMap,
+  includeParent = true // Should include the elementId
+): ReadonlyArray<string> => {
+  const element = props[elementId];
+  const idList: string[] = includeParent ? [elementId] : [];
+  const childIds = element?.childIds || [];
+  if (childIds.length) {
+    const ids = childIds.flatMap((childId) => getAllChildIdsRecursive(childId, props));
+    if (ids.length) idList.push(...ids);
+  }
+  return idList;
 };
 
 /**
@@ -144,7 +160,7 @@ export const filterRectsByWeight = (
 };
 
 /** Converts x and y based on current canvas position */
-export const convertCursorForCanvas = (pt: IPoint, canvas: cd.ICanvas): IPoint => {
+export const convertCursorForCanvas = (pt: IPoint, canvas: ICanvas): IPoint => {
   const { x, y, z } = canvas.position;
   const cx = (pt.x - x) / z;
   const cy = (pt.y - y) / z;

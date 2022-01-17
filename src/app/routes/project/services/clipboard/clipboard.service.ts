@@ -17,7 +17,7 @@
 /* eslint-disable max-lines */
 // prettier-ignore
 import { createDocumentCopies, createSymbolCopies, detectSVGinTextAndReturnFile, generateImportMessage, getAssetsInClipboardModels, getCodeComponentsInClipboardModels, getDatasetsInClipboardModels, isContentFromAnotherProject, removePortalReferences, updateContentWithMappedIds } from './clipboard.utils';
-import { getSelectedIds, getPanelsState } from '../../store/selectors';
+import { getSelectedIds, getProject, getPanelsState } from '../../store/selectors';
 import { getContainedSymbolIdsRecursive } from '../../utils/symbol.utils';
 import { SelectionToggleElements } from '../../store/actions/selection.action';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
@@ -42,8 +42,7 @@ import { AssetsService } from '../assets/assets.service';
 import { DatasetService } from '../dataset/dataset.service';
 import { combineMaps } from 'cd-utils/map';
 import { createId } from 'cd-utils/guid';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { buildInsertLocation, mergeChangeIntoProperties } from 'cd-common/utils';
+import { buildInsertLocation } from 'cd-common/utils';
 
 // prettier-ignore
 const CIRCULAR_PASTE_ERROR = 'Cannot paste content - a circular reference would be created';
@@ -75,11 +74,10 @@ export class ClipboardService implements OnDestroy {
     private _toastService: ToastsService,
     private _assetUploadService: AssetsUploadService,
     private _assetsService: AssetsService,
-    private _datasetsService: DatasetService,
-    private _projectContentService: ProjectContentService
+    private _datasetsService: DatasetService
   ) {
     const selectedIds$ = this._projectStore.pipe(select(getSelectedIds));
-    const project$ = this._projectContentService.project$;
+    const project$ = this._projectStore.pipe(select(getProject));
     const panelsState$ = this._projectStore.pipe(select(getPanelsState));
     const clipboardEvent$ = fromEvent<MessageEvent>(this._clipboardChannel, 'message');
 
@@ -177,7 +175,7 @@ export class ClipboardService implements OnDestroy {
       // Duplicate element behavior is differnt than copy/paste behavior
       // we don't place all of copied content at each selected id.
       // Rather we insert a duplicate of each item next to itself
-      const allUpdates: cd.IElementChangePayload[] = [];
+      const allUpdates: cd.IPropertiesUpdatePayload[] = [];
       const allRootIds: string[] = [];
       const filteredModels = mUtils.sortAndFilterElements(propertyModels, _elementProperties);
 
@@ -188,17 +186,17 @@ export class ClipboardService implements OnDestroy {
         this.incrementNameForModels(models, _elementProperties);
 
         const insertLocation = buildInsertLocation(elementId, cd.InsertRelation.After);
-        const change = mUtils.insertElements(rootIds, insertLocation, _elementProperties, models);
-        allUpdates.push(change);
+        const updates = mUtils.insertElements(rootIds, insertLocation, _elementProperties, models);
+        allUpdates.push(...updates);
         allRootIds.push(...rootIds);
 
         // In case, a single parent is getting multiple elements duplicated into it, (e.g. a board)
         // we need to merge the childId updates from each loop back into _elementProperties
         // so that the next insertElements calculation includes previous inserts
-        _elementProperties = mergeChangeIntoProperties(_elementProperties, change);
+        _elementProperties = mUtils.mergeUpdatesIntoProperties(_elementProperties, updates);
       }
 
-      this._projectStore.dispatch(new actions.ElementPropertiesChangeRequest(allUpdates));
+      this._projectStore.dispatch(new actions.ElementPropertiesUpdate(allUpdates));
       this._projectStore.dispatch(new SelectionToggleElements(allRootIds, false, false));
     }
   }
@@ -370,7 +368,7 @@ export class ClipboardService implements OnDestroy {
     return undefined;
   };
 
-  // b/130188817 -- Only one paste location per board (= last selected item in that board)
+  // Only one paste location per board (= last selected item in that board)
   private filterSinglePasteTargetPerBoard = (targets: cd.PropertyModel[]): cd.PropertyModel[] => {
     const perBoardTargets = mUtils.categorizeElementsByBoard(targets).values();
     const propertiesMap = this._propsService.getElementProperties();
@@ -437,12 +435,12 @@ export class ClipboardService implements OnDestroy {
       //// END HOTFIX ///////////////////////////////////////////////////////////////////////////
       const symbolProps = elementProperties[_isolateSymbolId];
       if (!symbolProps) return;
-      const { changes, rootIds } = this._addElementsToTargets(
+      const { updates, rootIds } = this._addElementsToTargets(
         assignedElementGroup,
         [symbolProps],
         duplicate
       );
-      this._updateElementsAndToggleSelection(changes, rootIds);
+      this._updateElementsAndToggleSelection(updates, rootIds);
     }
   }
 
@@ -490,15 +488,15 @@ export class ClipboardService implements OnDestroy {
     const filteredTargets = this.filterSinglePasteTargetPerBoard(definedTargets);
     if (filteredTargets.length === 0) return;
     const added = this._addElementsToTargets(assignedElementGroup, filteredTargets, duplicate);
-    this._updateElementsAndToggleSelection(added.changes, added.rootIds);
+    this._updateElementsAndToggleSelection(added.updates, added.rootIds);
   }
 
   private _updateElementsAndToggleSelection(
-    changes: cd.IElementChangePayload[],
+    updates: cd.IPropertiesUpdatePayload[],
     rootIds: string[]
   ) {
     const { _projectStore } = this;
-    _projectStore.dispatch(new actions.ElementPropertiesChangeRequest(changes));
+    _projectStore.dispatch(new actions.ElementPropertiesUpdate(updates, true));
     _projectStore.dispatch(new SelectionToggleElements(rootIds, false, false));
   }
 
@@ -506,9 +504,9 @@ export class ClipboardService implements OnDestroy {
     elementGroup: cd.IComponentInstanceGroup,
     targets: cd.PropertyModel[],
     duplicate = true
-  ): { changes: cd.IElementChangePayload[]; rootIds: string[] } => {
+  ): { updates: cd.IPropertiesUpdatePayload[]; rootIds: string[] } => {
     let elementProperties = deepCopy(this._propsService.getElementProperties());
-    const changes: cd.IElementChangePayload[] = [];
+    const allUpdates: cd.IPropertiesUpdatePayload[] = [];
     const allRootIds: string[] = [];
 
     for (const propModel of targets) {
@@ -522,17 +520,17 @@ export class ClipboardService implements OnDestroy {
         : cd.InsertRelation.After;
 
       const insertLocation = buildInsertLocation(propModel.id, relation);
-      const change = mUtils.insertElements(rootIds, insertLocation, elementProperties, models);
-      changes.push(change);
+      const updates = mUtils.insertElements(rootIds, insertLocation, elementProperties, models);
+      allUpdates.push(...updates);
       allRootIds.push(...rootIds);
 
       // In case, a single parent is getting multiple elements pasted into it, (e.g. a board)
       // we need to merge the childId updates from each loop back into _elementProperties
       // so that the next insertElements calculation includes previous inserts
-      elementProperties = mergeChangeIntoProperties(elementProperties, change);
+      elementProperties = mUtils.mergeUpdatesIntoProperties(elementProperties, updates);
     }
 
-    return { rootIds: allRootIds, changes };
+    return { rootIds: allRootIds, updates: allUpdates };
   };
 
   get dimensionOfFirstSelectedProp(): [number, number] {

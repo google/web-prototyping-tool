@@ -21,8 +21,7 @@ import { TILE_THUMBNAIL_LIMIT } from 'cd-common/consts';
 @Pipe({ name: 'projectThumbnailPipe' })
 export class ProjectThumbnailPipe implements PipeTransform {
   transform(project: IProject, thumbnails: Map<string, IScreenshotRef[]>): string[] {
-    if (!thumbnails.has(project.id)) return [];
-    const thumbs = thumbnails.get(project.id) as IScreenshotRef[];
-    return thumbs.slice(0, TILE_THUMBNAIL_LIMIT).map((ref) => ref.url || '');
+    const thumbs = new Map(thumbnails.get(project.id)?.map((item) => [item.id, item.url]));
+    return [...project.boardIds].slice(0, TILE_THUMBNAIL_LIMIT).map((id) => thumbs.get(id) || '');
   }
 }

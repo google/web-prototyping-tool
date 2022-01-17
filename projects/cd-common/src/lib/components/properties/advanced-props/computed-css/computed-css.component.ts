@@ -27,7 +27,7 @@ import { generateComputedCSS, cssToString } from 'cd-common/utils';
 })
 export class ComputedCssComponent {
   private _designSystem?: cd.IDesignSystem;
-  private _projectAssets?: cd.AssetMap;
+  private _projectAssets?: cd.IProjectAssets;
   private _styles?: cd.IStyleAttributes;
 
   public computed: ReadonlyArray<cd.IStyleList> = [];
@@ -38,7 +38,7 @@ export class ComputedCssComponent {
     this.computeCSS();
   }
   @Input()
-  set projectAssets(value: cd.AssetMap) {
+  set projectAssets(value: cd.IProjectAssets) {
     this._projectAssets = value;
     this.computeCSS();
   }

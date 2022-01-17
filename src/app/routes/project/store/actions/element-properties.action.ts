@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { remoteActionTag } from 'src/app/database/path.utils';
+import { remoteActionTag, FirestoreChangeType } from 'src/app/database/path.utils';
 import { IUndoableAction, ConfigAction } from '../../interfaces/action.interface';
 import { Action } from '@ngrx/store';
 import * as cd from 'cd-interfaces';
@@ -22,9 +22,9 @@ import * as cd from 'cd-interfaces';
 export const ELEMENT_PROPS = '[Element Properties]';
 
 export const ELEMENT_PROPS_REMOTE = `${ELEMENT_PROPS} ${remoteActionTag}`;
-export const ELEMENT_PROPS_REMOTE_ADDED = `${ELEMENT_PROPS_REMOTE} ${cd.FirestoreChangeType.Added}`;
-export const ELEMENT_PROPS_REMOTE_MODIFIED = `${ELEMENT_PROPS_REMOTE} ${cd.FirestoreChangeType.Modified}`;
-export const ELEMENT_PROPS_REMOTE_REMOVED = `${ELEMENT_PROPS_REMOTE} ${cd.FirestoreChangeType.Removed}`;
+export const ELEMENT_PROPS_REMOTE_ADDED = `${ELEMENT_PROPS_REMOTE} ${FirestoreChangeType.Added}`;
+export const ELEMENT_PROPS_REMOTE_MODIFIED = `${ELEMENT_PROPS_REMOTE} ${FirestoreChangeType.Modified}`;
+export const ELEMENT_PROPS_REMOTE_REMOVED = `${ELEMENT_PROPS_REMOTE} ${FirestoreChangeType.Removed}`;
 export const ELEMENT_PROPS_MOVE = `${ELEMENT_PROPS} move`;
 export const ELEMENT_PROPS_ORDER_CHANGE = `${ELEMENT_PROPS} order change`;
 export const ELEMENT_PROPS_SELECT_PARENT = `${ELEMENT_PROPS} select parent`;
@@ -43,12 +43,6 @@ export const ELEMENT_PROPS_CREATE_PORTAL_FROM_ELEMENTS = `${ELEMENT_PROPS} creat
 export const ELEMENT_PROPS_ADD_INTERACTION = `${ELEMENT_PROPS} add action`;
 export const ELEMENT_PROPS_SET_ALL = `${ELEMENT_PROPS} set all`;
 
-export const ELEMENT_PROPS_CHANGE_REQUEST = `${ELEMENT_PROPS} change request`;
-
-export class ElementPropertiesChangeRequest implements Action {
-  readonly type = ELEMENT_PROPS_CHANGE_REQUEST;
-  constructor(public payload: cd.IElementChangePayload[], public undoable = true) {}
-}
 export class ElementPropertiesReplaceAll implements Action {
   readonly type = ELEMENT_PROPS_REPLACE_ALL;
   constructor(public elementProperties: cd.ElementPropertiesMap) {}
@@ -95,7 +89,11 @@ export class ElementPropertiesCreate implements IUndoableAction {
 
 export class ElementPropertiesUpdate implements IUndoableAction {
   readonly type = ELEMENT_PROPS_UPDATE;
-  constructor(public payload: cd.IPropertiesUpdatePayload[], public undoable = true) {}
+  constructor(
+    public payload: cd.IPropertiesUpdatePayload[],
+    public undoable = true,
+    public symbolInputsUpdate = false
+  ) {}
 }
 
 export class ElementPropertiesUpdateFailure implements Action {
@@ -108,6 +106,7 @@ export class ElementPropertiesDelete implements IUndoableAction {
     public payload: cd.PropertyModel[],
     public undoable = true,
     public updates?: cd.IPropertiesUpdatePayload[],
+    // TODO : Would updates !== defined imply ignoreDeselect = true (and somebody should set selection)?
     public ignoreDeselect = false
   ) {}
 }
@@ -177,5 +176,4 @@ export type ElementPropertiesAction =
   | ElementPropertiesSetAll
   | ElementPropertiesUngroupElements
   | ElementPropertiesUpdate
-  | ElementPropertiesUpdateFailure
-  | ElementPropertiesChangeRequest;
+  | ElementPropertiesUpdateFailure;

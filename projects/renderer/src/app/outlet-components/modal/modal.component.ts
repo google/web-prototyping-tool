@@ -94,7 +94,7 @@ export class ModalComponent implements IRenderComponent, AfterViewInit {
   }
 
   animateIn() {
-    /** TODO: update with animation api instead of transition */
+    /** TODO:  update with animation api instead of transition */
   }
 
   @HostListener('animationend', ['$event'])

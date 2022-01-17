@@ -18,7 +18,7 @@ import { Theme } from 'cd-themes';
 import * as cd from 'cd-interfaces';
 
 export const THEMES_MENU_DEFAULT: cd.ISelectItem = {
-  title: 'Angular Material',
+  title: 'Material',
   value: Theme.AngularMaterial,
 };
 

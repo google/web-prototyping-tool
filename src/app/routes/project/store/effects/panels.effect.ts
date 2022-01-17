@@ -22,10 +22,10 @@ import { IAppState, getRouterState, AppGo } from 'src/app/store';
 import { ROUTER_NAVIGATION, RouterNavigationAction } from '@ngrx/router-store';
 import { IProjectState } from '../reducers';
 import { getIsolatedSymbolId, getSymbolMode } from '../selectors/panels.selector';
+import { getElementPropertiesLoaded, getElementProperties } from '../selectors';
 import { PanelConfig } from '../../configs/project.config';
 import { DataPickerService } from 'cd-common';
 import { Router } from '@angular/router';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import * as config from 'src/app/configs/routes.config';
 import * as actions from '../actions/panels.action';
 import * as storeActions from '../actions';
@@ -40,8 +40,7 @@ export class PanelsEffect {
     private _router: Router,
     private _appStore: Store<IAppState>,
     private _dataPickerService: DataPickerService,
-    private _projectStore: Store<IProjectState>,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>
   ) {}
 
   showSymbols$ = createEffect(() =>
@@ -145,9 +144,9 @@ export class PanelsEffect {
       ofType(storeActions.PROJECT_CONTENT_QUERY_SUCCESS, actions.PANEL_SET_ISOLATION_MODE),
       withLatestFrom(this._projectStore.pipe(select(getIsolatedSymbolId))),
       filter(([, isolatedSymbolId]) => !!isolatedSymbolId), // check that we are in isolation mode with a symbol id
-      withLatestFrom(this._projectContentService.projectLoaded$),
-      filter(([, projectLoaded]) => projectLoaded), // check project has been loaded from database
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementPropertiesLoaded))),
+      filter(([, propertiesLoaded]) => propertiesLoaded), // check element properties have been loaded from database
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       filter(([[[, isolatedSymbolId]], elementProperties]) => {
         // check if property  model for isolated symbol does not exist
         return !!(isolatedSymbolId && !elementProperties[isolatedSymbolId]);

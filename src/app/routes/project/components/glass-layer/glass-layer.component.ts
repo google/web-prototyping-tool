@@ -23,9 +23,10 @@ import {
   ChangeDetectorRef,
   OnInit,
 } from '@angular/core';
+import { ICanvas } from '../../interfaces/canvas.interface';
 import { InteractionService } from '../../services/interaction/interaction.service';
-import { combineLatest, Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 import { SelectionContextService } from '../../services/selection-context/selection.context.service';
 import { SelectTargetService } from '../../services/select-target/select-target.service';
 import { MarqueeMode, MarqueeService } from '../../services/marquee/marquee.service';
@@ -33,11 +34,8 @@ import { IAppState, getUserSettings } from 'src/app/store';
 import { KeyboardService } from '../../services/keyboard/keyboard.service';
 import { DndDirectorService } from '../../dnd-director/dnd-director.service';
 import { Store, select } from '@ngrx/store';
-import { RtcService } from 'src/app/services/rtc/rtc.service';
-import { areObjectsEqual } from 'cd-utils/object';
 import * as cd from 'cd-interfaces';
 import * as utils from './glass.utils';
-import { getIsolatedSymbolId } from '../../store/selectors';
 
 @Component({
   selector: 'app-glass-layer',
@@ -47,13 +45,12 @@ import { getIsolatedSymbolId } from '../../store/selectors';
 })
 export class GlassLayerComponent implements OnDestroy, OnInit {
   private _disableContextualOverlay = false;
-  private _canvas?: cd.ICanvas;
+  private _canvas?: ICanvas;
   private _outletFrameOrder: ReadonlyArray<string> = [];
   private _selectTargetActive = false;
   private _showLabel = false;
   private _subs = new Subscription();
   private _metaKeyDown = false;
-  private _peerSelection: cd.IUserSelection[] = [];
 
   public outletFrameScrollRect: ReadonlyMap<string, cd.IRect> = new Map();
   public elements: cd.RenderElementMap = new Map();
@@ -62,9 +59,7 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
   public selectedProperties: cd.ReadOnlyPropertyModelList = [];
   public selectionState: cd.RenderElementMap = new Map();
   public outletFrames: ReadonlyArray<cd.IRenderResult> = [];
-  public outletFrameRects: cd.RenderRectMap = new Map();
   public marqueeRect?: cd.IRect;
-  public peerRectsPerOutlet: Record<string, cd.IUserRect[]> = {};
 
   public boardMoving = false;
   public breakGlass = false;
@@ -77,10 +72,7 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
   public showMarquee = false;
   public selectionSize = 0;
   public createBoard = false;
-  public darkTheme = false;
   public zoom = 1;
-  public peerCursors: cd.IUserCursor[] = [];
-  public peerCursorsWithMarquee: cd.IUserCursor[] = [];
 
   @Input() canvasPos?: string;
   @Input() isRecording = false;
@@ -90,11 +82,11 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
   grab = false;
 
   @Input()
-  set canvas(value: cd.ICanvas | undefined) {
+  set canvas(value: ICanvas | undefined) {
     this._canvas = value;
     this.zoom = value?.position.z ?? 1;
   }
-  get canvas(): cd.ICanvas | undefined {
+  get canvas(): ICanvas | undefined {
     return this._canvas;
   }
 
@@ -106,8 +98,7 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     private _marqueeService: MarqueeService,
     private _dndService: DndDirectorService,
     private _cdRef: ChangeDetectorRef,
-    public keyboardService: KeyboardService,
-    public rtcService: RtcService
+    public keyboardService: KeyboardService
   ) {}
 
   get moving() {
@@ -150,6 +141,10 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
+    const outletRects$ = this._interactService.outletFrameRects$.pipe(
+      map((items) => Array.from(items.values()))
+    );
+
     const userSettings$ = this._appStore.pipe(
       select(getUserSettings),
       distinctUntilChanged(utils.filterUserDebugSettings)
@@ -157,10 +152,7 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
 
     const move$ = this._interactService.boardMoving$.pipe(distinctUntilChanged());
 
-    const { peerCursors$ } = this.rtcService;
-    const isolatedSymbolId$ = this._appStore.pipe(select(getIsolatedSymbolId));
-    const peerCursorsWithIsolatedId$ = combineLatest([peerCursors$, isolatedSymbolId$]);
-
+    this._subs.add(outletRects$.subscribe(this.onOutletFrameRects));
     this._subs.add(userSettings$.subscribe(this.onUserSettings));
     this._subs.add(move$.subscribe(this.onBoardMove));
     this._subs.add(this.keyboardService.metaKeyDown$.subscribe(this.onMetaKeydown));
@@ -168,7 +160,6 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     this._subs.add(this._selectTarget.active$.subscribe(this.onSelectTargetActive));
     this._subs.add(this._selectionCtxService.selectedProperties.subscribe(this.onSelectedProps));
     this._subs.add(this._dndService.dragActive$.subscribe(this.onActiveDrag));
-    this._subs.add(this._interactService.outletFrameRects$.subscribe(this.onOutletFrameRects));
     this._subs.add(this._interactService.renderRects$.subscribe(this.onRenderRects));
     this._subs.add(this._interactService.outletFrameOrder$.subscribe(this.onOutletFrameOrder));
     this._subs.add(this._interactService.highlight$.subscribe(this.onHighlight));
@@ -177,18 +168,14 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     this._subs.add(this._marqueeService.marqueeRect$.subscribe(this.onMarquee));
     this._subs.add(this._marqueeService.mode$.subscribe(this.onMarqueeMode));
     this._subs.add(this._interactService.propsInteracting$.subscribe(this.onPropsInteraction));
-    this._subs.add(this.rtcService.peerSelection$.subscribe(this.onPeerSelection));
-    this._subs.add(peerCursorsWithIsolatedId$.subscribe(this.onPeerCursors));
   }
 
   onUserSettings = (userSettings: cd.IUserSettings) => {
-    const { debugGlass, darkTheme, breakGlass, debugCanvas, disableContextualOverlay } =
-      userSettings;
+    const { debugGlass, breakGlass, debugCanvas, disableContextualOverlay } = userSettings;
     this._disableContextualOverlay = disableContextualOverlay;
     this.debugCanvas = debugCanvas;
     this.debugGlass = debugGlass;
     this.breakGlass = breakGlass;
-    this.darkTheme = darkTheme;
     this._cdRef.markForCheck();
   };
 
@@ -255,22 +242,6 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     this._cdRef.markForCheck();
   };
 
-  onPeerSelection = (peerSelection: cd.IUserSelection[]) => {
-    this._peerSelection = peerSelection;
-    const peerRects = utils.buildPeerRects(peerSelection, this.renderRects, this.outletFrameRects);
-    if (areObjectsEqual(peerRects, this.peerRectsPerOutlet)) return;
-    this.peerRectsPerOutlet = peerRects;
-    this._cdRef.detectChanges();
-  };
-
-  onPeerCursors = (data: [cd.IUserCursor[], string | undefined]) => {
-    const [cursors, isolatedSymbolId] = data;
-    const filteredCursors = cursors.filter((c) => c.isolatedSymbolId === isolatedSymbolId);
-    this.peerCursors = filteredCursors;
-    this.peerCursorsWithMarquee = filteredCursors.filter((c) => !!c.marqueeRect);
-    this._cdRef.detectChanges();
-  };
-
   onHighlight = (highlight: cd.RenderElementMap) => {
     this.highlight = highlight;
     this._cdRef.markForCheck();
@@ -287,14 +258,10 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     this.outletFrames = utils.sortOutletFrames(outletFrames, _outletFrameOrder);
   }
 
-  onOutletFrameRects = (outletFrameRects: cd.RenderRectMap) => {
-    this.outletFrameRects = outletFrameRects;
-    this.outletFrames = Array.from(outletFrameRects.values());
+  onOutletFrameRects = (outletFrameRects: cd.IRenderResult[]) => {
+    this.outletFrames = outletFrameRects;
     this.sortFrames();
     this._cdRef.markForCheck();
-
-    // recompute peer rects when outlet frames update
-    this.onPeerSelection(this._peerSelection);
   };
 
   onRenderRects = (renderRects: cd.RenderRectMap) => {
@@ -303,9 +270,6 @@ export class GlassLayerComponent implements OnDestroy, OnInit {
     this.elements = elements;
     this.renderRects = renderRects;
     this._cdRef.markForCheck();
-
-    // recompute peer rects when render rects update
-    this.onPeerSelection(this._peerSelection);
   };
 
   trackFn(_index: number, item: cd.RootElement): string {

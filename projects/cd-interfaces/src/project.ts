@@ -15,46 +15,37 @@
  */
 
 import { EntityType } from './entity-types';
-import { IDesignSystem, IDesignSystemDocument } from './design';
-import { AssetMap, IProjectAsset } from './assets';
+import { IDesignSystem } from './design';
+import { IProjectAssets, IProjectAsset } from './assets';
 import { IBaseDocument, IBaseDocumentMetadata } from './database';
 import { IPublishable, PublishType, IPublishEntry } from './publish';
-import { ElementPropertiesMap, PropertyModel } from './property-models';
+import { ElementPropertiesMap } from './property-models';
+import { IZiplinePublishData } from './zipline';
 import { ICodeComponentDocument } from './code-component';
 import { ProjectDataset } from './dataset';
-import { IBoardProperties } from './component-instances';
-import { ISymbolProperties } from './symbols';
-import type firebase from 'firebase/app';
-import { ChangePayload } from './project-changes';
-
-export interface IChangeMarker {
-  id: string;
-  timestamp: firebase.firestore.Timestamp;
-}
-
-export interface IBaseProjectDocument extends IBaseDocument {
-  type: string;
-  changeMarker?: IChangeMarker;
-}
 
 export const DefaultProjectType = 'Default';
 
-export interface IProject extends IBaseProjectDocument, IBaseDocumentMetadata, IPublishable {
+export interface IProject extends IBaseDocument, IBaseDocumentMetadata, IPublishable {
   type: typeof DefaultProjectType | PublishType;
+  ziplineData?: IZiplinePublishData;
   homeBoardId?: string;
   numComments: number;
+  // For ordering
+  boardIds: string[];
+  assetIds: string[];
+  symbolIds: string[];
 }
 
-export interface IProjectContentDocument extends IBaseProjectDocument {
+export interface IProjectContentDocument extends IBaseDocument {
+  id: string;
   projectId: string;
   type: EntityType;
 }
 
-export type ProjectContentMap = Record<string, IProjectContentDocument>;
-
 export interface IProjectBindings {
   designSystem: IDesignSystem;
-  assets: AssetMap;
+  assets: IProjectAssets;
 }
 
 export interface IBuiltInTemplate {
@@ -84,37 +75,4 @@ export interface IExportedProject {
   assets: IProjectAsset[];
   codeComponents: ICodeComponentDocument[];
   datasets: ProjectDataset[];
-}
-
-export interface IOutletFrameSubscription {
-  boards: IBoardProperties[];
-  symbols: ISymbolProperties[];
-}
-
-export interface IContentSection<T> {
-  idsCreatedInLastChange: Set<string>;
-  idsUpdatedInLastChange: Set<string>;
-  idsDeletedInLastChange: Set<string>;
-  records: Record<string, T>;
-  loaded: boolean;
-}
-
-export type ElementContent = IContentSection<PropertyModel>;
-export type DesignSystemContent = IContentSection<IDesignSystemDocument>;
-export type AssetContent = IContentSection<IProjectAsset>;
-export type CodeCmpContent = IContentSection<ICodeComponentDocument>;
-export type DatasetContent = IContentSection<ProjectDataset>;
-
-export interface IProjectContent {
-  project: IProject;
-  elementContent: ElementContent;
-  designSystemContent: DesignSystemContent;
-  assetContent: AssetContent;
-  codeCmpContent: CodeCmpContent;
-  datasetContent: DatasetContent;
-}
-
-export interface IBlankProjectCreate {
-  project: IProject;
-  changes: ChangePayload[];
 }

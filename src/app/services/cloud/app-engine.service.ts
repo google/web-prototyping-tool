@@ -19,13 +19,16 @@ import { HttpParams, HttpClient, HttpHeaders } from '@angular/common/http';
 import { COOKIE_SYNC_PATH, NO_PREFLIGHT_CONTENT_TYPE } from '../../configs/app-engine.config';
 import { lastValueFrom } from 'rxjs';
 
+/**
+ * Services for triggering GAE services. See
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class AppEngineService {
   constructor(private http: HttpClient) {}
 
-  // This one has to be fetch() API for mode: 'no-cors'
+  // This one has to be fetch() API for mode: 'no-cors', see
   private cookieSync = async (host: string) => {
     await fetch(`${host}${COOKIE_SYNC_PATH}`, {
       mode: 'no-cors',

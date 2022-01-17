@@ -65,6 +65,7 @@ export const TEXT_TYPE_NAMES: ReadonlyRecord<TTextType, string> = {
 
 export const ROBOTO_FONT = 'Roboto';
 export const GOOGLE_SANS_FONT = 'GoogleSans';
+export const GOOGLE_MATERIAL_ICONS_FONT = 'Google Material Icons';
 export const MATERIAL_ICONS_FONT = 'Material Icons';
 export const MATERIAL_ICONS_OUTLINED_FONT = 'Material Icons Outlined';
 export const MATERIAL_ICONS_ROUND_FONT = 'Material Icons Round';
@@ -88,6 +89,26 @@ export const ROBOTO = {
     FontWeight.Black,
     FontWeight.BlackItalic,
   ],
+};
+
+export const GOOGLE_SANS = {
+  family: 'Google Sans',
+  category: FontCategory.SansSerif,
+  locked: true,
+  variants: [
+    FontWeight.Regular,
+    FontWeight.RegularItalic,
+    FontWeight.Medium,
+    FontWeight.MediumItalic,
+    FontWeight.Bold,
+    FontWeight.BoldItalic,
+  ],
+};
+
+export const GOOGLE_MATERIAL_ICONS = {
+  family: GOOGLE_MATERIAL_ICONS_FONT,
+  kind: FontKind.Icon,
+  variants: [],
 };
 
 export const MATERIAL_ICONS = {
@@ -115,6 +136,7 @@ export const MATERIAL_ICONS_OUTLINED = {
 };
 
 export const DEFAULT_ICON_FONTS = {
+  [GOOGLE_MATERIAL_ICONS_FONT]: GOOGLE_MATERIAL_ICONS,
   [MATERIAL_ICONS_FONT]: MATERIAL_ICONS,
   [MATERIAL_ICONS_OUTLINED_FONT]: MATERIAL_ICONS_OUTLINED,
   [MATERIAL_ICONS_ROUND_FONT]: MATERIAL_ICONS_ROUND,

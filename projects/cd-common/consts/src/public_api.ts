@@ -16,6 +16,7 @@
 
 export * from './a11y.consts';
 export * from './assets.consts';
+export * from './bundle.consts';
 export * from './code-component.consts';
 export * from './component-tile.consts';
 export * from './css.consts';
@@ -33,7 +34,6 @@ export * from './project-tile.consts';
 export * from './project.consts';
 export * from './property-group.consts';
 export * from './props.consts';
-export * from './presence.consts';
 export * from './renderer.consts';
 export * from './screenshots.consts';
 export * from './spinner.consts';

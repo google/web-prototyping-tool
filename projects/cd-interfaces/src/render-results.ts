@@ -47,5 +47,5 @@ export interface IGreenlineRenderResults {
 
 // create map keyed off of both element position and id
 // so that either element id or position can be used to lookup render item data
-// TODO: use only ID long term?
+// TODO : use only ID long term?
 export type RenderResults = IStringMap<IRenderResult>;

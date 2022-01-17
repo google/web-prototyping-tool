@@ -19,7 +19,7 @@ import { Observable, fromEvent } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 import { CdPostMessage } from './cd-messaging.action';
 
-// TODO: pull correction origin's from environments object
+// TODO : pull correction origin's from environments object
 const TARGET_ORIGIN = '*';
 
 @Injectable({ providedIn: 'root' })

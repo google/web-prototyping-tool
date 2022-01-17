@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
+import { IPanel, IRect } from 'cd-interfaces';
+import { clamp, half, roundToDecimal } from 'cd-utils/numeric';
+import { Rect } from 'cd-utils/geometry';
+import { IPanelsState } from '../interfaces/panel.interface';
+import * as config from '../configs/canvas.config';
 import {
-  IPanel,
-  IRect,
   ICanvas,
   ICanvasDimensions,
   ICanvasPosition,
   IRectRange,
   IScrollbar,
-  Rect,
-} from 'cd-interfaces';
-import { clamp, half, roundToDecimal } from 'cd-utils/numeric';
-import { IPanelsState } from '../interfaces/panel.interface';
-import * as config from '../configs/canvas.config';
+} from '../interfaces/canvas.interface';
 
 const TOP_BAR_HEIGHT = 42;
 const ACTIVITY_BAR_WIDTH = 48;

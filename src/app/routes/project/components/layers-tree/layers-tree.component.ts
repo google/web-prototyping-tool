@@ -40,7 +40,6 @@ import * as models from 'cd-common/models';
 import * as config from './layers.config';
 import * as projStore from '../../store';
 import * as cd from 'cd-interfaces';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 const HEADER_HEIGHT = 78;
 const DRAG_OVER_TIMER = 800;
@@ -108,7 +107,6 @@ export class LayersTreeComponent implements OnDestroy, AfterViewInit {
     private _appStore: Store<IAppState>,
     private _selectTargetService: SelectTargetService,
     private _projectStore: Store<projStore.IProjectState>,
-    private _projectContentService: ProjectContentService,
     private _selectionContext: SelectionContextService,
     private _interactionService: InteractionService,
     private _layersTreeService: LayersTreeService,
@@ -159,7 +157,7 @@ export class LayersTreeComponent implements OnDestroy, AfterViewInit {
 
   // setup subscriptions after view init, so that view can be manipulated on first subscription call
   ngAfterViewInit() {
-    const elemProps$ = this._projectContentService.elementProperties$;
+    const elemProps$ = this._projectStore.pipe(select(projStore.getElementProperties));
     this._subscriptions.add(elemProps$.subscribe(this.onElementProps));
     this._subscriptions.add(this._interactionService.highlight$.subscribe(this.onHighlight));
     const showingIds$ = this._appStore.pipe(select(getShowingBoardIds));

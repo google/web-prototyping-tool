@@ -36,7 +36,6 @@ import { IconPickerDemoComponent } from './icon-picker-demo/icon-picker-demo.com
 import { ToggleButtonGroupDemoComponent } from './toggle-button-group-demo/toggle-button-group-demo.component';
 import { LayoutPickerDemoModule } from './layout-picker-demo/layout-picker-demo.module';
 import { LayoutEngineModuleDemo } from './layout-engine-demo/layout-engine-demo.module';
-import { PresenceIndicatorsDemoModule } from './presence-indicators-demo/presence-indicators-demo.module';
 
 @NgModule({
   declarations: [
@@ -53,7 +52,6 @@ import { PresenceIndicatorsDemoModule } from './presence-indicators-demo/presenc
   imports: [
     BoardCreationDemoModule,
     LayoutPickerDemoModule,
-    PresenceIndicatorsDemoModule,
     CommonModule,
     LayoutEngineModuleDemo,
     DynamicPropsDemoModule,

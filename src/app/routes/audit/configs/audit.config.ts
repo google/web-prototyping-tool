@@ -29,6 +29,13 @@ import { matChipsListConfig } from './chipslist-audit.config';
 import { matTabsConfig } from './tabs-audit.config';
 import { matStepperConfig } from './stepper-audit.config';
 import { matExpansionPanelConfig } from './expansionpanel-audit.config';
+import { googleFabConfig } from './google-fab-audit.config';
+import { cloudProductBadgeConfig } from './cloud-product-badge-audit.config';
+import { cloudDatePickerConfig } from './cloud-datepicker-audit.config';
+import { cloudUsageIndicatorConfig } from './cloud-usage-indicator-audit.config';
+import { cloudTableConfig } from './cloud-table-audit.config';
+import { cloudBreadcrumbsConfig } from './cloud-breadcrumbs-audit.config';
+import { cloudMessageConfig } from './cloud-message-audit.config';
 
 export interface IAuditView {
   title: string;
@@ -64,4 +71,11 @@ export const CUSTOM_AUDIT_VIEWS: IAuditView[] = [
   matTabsConfig,
   matStepperConfig,
   matExpansionPanelConfig,
+  googleFabConfig,
+  cloudProductBadgeConfig,
+  cloudDatePickerConfig,
+  cloudUsageIndicatorConfig,
+  cloudTableConfig,
+  cloudBreadcrumbsConfig,
+  cloudMessageConfig,
 ];

@@ -14,68 +14,39 @@
  * limitations under the License.
  */
 
+import { Store, select } from '@ngrx/store';
 import { deepCopy, isObjectLegacy } from 'cd-utils/object';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
-import { createDesignSystemChangePayload, loadFontFamilies } from 'cd-common/utils';
+import { IProjectState } from '../reducers';
+import { loadFontFamilies } from 'cd-common/utils';
+import { from } from 'rxjs';
+import { withDesignSystem, withDesignSystemDoc } from '../../utils/operators.utils';
+import { ofUndoRedo, ofTypeIncludingBundled } from '../../utils/history-ngrx.utils';
 import { ROBOTO_FONT as FALLBACK_FONT_ID } from 'cd-themes';
-import { switchMap, withLatestFrom, map, filter, tap } from 'rxjs/operators';
+import { switchMap, withLatestFrom, map, filter } from 'rxjs/operators';
 import * as utils from '../../utils/design-system.utils';
 import * as actions from '../actions';
 import * as cd from 'cd-interfaces';
+import * as selectors from '../selectors';
 import { getModelEntries } from 'cd-common/models';
 import { IconPickerService } from 'cd-common';
 import { ICON_DATA_SRC } from 'cd-common/consts';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
 
 @Injectable()
 export class DesignSystemEffects {
   constructor(
     private actions$: Actions,
+    private projectStore: Store<IProjectState>,
     private iconPickerService: IconPickerService,
-    private projectChangeCoordinator: ProjectChangeCoordinator,
-    private projectContentService: ProjectContentService
+    private databaseChangesService: DatabaseChangesService
   ) {}
 
-  /**
-   * Send design system create to ProjectChangeCoordinator
-   */
-  create$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<actions.DesignSystemDocumentCreate>(actions.DESIGN_SYSTEM_DOCUMENT_CREATE),
-        tap((action) => {
-          const sets = [action.payload];
-          const changePayload = createDesignSystemChangePayload(sets);
-          // Note: this is not undoable since we only support one design system per project
-          this.projectChangeCoordinator.dispatchChangeRequest([changePayload], false);
-        })
-      ),
-    { dispatch: false }
-  );
-
-  /**
-   * Send design system updates to ProjectChangeCoordinator
-   */
-  update$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<actions.DesignSystemUpdate>(actions.DESIGN_SYSTEM_UPDATE),
-        tap((action) => {
-          const { id, update } = action;
-          const updates = [{ id, update }];
-          const changeResult = createDesignSystemChangePayload(undefined, updates);
-          this.projectChangeCoordinator.dispatchChangeRequest([changeResult]);
-        })
-      ),
-    { dispatch: false }
-  );
-
-  replace$ = createEffect(() =>
+  designSystemReplace$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemReplace>(actions.DESIGN_SYSTEM_REPLACE),
-      withLatestFrom(this.projectContentService.designSystem$),
+      withDesignSystem(this.projectStore),
       switchMap(([action, designSystem]) => {
         const ds = designSystem as cd.IStringMap<any>;
         const themeCopy: cd.IStringMap<any> = deepCopy(action.update);
@@ -93,21 +64,57 @@ export class DesignSystemEffects {
         // if undefined, store null to prevent writing undefined to database.
         update.globalCssClass = globalCssClass || null;
 
-        return [new actions.DesignSystemUpdate(ds.id, update, true)];
+        return [new actions.DesignSystemUpdate(update, true)];
       })
     )
+  );
+
+  /**
+   * When new element data is updated locally. Save it to firestore
+   */
+
+  updateDesignSystemInDB$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofTypeIncludingBundled<actions.DesignSystemUpdate>(actions.DESIGN_SYSTEM_UPDATE),
+        withDesignSystemDoc(this.projectStore),
+        switchMap(([, designSystemDoc]) => {
+          return from(this.databaseChangesService.updateDesignSystem(designSystemDoc));
+        })
+      ),
+    { dispatch: false }
+  );
+
+  /**
+   * Inspect undone and redone actions (bundled or not) and pass undone/redone result
+   * to database.
+   */
+
+  undoRedoInDB$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofUndoRedo<actions.DesignSystemUpdate>(this.projectStore, actions.DESIGN_SYSTEM_UPDATE),
+        filter(([, , [undoneUpdate]]) => !!undoneUpdate),
+        map(([, destState]) => {
+          const { designSystem } = destState;
+          const { designSystem: designSystemDoc } = designSystem;
+          if (!designSystemDoc) return;
+          this.databaseChangesService.updateDesignSystem(designSystemDoc);
+        })
+      ),
+    { dispatch: false }
   );
 
   removeFont$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemRemoveFont>(actions.DESIGN_SYSTEM_REMOVE_FONT),
-      withLatestFrom(this.projectContentService.designSystem$),
+      withDesignSystem(this.projectStore),
       filter(([action, designSystem]) => {
         const font = designSystem.fonts[action.id];
         return font !== undefined;
       }),
-      withLatestFrom(this.projectContentService.elementProperties$),
-      switchMap(([[action, designSystem], elementProperties]) => {
+      withLatestFrom(this.projectStore.pipe(select(selectors.getElementProperties))),
+      map(([[action, designSystem], elementProperties]) => {
         const { id: fontId } = action;
         // 1. Remove the font from the design system
         const fonts = { ...designSystem.fonts };
@@ -141,11 +148,10 @@ export class DesignSystemEffects {
           return acc;
         }, []);
 
-        // TODO: update to send single payload array to ProjectChangeCoordinator
-        return [
-          new actions.DesignSystemUpdate(designSystem.id, { fonts, typography }),
-          new actions.ElementPropertiesUpdate(propertiesUpdates),
-        ];
+        return new actions.BundledUndoableActions(
+          new actions.DesignSystemUpdate({ fonts, typography }),
+          new actions.ElementPropertiesUpdate(propertiesUpdates)
+        );
       })
     )
   );
@@ -153,9 +159,9 @@ export class DesignSystemEffects {
   removeTypography$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemRemoveTypography>(actions.DESIGN_SYSTEM_REMOVE_TYPOGRAPHY),
-      withLatestFrom(this.projectContentService.designSystem$),
-      withLatestFrom(this.projectContentService.elementProperties$),
-      switchMap(([[action, designSystem], elementProperties]) => {
+      withDesignSystem(this.projectStore),
+      withLatestFrom(this.projectStore.pipe(select(selectors.getElementProperties))),
+      map(([[action, designSystem], elementProperties]) => {
         const { id: typeId } = action;
         // 1. Remove the typeStyle from the design system
         const typography = { ...designSystem.typography };
@@ -176,11 +182,10 @@ export class DesignSystemEffects {
           return acc;
         }, []);
 
-        // TODO: update to send single payload array to ProjectChangeCoordinator
-        return [
-          new actions.DesignSystemUpdate(designSystem.id, { typography }),
-          new actions.ElementPropertiesUpdate(propertiesUpdates),
-        ];
+        return new actions.BundledUndoableActions(
+          new actions.DesignSystemUpdate({ typography }),
+          new actions.ElementPropertiesUpdate(propertiesUpdates)
+        );
       })
     )
   );
@@ -188,13 +193,13 @@ export class DesignSystemEffects {
   removeColor$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemRemoveColor>(actions.DESIGN_SYSTEM_REMOVE_COLOR),
-      withLatestFrom(this.projectContentService.designSystem$),
+      withDesignSystem(this.projectStore),
       filter(([action, designSystem]) => {
         const color = designSystem.colors[action.id];
         return color !== undefined;
       }),
-      withLatestFrom(this.projectContentService.elementProperties$),
-      switchMap(([[action, designSystem], elementProperties]) => {
+      withLatestFrom(this.projectStore.pipe(select(selectors.getElementProperties))),
+      map(([[action, designSystem], elementProperties]) => {
         const { id: colorId } = action;
         // 1. Remove the color from the design system
         const colors = { ...designSystem.colors };
@@ -229,11 +234,10 @@ export class DesignSystemEffects {
           return acc;
         }, []);
 
-        // TODO: update to send single payload array to ProjectChangeCoordinator
-        return [
-          new actions.DesignSystemUpdate(designSystem.id, { colors }),
-          new actions.ElementPropertiesUpdate(propertiesUpdates),
-        ];
+        return new actions.BundledUndoableActions(
+          new actions.DesignSystemUpdate({ colors }),
+          new actions.ElementPropertiesUpdate(propertiesUpdates)
+        );
       })
     )
   );
@@ -241,10 +245,10 @@ export class DesignSystemEffects {
   removeGlobalCSS$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemRemoveGlobalCSS>(actions.DESIGN_SYSTEM_REMOVE_GLOBAL_CSS),
-      withLatestFrom(this.projectContentService.designSystem$),
+      withDesignSystem(this.projectStore),
       map(([, designSystem]) => {
         const update = { ...designSystem, themeId: '', globalCssClass: null };
-        return new actions.DesignSystemUpdate(designSystem.id, update, true);
+        return new actions.DesignSystemUpdate(update, true);
       })
     )
   );
@@ -252,14 +256,14 @@ export class DesignSystemEffects {
   removeVariable$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.DesignSystemRemoveVariable>(actions.DESIGN_SYSTEM_REMOVE_VARIABLE),
-      withLatestFrom(this.projectContentService.designSystem$),
+      withDesignSystem(this.projectStore),
       filter(([action, designSystem]) => {
         const vars = designSystem.variables && designSystem.variables[action.id];
         return vars !== undefined;
       }),
-      withLatestFrom(this.projectContentService.elementProperties$),
+      withLatestFrom(this.projectStore.pipe(select(selectors.getElementProperties))),
       filter(([[, designSystem]]) => !!designSystem.variables), // ensure variables exist
-      switchMap(([[action, designSystem], elementProperties]) => {
+      map(([[action, designSystem], elementProperties]) => {
         const { id: variableId } = action;
         // 1. Remove the variable from the design system
         const variables = { ...designSystem.variables };
@@ -281,13 +285,27 @@ export class DesignSystemEffects {
           return acc;
         }, []);
 
-        // TODO: update to send single payload array to ProjectChangeCoordinator
-        return [
-          new actions.DesignSystemUpdate(designSystem.id, { variables }),
-          new actions.ElementPropertiesUpdate(propertiesUpdates),
-        ];
+        return new actions.BundledUndoableActions(
+          new actions.DesignSystemUpdate({ variables }),
+          new actions.ElementPropertiesUpdate(propertiesUpdates)
+        );
       })
     )
+  );
+
+  /**
+   * When new design system document is successfully created locally, save it to firestore
+   */
+
+  createDesignSystemInDB$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType<actions.DesignSystemDocumentCreate>(actions.DESIGN_SYSTEM_DOCUMENT_CREATE),
+        switchMap((action) => {
+          return from(this.databaseChangesService.createDesignSystem(action.payload));
+        })
+      ),
+    { dispatch: false }
   );
 
   /**

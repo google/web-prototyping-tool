@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { QueryService, IQueryResult } from './query.service';
+import { AbstractQueryService, IQueryResult } from './query.service';
 import { initService, TestCollection } from './test/test.utils';
 import * as data from './test/test-data';
 import * as consts from 'cd-common/consts';
 import * as cd from 'cd-interfaces';
 
-describe('QueryService', () => {
+describe('AbstractQueryService', () => {
   const collection = new TestCollection<data.ITestDoc>(data.TEST_COLLECTION, true);
-  let service: QueryService;
+  let service: AbstractQueryService;
 
   beforeEach(async () => {
-    service = initService(QueryService);
+    service = initService(AbstractQueryService);
     await collection.deleteAll();
   });
 
@@ -69,8 +69,8 @@ describe('QueryService', () => {
   });
 
   it('extracts username from query', () => {
-    expect(service.usernameFromQuery('test@google.com')).toBe('test@google.com');
-    expect(service.usernameFromQuery('owner:test@google.com')).toBe('test@google.com');
+    expect(service.usernameFromQuery('test')).toBe('test');
+    expect(service.usernameFromQuery('owner:test')).toBe('test');
     expect(service.usernameFromQuery('owner:test')).toBe('test');
     expect(service.usernameFromQuery('test')).toBeUndefined();
     expect(service.usernameFromQuery('owner:')).toBe('');

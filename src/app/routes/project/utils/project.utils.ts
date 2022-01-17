@@ -24,7 +24,7 @@ import * as cd from 'cd-interfaces';
 export const BOARD_TAG = 'APP-BOARD';
 export const RENDERER_TAG = 'APP-NG-RENDERER';
 
-const NAME = 'WebPrototypingTool';
+const APP_NAME = 'WebPrototypingTool';
 const DISABLE_OVERSCROLL_CLASS = 'disable-overscroll';
 const TITLE_DIVIDER = ' - ';
 /** Defined in properties.component.html */
@@ -34,7 +34,7 @@ const SAVE_KEY = 's';
 
 export const getPageTitle = (name: string = '') => {
   const projectName = name ? name + TITLE_DIVIDER : '';
-  return `${projectName}${NAME}`;
+  return `${projectName}${APP_NAME}`;
 };
 /**
  * Determine if keyboard events are allowed on target

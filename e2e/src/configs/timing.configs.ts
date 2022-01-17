@@ -20,12 +20,12 @@ export const LONG_INTERACTION_INTERVAL = 1500;
 // Like a human
 export const INTERACTION_INTERVAL = 650;
 
-// TODO Instead of this, we should listen to render results.
+// TODO  Instead of this, we should listen to render results.
 export const LIBRARY_COMPILATION_TIME = 800;
 
-// TODO: Should check panel width / visibility, instead of hardcoded delay
+// TODO : Should check panel width / visibility, instead of hardcoded delay
 export const PANEL_TOGGLE_DELAY = 300;
 
-// TODO: Look into this more:
+// TODO : Look into this more:
 //                We're wait for styles to be applied so we need a signal/trigger.
 export const PREVIEW_LAUNCH_DELAY = 300;

@@ -21,8 +21,9 @@ export const BLANK_TEMPLATE: cd.IBuiltInTemplate = {
   id: '_cd_BLANK_TEMPLATE',
   name: 'Blank - Material',
   builtInTemplate: true,
-  themeId: Theme.AngularMaterial,
+  themeId: Theme.Material,
 
   imageUrl: '/assets/template-images/blank-google-material.png',
   imagePosition: 'center', // default is top
 };
+

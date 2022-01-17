@@ -22,7 +22,7 @@
  * @param current The current location of the item
  * @param selected The current selectedIndex for the list
  *
- * TODO: Move this function out of cd-common once we remove generic-props-list component
+ * TODO : Move this function out of cd-common once we remove generic-props-list component
  */
 export const findNewSelectedIndexForListControls = (
   previous: number,

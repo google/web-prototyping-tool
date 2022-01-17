@@ -23,19 +23,12 @@
 .selection {
   pointer-events: none;
   fill: none;
+  stroke: var(--cd-glass-color);
   vector-effect: non-scaling-stroke;
   stroke-width: 1px;
   text-rendering: optimizeSpeed;
 
   @include for-desktop-hidpi {
     shape-rendering: optimizeSpeed;
-  }
-
-  &:not(.peer) {
-    stroke: var(--cd-glass-color);
-  }
-
-  &.peer {
-    stroke-width: 3px;
   }
 }

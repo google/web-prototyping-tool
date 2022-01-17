@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// TODO: Move all material attributes here ... mat-label
+
 export const MAT_STEPPER_HZ_CLASS = '.mat-stepper-horizontal';
 export const MAT_STEPPER_HZ_HEADER_CLASS = '.mat-horizontal-stepper-header-container';
 export const MAT_RADIO_INPUT_CLASS = '.mat-radio-input';

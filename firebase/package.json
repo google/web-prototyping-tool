@@ -1,7 +1,7 @@
 {
   "name": "functions",
   "engines": {
-    "node": "12"
+    "node": "10"
   },
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
@@ -14,8 +14,6 @@
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions -P default",
-    "deploy:indexes": "firebase deploy --only firestore:indexes",
-    "deploy:change-requests": "firebase deploy --only functions:onChangeRequest",
     "deploy:prod": "firebase deploy --only functions -P production",
     "deploy:comment-count": "firebase deploy --only functions:onCommentCreateUpdateCount,functions:onCommentDeleteUpdateCount,functions:onCommentResolutionChangeUpdateCount",
     "deploy:screenshots": "firebase deploy --only functions:onProjectContentsCreated,functions:onProjectContentsUpdated,functions:onProjectContentsDeleted,functions:onScreenshotCreated",

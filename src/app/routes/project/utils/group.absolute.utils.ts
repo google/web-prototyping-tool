@@ -20,8 +20,6 @@ import {
   assignBaseStyles,
   createPixelIValue,
   generateFrame,
-  convertPropsUpdateToUpdateChanges,
-  createElementChangePayload,
 } from 'cd-common/utils';
 import * as cd from 'cd-interfaces';
 
@@ -157,7 +155,7 @@ export const ungroupAbsolutePositionChildren = (
   element: cd.PropertyModel,
   elementProperties: cd.ElementPropertiesMap,
   renderRects: cd.RenderRectMap
-): cd.IElementChangePayload => {
+): cd.IPropertiesUpdatePayload[] => {
   const { id, parentId, childIds = [] } = element;
   const frame = renderRects.get(id)?.frame;
   const groupRect = frameFromStylesWithFallback(element, frame);
@@ -167,14 +165,10 @@ export const ungroupAbsolutePositionChildren = (
 
   // filter to child elements who have absolute position
   // and adjust their position based on the ungroup
-  const updates = childIds
+  return childIds
     .map((childId) => elementProperties[childId])
     .filter((child): child is cd.PropertyModel => !!child && elementsHaveAbsolutePosition([child]))
     .map((child) => rectStylePayload(child, -groupRect.y, -groupRect.x, -bottom, -right));
-
-  const updateChanges = convertPropsUpdateToUpdateChanges(updates);
-  const change = createElementChangePayload(undefined, updateChanges);
-  return change;
 };
 
 export const elementsHaveAbsolutePosition = (elements: cd.ReadOnlyPropertyModelList): boolean => {

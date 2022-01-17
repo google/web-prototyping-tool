@@ -212,7 +212,7 @@ export const changeElementNavigateToBoard = async (
   await propsPanel.changeNavigateToBoard(page, boardName);
 };
 
-// TODO
+// TODO : make board an optional param (=> press the preview button at top-bar)
 export const launchPreview = async (page: Page, boardIndex: number) => {
   await canvas.selectAndViewBoard(page, boardIndex);
   await canvas.clickBoard(page, boardIndex, false, true);

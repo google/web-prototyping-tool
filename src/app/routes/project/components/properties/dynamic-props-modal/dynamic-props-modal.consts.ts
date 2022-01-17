@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { createChangeMarker, generateFrame } from 'cd-common/utils';
+import { generateFrame } from 'cd-common/utils';
 import * as cd from 'cd-interfaces';
 
 export interface IInstanceInputs extends cd.IBaseElementInputs {
@@ -24,7 +24,6 @@ export interface IInstanceInputs extends cd.IBaseElementInputs {
 export const MODEL: cd.PropertyModel = {
   projectId: 'project-id',
   id: 'model-id',
-  changeMarker: createChangeMarker(),
   name: '',
   actions: [],
   attrs: [],

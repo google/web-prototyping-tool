@@ -129,12 +129,6 @@ export interface IBoardSizeMatch {
   height: number;
 }
 
-export interface ISymbolSizeMatch {
-  symbolName: string;
-  width: number;
-  height: number;
-}
-
 export interface IPortalChildrenCheck {
   boardIndex: number;
   elementIndices: number[];
@@ -159,6 +153,5 @@ export interface ITestExpectations {
   propsPanelGroupDoesNotExist?: IPropsPanelGroupExists;
   numberOfChildren?: INumberOfChildren;
   boardSizeMatch?: IBoardSizeMatch;
-  symbolSizeMatch?: ISymbolSizeMatch;
   checkPortalChildren?: IPortalChildrenCheck;
 }

@@ -60,4 +60,3 @@ export * from './lib/components/search-box/search-box.component';
 export * from './lib/components/search-input/search-input.component';
 export * from './lib/components/toast-manager/toast-manager.module';
 export * from './lib/components/tree-cell/tree-cell.component';
-export * from './lib/components/measured-text/measured-text.utils';

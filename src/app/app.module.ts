@@ -31,9 +31,9 @@ import { AnalyticsService } from './services/analytics/analytics.service';
 import { ErrorService } from './services/error/error.service';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { ANALYTICS_SERVICE_TOKEN } from 'cd-common/analytics';
+
 import { ShareDialogModule } from 'src/app/components/share-dialog/share-dialog.module';
 import { FormatDataService } from './services/formatting/formatting.service';
-import { registerComponentDefinitions } from 'cd-definitions';
 
 const MIN_CACHE_SIZE = 1048576; // 1Mb
 const errorProvider = { provide: ErrorHandler, useClass: ErrorService };
@@ -77,10 +77,5 @@ const firestoreSettings = {
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(protected _analyticsService: AnalyticsService, protected _tooltips: TooltipService) {
-    // Load all built-in component definitions - this will populate components panel
-    // It is necessary to do this here so that the defitions are available on the project page,
-    // and also on the dashboard so we can create new models as part of the create new project flow
-    registerComponentDefinitions();
-  }
+  constructor(protected _analyticsService: AnalyticsService, protected _tooltips: TooltipService) {}
 }

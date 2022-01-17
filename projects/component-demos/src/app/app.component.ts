@@ -24,7 +24,7 @@ const DARK_THEME = 'dark-theme';
   template: `
     <aside class="sidebar">
       <header>
-        <h3></h3>
+        <h3>WebPrototypingTool</h3>
         <button class="theme-toggle" (click)="onThemeToggle()">
           <i class="google-material-icons">mode_night</i>
         </button>

@@ -81,7 +81,7 @@ export class CdComponentFactory implements cd.IComponentInstance {
     this.processAttrs(component);
     this.processInputs(component);
     // Resize type
-    // TODO Add support for Vertical/Horizontal
+    // TODO,  Add support for Vertical/Horizontal
     if (component.resizeType === cd.ResizeType.Uniform) {
       this.frame.locked = true;
     }

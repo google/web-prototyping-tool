@@ -98,7 +98,7 @@ export class StyleManager {
     _styleManagerMap.delete(win);
   }
 
-  static generateClassStylePrefix(id?: string, classPrefix?: string): string {
+  static generateWebPrototypingToolClassStylePrefix(id?: string, classPrefix?: string): string {
     const identifier = id || generateIDWithLength(6);
     const prefix = classPrefix ? `${classPrefix}-` : '';
     return DEFAULT_PREFIX + prefix + identifier;

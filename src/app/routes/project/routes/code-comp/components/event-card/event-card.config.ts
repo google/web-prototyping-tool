@@ -19,7 +19,7 @@ import { IRichTooltip } from 'cd-interfaces';
 export const UNBOUND_EVENT_NAME = 'Unnamed';
 
 export const INPUT_BINDING_HELP_TEXT: IRichTooltip = {
-  text: 'Corresponding input for this output event. This will enable  to stay in sync with the internal state of your component.',
+  text: 'Corresponding input for this output event. This will enable WebPrototypingTool to stay in sync with the internal state of your component.',
   link: '',
   linkText: 'Learn more',
 };

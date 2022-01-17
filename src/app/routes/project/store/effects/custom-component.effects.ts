@@ -22,9 +22,11 @@ import { projectPathForId } from 'src/app/database/path.utils';
 import { DatabaseService } from 'src/app/database/database.service';
 import { DuplicateService } from 'src/app/services/duplicate/duplicate.service';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
+import { IProjectState } from '../reducers/index';
 import { Observable, forkJoin, EMPTY, of } from 'rxjs';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { Store, select, Action } from '@ngrx/store';
+import { getElementProperties, getProject, selectCodeComponents } from '../selectors';
 import { Injectable } from '@angular/core';
 import * as utils from '../../utils/import.utils';
 import * as actions from '../actions';
@@ -37,11 +39,12 @@ import {
   SYMBOL_MODE_QUERY_PARAM,
 } from 'src/app/configs/routes.config';
 import { getRouterState, IAppState } from 'src/app/store';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { buildPropertyUpdatePayload } from 'cd-common/utils';
 
 interface IImportPayload {
   publishEntries: cd.IPublishEntry[];
+  updatedSymbolIds: string[];
+  updatedAssetIds: string[];
   newAssets: cd.IProjectAsset[];
   newElements: cd.PropertyModel[];
   newCodeComponents: cd.ICodeComponentDocument[];
@@ -59,14 +62,14 @@ export class CustomComponentEffect {
     private _analyticsService: AnalyticsService,
     private _duplicateService: DuplicateService,
     private _appStore: Store<IAppState>,
-    private _symbolScreenshotsService: SymbolScreenshotsService,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>,
+    private _symbolScreenshotsService: SymbolScreenshotsService
   ) {}
 
   importComponents$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.CustomComponentImport>(actions.CUSTOM_COMPONENT_IMPORT),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       // Log Analytics Events
       tap(([action]) => {
         for (const entry of action.publishEntries) {
@@ -100,8 +103,8 @@ export class CustomComponentEffect {
   swapSymbolVersion$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.SymbolSwapVersion>(actions.SYMBOL_SWAP_VERSION),
-      withLatestFrom(this._projectContentService.elementProperties$),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       switchMap(([[swapAction, elementProperties], project]) => {
         const { payload, navigateToComponent } = swapAction;
         const { publishEntry: entry, updatedVersion, componentId } = payload;
@@ -163,9 +166,9 @@ export class CustomComponentEffect {
   swapCodeComponentVersion$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.CodeComponentSwapVersion>(actions.CODE_COMPONENT_SWAP_VERSION),
-      withLatestFrom(this._projectContentService.elementProperties$),
-      withLatestFrom(this._projectContentService.project$),
-      withLatestFrom(this._projectContentService.codeCmpMap$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
+      withLatestFrom(this._projectStore.pipe(select(selectCodeComponents))),
       switchMap(([[[swapAction, elementProperties], project], codeCmps]) => {
         const { payload, navigateToComponent } = swapAction;
         const { publishEntry: entry, updatedVersion, componentId } = payload;
@@ -321,13 +324,19 @@ export class CustomComponentEffect {
     return forkJoin(imports).pipe(
       switchMap((contentSets) => {
         const newProjectContents = contentSets.flat();
+        const newSymbolIds = utils.filterSymbols(newProjectContents).map((d) => d.id);
         const newAssets = utils.filterAssets(newProjectContents);
+        const newAssetIds = newAssets.map((d) => d.id);
         const newElements = utils.filterElements(newProjectContents) as cd.PropertyModel[];
         const newCodeComponents = utils.filterCodeComponents(newProjectContents);
         const newDatasets = utils.filterDatasets(newProjectContents);
+        const updatedSymbolIds = [...project.symbolIds, ...newSymbolIds];
+        const updatedAssetIds = [...project.assetIds, ...newAssetIds];
 
         return of({
           publishEntries,
+          updatedSymbolIds,
+          updatedAssetIds,
           newAssets,
           newElements,
           newCodeComponents,
@@ -338,14 +347,24 @@ export class CustomComponentEffect {
   }
 
   private _getActionsForImportPayload = (payload: IImportPayload): Action[] => {
-    const { publishEntries, newAssets, newElements, newCodeComponents, newDatasets } = payload;
+    const {
+      publishEntries,
+      updatedSymbolIds: symbolIds,
+      updatedAssetIds: assetIds,
+      newAssets,
+      newElements,
+      newCodeComponents,
+      newDatasets,
+    } = payload;
 
     const list: Action[] = [];
     if (newAssets.length) list.push(new actions.AssetsCreateDocuments(newAssets));
     if (newCodeComponents.length) list.push(new actions.CodeComponentCreate(newCodeComponents));
     if (newDatasets.length) list.push(new actions.DatasetCreate(newDatasets));
     if (newElements.length) list.push(new actions.ElementPropertiesCreate(newElements, false));
+    const projectAction = new actions.ProjectDataUpdate({ symbolIds, assetIds }, false);
     const loadEntryAction = new actions.PublishEntriesLoaded(publishEntries);
+    list.push(projectAction);
     list.push(loadEntryAction);
     return list;
   };

@@ -29,6 +29,7 @@ import { ImagesEffects } from './images.effect';
 import { InteractionEffect } from './interaction.effect';
 import { LayersTreeEffects } from './layers-tree.effect';
 import { LayoutEffects } from './layout.effect';
+import { OfflineEffects } from './offline.effect';
 import { PanelsEffect } from './panels.effect';
 import { ProjectContentEffects } from './project-content.effect';
 import { ProjectDataEffects } from './project-data.effect';
@@ -52,6 +53,7 @@ export const effects: any[] = [
   ImagesEffects,
   InteractionEffect,
   LayersTreeEffects,
+  OfflineEffects,
   PanelsEffect,
   LayoutEffects,
   ProjectContentEffects,
@@ -74,6 +76,7 @@ export * from './history.effect';
 export * from './images.effect';
 export * from './interaction.effect';
 export * from './layers-tree.effect';
+export * from './offline.effect';
 export * from './panels.effect';
 export * from './project-content.effect';
 export * from './project-data.effect';

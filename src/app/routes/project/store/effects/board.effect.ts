@@ -19,7 +19,9 @@ import { calculateScrollFrameFromOutletFrame } from '../../components/glass-laye
 import { CanvasService } from '../../services/canvas/canvas.service';
 import { CanvasSnapToBoard } from '../actions/canvas.action';
 import { createEffect, ofType, Actions } from '@ngrx/effects';
-import { getSymbolMode, getSelectionState } from '../selectors';
+import { getAllBoards } from '../selectors/board.selector';
+import { getElementProperties } from '../selectors/element-properties.selector';
+import { getSymbolMode, getProject, getSelectionState } from '../selectors';
 import { Injectable } from '@angular/core';
 import { EMPTY } from 'rxjs';
 import { InteractionService } from '../../services/interaction/interaction.service';
@@ -36,8 +38,6 @@ import * as actions from '../actions/board.action';
 import * as cd from 'cd-interfaces';
 import * as eActions from '../actions/element-properties.action';
 import * as boardUtils from '../../utils/board.utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { createElementChangePayload } from 'cd-common/utils';
 
 @Injectable()
 export class BoardEffects {
@@ -46,8 +46,7 @@ export class BoardEffects {
     private _canvasService: CanvasService,
     private _renderService: RendererService,
     private _interactionService: InteractionService,
-    private _projectStore: Store<IProjectState>,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>
   ) {}
 
   previewBoard$ = createEffect(() =>
@@ -75,7 +74,7 @@ export class BoardEffects {
   fitContent$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.BoardFitContent>(actions.BOARD_FIT_CONTENT),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       map(([action, elementProperties]) => {
         const updates: cd.IPropertiesUpdatePayload[] = [];
         const renderRects = this._renderService.renderResultsByBoard$.getValue();
@@ -100,7 +99,7 @@ export class BoardEffects {
               };
               const properties: Partial<cd.IBoardProperties> = { frame };
               updates.push({ elementId, properties });
-              // Fixes Glass layer update b/137208621
+              // Fixes Glass layer update
               this._interactionService.updateElementRect(elementId, frame);
             }
           }
@@ -116,9 +115,9 @@ export class BoardEffects {
       ofType<actions.BoardCreateViaMarquee>(actions.BOARD_CREATE_VIA_MARQUEE),
       withLatestFrom(this._projectStore.pipe(select(getSymbolMode))),
       filter(([, symbolMode]) => symbolMode === false),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
-      withLatestFrom(this._projectContentService.boardsArray$),
+      withLatestFrom(this._projectStore.pipe(select(getAllBoards))),
       switchMap(([[[action], project], boardsArray]) => {
         const projectId = project?.id;
         if (!projectId) return EMPTY;
@@ -146,16 +145,16 @@ export class BoardEffects {
       ofType<actions.BoardCreate>(actions.BOARD_CREATE),
       withLatestFrom(this._projectStore.pipe(select(getSymbolMode))),
       filter(([, symbolMode]) => symbolMode === false),
-      withLatestFrom(this._projectContentService.project$),
+      withLatestFrom(this._projectStore.pipe(select(getProject))),
       filter(([, proj]) => proj !== undefined),
-      withLatestFrom(this._projectContentService.boardsArray$),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getAllBoards))),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       withLatestFrom(this._projectStore.pipe(select(getSelectionState))),
       switchMap(([[[[[action], project], boardsArray], elementProperties], selectionState]) => {
         const projectId = project?.id;
         if (!projectId) return EMPTY;
         const canvas = this._canvasService.canvas;
-        const [boards, boardChanges] = boardUtils.generateBoards(
+        const [boards, models] = boardUtils.generateBoards(
           action,
           boardsArray,
           elementProperties,
@@ -166,16 +165,17 @@ export class BoardEffects {
 
         // When the canvas is empty, don't animate
         const evt = boardsArray.length ? undefined : new Event(NO_CANVAS_ANIMATION_EVENT);
+        const createdModels = action.symbolModels ? [...models, ...action.symbolModels] : models;
+
         const shouldSnapToBoards = boardUtils.shouldSnapToBoardsOnCreate(boards, canvas);
         const snapToBoardAction = shouldSnapToBoards
           ? [new CanvasSnapToBoard(null, { propertyModels: boards, zoom: canvas.position.z }, evt)]
           : [];
 
-        const { symbolModels, isResultingElemActionUndoable: undoable } = action;
-        const symbolChanges = symbolModels ? createElementChangePayload(symbolModels) : null;
-        const payload = symbolChanges ? [...boardChanges, symbolChanges] : boardChanges;
-        const changeAction = new eActions.ElementPropertiesChangeRequest(payload, undoable);
-        const resultingActions: Action[] = [changeAction, ...snapToBoardAction];
+        const resultingActions: Action[] = [
+          new eActions.ElementPropertiesCreate(createdModels, action.isResultingElemActionUndoable),
+          ...snapToBoardAction,
+        ];
 
         // Menu events don't specify selectOnCreate boolean so we should infer true for undefined
         const selectBoard = action.selectOnCreate === undefined || action.selectOnCreate === true;

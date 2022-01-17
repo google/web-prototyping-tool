@@ -48,7 +48,7 @@ const screenshotPromise = (url: string, page: puppeteer.Page): Promise<string> =
 
     // Disabling for now. See following issue:
     // https://github.com/GoogleChrome/puppeteer/issues/3397#issuecomment-429325514
-    // TODO: enable aborting screenshot task on errors in console
+    // TODO : enable aborting screenshot task on errors in console
     page.on('console', (msg) => {
       // Error & PageError may not get capture, but console does
       if (msg.type() === 'error') {

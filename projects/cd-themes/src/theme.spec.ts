@@ -52,10 +52,8 @@ describe('Themes', () => {
 
   it('Angular Material', () => themeCheck(Theme.AngularMaterial));
   it('Angular Material Dark', () => themeCheck(Theme.AngularMaterialDark));
-  it('Google Material', () => themeCheck(Theme.GoogleMaterial));
   it('Fortnightly', () => themeCheck(Theme.Fortnightly));
   it('Crane', () => themeCheck(Theme.Crane));
   it('Baseline', () => themeCheck(Theme.Baseline));
   it('Baseline Dark', () => themeCheck(Theme.BaselineDark));
-  it('Cloud Platform', () => themeCheck(Theme.));
 });

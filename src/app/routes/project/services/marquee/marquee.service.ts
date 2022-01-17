@@ -15,6 +15,7 @@
  */
 
 import { areObjectsEqual } from 'cd-utils/object';
+import { ICanvasPosition } from '../../interfaces/canvas.interface';
 import { InteractionService } from '../interaction/interaction.service';
 import { BoardCreateViaMarquee } from '../../store/actions/board.action';
 import { Injectable } from '@angular/core';
@@ -78,17 +79,17 @@ export class MarqueeService {
     this.activateBoardCreateMode();
   }
 
-  handleSelect(rect: cd.IRect, canvasPosition: cd.ICanvasPosition | undefined) {
+  handleSelect(rect: cd.IRect, canvasPosition: ICanvasPosition | undefined) {
     this.marqueeRect$.next(rect);
     if (!canvasPosition) return;
     this._interactionService.checkOutletFrameSelection(rect, canvasPosition);
   }
 
-  handleCreateBoardMode(rect: cd.IRect, _canvasPosition?: cd.ICanvasPosition) {
+  handleCreateBoardMode(rect: cd.IRect, _canvasPosition?: ICanvasPosition) {
     this.marqueeRect$.next(rect);
   }
 
-  updateMarqueeSelection(x = 0, y = 0, width = 0, height = 0, canvasPosition?: cd.ICanvasPosition) {
+  updateMarqueeSelection(x = 0, y = 0, width = 0, height = 0, canvasPosition?: ICanvasPosition) {
     this._interactionService.interacting = x + y + width + height !== 0;
     const rect = generateMarqueeRect(x, y, width, height);
     if (areObjectsEqual(this.marqueeRect, rect)) return;
@@ -96,7 +97,7 @@ export class MarqueeService {
     this.handleSelect(rect, canvasPosition);
   }
 
-  createBoardFromSelection(lastRect: cd.IRect, canvasPosition?: cd.ICanvasPosition) {
+  createBoardFromSelection(lastRect: cd.IRect, canvasPosition?: ICanvasPosition) {
     this.deactivateBoardCreateMode();
     if (!canvasPosition) return;
     if (lastRect.width === 0 && lastRect.height === 0) return;
@@ -107,7 +108,7 @@ export class MarqueeService {
     this._interactionService.dispatch(new BoardCreateViaMarquee(boardFrame));
   }
 
-  finishMarqueeSelection(canvasPosition?: cd.ICanvasPosition) {
+  finishMarqueeSelection(canvasPosition?: ICanvasPosition) {
     const lastRect = { ...this.marqueeRect };
     this.updateMarqueeSelection();
     if (this.isCreateBoardMode) this.createBoardFromSelection(lastRect, canvasPosition);

@@ -102,7 +102,7 @@ export { parseUnits, getIValueSizeFromString, generateIValue } from './units.uti
 
 export { createScreenshotTaskDocumentId, createScreenshotTask } from './screenshot.utils';
 
-export { sortElementsByName, sortElementIdsByName } from './sort.utils';
+export { sortElementsByName } from './sort.utils';
 
 export * from './a11y.utils';
 
@@ -143,7 +143,3 @@ export { generateLinkTag } from './url.utils';
 export { isIcon, isMaterialIcon, convertIconConfigToLookup } from './icon.utils';
 
 export { findNewSelectedIndexForListControls } from './list.utils';
-
-export * from './change.utils';
-
-export * from './dot-notation.utils';

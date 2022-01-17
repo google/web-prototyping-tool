@@ -26,7 +26,7 @@ import {
 } from '../consts/query-selectors';
 import { getElementId } from '../ui-utils/common/id.utils';
 import { getElementStyles } from '../ui-utils/components/renderer.utils';
-import * as project from '../utils/project.utils';
+import * as projectUtils from '../utils/project.utils';
 import * as utils from '../consts/tests.interface';
 import * as surfaceUtils from '../ui-utils/design-surface.utils';
 import * as cd from 'cd-interfaces';
@@ -67,10 +67,6 @@ export const symbolsValidator = async (
     await verifyBoardSizeMatch(expected.boardSizeMatch, page);
   }
 
-  if (expected.symbolSizeMatch) {
-    await verifySymbolSizeMatch(expected.symbolSizeMatch, page);
-  }
-
   if (expected.symbolDefStylesMatch) {
     await verifySymbolDefStylesMatch(expected.symbolDefStylesMatch, page);
   }
@@ -98,7 +94,7 @@ const verifySymbolsStylesMatch = async (
   symbolStylesMatch: utils.IExpectSymbolStylesMatch[],
   page: Page
 ) => {
-  const projectData = await project.getElementPropertiesData(page);
+  const projectData = await projectUtils.getElementPropertiesData(page);
   const projectValues = Object.values(projectData);
   for (const styleMatch of symbolStylesMatch) {
     const { instanceIndex, childIndex, boardName, boardIndex, styles, failureMessage } = styleMatch;
@@ -111,14 +107,17 @@ const verifySymbolsStylesMatch = async (
       const instanceId = boardData.childIds[instanceIndex];
       if (!instanceId) return;
 
-      const { inputs } = (await project.getDataForId(
+      const { inputs } = (await projectUtils.getDataForId(
         instanceId,
         page
       )) as cd.ISymbolInstanceProperties;
       const { referenceId } = inputs;
       if (!referenceId) return;
 
-      const symbolDefData = (await project.getDataForId(referenceId, page)) as cd.ISymbolProperties;
+      const symbolDefData = (await projectUtils.getDataForId(
+        referenceId,
+        page
+      )) as cd.ISymbolProperties;
       const idOfChildToCheck = symbolDefData.childIds[childIndex];
       if (!idOfChildToCheck) return;
 
@@ -178,18 +177,24 @@ const verifyPropsPanelGroupCheck = async (
 
 const verifyNumberOfChildren = async (expected: utils.INumberOfChildren, page: Page) => {
   const { boardName, elementIndex, numberChildren } = expected;
-  const projectData = await project.getElementPropertiesData(page);
+  const projectData = await projectUtils.getElementPropertiesData(page);
   const boardData = Object.values(projectData).find((elemProp) => elemProp?.name === boardName);
   if (!boardData) return;
 
   const instanceId = boardData.childIds[elementIndex];
   if (!instanceId) return;
 
-  const { inputs } = (await project.getDataForId(instanceId, page)) as cd.ISymbolInstanceProperties;
+  const { inputs } = (await projectUtils.getDataForId(
+    instanceId,
+    page
+  )) as cd.ISymbolInstanceProperties;
   const { referenceId } = inputs;
   if (!referenceId) return;
 
-  const symbolDefData = (await project.getDataForId(referenceId, page)) as cd.ISymbolProperties;
+  const symbolDefData = (await projectUtils.getDataForId(
+    referenceId,
+    page
+  )) as cd.ISymbolProperties;
 
   expect(symbolDefData.childIds.length).toBe(numberChildren);
 };
@@ -197,28 +202,12 @@ const verifyNumberOfChildren = async (expected: utils.INumberOfChildren, page: P
 const verifyBoardSizeMatch = async (expected: utils.IBoardSizeMatch, page: Page) => {
   const { boardName, width, height } = expected;
 
-  const board = await project.getDataForElementName(boardName, page, cd.ElementEntitySubType.Board);
+  const board = await projectUtils.getDataForElementName(boardName, page);
   expect(board).toBeTruthy();
 
   if (!board) return;
+
   const { frame } = board;
-
-  expect(frame.height).toBe(height);
-  expect(frame.width).toBe(width);
-};
-
-const verifySymbolSizeMatch = async (expected: utils.ISymbolSizeMatch, page: Page) => {
-  const { symbolName, width, height } = expected;
-
-  const symbol = await project.getDataForElementName(
-    symbolName,
-    page,
-    cd.ElementEntitySubType.Symbol
-  );
-  expect(symbol).toBeTruthy();
-
-  if (!symbol) return;
-  const { frame } = symbol;
 
   expect(frame.height).toBe(height);
   expect(frame.width).toBe(width);
@@ -232,13 +221,13 @@ const verifySymbolDefStylesMatch = async (
     const { symbolName, styles, failureMessage, childIndex } = defStyleMatch;
     const stylesKeys = Object.keys(styles);
 
-    const { childIds, styles: symbolDefRootStyles } = await project.getDataForElementName(
+    const { childIds, styles: symbolDefRootStyles } = await projectUtils.getDataForElementName(
       symbolName,
       page
     );
     const childId = childIndex !== undefined ? childIds[childIndex] : undefined;
     const childElement =
-      childId !== undefined ? await project.getDataForId(childId, page) : undefined;
+      childId !== undefined ? await projectUtils.getDataForId(childId, page) : undefined;
     const symbolStyles = childElement ? childElement.styles : symbolDefRootStyles;
 
     const styleMap = symbolStyles.base.style;
@@ -264,7 +253,7 @@ const verifySymbolDefStylesMatch = async (
 const verifyCheckPortalChildren = async (expected: utils.IPortalChildrenCheck, page: Page) => {
   const { boardIndex, elementIndices, childIndices, symbolIndices, styles } = expected;
   // get the board data
-  const boardData = await project.getDataForBoardAtIndex(boardIndex, page);
+  const boardData = await projectUtils.getDataForBoardAtIndex(boardIndex, page);
   if (!boardData) {
     return expect(boardData).toBeTruthy(`Could not find board data for boardIndex ${boardIndex}`);
   }
@@ -275,7 +264,7 @@ const verifyCheckPortalChildren = async (expected: utils.IPortalChildrenCheck, p
     return expect(portalId).toBeTruthy(`Could not find portal ID using indices ${elementIndices}`);
   }
 
-  const portalData = await project.getDataForId(portalId, page);
+  const portalData = await projectUtils.getDataForId(portalId, page);
   if (!portalData) {
     return expect(portalData).toBeTruthy(`Could not find portal data using ID ${portalId}`);
   }
@@ -287,7 +276,7 @@ const verifyCheckPortalChildren = async (expected: utils.IPortalChildrenCheck, p
   }
 
   // get that board data
-  const referencedBoardData = await project.getDataForId(referenceId, page);
+  const referencedBoardData = await projectUtils.getDataForId(referenceId, page);
   if (!referencedBoardData) {
     return expect(referencedBoardData).toBeTruthy(
       `Could not find board data for boardIndex ${boardIndex}`
@@ -300,7 +289,7 @@ const verifyCheckPortalChildren = async (expected: utils.IPortalChildrenCheck, p
     return expect(childId).toBeTruthy(`Could not find child id for childIndices ${childIndices}`);
   }
 
-  const childData = await project.getDataForId(childId, page);
+  const childData = await projectUtils.getDataForId(childId, page);
   if (!childData) {
     return expect(childData).toBeTruthy(`Could not find child data using ID ${childId}`);
   }
@@ -319,7 +308,7 @@ const verifyCheckPortalChildren = async (expected: utils.IPortalChildrenCheck, p
       );
     }
 
-    const symbolDef = await project.getDataForId(symbolRefId, page);
+    const symbolDef = await projectUtils.getDataForId(symbolRefId, page);
     if (!symbolDef) {
       return expect(symbolDef).toBeTruthy(`Could not find symbol ref data using ID ${symbolRefId}`);
     }

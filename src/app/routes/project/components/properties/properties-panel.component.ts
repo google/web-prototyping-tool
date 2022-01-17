@@ -19,7 +19,6 @@
 import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Input, NgZone } from '@angular/core';
 // prettier-ignore
 import { BLANK_MENU_ITEM, UPLOAD_MENU_ITEM, DEFINE_COLOR_MENU_ITEM, ADD_DATASET_MENU_ITEM } from '../../configs/properties.config';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { Store, select, Action } from '@ngrx/store';
 import { ISelectionState } from '../../store/reducers/selection.reducer';
 import { Subscription, Subject, ReplaySubject, Observable, of } from 'rxjs';
@@ -57,10 +56,9 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
   private _subscriptions = new Subscription();
   private _updateSubscriptions = new Subscription();
   private propUpdates$ = new Subject<utils.PropertyPartial>();
-  private _isProjectEditor = false;
 
   public component?: cd.IComponent;
-  public projectAssets: cd.AssetMap = {};
+  public projectAssets: cd.IProjectAssets = {};
   public assetsMenuData: ReadonlyArray<cd.ISelectItem> = [];
   public datasetsMenuData: ReadonlyArray<cd.ISelectItem> = [];
   public colorMenuData: ReadonlyArray<cd.ISelectItem> = [];
@@ -87,7 +85,6 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
     private _analyticsService: AnalyticsService,
     private _appStore: Store<IAppState>,
     private _projectStore: Store<projectStore.IProjectState>,
-    private _projectContentService: ProjectContentService,
     private _interactionService: InteractionService,
     private _propertiesService: PropertiesService,
     private _rendererService: RendererService,
@@ -99,27 +96,23 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    const {
-      project$,
-      designSystem$,
-      elementProperties$,
-      symbolsMap$,
-      datasetArray$,
-      boardsArray$,
-      currentUserIsProjectEditor$,
-    } = this._projectContentService;
+    const boards$ = this._projectStore.pipe(select(projectStore.getAllBoards));
+    const designSystem$ = this._projectStore.pipe(select(projectStore.getDesignSystem));
+    const projectData$ = this._projectStore.pipe(select(projectStore.getProject));
+    const propertiesMap$ = this._projectStore.pipe(select(projectStore.getElementProperties));
     const selectionState$ = this._projectStore.pipe(select(projectStore.getSelectionState));
+    const symbols$ = this._projectStore.pipe(select(projectStore.getSymbolMap));
+    const datasets$ = this._projectStore.pipe(select(projectStore.selectDatasetsArray));
     const panelState$ = this._projectStore.pipe(select(projectStore.getPropertiesPanelState));
     this._subscriptions.add(panelState$.subscribe(this.onPanelState));
-    this._subscriptions.add(boardsArray$.subscribe(this.onBoardUpdate));
+    this._subscriptions.add(boards$.subscribe(this.onBoardUpdate));
     this._subscriptions.add(designSystem$.subscribe(this.onDesignSystemUpdate));
-    this._subscriptions.add(project$.subscribe(this.onProjectDataSubscription));
-    this._subscriptions.add(elementProperties$.subscribe(this.onPropertiesMapSubscription));
+    this._subscriptions.add(projectData$.subscribe(this.onProjectDataSubscription));
+    this._subscriptions.add(propertiesMap$.subscribe(this.onPropertiesMapSubscription));
     this._subscriptions.add(selectionState$.subscribe(this.onSelectionStateSubscription));
-    this._subscriptions.add(symbolsMap$.subscribe(this.onSymbolMapUpdate));
+    this._subscriptions.add(symbols$.subscribe(this.onSymbolMapUpdate));
     this._subscriptions.add(this._assetsService.assets$.subscribe(this.onProjectAssets));
-    this._subscriptions.add(datasetArray$.subscribe(this.onProjectDatasets));
-    this._subscriptions.add(currentUserIsProjectEditor$.subscribe(this.onIsEditor));
+    this._subscriptions.add(datasets$.subscribe(this.onProjectDatasets));
 
     this._zone.runOutsideAngular(() => {
       this._updateSubscriptions = this.propUpdates$
@@ -195,10 +188,7 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
     const updatedInputs = Object.keys(exposedInputs);
     const mergedInputs = [...new Set([...legacyKeys, ...updatedInputs])];
 
-    // sort symbol inputs by layer name so that they show up in a predictable order
-    const sortedInputs = cdUtils.sortElementIdsByName(mergedInputs, this._propertiesMap);
-
-    this.symbolInputs = sortedInputs.reduce<cd.IPropertyGroup[]>((acc, id) => {
+    this.symbolInputs = mergedInputs.reduce<cd.IPropertyGroup[]>((acc, id) => {
       const targetProps = this._propertiesService.getPropertiesForId(id);
       if (!targetProps) return acc;
       const legacy = legacyInputs[id];
@@ -228,10 +218,6 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
     this._subscriptions.unsubscribe();
   }
 
-  private onIsEditor = (isProjectEditor: boolean) => {
-    this._isProjectEditor = isProjectEditor;
-  };
-
   onBoardUpdate = (boards: cd.IBoardProperties[]) => {
     this.boards = cdUtils.sortElementsByName<cd.IBoardProperties>(boards);
   };
@@ -241,7 +227,7 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
     this.buildColorMenu(ds);
   };
 
-  generateAssetsMenu(projectAssets: cd.AssetMap) {
+  generateAssetsMenu(projectAssets: cd.IProjectAssets) {
     const assetsArray = Object.values(projectAssets);
     const menu = cdUtils.menuFromProjectAssets(assetsArray);
     this.assetsMenuData = [BLANK_MENU_ITEM, ...menu, UPLOAD_MENU_ITEM];
@@ -359,7 +345,6 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
   };
 
   onFastPropsUpdate = (update: utils.IPropertiesPanelUpdate) => {
-    if (!this._isProjectEditor) return;
     const updates = update.ids.map((id) => {
       return cdUtils.buildPropertyUpdatePayload(id, update.properties);
     });
@@ -367,7 +352,6 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
   };
 
   onElementPropertiesUpdate(payload: cd.IPropertiesUpdatePayload[]) {
-    if (!this._isProjectEditor) return;
     this.dispatch(new projectStore.ElementPropertiesUpdate(payload));
   }
 
@@ -402,7 +386,7 @@ export class PropertiesPanelComponent implements OnDestroy, OnInit {
     }
   }
 
-  onProjectAssets = (value: cd.AssetMap) => {
+  onProjectAssets = (value: cd.IProjectAssets) => {
     this.projectAssets = value;
     this.generateAssetsMenu(value);
   };

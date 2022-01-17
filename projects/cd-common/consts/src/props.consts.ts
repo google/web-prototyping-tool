@@ -17,5 +17,3 @@
 export const EMPTY_REFERENCE_ID = null;
 export const DEFAULT_IFRAME_URL = 'https://en.wikipedia.org/wiki/Google';
 export const A11Y_DOCS_URL = 'https://www.w3.org/TR/wai-aria/#';
-export const PARENT_ID_PROP = 'parentId';
-export const FRACTIONAL_INDEX_PROP = 'fractionalIndex';

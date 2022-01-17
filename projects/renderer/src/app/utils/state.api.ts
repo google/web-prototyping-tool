@@ -47,7 +47,7 @@ const getClosestRenderElementId = (context: HTMLElement): string | undefined => 
 };
 
 /** Allows components and runJS access to the current state */
-export class RendererAPI {
+export class WebPrototypingToolRendererAPI {
   public requestChangeDetection$ = new Subject<void>();
   public navigateToBoard$ = new Subject<StateAPIBoardNavEvt>();
 

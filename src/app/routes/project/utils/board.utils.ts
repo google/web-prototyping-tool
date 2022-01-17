@@ -17,20 +17,17 @@
 /* eslint-disable max-lines */
 import { BoardCreate } from '../store';
 import { boundsToIRect, canvasHasBounds, generateBounds } from './canvas.utils';
+import { ICanvas } from '../interfaces/canvas.interface';
 import { incrementedName, removeNumbersAndTrim } from 'cd-utils/string';
-import {
-  buildInsertLocation,
-  createElementChangePayload,
-  generateFrame,
-  rectsIntersect,
-} from 'cd-common/utils';
+import { Rect } from 'cd-utils/geometry';
+import { buildInsertLocation, generateFrame, rectsIntersect } from 'cd-common/utils';
 import { ISelectionState } from '../store/reducers/selection.reducer';
 import * as config from '../configs/outlet-frame.config';
 import * as cd from 'cd-interfaces';
 import * as models from 'cd-common/models';
 import { createId } from 'cd-utils/guid';
-import { DEFAULT_OUTLET_FRAME_NAME } from 'cd-common/consts';
 
+const DEFAULT_OUTLET_FRAME_NAME = 'Board';
 const PLACEMENT_TEST_OFFSET = 9; // Used when testing if a board can fit next to another
 
 const enum BoardIcon {
@@ -168,7 +165,7 @@ export const findRoomForBoard = (
 const getBackupBoardPlacement = (
   frame: cd.IRect,
   boards: cd.IBoardProperties[],
-  canvasBounds: cd.Rect
+  canvasBounds: Rect
 ): cd.IRect => {
   const [xpos, ypos, width, height] = canvasBounds;
   const leftMostWithRoom = findRoomForBoard(frame, boards);
@@ -243,7 +240,7 @@ const isBoardInlineWithSelection = (
 
 /**
  * Find the sets of boards that intersect projecting out from the selected boards to the right and
- * below. This is easiest to grasp when looking at this diagram
+ * below.
  *
  * @param boards - Full list of boards in the project
  * @param selectedIds - Set of ids of selected boards
@@ -314,7 +311,7 @@ export const updateBoardFramePosition = (
   frame: cd.IRect,
   elementProperties: cd.ElementPropertiesMap,
   selectedIdsSet: Set<string>,
-  canvasBounds: cd.Rect
+  canvasBounds: Rect
 ): cd.IRect => {
   const propModels = models.getModels(elementProperties);
   const boards = models.filterBoardsList(propModels, true) as cd.IBoardProperties[];
@@ -365,7 +362,7 @@ const generateDefaultBoardName = (name: string | undefined): string => {
   return name ? removeNumbersAndTrim(name) : DEFAULT_OUTLET_FRAME_NAME;
 };
 
-const isRectVisibleOnCanvas = (canvas: cd.ICanvas, rect: cd.Rect): boolean => {
+const isRectVisibleOnCanvas = (canvas: ICanvas, rect: Rect): boolean => {
   const { position, offset, viewPortHeight, viewPortWidth } = canvas;
   const { x: canX, y: canY, z: zoom } = position;
   const [vpLeft, vpTop] = offset;
@@ -383,7 +380,7 @@ const isRectVisibleOnCanvas = (canvas: cd.ICanvas, rect: cd.Rect): boolean => {
 
 export const shouldSnapToBoardsOnCreate = (
   boardsToAdd: ReadonlyArray<cd.IBoardProperties>,
-  canvas: cd.ICanvas
+  canvas: ICanvas
 ): boolean => {
   if (!canvasHasBounds(canvas)) return true;
   const boardFrames = boardsToAdd.map((board) => board.frame);
@@ -393,20 +390,22 @@ export const shouldSnapToBoardsOnCreate = (
   return !roomForNewBoard;
 };
 
-/**
- * Generate change payload to populate child content of a new board
- */
+// TODO:  What does this do?
 const populateModelContent = (
   content: cd.IComponentInstanceGroup,
   board: cd.IBoardProperties,
   elemProps: cd.ElementPropertiesMap
-): cd.IElementChangePayload => {
+): cd.PropertyModel[] => {
   const elementId = board.rootId;
   const { rootIds, models: propertyModels } = content;
   const location = buildInsertLocation(elementId, cd.InsertRelation.Append);
   const newElements = [board, ...propertyModels];
   // Insert update will include updates to create board and content models
-  return models.insertElements(rootIds, location, elemProps, newElements);
+  const insertUpdates = models.insertElements(rootIds, location, elemProps, newElements);
+  // merge create updates with updates for setting childIds, parentId, etc
+  const mergedUpdates = models.mergeUpdates(insertUpdates);
+  // push all new models (including board) into array of createdModels
+  return mergedUpdates.map((update) => update.properties as cd.PropertyModel);
 };
 
 export const generateEmptyBoardFromFrame = (
@@ -430,7 +429,7 @@ const createNewBoard = (
   projectId: string,
   boardsArray: cd.IBoardProperties[] = [],
   keepOriginalId = false
-): cd.IBoardProperties => {
+) => {
   const rootId = keepOriginalId && item.id ? item.id : createId();
   const defaultName = generateDefaultBoardName(item.name);
   const name = incrementedBoardName(defaultName, boardsArray, index);
@@ -446,10 +445,10 @@ const createNewBoard = (
   return boardInstance.build();
 };
 
-type BoardAndContentModels = [boards: cd.IBoardProperties[], changes: cd.IElementChangePayload[]];
+type BoardAndContentModels = [boards: cd.IBoardProperties[], allModels: cd.PropertyModel[]];
 
 const generateDefaultSizeBoard = (
-  canvas: cd.ICanvas,
+  canvas: ICanvas,
   projectId: string,
   boardsArray: cd.IBoardProperties[],
   elemProps: cd.ElementPropertiesMap,
@@ -467,11 +466,9 @@ const generateDefaultSizeBoard = (
   }
 
   const [firstItem] = content;
-  const change = firstItem
-    ? populateModelContent(firstItem, board, elemProps)
-    : createElementChangePayload([board]);
+  const createdModels = firstItem ? populateModelContent(firstItem, board, elemProps) : [board];
 
-  return [[board], [change]];
+  return [[board], createdModels];
 };
 
 // Copy/Paste or Duplicate
@@ -480,7 +477,7 @@ const generateDefaultSizeBoard = (
 const generateBoardsWithFrames = (
   frames: ReadonlyArray<cd.IRect>,
   params: Partial<cd.IBoardProperties>[],
-  canvas: cd.ICanvas,
+  canvas: ICanvas,
   projectId: string,
   boardsArray: cd.IBoardProperties[],
   elemProps: cd.ElementPropertiesMap,
@@ -488,7 +485,7 @@ const generateBoardsWithFrames = (
   content: cd.IComponentInstanceGroup[],
   keepOriginalId = false
 ): BoardAndContentModels => {
-  const changes: cd.IElementChangePayload[] = [];
+  const createdModels: cd.PropertyModel[] = [];
   const addedBounds = generateBounds(frames);
   const addedFrame = boundsToIRect(addedBounds);
   const { x: boundsX, y: boundsY } = addedFrame;
@@ -504,7 +501,7 @@ const generateBoardsWithFrames = (
     // Grab from item because the frame in 'board' gets wiped
     const { frame } = item;
 
-    // TODO: add description of what this is for
+    // TODO:  add description of what this is for
     if (frame) {
       const dx = frame.x - boundsX;
       const dy = frame.y - boundsY;
@@ -513,16 +510,13 @@ const generateBoardsWithFrames = (
       board.frame = { ...frame, x, y };
     }
 
-    const change = boardContent
-      ? populateModelContent(boardContent, board, elemProps)
-      : createElementChangePayload([board]);
-
-    changes.push(change);
+    const newModels = boardContent ? populateModelContent(boardContent, board, elemProps) : [board];
+    createdModels.push(...newModels);
 
     return board;
   });
 
-  return [boards, changes];
+  return [boards, createdModels];
 };
 
 const framesFromBoardProps = (boards: Partial<cd.IBoardProperties>[]): ReadonlyArray<cd.IRect> => {
@@ -550,7 +544,7 @@ export const generateBoards = (
   boardsArray: cd.IBoardProperties[] = [],
   elemProps: cd.ElementPropertiesMap,
   projectId: string,
-  canvas: cd.ICanvas,
+  canvas: ICanvas,
   selectionState: ISelectionState
 ): BoardAndContentModels => {
   const { boardParameters: params = [], content = [], keepOriginalId } = action;

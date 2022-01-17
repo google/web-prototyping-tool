@@ -15,21 +15,9 @@
  */
 
 import { areObjectsEqual, deepCopy, isObject } from 'cd-utils/object';
-import {
-  applyChangeToElementContent,
-  buildPropertyUpdatePayload,
-  convertPropsUpdateToUpdateChanges,
-  isIValue,
-} from 'cd-common/utils';
+import { buildPropertyUpdatePayload, isIValue } from 'cd-common/utils';
 import { nullifyPrevKeys } from './store.utils';
 import * as cd from 'cd-interfaces';
-import {
-  findAllInstancesOfSymbol,
-  getSymInstUpdate,
-  updateExposedSymbolInputs,
-} from './symbol.utils';
-import { generateSymbolInstanceDefaults } from './symbol-overrides';
-import { getChildren } from 'cd-common/models';
 
 const collectChangesForInstanceInputs = (
   symbolUpdate: cd.SymbolInstanceInputs,
@@ -76,7 +64,7 @@ export const mergeNewInputsIntoInstances = (
     ///////////////////////////////////////////////////
     ///////////////////////////////////////////////////
     let dirtyInputs: DirtyInputs = {};
-    let didUpdate = false; // optimization to prevent unnecessary writes
+    let didUpdate = false; // optimization to prevent unecissary writes
 
     for (const id of removed) {
       (instanceInputs as any)[id] = null;
@@ -119,7 +107,7 @@ const nullifyIValueStylesWithoutId = (value: any): any => {
 
 /**
  * Compare changes to instanceInputs to determine values
- * TODO: add tests
+ * TODO : add tests
  * */
 const didSymValueChange = (
   key: string,
@@ -263,7 +251,7 @@ export const processPrevSymbolInputs = (
 
 /**
  * @deprecated used to migrate legacy symbolInputs
- * TODO: add tests
+ * TODO : add tests
  * */
 const processLegacyValue = (
   legacy: cd.SymbolInput[],
@@ -289,26 +277,4 @@ const processLegacyValue = (
     }
   }
   return { inputs, styles };
-};
-
-export const computeSymbolInputUpdates = (
-  isolatedSymbolId: string,
-  elementContent: cd.ElementContent,
-  incomingChange: cd.IElementChangePayload
-): cd.IUpdateChange<cd.PropertyModel>[] => {
-  // Calculate new symbol inputs based on results of change
-  const updatedContent = applyChangeToElementContent(incomingChange, elementContent);
-  const { records } = updatedContent;
-  const symbol = records[isolatedSymbolId] as cd.ISymbolProperties;
-  const symbolChildren = getChildren(symbol.id, records);
-  const instanceInputs = generateSymbolInstanceDefaults(symbolChildren);
-  const prevInputs = processPrevSymbolInputs(symbol, instanceInputs);
-  const changes = processInstanceToNullifyChanges(instanceInputs, prevInputs);
-  const exposedInputs = updateExposedSymbolInputs(symbol, symbolChildren);
-  const symUpdate = getSymInstUpdate(isolatedSymbolId, changes, exposedInputs);
-  // Propagate updated inputs to all instances of this symbol
-  const instances = findAllInstancesOfSymbol(symbol.id, records);
-  const updates = mergeNewInputsIntoInstances(instanceInputs, prevInputs, instances);
-  const allUpdates = [symUpdate, ...updates];
-  return convertPropsUpdateToUpdateChanges(allUpdates);
 };

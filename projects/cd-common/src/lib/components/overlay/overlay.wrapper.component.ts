@@ -204,15 +204,13 @@ export class OverlayWrapperComponent implements OnInit, OnDestroy, AfterViewInit
     const { top, left, width, height } = parentRect;
     const x = left;
     const y = top + height;
-    const alignBottom = config?.alignBottom || y + h > innerHeight;
-    const alignRight = config?.alignRight || x + w > innerWidth;
-    const xOffset = config?.xOffset ?? 0;
-    const yOffset = config?.yOffset ?? 0;
-    const xp = alignRight ? left - w + width - xOffset : x + xOffset;
-    const yp = alignBottom ? clamp(top - h - yOffset, 0, innerHeight) : y + yOffset;
+    const bottom = y + h > innerHeight;
+    const right = (config && config.alignRight) || x + w > innerWidth;
+    const xp = right ? left - w + width : x;
+    const yp = bottom ? clamp(top - h, 0, innerHeight) : y;
     // Align bottom is used by select dropdown (autocomplete) to align and filter
-    this.alignBottom = alignBottom;
-    this.updateTransformOrigin(alignBottom, alignRight);
+    this.alignBottom = bottom;
+    this.updateTransformOrigin(bottom, right);
     this.updateContentStyle(xp, yp, h);
   }
 

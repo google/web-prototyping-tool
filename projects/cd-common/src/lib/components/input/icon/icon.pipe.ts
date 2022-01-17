@@ -33,6 +33,6 @@ export class MatIconClassNamePipe implements PipeTransform {
     const iconFontFamily = ds?.icons.family;
     return iconFontFamily
       ? ICON_FONT_FAMILY_CLASS_MAP[iconFontFamily]
-      : ICON_STYLE_CLASSES[IconStyle.MATERIAL_ICONS_FILLED];
+      : ICON_STYLE_CLASSES[IconStyle.GOOGLE_MATERIAL_ICONS];
   }
 }

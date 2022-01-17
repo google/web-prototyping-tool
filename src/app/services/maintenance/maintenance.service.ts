@@ -21,7 +21,6 @@ import { maintenanceModePathForId } from 'src/app/database/path.utils';
 import { FirebaseCollection, FirebaseField } from 'cd-common/consts';
 import { Router } from '@angular/router';
 import { RoutePath, Route } from 'src/app/configs/routes.config';
-import { environment } from 'src/environments/environment';
 
 interface IMaintenanceModeDocument {
   [FirebaseField.MaintenanceModeEnabled]: boolean;
@@ -37,7 +36,6 @@ export class MaintenanceService {
   constructor(private _databaseService: DatabaseService, private router: Router) {}
 
   checkForMaintenanceMode() {
-    if (!environment.databaseEnabled) return;
     const path = maintenanceModePathForId(FirebaseCollection.MaintenanceMode);
     this._databaseService
       .subscribeToDocument<IMaintenanceModeDocument>(path)
@@ -80,7 +78,7 @@ export class MaintenanceService {
     const newLocation = _previousLocation || RoutePath.Dashboard;
 
     // Navigate to new location, and then perform a hard reload to ensure client has loaded
-    // newest version of
+    // newest version of WebPrototypingTool
     this.router.navigateByUrl(newLocation).then(() => {
       window.location.reload();
     });

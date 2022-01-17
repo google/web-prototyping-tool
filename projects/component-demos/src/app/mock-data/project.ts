@@ -18,7 +18,7 @@ export const MOCK_PROJECT = {
   id: '0pP8xBKPNlUOWet8WAlC',
   creator: {
     id: 'FkbIlY5VzER4T4yfkei4x7RRQIR2',
-    email: 'foo@google.com',
+    email: 'foo',
   },
   updatedAt: {
     seconds: 1602858819,
@@ -75,7 +75,7 @@ export const MOCK_PROJECT = {
   assetIds: [],
   owner: {
     id: 'FkbIlY5VzER4T4yfkei4x7RRQIR2',
-    email: 'foo@google.com',
+    email: 'foo',
   },
   symbolIds: [],
   homeBoardId: 'T1yMOWxF2uOadpav7Whw',

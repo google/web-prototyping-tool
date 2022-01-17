@@ -23,7 +23,7 @@ import { STYLES_PROP } from 'cd-common/consts';
 
 export const rootIdsUpdated$ = new Subject<string[]>();
 
-export interface IIdsSummary {
+interface IIdsSummary {
   rootIds: string[];
   allIds: string[];
 }
@@ -56,21 +56,21 @@ export const getRenderResults = (
 };
 
 // Returns an array of board ids in the updates
-export const getIdsInUpdatedElementContent = (updatedContent: cd.ElementContent): IIdsSummary => {
-  const { idsCreatedInLastChange, idsUpdatedInLastChange, idsDeletedInLastChange, records } =
-    updatedContent;
-  const allIdsSet = new Set<string>([
-    ...idsCreatedInLastChange,
-    ...idsUpdatedInLastChange,
-    ...idsDeletedInLastChange,
-  ]);
+export const getIdsInUpdates = (
+  updates: cd.IPropertiesUpdatePayload[],
+  props: cd.ElementPropertiesMap
+): IIdsSummary => {
   const rootIdsSet = new Set<string>();
+  const allIdsSet = new Set<string>();
 
-  for (const elementId of allIdsSet) {
-    const elementProps = records[elementId];
+  for (const update of updates) {
+    const { elementId } = update;
+    const elementProps = props[elementId];
     if (!elementProps) continue;
     const { rootId } = elementProps;
     rootIdsSet.add(rootId);
+    allIdsSet.add(rootId);
+    allIdsSet.add(elementId);
   }
 
   const rootIds = [...rootIdsSet];

@@ -31,10 +31,10 @@ const NEWS_UPDATES = 'news_updates';
 const ADMINS = 'admins';
 const TEST_CHANGELOG_ENTRY_ID = 'firebase-changlog-entry';
 const ADMIN_USER_ID = 'admin';
-const ADMIN_USER_EMAIL = 'admin@google.com';
+const ADMIN_USER_EMAIL = 'admin';
 const TEST_USER_ID = 'alice';
 const TEST_USURPER_ID = 'usurper';
-const TEST_USER_EMAIL = 'alice@google.com';
+const TEST_USER_EMAIL = 'alice';
 
 function authedApp(auth) {
   return firebase.initializeTestApp({ projectId: TEST_PROJECT_ID, auth }).firestore();
@@ -63,7 +63,7 @@ after(async () => {
   console.log(`View rule coverage information at ${coverageUrl}\n`);
 });
 
-describe('Tests', () => {
+describe('WebPrototypingTool', () => {
   it('Only users can read & edit their user_settings', async () => {
     const ownerDb = authedApp({ uid: TEST_USER_ID, email_verified: true });
     const usurperDb = authedApp({ uid: TEST_USURPER_ID, email_verified: true });

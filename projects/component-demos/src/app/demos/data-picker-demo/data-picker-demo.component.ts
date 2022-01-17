@@ -22,7 +22,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { DataPickerService } from 'cd-common';
-import * as cd from 'cd-interfaces';
+import { DataPickerType, ElementPropertiesMap, IPickerDataset, IValue } from 'cd-interfaces';
 // import { deepCopy } from 'cd-utils/object';
 ////////////////////////////////////////////////////////////////
 import tableSampleData from './data/table-sample-data.json';
@@ -30,20 +30,6 @@ import elemProps from './data/element-properties.json';
 import demoData from './data/demo-data.json';
 import a11yData from './data/a11y-data.json';
 import { Subscription } from 'rxjs';
-import { createChangeMarker } from 'cd-common/utils';
-
-export const createDemoDataset = (id: string, name: string): cd.IDataset => {
-  const jsonDataset: cd.IJsonDataset = {
-    id,
-    name,
-    changeMarker: createChangeMarker(),
-    type: cd.EntityType.Dataset,
-    datasetType: cd.DatasetType.Json,
-    projectId: 'demoProject',
-    storagePath: 'datasets/1234/data.json',
-  };
-  return jsonDataset;
-};
 
 @Component({
   selector: 'app-data-picker-demo',
@@ -82,21 +68,18 @@ export const createDemoDataset = (id: string, name: string): cd.IDataset => {
 })
 export class DataPickerDemoComponent implements OnInit, OnDestroy {
   private _subscription = Subscription.EMPTY;
-  public selectedValue?: cd.IValue;
-  public sources: cd.IPickerDataset[] = [];
+  public selectedValue?: IValue;
+  public sources: IPickerDataset[] = [];
   constructor(private _cdRef: ChangeDetectorRef, public dataService: DataPickerService) {}
 
   ngOnInit(): void {
-    this.dataService.setElementProperties(elemProps as cd.ElementPropertiesMap);
-    this.dataService.addDataSource(createDemoDataset('demo-qshTXF0M', 'Demo data'), demoData);
+    this.dataService.setElementProperties(elemProps as ElementPropertiesMap);
+    this.dataService.addDataSource({ id: 'demo-qshTXF0M', name: 'Demo data' }, demoData);
+    this.dataService.addDataSource({ id: 'table-2gNKKt4m', name: 'Table Sample' }, tableSampleData);
     this.dataService.addDataSource(
-      createDemoDataset('table-2gNKKt4m', 'Table Sample'),
-      tableSampleData
-    );
-    this.dataService.addDataSource(
-      createDemoDataset('accessibility-properties', 'Accessibility Props'),
+      { id: 'accessibility-properties', name: 'Accessibility Props' },
       a11yData,
-      cd.DataPickerType.A11yProps
+      DataPickerType.A11yProps
     );
     this.sources = this.dataService.sources;
     // Note this needs to happen after inital data has been added
@@ -114,14 +97,13 @@ export class DataPickerDemoComponent implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  onDataSourceUpdate = (data: cd.IPickerDataset) => {
+  onDataSourceUpdate = (data: IPickerDataset) => {
     const value = data.value ? JSON.parse(data.value) : {};
-    const dataset = createDemoDataset(data.id, data.name);
-    this.dataService.addDataSource(dataset, value);
+    this.dataService.addDataSource({ id: data.id, name: data.name }, value);
     this._cdRef.markForCheck();
   };
 
-  onSelection(value: cd.IValue) {
+  onSelection(value: IValue) {
     this.selectedValue = value;
   }
 }

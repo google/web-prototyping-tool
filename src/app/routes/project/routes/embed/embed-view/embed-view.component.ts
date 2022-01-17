@@ -23,10 +23,11 @@ import {
 } from '@angular/core';
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { ActivatedRoute, Params } from '@angular/router';
+import { select, Store } from '@ngrx/store';
+import * as pStore from '../../../store';
 import * as cd from 'cd-interfaces';
 import { Subscription } from 'rxjs';
 import { IOutlets, createProp, IOutletList } from './embed-view.utils';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 @Component({
   selector: 'app-embed-view',
@@ -41,7 +42,7 @@ export class EmbedViewComponent implements OnInit, OnDestroy {
   public id = '';
 
   constructor(
-    private _projectContentService: ProjectContentService,
+    private _projectStore: Store<pStore.IProjectState>,
     private _activatedRoute: ActivatedRoute,
     private _cdRef: ChangeDetectorRef,
     public _renderer: RendererService
@@ -52,8 +53,8 @@ export class EmbedViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const outlets$ = this._projectContentService.outletFrames$;
-    const codeComps$ = this._projectContentService.codeCmpArray$;
+    const outlets$ = this._projectStore.pipe(select(pStore.getAllOutletFrames));
+    const codeComps$ = this._projectStore.pipe(select(pStore.selectCodeComponentsArray));
     const params$ = this._activatedRoute.queryParams;
     this._subscription.add(codeComps$.subscribe(this._onCodeComponentsSubscription));
     this._subscription.add(outlets$.subscribe(this._onOutletsSubscription));
@@ -76,7 +77,7 @@ export class EmbedViewComponent implements OnInit, OnDestroy {
     this._cdRef.markForCheck();
   };
 
-  private _onOutletsSubscription = ({ symbols, boards }: cd.IOutletFrameSubscription) => {
+  private _onOutletsSubscription = ({ symbols, boards }: pStore.IOutletFrameSubscription) => {
     this._processOutlets([...symbols, ...boards], false);
     this._cdRef.markForCheck();
   };

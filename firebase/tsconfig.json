@@ -17,10 +17,10 @@
     "outDir": "lib",
     "sourceMap": false,
     "strict": true,
-    "target": "es2019",
+    "target": "es2017",
     "typeRoots": ["./types"],
     "types": ["node"],
-    "lib": ["es2019", "dom"],
+    "lib": ["es2017", "dom"],
     "paths": {
       "cd-interfaces": ["dist/cd-interfaces"],
       "cd-common/*": ["dist/cd-common/*"],

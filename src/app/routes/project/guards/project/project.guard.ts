@@ -21,32 +21,41 @@ import {
   RouterStateSnapshot,
   CanActivateChild,
 } from '@angular/router';
+import { Store, select } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { ProjectChangeCoordinator } from 'src/app/database/changes/project-change.coordinator';
-import { PROJECT_ID_ROUTE_PARAM } from 'src/app/configs/routes.config';
+
+import { tap, map, take, switchMap } from 'rxjs/operators';
+import * as projectStoreModule from '../../store';
+import { IProjectDataState } from '../../store/reducers/project-data.reducer';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class ProjectGuard implements CanActivate, CanActivateChild {
-  constructor(private projectChangeCoordinator: ProjectChangeCoordinator) {}
+  constructor(private store: Store<projectStoreModule.IProjectState>) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    _routerState: RouterStateSnapshot
-  ): Observable<boolean> {
-    const projectId = route.params[PROJECT_ID_ROUTE_PARAM];
-    return this.projectOpened(projectId);
+  canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
+    return this.checkStore();
   }
 
   canActivateChild(
-    route: ActivatedRouteSnapshot,
+    _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot
   ): Observable<boolean> {
-    const projectId = route.params[PROJECT_ID_ROUTE_PARAM];
-    return this.projectOpened(projectId);
+    return this.checkStore();
   }
 
-  projectOpened(projectId?: string): Observable<boolean> {
-    if (!projectId) return of(false);
-    return this.projectChangeCoordinator.openProject(projectId);
+  checkStore(): Observable<boolean> {
+    return this.store.pipe(
+      select(projectStoreModule.getProjectDataState),
+      tap((projectData: IProjectDataState) => {
+        if (!projectData.projectDataLoaded && !environment.e2e) {
+          this.store.dispatch(new projectStoreModule.ProjectDataQuery());
+        }
+      }),
+      map((projectData) => projectData.projectDataLoaded),
+      // filter(loaded => loaded),
+      take(1),
+      switchMap(() => of(true))
+    );
   }
 }

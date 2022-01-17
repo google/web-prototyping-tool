@@ -31,9 +31,9 @@ import { ToastsService } from '../toasts/toasts.service';
 })
 export class ScreenshotService {
   constructor(
-    private afStorage: AngularFireStorage,
+    private _afStorage: AngularFireStorage,
     private databaseService: DatabaseService,
-    private toastService: ToastsService
+    private _toastService: ToastsService
   ) {}
 
   getScreenshot(
@@ -41,7 +41,7 @@ export class ScreenshotService {
     size: cd.ScreenshotSizes = cd.ScreenshotSizes.BigThumbnailXHDPI
   ): Observable<cd.IScreenshotRef> {
     return from(
-      this.afStorage.storage.ref(consts.SCREENSHOTS_PATH_PREFIX).child(id).listAll()
+      this._afStorage.storage.ref(consts.SCREENSHOTS_PATH_PREFIX).child(id).listAll()
     ).pipe(
       map((results) => {
         const filename = consts.sizeToFileNameMap[size];
@@ -85,16 +85,13 @@ export class ScreenshotService {
 
   public triggerCreateProjectScreenshots(project: cd.IProject) {
     this.showGeneratingScreenshotsToast('Generating screenshots');
-    const boards$ = this.databaseService.getProjectBoards(project);
-
-    boards$.pipe(take(1)).subscribe((boards) => {
-      for (const board of boards) {
-        this.triggerCreateScreenshot(board.id, project.id, false);
-      }
-    });
+    const { boardIds, id } = project;
+    for (const boardId of boardIds) {
+      this.triggerCreateScreenshot(boardId, id, false);
+    }
   }
 
   private showGeneratingScreenshotsToast(message: string) {
-    this.toastService.addToast({ message });
+    this._toastService.addToast({ message });
   }
 }

@@ -29,7 +29,7 @@ const DEFAULT_REPLY_MSG = 'Someone replied to your comment';
 const DEFAULT_THREAD_MSG = 'Someone replied to your thread';
 const DEFAULT_MENTION_MSG = 'You were mentioned';
 
-const generateSubject = (msg: string) => `${msg} on ${emailConsts.NAME}`;
+const generateSubject = (msg: string) => `${msg} on ${emailConsts.APP_NAME}`;
 
 export const createListOfAllTaggedUsersInThread = async (comments: cd.ICommentDocument[]) => {
   let userList: string[] = [];
@@ -217,7 +217,7 @@ export const getEmailDetailsForTaggedUserInThread = async (
   const projectName = (projectDoc as cd.IProject).name || 'A project';
   const comments = await utils.getAllCommentsInThread(afterDoc.id);
   const to = await utils.createListOfAllTaggedUsersInThread(comments);
-  const subject = `${projectName} has changed on ${emailConsts.NAME}`;
+  const subject = `${projectName} has changed on ${emailConsts.APP_NAME}`;
 
   const templateData: cd.IResolvedCommentEmailAlertConfig = {
     projectId,

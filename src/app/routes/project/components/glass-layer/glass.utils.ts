@@ -144,37 +144,3 @@ export const didArrayValueChangeForKey = <T>(key: keyof T, changes: SimpleChange
   const change = (changes as any)[key];
   return areArraysEqual(change.previousValue, change.currentValue) === false;
 };
-
-/** Convert array of all peer selections into arrays of rects per board */
-export const buildPeerRects = (
-  peerSelection: cd.IUserSelection[],
-  renderRects: cd.RenderRectMap,
-  outletFrameRects: cd.RenderRectMap
-): Record<string, cd.IUserRect[]> => {
-  const clones = new Map<string, cd.IRenderResult>();
-
-  return peerSelection.reduce<Record<string, cd.IUserRect[]>>((acc, curr) => {
-    const { sessionId, selectedIdsByOutlet } = curr;
-
-    for (const entry of Object.entries(selectedIdsByOutlet)) {
-      const [outletId, selectedIds] = entry;
-      const outletFrame = outletFrameRects.get(outletId);
-      if (!outletFrame) continue;
-
-      const rects = selectedIds.reduce<cd.IUserRect[]>((rectAcc, id) => {
-        const outletClone = clones.get(outletId) || cloneOutletAndRemoveCoordinates(outletFrame);
-        clones.set(outletId, outletClone); // prevent cloning the same outlet more than once
-
-        const isOutlet = id === outletId;
-        const renderResult = isOutlet ? outletClone : renderRects.get(id);
-        if (!renderResult) return rectAcc;
-        rectAcc.push({ sessionId, renderResult });
-        return rectAcc;
-      }, []);
-      const currentRects = acc[outletId] || [];
-      acc[outletId] = [...currentRects, ...rects];
-    }
-
-    return acc;
-  }, {});
-};

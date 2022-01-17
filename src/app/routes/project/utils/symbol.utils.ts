@@ -29,11 +29,6 @@ import * as gUtils from './group.absolute.utils';
 import * as mUtils from 'cd-common/models';
 import * as consts from 'cd-common/consts';
 import * as cd from 'cd-interfaces';
-import {
-  convertPropsUpdateToUpdateChanges,
-  createElementChangePayload,
-  mergeElementChangePayloads,
-} from 'cd-common/utils';
 
 const SYMBOL_INSTANCE_NAME = 'Instance';
 const SYMBOL_UNPACKED_NAME = '(Detached)';
@@ -143,6 +138,7 @@ const getSymbolFromSingleRoot = (
   const { childIds, styles } = first;
   const { base } = styles;
   const { ...baseStyles } = base.style || {};
+  const orderedElemIds = mUtils.getAllIdsDepthFirst(elementProperties, childIds);
   const elementsToConvert = mUtils.getModelsAndChildren(childIds, elementProperties);
   const a11yInputs = first.a11yInputs || {};
   const exposed = generateExposedSymbolInputDefaults(elementsToConvert);
@@ -151,6 +147,8 @@ const getSymbolFromSingleRoot = (
     .assignName(name)
     .assignRootId(symbolId)
     .assignFrameFromFrame(frame)
+    .assignOrderElemIds(orderedElemIds)
+    .assignChildIds(childIds)
     .assignA11yInputs(a11yInputs)
     .addDefaultInstanceInputs(defaultInputs)
     .addExposedInputsForIds(exposed)
@@ -178,6 +176,7 @@ const getSymbolFromMultiRoot = (
   rootElems: cd.PropertyModel[]
 ): ISymbolCreationParts => {
   const childIds = rootElems.map(({ id }) => id);
+  const orderedElemIds = mUtils.getAllIdsDepthFirst(elementProperties, childIds);
   const elementsToConvert = mUtils.getModelsAndChildren(childIds, elementProperties);
   const exposed = generateExposedSymbolInputDefaults(elementsToConvert);
   const defaultInputs = generateSymbolInstanceDefaults(elementsToConvert);
@@ -185,6 +184,8 @@ const getSymbolFromMultiRoot = (
     .assignName(name)
     .assignRootId(symbolId)
     .assignFrameFromFrame(frame)
+    .assignOrderElemIds(orderedElemIds)
+    .assignChildIds(childIds)
     .addDefaultInstanceInputs(defaultInputs)
     .addExposedInputsForIds(exposed)
     .build();
@@ -209,8 +210,8 @@ const applyAbsolutePositionToSymbolAndInstance = (
   symbolInstance: cd.ISymbolInstanceProperties,
   renderRects: cd.RenderRectMap,
   initalId: string
-): cd.IElementChangePayload => {
-  if (!hasAbsolutePosition) return createElementChangePayload();
+): ReadonlyArray<cd.IPropertiesUpdatePayload> => {
+  if (!hasAbsolutePosition) return [];
   removePositionFromAbsoluteSymbol(symbol);
 
   const childElements = childIds
@@ -225,20 +226,12 @@ const applyAbsolutePositionToSymbolAndInstance = (
   const { width, height } = bounds;
   symbol.frame = { ...symbol.frame, width, height };
   gUtils.applyAbsolutePositionToGroup(symbolInstance, bounds, hasFixed);
-  const updates = gUtils.adjustAbsolutePositionForChildren(bounds, childElements, renderRects);
-
-  // convert updates to changes interface
-  const absStyleUpdateChanges = convertPropsUpdateToUpdateChanges(updates);
-  const absStyleChanges = createElementChangePayload(undefined, absStyleUpdateChanges);
-  return absStyleChanges;
+  return gUtils.adjustAbsolutePositionForChildren(bounds, childElements, renderRects);
 };
 /**
  * 1. Create a symbol based on a set of elements
  * 2. Replace the elements was with an instance the new symbol
  * 3. Return an array of updates to peform all changes
- *
- * See design proposal doc:
- * https://docs.google.com/document/d/1rMEiCg44fUmkHdL-mH1HhhAepIaP9T6nX44tSsWDVh0/edit#bookmark=id.1h9pdq13ccu6
  */
 export const createSymbolFromElements = (
   name: string,
@@ -263,7 +256,7 @@ export const createSymbolFromElements = (
   const symbolInstance = createInstanceOfSymbol(elemProps, symbol, instanceId);
   const insertInstanceLocation = utils.buildInsertLocation(first.id, cd.InsertRelation.Before);
   const hasAbsolutePosition = gUtils.elementsHaveAbsolutePosition(rootElems);
-  const absStyleChanges = applyAbsolutePositionToSymbolAndInstance(
+  const absStyleUpdates = applyAbsolutePositionToSymbolAndInstance(
     hasAbsolutePosition,
     symbol,
     isSingleRoot,
@@ -273,7 +266,6 @@ export const createSymbolFromElements = (
     renderRects,
     first.id
   );
-
   // If every parent is a grid, apply row or column layout
   const sameParent = rootElems.every((item) => item.parentId === first.parentId);
 
@@ -293,60 +285,54 @@ export const createSymbolFromElements = (
     }
   }
 
-  const insertChange = mUtils.insertElements(
+  const insertInstanceUpdates = mUtils.insertElements(
     [symbolInstance.id],
     insertInstanceLocation,
     elemProps,
     [symbolInstance]
   );
-
-  // incorporate insert change into move calculations
-  const propsWithInserts = utils.mergeChangeIntoProperties(elemProps, insertChange);
+  const propertiesWithInsertUpdates = mUtils.mergeUpdatesIntoProperties(
+    elemProps,
+    insertInstanceUpdates
+  );
 
   // Original root relements now become children of the symbol
   const moveLocation = utils.buildInsertLocation(symbol.id, cd.InsertRelation.Append);
-  const moveChange = mUtils.insertElements(childIds, moveLocation, propsWithInserts, [symbol]);
+  const moveUpdates = mUtils.insertElements(childIds, moveLocation, propertiesWithInsertUpdates, [
+    symbol,
+  ]);
 
-  const childActionChanges = migrateChildActionsForSymbolRoot(
+  const childActions = migrateChildActionsForSymbolRoot(
     symbol.id,
     first.id,
-    moveChange,
+    moveUpdates,
     elemProps
   );
 
-  // Compute deletion changes
+  const updates = [...insertInstanceUpdates, ...moveUpdates, ...absStyleUpdates, ...childActions];
   const isFirstGenericElement = first.elementType === cd.ElementEntitySubType.Generic;
   const deletions = isSingleRoot && isFirstGenericElement ? rootElems : [];
-  const deleteIds = deletions.map((d) => d.id);
-  const deleteChanges = createElementChangePayload(undefined, undefined, deleteIds);
 
-  const allChanges = [insertChange, moveChange, absStyleChanges, childActionChanges, deleteChanges];
-  const change = mergeElementChangePayloads(allChanges);
-  return { symbol, symbolInstance, change };
+  return { symbol, symbolInstance, updates, deletions };
 };
 
-/** Ensure that any actions on children are remapped to point to the symbol Id */
+/** Ensure that any actions on children are remapped to point to the symbol Id  */
 const migrateChildActionsForSymbolRoot = (
   symId: string,
   rootId: string,
-  currentChange: cd.IElementChangePayload,
+  updates: cd.IPropertiesUpdatePayload[],
   elemProps: cd.ElementPropertiesMap
-): cd.IElementChangePayload => {
+): cd.IPropertiesUpdatePayload[] => {
   const replacementMap = new Map([[rootId, symId]]);
-  const { sets = [], updates = [] } = currentChange;
-  const changeIds = [...sets, ...updates].map((c) => c.id);
-
-  const childActionUpdates = changeIds.reduce<cd.IUpdateChange<cd.PropertyModel>[]>((acc, id) => {
-    const elem = elemProps[id];
+  return updates.reduce<cd.IPropertiesUpdatePayload[]>((acc, item) => {
+    const elem = elemProps[item.elementId];
     if (!elem?.actions.length) return acc;
     const clone = deepCopy(elem);
     const migration = mUtils.migrateActions(clone, replacementMap);
-    const newUpdate = utils.createElementUpdate(elem.id, { actions: migration.actions });
-    acc.push(newUpdate);
+    const update = utils.buildPropertyUpdatePayload(item.elementId, { actions: migration.actions });
+    acc.push(update);
     return acc;
   }, []);
-
-  return createElementChangePayload(undefined, childActionUpdates);
 };
 
 const _duplicateMergedInstanceProps = (
@@ -398,19 +384,6 @@ const getUnpackParent = (
   return [parentId, newElements];
 };
 
-const assignParentIdToRootModels = (
-  parentId: string,
-  group: cd.IComponentInstanceGroup
-): cd.IComponentInstanceGroup => {
-  const { rootIds } = group;
-  const rootIdSet = new Set(rootIds);
-  const models = group.models.map((m) => {
-    if (!rootIdSet.has(m.id)) return m;
-    return { ...m, parentId };
-  });
-  return { models, rootIds };
-};
-
 export const unpackComponentInstance = (
   instance: cd.ISymbolInstanceProperties,
   symbol: cd.ISymbolProperties,
@@ -419,11 +392,10 @@ export const unpackComponentInstance = (
   const mergedInstanceProps = utils.mergeInstanceOverrides(instance, allElementProps);
   const propsCopy = _duplicateMergedInstanceProps(symbol.childIds, mergedInstanceProps);
   const [parentId, parentElements] = getUnpackParent(propsCopy, symbol, instance);
-  const updatedPropsGroup = assignParentIdToRootModels(parentId, propsCopy);
   const location = utils.buildInsertLocation(instance.id, cd.InsertRelation.Before);
-  const newElements = [...updatedPropsGroup.models, ...parentElements];
-  const change = mUtils.insertElements([parentId], location, allElementProps, newElements);
-  return { change, rootId: parentId };
+  const newElements = [...propsCopy.models, ...parentElements];
+  const updates = mUtils.insertElements([parentId], location, allElementProps, newElements);
+  return { updates, rootId: parentId };
 };
 
 export const unpackInstances = (
@@ -432,9 +404,10 @@ export const unpackInstances = (
   elementProperties: cd.ElementPropertiesMap
 ): {
   rootIds: string[];
-  change: cd.IElementChangePayload;
+  updates: cd.IPropertiesUpdatePayload[];
+  elementProperties: cd.ElementPropertiesMap;
 } => {
-  const allChanges: cd.IElementChangePayload[] = [];
+  const unpackUpdates: cd.IPropertiesUpdatePayload[] = [];
   const rootIds: string[] = [];
 
   for (const instance of instances) {
@@ -443,14 +416,17 @@ export const unpackInstances = (
 
     const definition = definitions[referenceId];
     const unpackResult = unpackComponentInstance(instance, definition, elementProperties);
-    const { rootId: rootIdForInstance, change: changeForInstance } = unpackResult;
 
-    allChanges.push(changeForInstance);
+    const { rootId: rootIdForInstance, updates: updatesForInstance } = unpackResult;
+
+    unpackUpdates.push(...updatesForInstance);
     rootIds.push(rootIdForInstance);
+    // TODO ,  Don't mutate objects
+    elementProperties = mUtils.mergeUpdatesIntoProperties(elementProperties, updatesForInstance);
   }
 
-  const change = mergeElementChangePayloads(allChanges);
-  return { change, rootIds };
+  const updates = [...unpackUpdates];
+  return { updates, rootIds, elementProperties };
 };
 
 export const findAllInstancesOfSymbol = (
@@ -547,8 +523,9 @@ export const getContainedSymbolIdsRecursive = (
 export const getSymInstUpdate = (
   elementId: string,
   defaultInputs: cd.SymbolInstanceInputs,
-  exposedInputs: Record<string, boolean>
+  exposedInputs: Record<string, boolean>,
+  orderedElemIds: string[]
 ): cd.IPropertiesUpdatePayload => {
-  const properties = { symbolInputs: null, defaultInputs, exposedInputs };
+  const properties = { symbolInputs: null, defaultInputs, exposedInputs, orderedElemIds };
   return { elementId, properties } as cd.IPropertiesUpdatePayload;
 };

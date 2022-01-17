@@ -54,7 +54,7 @@ export class InputCardComponent implements OnDestroy, OnInit {
   public UNLABELED_INPUT_NAME = UNLABELED_INPUT_NAME;
   public INPUT_TYPES_MENU_DATA = config.INPUT_TYPES_MENU_DATA;
   public INPUT_BINDING_TYPES_MENU_DATA = config.INPUT_BINDING_TYPES_MENU_DATA;
-  public iconClass = ICON_STYLE_CLASSES[IconStyle.MATERIAL_ICONS_FILLED];
+  public iconClass = ICON_STYLE_CLASSES[IconStyle.GOOGLE_MATERIAL_ICONS];
   public inputTypeHelpText: cd.IRichTooltip = { text: config.INPUT_TYPE_TEXT };
   public inputCssNameHelpText: cd.IRichTooltip = { text: config.INPUT_CSS_NAME_TEXT };
   public inputPropAttrNameHelpText: cd.IRichTooltip = { text: config.INPUT_PROP_ATTR_NAME_TEXT };

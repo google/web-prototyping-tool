@@ -30,3 +30,5 @@ export enum EDGE {
   BottomLeft,
   BottomRight,
 }
+
+export type Rect = [left: number, top: number, right: number, bottom: number];

@@ -27,7 +27,7 @@ export interface IQuickInteraction extends cd.IConfig {
 
 const DEFAULT_BACKDROP_COLOR = 'rgba(0,0,0,0.32)';
 
-// TODO These values should bind to the design system
+// TODO  These values should bind to the design system
 export const MaterialElevation = {
   Level1: '0 1px 2px 0 rgba(60,64,67,0.30), 0 1px 3px 1px rgba(60,64,67,0.15)',
   Level2: '0 1px 2px 0 rgba(60,64,67,0.30), 0 2px 6px 2px rgba(60,64,67,0.15)',
@@ -363,7 +363,7 @@ export const RICH_TOOLTIPS: cd.IStringMap<cd.IRichTooltip> = {
   },
 };
 
-export const RUNJS_SCRIPT_PLACEHOLDER = 'Accepts valid JavaScript...';
+export const RUNJS_SCRIPT_PLACEHOLDER = 'Accepts valid JavaScript...\n';
 
 export const POSTMESSAGE_PLACEHOLDER = 'Accepts valid JSON...\ni.e { "foo": "bar" }';
 

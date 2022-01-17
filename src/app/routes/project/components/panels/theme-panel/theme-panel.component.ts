@@ -18,11 +18,11 @@ import { Component, ChangeDetectionStrategy, OnDestroy, OnInit } from '@angular/
 import { deepCopy } from 'cd-utils/object';
 import { DESIGN_SYSTEM_MENU, DesignSystemMenu } from '../../../configs/design-system.config';
 import { DesignSystemService } from '../../../services/design-system/design-system.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { Theme, IconStyle, ICON_FONT_FAMILY, themeFromId } from 'cd-themes';
 import { IDesignColorWithId } from './components/theme-color/theme-color.utils';
 import { Observable, Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
+import { shareReplay } from 'rxjs/operators';
 import { THEMES_MENU } from './theme-panel.config';
 import { ICON_DATA_SRC } from 'cd-common/consts';
 import * as utils from '../../../utils/style-guide.utils';
@@ -38,22 +38,23 @@ import * as uploadUtils from 'cd-utils/files';
 })
 export class ThemePanelComponent implements OnDestroy, OnInit {
   private _subscriptions = new Subscription();
-  private _designSystem?: cd.IDesignSystemDocument;
+  private _designSystem?: cd.IDesignSystem;
   private _project?: cd.IProject;
 
   public project$: Observable<cd.IProject | undefined>;
-  public designSystem$: Observable<cd.IDesignSystemDocument | undefined>;
+  public designSystem$: Observable<cd.IDesignSystem | undefined>;
   public themeList: cd.ISelectItem[] = [];
   public menuData: cd.IMenuConfig[][] = DESIGN_SYSTEM_MENU;
 
   constructor(
     private _dsService: DesignSystemService,
-    private _projectStore: Store<actions.IProjectState>,
-
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<actions.IProjectState>
   ) {
-    this.project$ = this._projectContentService.project$;
-    this.designSystem$ = this._projectContentService.designSystem$;
+    this.project$ = this._projectStore.pipe(select(actions.getProject));
+    this.designSystem$ = this._projectStore.pipe(
+      select(actions.getDesignSystem),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
   }
 
   ngOnInit(): void {
@@ -109,10 +110,9 @@ export class ThemePanelComponent implements OnDestroy, OnInit {
 
   onAddFont(font: cd.IFontFamily) {
     if (!this._designSystem) return;
-    const { id } = this._designSystem;
     const fonts = { ...this._designSystem.fonts };
     fonts[font.family] = font;
-    const action = new actions.DesignSystemUpdate(id, { fonts });
+    const action = new actions.DesignSystemUpdate({ fonts });
     this._projectStore.dispatch(action);
   }
 
@@ -131,12 +131,12 @@ export class ThemePanelComponent implements OnDestroy, OnInit {
   }
 
   onSelectIconStyle(style: IconStyle) {
+    if (!this._designSystem) return;
+
     const { _designSystem } = this;
-    if (!_designSystem) return;
-    const { id } = _designSystem;
     const fontFamily = ICON_FONT_FAMILY[style];
     const icons = _designSystem.fonts[fontFamily];
-    this._projectStore.dispatch(new actions.DesignSystemUpdate(id, { icons }));
+    this._projectStore.dispatch(new actions.DesignSystemUpdate({ icons }));
   }
 
   onColorPick(color: IDesignColorWithId) {
@@ -144,7 +144,7 @@ export class ThemePanelComponent implements OnDestroy, OnInit {
     const { _designSystem } = this;
     if (!id || !_designSystem) return;
     const payload = { colors: { ..._designSystem.colors, [id]: colorItem } };
-    this._projectStore.dispatch(new actions.DesignSystemUpdate(_designSystem.id, payload));
+    this._projectStore.dispatch(new actions.DesignSystemUpdate(payload));
   }
 
   onRemoveColor(colorId: string) {
@@ -157,14 +157,14 @@ export class ThemePanelComponent implements OnDestroy, OnInit {
     if (!id || !_designSystem) return;
     const typography = deepCopy(_designSystem.typography);
     typography[id] = typeItem;
-    this._projectStore.dispatch(new actions.DesignSystemUpdate(_designSystem.id, { typography }));
+    this._projectStore.dispatch(new actions.DesignSystemUpdate({ typography }));
   }
 
   public onTabChanged(newTabIndex: number) {
     console.log('on tab change', newTabIndex);
   }
 
-  private _onDesignSystemSubscription = (ds: cd.IDesignSystemDocument | undefined) => {
+  private _onDesignSystemSubscription = (ds: cd.IDesignSystem | undefined) => {
     const prevID = this._designSystem && this._designSystem.themeId;
     const newID = ds && ds.themeId;
     this._designSystem = ds;
@@ -186,7 +186,7 @@ export class ThemePanelComponent implements OnDestroy, OnInit {
     if (!id || !_designSystem) return;
     const variables = _designSystem.variables ? deepCopy(_designSystem.variables) : {};
     variables[id] = typeItem;
-    this._projectStore.dispatch(new actions.DesignSystemUpdate(_designSystem.id, { variables }));
+    this._projectStore.dispatch(new actions.DesignSystemUpdate({ variables }));
   }
 
   onVariableRemove(id: string) {

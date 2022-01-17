@@ -40,7 +40,7 @@ import { AppGo } from 'src/app/store/actions';
 import { constructProjectPath } from 'src/app/utils/route.utils';
 import { Subscription } from 'rxjs';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
-import { BLANK_TEMPLATE } from '../../configs/built-in-templates.config';
+import { BLANK_CP_TEMPLATE, BLANK_TEMPLATE } from '../../configs/built-in-templates.config';
 import { AnalyticsEvent } from 'cd-common/analytics';
 import { Theme } from 'cd-themes';
 import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
@@ -69,7 +69,7 @@ export class CreateProjectPickerComponent
   public currentTemplates: cd.ProjectTemplate[] = [];
   public templateCategories: string[] = [];
   public menuListItems: cd.IMenuListItem[] = [];
-  public selectedTemplate: cd.ProjectTemplate = BLANK_TEMPLATE;
+  public selectedTemplate: cd.ProjectTemplate = BLANK_CP_TEMPLATE;
 
   public searchValue = '';
 
@@ -82,8 +82,8 @@ export class CreateProjectPickerComponent
 
   @Input()
   set projectTemplates(value: cd.ProjectTemplate[]) {
-    this._loadedTemplates = value as cd.ILoadedTemplate[]; // TODO: cleanup
-    this._projectTemplates = [BLANK_TEMPLATE, ...value];
+    this._loadedTemplates = value as cd.ILoadedTemplate[]; // TODO : cleanup
+    this._projectTemplates = [BLANK_CP_TEMPLATE, BLANK_TEMPLATE, ...value];
     this._computeCategories();
     this.update();
   }

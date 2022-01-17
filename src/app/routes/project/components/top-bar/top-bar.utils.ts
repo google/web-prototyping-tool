@@ -20,7 +20,12 @@ import { getUser } from 'src/app/store';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { Store, select } from '@ngrx/store';
 import { combineLatest, Observable } from 'rxjs';
-import { getIsolatedSymbolId, IProjectState, selectPublishEntries } from '../../store';
+import {
+  getElementProperties,
+  getIsolatedSymbolId,
+  IProjectState,
+  selectPublishEntries,
+} from '../../store';
 
 export enum GroupAction {
   Group,
@@ -73,19 +78,14 @@ export const buildMenuConfig = (disableUngroup: boolean): cd.IMenuConfig[] => {
 
 /** Used to activate the publish button in symbol isolation mode */
 export const getIsoloatedSymbolObservable = (
-  projectStore: Store<IProjectState>,
-  elementProperties$: Observable<cd.ElementPropertiesMap>
+  projectStore: Store<IProjectState>
 ): Observable<boolean> => {
   const isolatedSymbolId$ = projectStore.pipe(select(getIsolatedSymbolId));
-
+  const elementProps$ = projectStore.pipe(select(getElementProperties));
   const publishedEntries$ = projectStore.pipe(select(selectPublishEntries));
   const user$ = projectStore.pipe(select(getUser));
 
-  const publishEntry$ = combineLatest([
-    isolatedSymbolId$,
-    publishedEntries$,
-    elementProperties$,
-  ]).pipe(
+  const publishEntry$ = combineLatest([isolatedSymbolId$, publishedEntries$, elementProps$]).pipe(
     map(([id, _entries, elemProps]) => {
       if (!id) return;
       const symbolInstance = elemProps[id] as cd.ISymbolProperties;

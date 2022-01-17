@@ -20,7 +20,7 @@ import { InteractionService } from '../services/interaction/interaction.service'
 import { PropertiesService } from '../services/properties/properties.service';
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { CanvasService } from '../services/canvas/canvas.service';
-import { getAllChildIdsRecursive, getComponent, isRoot } from 'cd-common/models';
+import { getComponent, isRoot } from 'cd-common/models';
 import { createPoint, IPoint } from 'cd-utils/geometry';
 import { generateBounds } from '../utils/canvas.utils';
 import { areArraysEqual } from 'cd-utils/array';
@@ -243,7 +243,7 @@ export class DndSurfaceService {
 
   /** Look at the drag ids and all of thier nested children */
   getIgnoredElementIds(props: cd.ReadonlyElementPropertiesMap): ReadonlyArray<string> {
-    return this._dragIds.flatMap((id) => getAllChildIdsRecursive(id, props));
+    return this._dragIds.flatMap((id) => utils.getAllChildIdsRecursive(id, props));
   }
 
   /** Returns all of the element properties for a given board, ignoring the dragged element */
@@ -346,7 +346,7 @@ export class DndSurfaceService {
 
     // Ignore all childIds of similar elements
     const similarChildren = similar.flatMap((item) => {
-      return getAllChildIdsRecursive(item.id, props, false);
+      return utils.getAllChildIdsRecursive(item.id, props, false);
     });
 
     return [similar, similarChildren];

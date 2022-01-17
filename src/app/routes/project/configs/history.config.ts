@@ -21,7 +21,11 @@ import { IHistoryState } from '../interfaces/history.interface';
 // enforcing types
 // (i.e. that these slice names have to be defined keys in IProjectState)
 export enum UndoableStateSliceNames {
+  ProjectData = 'projectData',
+  ElementProperties = 'elementProperties',
   Selection = 'selection',
+  DesignSystem = 'designSystem',
+  CodeComponents = 'codeComponents',
 }
 
 export const initialHistoryState: IHistoryState = {

@@ -42,7 +42,7 @@ export class TreeDropZoneDirective implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this._subscription = this._dndDirector.dragActive$.subscribe(this._onDragActive);
-    // If the drag is active when this directive initializes  Fixes b/134957485
+    // If the drag is active when this directive initializes
     if (this._dndDirector.dragActive) this._setupDragListeners();
   }
 

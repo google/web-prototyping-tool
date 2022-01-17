@@ -44,11 +44,12 @@ export class ThemeFactory {
     ...crossPlatformFonts,
     ...fontLib.DEFAULT_ICON_FONTS,
     [fontLib.ROBOTO_FONT]: fontLib.ROBOTO,
+    [fontLib.GOOGLE_SANS_FONT]: fontLib.GOOGLE_SANS,
   };
   public isDarkTheme = false;
 
-  constructor(public id: string, public name: string) {
-    this.icons = fontLib.MATERIAL_ICONS;
+  constructor(public id: string, public name: string, public internal = false) {
+    this.icons = internal ? fontLib.GOOGLE_MATERIAL_ICONS : fontLib.MATERIAL_ICONS;
   }
 
   assert(predicated: boolean, text: string) {
@@ -266,8 +267,8 @@ export class ThemeFactory {
   }
 
   get base() {
-    const { id, name } = this;
-    return { id, name };
+    const { id, name, internal } = this;
+    return { id, name, internal };
   }
 
   build(): cd.ITheme {

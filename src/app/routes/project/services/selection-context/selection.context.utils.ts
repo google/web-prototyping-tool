@@ -16,6 +16,8 @@
 
 import { Action } from '@ngrx/store';
 import { ConfigAction, IConfigPayload, IConfigAction } from '../../interfaces/action.interface';
+import { ICanvas } from '../../interfaces/canvas.interface';
+import { IProjectState } from '../../store';
 import { ISelectionState } from '../../store/reducers/selection.reducer';
 import { MIN_ZOOM, MAX_ZOOM } from '../../configs/canvas.config';
 import { hasChildren, isSymbolInstance, lookupElementIds } from 'cd-common/models';
@@ -26,14 +28,10 @@ import * as configs from '../../configs/context.menu.config';
 import * as keyUtils from 'cd-utils/keycodes';
 import * as cd from 'cd-interfaces';
 
+export type SelectionState = ISelectionState | undefined;
 export type TargetContextPayload = [IConfigPayload, cd.ConfigTargetType];
 export interface IMenuActivationMap {
-  [actionType: string]: (
-    selection: ISelectionState,
-    project: cd.IProject | undefined,
-    elementProperties: cd.ElementPropertiesMap,
-    canvas: cd.ICanvas | undefined
-  ) => boolean;
+  [actionType: string]: (state: IProjectState, canvas: ICanvas | undefined) => boolean;
 }
 /**
  * This looks through all provided configs for a keyboard shortcut
@@ -79,7 +77,7 @@ const lookupKeyboardShortcut = (
 };
 // prettier-ignore
 export const targetTypeFromSelection = (
-  selection: ISelectionState,
+  selection: SelectionState,
   symbolMode: boolean
 ): cd.ConfigTargetType => {
   if (!selection || selection.type === cd.EntityType.Project) return symbolMode ? cd.ConfigTargetType.CanvasSymbolMode : cd.ConfigTargetType.Canvas;
@@ -134,34 +132,26 @@ export const actionFromKeyboard = (
 // TODO Consider Refactor for cleaner implenetation not reliant on canvas
 ////////////////////////////////////////////////////////////////////////////////////
 
-const isActionTypeActivated = (
+export const isActionTypeActivated = (
   type: string,
-  selection: ISelectionState,
-  project: cd.IProject | undefined,
-  elementProps: cd.ElementPropertiesMap,
-  canvas?: cd.ICanvas
+  projectState: IProjectState,
+  canvas?: ICanvas
 ): boolean => {
   const activation = menuActivations[type];
-  return activation ? activation(selection, project, elementProps, canvas) : true;
+  return activation ? activation(projectState, canvas) : true;
 };
 
 export const shouldEnableAction = (
   { type }: Action,
-  selection: ISelectionState,
-  project: cd.IProject | undefined,
-  elementProps: cd.ElementPropertiesMap,
-  canvas?: cd.ICanvas
-): boolean => isActionTypeActivated(type, selection, project, elementProps, canvas);
+  projectState: IProjectState,
+  canvas?: ICanvas
+): boolean => isActionTypeActivated(type, projectState, canvas);
 
 export const shouldEnableMenuItem = (
   { action }: cd.IConfig,
-  selection: ISelectionState,
-  project: cd.IProject | undefined,
-  elementProps: cd.ElementPropertiesMap,
-  canvas?: cd.ICanvas
-): boolean => {
-  return action ? isActionTypeActivated(action, selection, project, elementProps, canvas) : true;
-};
+  projectState: IProjectState,
+  canvas?: ICanvas
+): boolean => (action ? isActionTypeActivated(action, projectState, canvas) : true);
 
 export const disableMenuItem = (item: cd.IConfig): cd.IConfig => {
   const copy = { ...item };
@@ -170,11 +160,9 @@ export const disableMenuItem = (item: cd.IConfig): cd.IConfig => {
 };
 
 export const getMenuFromConfig = (
-  selection: ISelectionState,
-  project: cd.IProject | undefined,
-  elementProperties: cd.ElementPropertiesMap,
+  state: IProjectState,
   selectedPropertyModels: cd.PropertyModel[],
-  canvas?: cd.ICanvas,
+  canvas?: ICanvas,
   targetType?: cd.ConfigTargetType
 ): cd.IConfig[][] => {
   const menu = menuForTargetType(targetType);
@@ -195,8 +183,8 @@ export const getMenuFromConfig = (
         return clone;
       }
 
-      const enable = shouldEnableMenuItem(item, selection, project, elementProperties, canvas);
-      return enable ? item : disableMenuItem(item);
+      const shouldEnable = shouldEnableMenuItem(item, state, canvas);
+      return shouldEnable ? item : disableMenuItem(item);
     })
   );
 };
@@ -214,35 +202,24 @@ export const canCreateComponentsFromSelectedProperties = (
   return elementType !== SymbolInstance;
 };
 
-const isSingleBoardSelected = (selection: ISelectionState): boolean => {
+const isSingleBoardSelected = ({ selection }: IProjectState): boolean => {
   return selection.outletFramesSelected && selection.ids.size === 1;
 };
 
-const canZoomIn = (
-  _selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  _elementProperties: cd.ElementPropertiesMap,
-  canvas?: cd.ICanvas
-): boolean => {
+const canZoomIn = (_proj: IProjectState, canvas?: ICanvas): boolean => {
   if (!canvas) return false;
   return canvas.position.z < MAX_ZOOM;
 };
 
-const canZoomOut = (
-  _selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  _elementProperties: cd.ElementPropertiesMap,
-  canvas?: cd.ICanvas
-): boolean => {
+const canZoomOut = (_proj: IProjectState, canvas?: ICanvas): boolean => {
   if (!canvas) return false;
   return canvas.position.z > MIN_ZOOM;
 };
 
-const canCreateSymbols = (
-  selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  elementProperties: cd.ElementPropertiesMap
-): boolean => {
+const canCreateSymbols = ({
+  selection,
+  elementProperties: { elementProperties },
+}: IProjectState): boolean => {
   const { outletFramesSelected: boardsSelected, ids } = selection;
   if (boardsSelected || ids.size === 0) return false;
   if (ids.size > 1) return true;
@@ -251,64 +228,52 @@ const canCreateSymbols = (
   return !!props && canCreateComponentsFromSelectedProperties([props]);
 };
 
-const canUnpackUserSymbolInstances = (
-  selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  elementProperties: cd.ElementPropertiesMap
-): boolean => {
+const canUnpackUserSymbolInstances = ({
+  selection,
+  elementProperties: { elementProperties },
+}: IProjectState): boolean => {
   const { ids } = selection;
   if (ids.size === 0) return false; // Array.prototype.every() returns true for empty array
   const models = lookupElementIds([...ids], elementProperties);
   return models.every((m) => isSymbolInstance(m));
 };
 
-const canEditSymbol = (
-  selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  elementProperties: cd.ElementPropertiesMap
-): boolean => {
+const canEditSymbol = ({
+  selection,
+  elementProperties: { elementProperties },
+}: IProjectState): boolean => {
   const { ids } = selection;
   if (ids.size !== 1) return false;
   const models = lookupElementIds([...ids], elementProperties);
   return models.every((m) => isSymbolInstance(m));
 };
 
-const isSelectedBoardNotHome = (
-  selection: ISelectionState,
-  project: cd.IProject | undefined,
-  _elementProperties: cd.ElementPropertiesMap
-): boolean => {
-  const singleBoardSelected = isSingleBoardSelected(selection);
+const isSelectedBoardNotHome = (state: IProjectState): boolean => {
+  const { selection, projectData } = state;
+  const { project } = projectData;
+  const singleBoardSelected = isSingleBoardSelected(state);
   const homeBoardId = project && project.homeBoardId;
   return singleBoardSelected && homeBoardId !== Array.from(selection.ids)[0];
 };
 
-const areBoardsOrElementsSelected = ({ type }: ISelectionState): boolean =>
+const areBoardsOrElementsSelected = ({ selection: { type } }: IProjectState): boolean =>
   type === cd.EntityType.Element;
 
-const canGroupSelectedElements = (
-  selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  _elementProperties: cd.ElementPropertiesMap
-): boolean => {
+const canGroupSelectedElements = ({ selection }: IProjectState): boolean => {
   return !selection.outletFramesSelected && selection.ids.size >= 1;
 };
 
-const notBoardAndHasChildren = (
-  selection: ISelectionState,
-  _project: cd.IProject | undefined,
-  elementProperties: cd.ElementPropertiesMap
-): boolean => {
+const notBoardAndHasChildren = ({ selection, elementProperties }: IProjectState): boolean => {
   if (selection.outletFramesSelected) return false;
-  return Array.from(selection.ids).every((id) => hasChildren(id, elementProperties));
+  const { elementProperties: props } = elementProperties;
+  return Array.from(selection.ids).every((id) => hasChildren(id, props));
 };
 
-// TODO: compute this with new undo/redo system for multi-editor
-const canUndo = (): boolean => true;
+const canUndo = ({ history: { past } }: IProjectState): boolean => past.length > 0;
 
-const canRedo = (): boolean => true;
+const canRedo = ({ history: { future } }: IProjectState): boolean => future.length > 0;
 
-const menuActivations: IMenuActivationMap = {
+export const menuActivations: IMenuActivationMap = {
   [actions.BOARD_SET_HOME]: isSelectedBoardNotHome,
   [actions.CLIPBOARD_CUT]: areBoardsOrElementsSelected,
   [actions.CLIPBOARD_COPY]: areBoardsOrElementsSelected,

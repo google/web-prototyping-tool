@@ -15,7 +15,7 @@
  */
 
 import { Injectable, OnDestroy } from '@angular/core';
-import { Action, Store } from '@ngrx/store';
+import { Action, select, Store } from '@ngrx/store';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
 import { IProjectState } from '../../store/reducers';
 import {
@@ -30,11 +30,11 @@ import { UploadService } from '../upload/upload.service';
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { storagePathForJsonDatasetFile } from 'src/app/utils/storage.utils';
 import { PropertiesService } from '../properties/properties.service';
+import { selectDatasetsArray } from '../../store/selectors/datasets.selector';
 import { incrementedName } from 'cd-utils/string';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { AnalyticsEvent, getDatasetAnalyticsName, UPLOAD_JSON_FILE } from 'cd-common/analytics';
 import { createId } from 'cd-utils/guid';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import * as actions from '../../store/actions';
 import * as config from '../../components/panels/data-panel/data-panel.config';
 import * as consts from 'cd-common/consts';
@@ -67,11 +67,10 @@ export class DatasetService extends AbstractOverlayControllerDirective implement
     private uploadService: UploadService,
     private rendererService: RendererService,
     private propertiesService: PropertiesService,
-    private analyticsService: AnalyticsService,
-    private projectContentService: ProjectContentService
+    private analyticsService: AnalyticsService
   ) {
     super(overlayService);
-    this.datasets$ = this.projectContentService.datasetArray$;
+    this.datasets$ = this.projectStore.pipe(select(selectDatasetsArray));
     this.subscriptions.add(this.datasets$.subscribe(this.onDatasetsSubscription));
   }
 
@@ -199,7 +198,7 @@ export class DatasetService extends AbstractOverlayControllerDirective implement
   }
 
   downloadDatasetData = async (dataset: cd.ProjectDataset) => {
-    // TODO: how would we download other dataset types
+    // TODO : how would we download Jetway or Google Sheets datasets
     if (dataset.datasetType !== cd.DatasetType.Json) return;
     const { storagePath, name } = dataset as cd.IJsonDataset;
     const jsonBlob = await this.uploadService.downloadFile(storagePath);

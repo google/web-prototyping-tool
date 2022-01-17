@@ -77,19 +77,6 @@ export const addPayloadToQueue = (
   });
 };
 
-export const getRootIdsForProject = async (projectId: string): Promise<string[]> => {
-  const rootDocsQuery = await projectContentsCollection
-    .where(FirebaseField.ProjectId, FirebaseQueryOperation.Equals, projectId)
-    .where(FirebaseField.DocumentType, FirebaseQueryOperation.Equals, cd.EntityType.Element)
-    .where(FirebaseField.ElementType, FirebaseQueryOperation.In, [
-      cd.ElementEntitySubType.Board,
-      cd.ElementEntitySubType.Symbol,
-    ])
-    .get();
-
-  return rootDocsQuery.docs.map((d) => d.data().id);
-};
-
 export const addPayloadsForProject = async (projectId: string, timestamp?: number) => {
   try {
     const projectDocumentQueryResult = await projectsCollection
@@ -98,7 +85,9 @@ export const addPayloadsForProject = async (projectId: string, timestamp?: numbe
       .get();
 
     if (projectDocumentQueryResult.size === 1) {
-      const allRootIds = await getRootIdsForProject(projectId);
+      const project: cd.IProject = projectDocumentQueryResult.docs[0].data() as cd.IProject;
+      const { boardIds, symbolIds } = project;
+      const allRootIds = [...boardIds, ...symbolIds];
       for (const id of allRootIds) {
         await addPayloadToQueue(projectId, id, timestamp);
       }

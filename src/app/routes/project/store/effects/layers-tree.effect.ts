@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { filter, tap } from 'rxjs/operators';
-
+import { createEffect, Actions, ofType } from '@ngrx/effects';
+import { tap, filter } from 'rxjs/operators';
+import { IProjectState } from '../reducers/index';
+import { Store } from '@ngrx/store';
 import { Injectable } from '@angular/core';
 import { LayersTreeService } from '../../services/layers-tree/layers-tree.service';
-
+import { ofUndoRedo } from '../../utils/history-ngrx.utils';
+import * as actions from '../actions';
 import * as cd from 'cd-interfaces';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import {
-  ElementPropertiesUpdate,
-  ELEMENT_PROPS_UPDATE,
-} from '../actions/element-properties.action';
 
 // Check to see if an array of updates contains changes to any childIds
 // From this we will know if structure of tree has changed
-const containChildIdUpdates = (updates: cd.IPropertiesUpdatePayload[]): boolean => {
+export const containChildIdUpdates = (updates: cd.IPropertiesUpdatePayload[]): boolean => {
   return updates.some((update) => !!update.properties.childIds);
 };
-
 /**
  * This is a set of effects to update the layers tree whenever structural updates are made
  */
@@ -41,17 +37,17 @@ export class LayersTreeEffects {
   constructor(
     private actions$: Actions,
     private _layersTreeService: LayersTreeService,
-    private _projectContentService: ProjectContentService
+    private _projectStore: Store<IProjectState>
   ) {}
 
-  // TODO: Provide mechanism to only update tree if childIds have changed
   createOrDelete$ = createEffect(
     () =>
-      this._projectContentService.elementContent$.pipe(
-        filter((content) => {
-          const { idsCreatedInLastChange, idsDeletedInLastChange } = content;
-          return Boolean(idsCreatedInLastChange.size || idsDeletedInLastChange.size);
-        }),
+      this.actions$.pipe(
+        ofType(
+          actions.ELEMENT_PROPS_CREATE,
+          actions.ELEMENT_PROPS_REMOTE_ADDED,
+          actions.ELEMENT_PROPS_DELETE
+        ),
         tap(() => this._layersTreeService.updateTreeNodes())
       ),
     { dispatch: false }
@@ -60,8 +56,34 @@ export class LayersTreeEffects {
   updateElementProperties$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType<ElementPropertiesUpdate>(ELEMENT_PROPS_UPDATE),
+        ofType<actions.ElementPropertiesUpdate>(actions.ELEMENT_PROPS_UPDATE),
         filter((action) => containChildIdUpdates(action.payload)),
+        tap(() => this._layersTreeService.updateTreeNodes())
+      ),
+    { dispatch: false }
+  );
+
+  undoRedo$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofUndoRedo<
+          actions.ElementPropertiesCreate,
+          actions.ElementPropertiesUpdate,
+          actions.ElementPropertiesDelete
+        >(
+          this._projectStore,
+          actions.ELEMENT_PROPS_CREATE,
+          actions.ELEMENT_PROPS_UPDATE,
+          actions.ELEMENT_PROPS_DELETE
+        ),
+        filter(
+          ([, _destState, [revertedCreateAction, revertedUpdateAction, revertedDeleteAction]]) => {
+            if (revertedCreateAction || revertedDeleteAction) return true;
+            if (revertedUpdateAction && containChildIdUpdates(revertedUpdateAction.payload))
+              return true;
+            return false;
+          }
+        ),
         tap(() => this._layersTreeService.updateTreeNodes())
       ),
     { dispatch: false }

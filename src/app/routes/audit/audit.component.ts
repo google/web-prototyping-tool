@@ -33,7 +33,6 @@ import * as themePanel from '../project/components/panels/theme-panel/theme-pane
 import * as utils from './audit.utils';
 import * as appStore from '../../store';
 import * as cd from 'cd-interfaces';
-import { createChangeMarker } from 'cd-common/utils';
 
 const PROJECT_ID = 'audit-project';
 
@@ -139,7 +138,6 @@ export class AuditComponent implements OnInit, OnDestroy {
       type: cd.EntityType.DesignSystem,
       projectId,
       id: 'test-design-system',
-      changeMarker: createChangeMarker(),
     };
     this._rendererService.setDesignSystem(designSystemDoc);
   }

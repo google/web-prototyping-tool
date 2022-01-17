@@ -248,7 +248,7 @@ export const mergeUpdatesIntoElementProperties = (
     }
     // if no current props, just set as incoming properties
     else {
-      // TODO: how can we guarantee that when an update
+      // TODO : how can we guarantee that when an update
       // adds a new model, it passes in a full PropertyModel (i.e. not a partial)
       elementProperties[elementId] = properties as cd.PropertyModel;
     }

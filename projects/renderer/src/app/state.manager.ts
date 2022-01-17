@@ -27,7 +27,6 @@ import { Subject } from 'rxjs';
 import { toKebabCase } from 'cd-utils/string';
 import * as utils from 'cd-common/utils';
 import type * as cd from 'cd-interfaces';
-import { IIdsSummary } from './utils/renderer.utils';
 
 /** We expect this element to be a symbol instance, if it isn't throw a warning */
 export const elementIsSymbolInstanceGaurd = (
@@ -52,12 +51,11 @@ export class RendererStateManager {
   public stylesMap: cd.IStringMap<cd.IStyleAttributes> = {};
   public propertiesLoaded = false;
   public designSystem?: cd.IDesignSystem;
-  public assets: cd.AssetMap = {};
+  public assets: cd.IProjectAssets = {};
   public previewMode = false;
   public a11yMode: cd.IA11yModeState = DEFAULT_A11Y_MODE_STATE;
   public cssVars: cd.KeyValueTuple[] = [];
-  public preview?: cd.IElementChangePayload[]; // current drop preview
-  public idsInPreview?: IIdsSummary; // ids that are affected by current drop preview
+  public preview?: cd.IPropertiesUpdatePayload[];
   public applicationTheme: cd.IStringMap<string> = {};
   public codeComponents = new Map<string, cd.ICodeComponentDocument>();
   public codeComponentJsBlobUrls = new Map<string, string>();
@@ -414,17 +412,15 @@ export class RendererStateManager {
   resetPreview() {
     this.preview = undefined;
     this.previewProperties = undefined;
-    this.idsInPreview = undefined;
   }
 
-  updatePreview(
-    preview: cd.IElementChangePayload[],
-    previewProperties: cd.ElementPropertiesMap,
-    idsInPreview: IIdsSummary
-  ) {
+  updatePreviewAndReturnMerged(
+    preview: cd.IPropertiesUpdatePayload[],
+    previewProperties: cd.ElementPropertiesMap
+  ): cd.ElementPropertiesMap {
     this.preview = preview;
     this.previewProperties = previewProperties;
-    this.idsInPreview = idsInPreview;
+    return this.mergedProperties;
   }
 
   reset() {

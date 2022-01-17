@@ -20,9 +20,12 @@ import { select, Store, Action } from '@ngrx/store';
 import { Injectable, NgZone } from '@angular/core';
 import { IProjectState } from '../reducers';
 import { RecordActionService } from '../../services/record-action/record-action.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
+import { getElementProperties } from '../selectors/element-properties.selector';
+import { ofTypeIncludingBundled } from '../../utils/history-ngrx.utils';
+import { exitZone, enterZone } from '../../utils/store.utils';
 import { asyncScheduler } from 'rxjs';
 import { getInteractionClipboard } from '../selectors/interaction.selector';
+import { getUserIsProjectEditor } from '../selectors/project-data.selector';
 import { migrateRecordedActions, removeMismatchedRecordedInputs } from 'cd-common/models';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { ToastsService } from 'src/app/services/toasts/toasts.service';
@@ -33,7 +36,6 @@ import * as utils from '../../utils/interaction.utils';
 import * as actions from '../actions/panels.action';
 import * as storeActions from '../actions';
 import * as cd from 'cd-interfaces';
-import { enterZone, exitZone } from 'src/app/utils/zone.utils';
 
 const RECORD_BUFFER_TIMEOUT = 20;
 
@@ -45,15 +47,14 @@ export class InteractionEffect {
     private _analyticsService: AnalyticsService,
     private _recordSerivce: RecordActionService,
     private _projectStore: Store<IProjectState>,
-    private _toastService: ToastsService,
-    private _projectContentService: ProjectContentService
+    private _toastService: ToastsService
   ) {}
 
   pasteActions$ = createEffect(() =>
     this.actions$.pipe(
       ofType<storeActions.InteractionPasteActions>(storeActions.INTERACTION_PASTE_ACTION),
       withLatestFrom(this._projectStore.pipe(select(getInteractionClipboard))),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       switchMap(([[{ elementId }, clipboard], elementProperties]) => {
         const props = elementProperties[elementId];
         const refId = clipboard?.refId as string;
@@ -81,7 +82,7 @@ export class InteractionEffect {
   startRecordingActions$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.PanelStartRecording>(actions.PANEL_START_RECORDING),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       switchMap(([{ elementId, actionId }, elementProperties]) => {
         const elementProps = elementProperties[elementId];
         if (!elementProps) return [];
@@ -120,7 +121,7 @@ export class InteractionEffect {
   stopRecordingActions$ = createEffect(() =>
     this.actions$.pipe(
       ofType<actions.PanelStopRecording>(actions.PANEL_STOP_RECORDING),
-      withLatestFrom(this._projectContentService.elementProperties$),
+      withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
       switchMap(([, elementProperties]) => {
         const { elementId, actionId, stateChanges, propsSnapshot } =
           this._recordSerivce.stopRecording();
@@ -154,8 +155,10 @@ export class InteractionEffect {
   recordStateChanges$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType<storeActions.ElementPropertiesUpdate>(storeActions.ELEMENT_PROPS_UPDATE),
-        withLatestFrom(this._projectContentService.currentUserIsProjectEditor$),
+        ofTypeIncludingBundled<storeActions.ElementPropertiesUpdate>(
+          storeActions.ELEMENT_PROPS_UPDATE
+        ),
+        withLatestFrom(this._projectStore.pipe(select(getUserIsProjectEditor))),
         filter(([, editor]) => editor && this._recordSerivce.isRecording === true),
         map(([action]) => action),
         // Run the buffer outside angular's change detection
@@ -163,7 +166,7 @@ export class InteractionEffect {
         filter((updates: any[]) => updates.length > 0),
         observeOn(enterZone(this._zone, asyncScheduler)),
         // Re-enter Angular's zone
-        withLatestFrom(this._projectContentService.elementProperties$),
+        withLatestFrom(this._projectStore.pipe(select(getElementProperties))),
         tap(([bufferedActions, _elementProperties]) => {
           // Group each change by elementId to improve processing performance
           const elementChangesMap = bufferedActions

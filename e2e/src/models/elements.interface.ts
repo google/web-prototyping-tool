@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-// TODO Allow indexing elements deep in the tree.
+// TODO  Allow indexing elements deep in the tree.
 // Support for indexing nested elements was taken down because renderer and glass
 // no longer had hLoc as data-* attributes, which makes nested elements harder
 // to querySelect.

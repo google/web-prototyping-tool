@@ -25,7 +25,7 @@ const convertFirebaseTimestamp = (ts: firebase.firestore.Timestamp) => {
 export const getLocalProjectDataForId = (
   projectId: string,
   disabled?: boolean
-): Promise<cd.IProjectContent | undefined> => {
+): Promise<cd.IOfflineProjectState | undefined> => {
   return getLocalDataForProject(projectId, disabled).then((data) => {
     if (!data) return data;
     const updatedAt = data.project?.updatedAt;

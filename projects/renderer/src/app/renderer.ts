@@ -19,11 +19,9 @@
 import {
   generateCSSVars,
   deepMerge,
+  mergeUpdatesIntoElementProperties,
   isJsonDataset,
   generateStyle,
-  applyChangeToElementContent,
-  mergeElementChangePayloads,
-  createContentSection,
 } from 'cd-common/utils';
 import { compilationUpdate$, compileOutletComponentDirectiveSet } from './utils/compiler.utils';
 import DrawerOutlet from './outlet-components/drawer/drawer.outlet';
@@ -262,42 +260,6 @@ const handleRecompile = () => {
   compileOutletComponentDirectiveSet();
 };
 
-const handleApplyElementChanges = (message: services.PostMessageApplyElementChanges) => {
-  const { createdElements, updatedElements, deletedElementIds } = message;
-  const createdIdSet = new Set(Array.from(createdElements.map((e) => e.id)));
-  const { baseProperties, stylesMap, projectBindings } = rendererState;
-  const updatedOutletIds = new Set<string>();
-
-  // creates and updates
-  for (const model of [...createdElements, ...updatedElements]) {
-    const { id, rootId } = model;
-    const skipUpdateStyles = !createdIdSet.has(id) && areObjectsEqual(baseProperties[id], model);
-    if (!skipUpdateStyles) {
-      baseProperties[id] = model;
-      if (projectBindings) {
-        stylesMap[id] = generateStyle(model.styles, projectBindings);
-      }
-    }
-    //  We still need to update references to any rootIds
-    //  In the case of symbol instances and portals
-    updatedOutletIds.add(rootId);
-  }
-
-  // deletes
-  for (const id of deletedElementIds) {
-    const model = baseProperties[id];
-    if (!model) continue;
-
-    updatedOutletIds.add(model.rootId);
-    delete baseProperties[id];
-    delete stylesMap[id];
-  }
-
-  if (updatedOutletIds.size === 0) return;
-  rendererState.baseProperties = baseProperties;
-  updateOutletsById(...updatedOutletIds);
-};
-
 const handleAddProperties = ({ propertyModels }: services.PostMessagePropertiesAdd) => {
   const { baseProperties, stylesMap, projectBindings } = rendererState;
   const updatedOutletIds = new Set<string>();
@@ -312,7 +274,6 @@ const handleAddProperties = ({ propertyModels }: services.PostMessagePropertiesA
     updatedOutletIds.add(rootId);
   }
 
-  if (updatedOutletIds.size === 0) return;
   rendererState.baseProperties = baseProperties;
   updateOutletsById(...updatedOutletIds);
 };
@@ -403,7 +364,7 @@ const handleUpdatePropsPartial = ({ updates }: services.PostMessagePropertiesUpd
       );
     }
 
-    // TODO: we don't need to generateStyles for symbol and portal instances
+    // TODO : we don't need to generateStyles for symbol and portal instances
     // Their styles get merged into the board or symbol styles that they are an instance of
     if (projectBindings) {
       stylesMap[elementId] = generateStyle(merged.styles, projectBindings);
@@ -482,18 +443,16 @@ const handleDeleteProjectAsset = ({ ids }: services.PostMessageProjectAssetDelet
 };
 
 const handleShowPreview = ({ preview: newPreview }: services.PostMessagePreviewShow) => {
-  const { baseProperties, idsInPreview } = rendererState;
+  const { preview: currentPreview, mergedProperties, baseProperties } = rendererState;
+  const idsInCurrent = currentPreview && utils.getIdsInUpdates(currentPreview, mergedProperties);
 
   // merge newPreview updates into base properties map
-  const change = mergeElementChangePayloads(newPreview);
-  const elementContent = createContentSection(baseProperties, true);
-  const updatedContent = applyChangeToElementContent(change, elementContent);
-  const idsInNewPreview = utils.getIdsInUpdatedElementContent(updatedContent);
-  rendererState.updatePreview(newPreview, updatedContent.records, idsInNewPreview);
-
-  // get all ids associated with currentPreview and newPreview
-  const idsInAllPreviews = idsInPreview
-    ? utils.mergeIdSummaries(idsInPreview, idsInNewPreview)
+  const { elementProperties } = mergeUpdatesIntoElementProperties(newPreview, baseProperties);
+  const merged = rendererState.updatePreviewAndReturnMerged(newPreview, elementProperties);
+  // get all ids associated with currentPreview and newPreview updates
+  const idsInNewPreview = utils.getIdsInUpdates(newPreview, merged);
+  const idsInAllPreviews = idsInCurrent
+    ? utils.mergeIdSummaries(idsInCurrent, idsInNewPreview)
     : idsInNewPreview;
 
   // generate styles for all affected ids
@@ -504,12 +463,16 @@ const handleShowPreview = ({ preview: newPreview }: services.PostMessagePreviewS
 };
 
 const handleClearPreview = () => {
-  const { idsInPreview } = rendererState;
+  const { preview, mergedProperties } = rendererState;
 
   // reset any boards in current preview (if any)
-  if (!idsInPreview) return;
-  rendererState.resetPreview();
-  updateOutletsById(...idsInPreview.rootIds);
+  if (preview) {
+    const idsInUpdates = utils.getIdsInUpdates(preview, mergedProperties);
+    // update state first so recompiling reflects correctly
+    rendererState.resetPreview();
+
+    updateOutletsById(...idsInUpdates.rootIds);
+  }
 };
 
 const handleRetargetOutlet = (message: services.PostMessageRetargetOutlet) => {
@@ -654,7 +617,6 @@ const handleHotspots = ({ disable }: services.PostMessageToggleHotspots) => {
 };
 
 const messageReducer: cd.IStringMap<Function> = {
-  [services.MESSAGE_APPLY_ELEMENT_CHANGES]: handleApplyElementChanges,
   [services.MESSAGE_PROPERTIES_ADD]: handleAddProperties,
   [services.MESSAGE_TOGGLE_HOTSPOTS]: handleHotspots,
   [services.MESSAGE_BOARD_DID_APPEAR_AFTER_RESET]: handleBoardDidAppearAfterReset,

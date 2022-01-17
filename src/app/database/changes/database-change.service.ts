@@ -17,6 +17,7 @@
 import * as cd from 'cd-interfaces';
 import { Injectable } from '@angular/core';
 import { DatabaseService } from '../database.service';
+import { createProjectDocument } from './change.utils';
 import {
   commentPathForId,
   projectContentsPathForId,
@@ -32,6 +33,7 @@ import { DuplicateService } from 'src/app/services/duplicate/duplicate.service';
 import { map, switchMap } from 'rxjs/operators';
 import { DEFAULT_PROJECT_TYPE } from 'cd-common/consts';
 import { generateKeywordsForPublishEntry } from 'cd-common/utils';
+import { createId } from 'cd-utils/guid';
 
 /**
  * Abstraction layer for all writes to the database
@@ -61,6 +63,20 @@ export class DatabaseChangesService {
   }
 
   //#region Project changes
+
+  /** Create a new blank project */
+  createProject = async (): Promise<cd.IProject> => {
+    const { currentUser } = this;
+    if (!currentUser) {
+      throw new Error('User must be signed in to create a new project');
+    }
+    const id = createId();
+    const timestamp = DatabaseService.getTimestamp();
+    const project = createProjectDocument(id, timestamp, currentUser);
+    const projectPath = projectPathForId(project.id);
+    await this.databaseService.setDocument(projectPath, project);
+    return project;
+  };
 
   /**
    * Create a project from a template

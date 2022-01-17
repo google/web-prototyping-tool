@@ -20,12 +20,7 @@ import { map, filter, first } from 'rxjs/operators';
 import * as utils from '../../routes/project/utils/project.utils';
 import * as cd from 'cd-interfaces';
 import { deleteIdbData, getIdbData } from './indexed-db.utils';
-import firebase from 'firebase/app';
-import { createContentSection } from 'cd-common/utils';
-
-const convertFirebaseTimestamp = (ts: firebase.firestore.Timestamp) => {
-  return new firebase.firestore.Timestamp(ts.seconds, ts.nanoseconds);
-};
+import type firebase from 'firebase/app';
 
 export const deleteLocalDataForProject = async (projectId: string) => {
   await deleteIdbData(projectId);
@@ -33,38 +28,12 @@ export const deleteLocalDataForProject = async (projectId: string) => {
 
 export const getLocalDataForProject = async (
   projectId: string,
-  localDatabaseDisabled = false
-): Promise<cd.IProjectContent | undefined> => {
-  if (localDatabaseDisabled) return undefined;
+  disabled?: boolean
+): Promise<cd.IOfflineProjectState | undefined> => {
   const localDataString: string | undefined = await getIdbData(projectId);
-  if (!localDataString) return undefined;
-  const content = JSON.parse(localDataString) as cd.IProjectContent;
+  if (!localDataString || disabled) return undefined;
 
-  // Recreate the Sets in each content section since they won't get recreated with JSON.parse
-  const { project } = content;
-  const elementContent = createContentSection(content.elementContent.records, true, true);
-  const designSystemContent = createContentSection(content.designSystemContent.records, true, true);
-  const assetContent = createContentSection(content.assetContent.records, true, true);
-  const codeCmpContent = createContentSection(content.codeCmpContent.records, true, true);
-  const datasetContent = createContentSection(content.datasetContent.records, true, true);
-
-  // Restore timestamps on project document
-  const { changeMarker } = project;
-  project.changeMarker = changeMarker
-    ? { ...changeMarker, timestamp: convertFirebaseTimestamp(changeMarker.timestamp) }
-    : undefined;
-  project.createdAt = convertFirebaseTimestamp(project.createdAt);
-  project.updatedAt = convertFirebaseTimestamp(project.updatedAt);
-  // TODO: convert timestamps on all changeMarkers?
-
-  return {
-    project,
-    elementContent,
-    designSystemContent,
-    assetContent,
-    codeCmpContent,
-    datasetContent,
-  };
+  return JSON.parse(localDataString) as cd.IOfflineProjectState;
 };
 
 export const isRemoteDataNewerThanLocalData = (
@@ -107,7 +76,7 @@ export const convertProjectToOfflineState = (
     return acc;
   }, {});
 
-  const assets = assetsList.reduce<cd.AssetMap>((acc, curr) => {
+  const assets = assetsList.reduce<cd.IProjectAssets>((acc, curr) => {
     acc[curr.id] = curr;
     return acc;
   }, {});

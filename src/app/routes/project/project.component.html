@@ -63,7 +63,7 @@
   (contextmenu)="onContextMenu($event)"
 >
   <app-outlet-container
-    *ngIf="projectLoaded$ | async"
+    *ngIf="propertiesLoaded$ | async"
     [breakGlass]="breakGlass$ | async"
     [selection]="selectionState$ | async"
     [commentCount]="commentCounts$ | async"
@@ -71,12 +71,6 @@
     [zoomLevel]="zoom"
   ></app-outlet-container>
 </app-canvas>
-
-<app-presence-indicators
-  [presentUsers]="presenceService.otherPresentUsers$ | async"
-  [darkTheme]="darkTheme$ | async"
-  class="presence-indicators"
-></app-presence-indicators>
 
 <cd-side-panel
   class="properties-panel"

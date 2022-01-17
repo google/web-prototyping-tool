@@ -19,6 +19,7 @@ import { ElementPropertiesUpdate } from '../../store/actions/element-properties.
 import { RendererService } from 'src/app/services/renderer/renderer.service';
 import { buildPropertyUpdatePayload, rectsIntersect } from 'cd-common/utils';
 import { ISelectionState } from '../../store/reducers/selection.reducer';
+import { ICanvasPosition } from '../../interfaces/canvas.interface';
 import { IConfigPayload } from '../../interfaces/action.interface';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { distinctUntilChanged, map } from 'rxjs/operators';
@@ -34,8 +35,6 @@ import * as actions from '../../store/actions';
 import * as utils from './interaction.utils';
 import * as snapUtils from './snap.utils';
 import * as cd from 'cd-interfaces';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
-import { PropertiesService } from '../properties/properties.service';
 
 @Injectable({ providedIn: 'root' })
 export class InteractionService implements OnDestroy {
@@ -62,17 +61,16 @@ export class InteractionService implements OnDestroy {
   constructor(
     private _rendererService: RendererService,
     private _canvasService: CanvasService,
-    private _projectStore: Store<IProjectState>,
-    private _projectContentService: ProjectContentService,
-    private _propsService: PropertiesService
+    private _projectStore: Store<IProjectState>
   ) {
-    const outletFrames$ = this._propsService.currentOutletFrames$.pipe(
+    const outletFrames$ = this._projectStore.pipe(
+      select(selectors.getCurrentOutletFrames),
       map((item) => item.map(({ id, elementType, frame }) => ({ id, elementType, frame }))),
       distinctUntilChanged((x, y) => areObjectsEqual(x, y))
     );
 
     this.selectionState$ = this._projectStore.pipe(select(selectors.getSelectionState));
-    this.elementProperties$ = this._projectContentService.elementProperties$;
+    this.elementProperties$ = this._projectStore.pipe(select(selectors.getElementProperties));
     this._subscriptions.add(outletFrames$.subscribe(this.onOutletFramesSubscription));
     this._subscriptions.add(this.elementProperties$.subscribe(this.onElementProperties));
     this._subscriptions.add(this.selectionState$.subscribe(this.onSelectionChange));
@@ -236,7 +234,7 @@ export class InteractionService implements OnDestroy {
     this.outletFrameOrder = utils.bringOutletToFront(order, outlets);
   }
 
-  checkOutletFrameSelection(rect: cd.IRect, canvasPosition: cd.ICanvasPosition) {
+  checkOutletFrameSelection(rect: cd.IRect, canvasPosition: ICanvasPosition) {
     const selRect = utils.selectionRectFromCanvas(rect, canvasPosition);
     const { outletFrameRects } = this;
     const selected = Array.from(outletFrameRects.entries()).reduce<string[]>((acc, curr) => {

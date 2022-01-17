@@ -86,7 +86,7 @@ export class DashboardComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    // Debounce time fixes back button issue b/150645691 with query change
+    // Debounce time fixes back button issue with query change
     const queryChange$ = this._activatedRoute.queryParams.pipe(debounceTime(0));
     this._subscriptions.add(queryChange$.subscribe(this.onQueryParams));
     this._subscriptions.add(this.user$.subscribe(this.onUserSubscription));

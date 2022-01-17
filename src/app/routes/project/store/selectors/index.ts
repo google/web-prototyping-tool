@@ -14,8 +14,17 @@
  * limitations under the License.
  */
 
+export * from './board.selector';
+export * from './code-component.selector';
 export * from './comment-threads.selector';
+export * from './datasets.selector';
+export * from './design-system.selector';
+export * from './element-properties.selector';
+export * from './history.selector';
 export * from './interaction.selector';
+export * from './outlet-frames.selector';
 export * from './panels.selector';
+export * from './project-data.selector';
 export * from './publish.selector';
 export * from './selection.selector';
+export * from './symbols.selector';

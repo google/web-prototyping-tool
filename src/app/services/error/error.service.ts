@@ -37,7 +37,7 @@ const DIST_PREFIX = '/dist';
 const CODE_LINE_FORMAT = 'at {0}()  ({1} - line: {2}, col: {3})\n{4}';
 
 /** Params: branch, file path, line */
-const SOURCE_URL_FORMAT = ' ⇨ /{0}:{1};l={2}\n';
+const SOURCE_URL_FORMAT = '';
 
 /** Start removing decompiled cached stack traces after this value. */
 const MAXIMUM_CACHED_STACKS = 30;
@@ -104,10 +104,10 @@ export class ErrorService implements ErrorHandler {
 
   public sendErrorToast(message: string) {
     // TEMP - disable all error toasts for now
-    // TODO - when should we ever show an error toast to users?
+    // TODO  - when should we ever show an error toast to users?
     if (this.errorToastsDisabled) return;
 
-    /// HOTFIX / TODO TEMP fix to not show a toast
+    /// HOTFIX / TODO  TEMP fix to not show a toast
     if (message.includes(OFFLINE_HOTFIX)) return;
     /////////////////////////////////////////////////////////////
     const toastService = this._injector.get(ToastsService);

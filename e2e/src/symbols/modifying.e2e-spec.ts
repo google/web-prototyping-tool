@@ -18,7 +18,7 @@
 
 import { testRunner } from '../utils/test.runner.utils';
 import { INTERACTION_INTERVAL, LONG_INTERACTION_INTERVAL } from '../configs/timing.configs';
-import { BOARD_1, ICON_SYMBOL_NAME } from '../configs/generic.config';
+import { BOARD_1, SYMBOL_NAME_1 } from '../configs/generic.config';
 import { symbolsBehaviorReducer } from './symbols.reducer';
 import { symbolsValidator } from './symbols.validator';
 import { BehaviorType, ITest } from '../consts/tests.interface';
@@ -72,12 +72,11 @@ const MODIFICATION_TESTS: ITest[] = [
       // exit symbol isolation mode
       {
         type: BehaviorType.ExitSymbolIsolationMode,
-        wait: INTERACTION_INTERVAL,
       },
     ],
     expected: {
-      symbolSizeMatch: {
-        symbolName: 'Element',
+      boardSizeMatch: {
+        boardName: 'Element',
         width: 100,
         height: 300,
       },
@@ -91,12 +90,28 @@ const MODIFICATION_TESTS: ITest[] = [
     },
   },
   {
-    title: 'Applying an override should change the styles of the child appropriately',
+    title: 'Applying an override should change the styles of the children appropriately',
     do: [
       // add first icon element
       {
         type: BehaviorType.AddElement,
         target: cd.ElementEntitySubType.Icon,
+        boardIndex: 0,
+        wait: INTERACTION_INTERVAL,
+      },
+
+      // add second icon element
+      {
+        type: BehaviorType.AddElement,
+        target: cd.ElementEntitySubType.Icon,
+        boardIndex: 0,
+        wait: INTERACTION_INTERVAL,
+      },
+
+      // shift click first icon to add to selection
+      {
+        type: BehaviorType.ShiftClickElement,
+        elementIndices: [0],
         boardIndex: 0,
         wait: INTERACTION_INTERVAL,
       },
@@ -144,6 +159,23 @@ const MODIFICATION_TESTS: ITest[] = [
       {
         type: BehaviorType.AddElement,
         target: cd.ElementEntitySubType.Icon,
+        elementIndices: [0],
+        boardIndex: 0,
+        wait: INTERACTION_INTERVAL,
+      },
+
+      // add second icon element
+      {
+        type: BehaviorType.AddElement,
+        target: cd.ElementEntitySubType.Icon,
+        elementIndices: [1],
+        boardIndex: 0,
+        wait: INTERACTION_INTERVAL,
+      },
+
+      // shift click first icon to add to selection
+      {
+        type: BehaviorType.ShiftClickElement,
         elementIndices: [0],
         boardIndex: 0,
         wait: INTERACTION_INTERVAL,
@@ -204,7 +236,7 @@ const MODIFICATION_TESTS: ITest[] = [
     expected: {
       symbolDefStylesMatch: [
         {
-          symbolName: ICON_SYMBOL_NAME,
+          symbolName: SYMBOL_NAME_1,
           childIndex: 0,
           styles: { color: 'rgb(0,0,255)' },
         },
@@ -473,6 +505,19 @@ const MODIFICATION_TESTS: ITest[] = [
         target: cd.ElementEntitySubType.Icon,
       },
 
+      // add second icon to board
+      {
+        type: BehaviorType.AddElement,
+        target: cd.ElementEntitySubType.Icon,
+      },
+
+      // shift click first icon to add to selection
+      {
+        type: BehaviorType.ShiftClickElement,
+        elementIndices: [0],
+        boardIndex: 0,
+      },
+
       // right click selected icons
       {
         type: BehaviorType.RightClickElement,
@@ -535,6 +580,6 @@ const MODIFICATION_TESTS: ITest[] = [
   },
 ];
 
-fdescribe('Symbols: Modification', () => {
+describe('Symbols: Modification', () => {
   testRunner(MODIFICATION_TESTS, symbolsBehaviorReducer, symbolsValidator);
 });

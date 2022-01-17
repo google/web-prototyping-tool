@@ -28,6 +28,7 @@ export enum TemplateTag {
   Closing = ']*]',
 }
 
+// :
 // Continue adding to the type alias when you need new types
 // for Taggable Text Field
 export type ITaggableTextFieldTagItem = IUser;

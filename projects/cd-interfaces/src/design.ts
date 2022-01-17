@@ -65,5 +65,3 @@ export interface IDesignSystem {
 export interface IDesignSystemDocument extends IDesignSystem, IProjectContentDocument {
   type: EntityType.DesignSystem;
 }
-
-export type DesignSystemMap = Record<string, IDesignSystemDocument>;

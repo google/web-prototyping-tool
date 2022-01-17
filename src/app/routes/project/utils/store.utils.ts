@@ -17,9 +17,11 @@
 import { PAN_SHIFT_KEY, PAN_DEFAULT } from '../configs/canvas.config';
 import { convertModelListToMap, getModels } from 'cd-common/models';
 import { IPoint } from 'cd-utils/geometry';
+import { SchedulerLike, Subscription } from 'rxjs';
 import { keyCheck, KEYS } from 'cd-utils/keycodes';
 import { getSetChanges } from 'cd-utils/set';
 import { negate } from 'cd-utils/numeric';
+import { NgZone } from '@angular/core';
 import { Action } from '@ngrx/store';
 import * as action from '../store/actions';
 import * as utils from './project.utils';
@@ -115,3 +117,31 @@ export const nullifyPrevKeys = <T extends any>(prevObject: any, newObject: any):
     { ...newObject }
   );
 };
+
+class ZoneScheduler implements SchedulerLike {
+  constructor(protected _zone: NgZone, protected scheduler: SchedulerLike) {}
+
+  schedule(...args: any[]): Subscription {
+    return this._zone.runOutsideAngular(() =>
+      this.scheduler.schedule.apply(this.scheduler, args as any)
+    );
+  }
+
+  now(): number {
+    return this.scheduler.now();
+  }
+}
+
+class EnterZoneScheduler extends ZoneScheduler {
+  schedule(...args: any[]): Subscription {
+    return this._zone.run(() => this.scheduler.schedule.apply(this.scheduler, args as any));
+  }
+}
+
+export function exitZone(zone: NgZone, scheduler: SchedulerLike): SchedulerLike {
+  return new ZoneScheduler(zone, scheduler);
+}
+
+export function enterZone(zone: NgZone, scheduler: SchedulerLike): SchedulerLike {
+  return new EnterZoneScheduler(zone, scheduler);
+}

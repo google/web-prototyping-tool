@@ -17,7 +17,6 @@
 import { loadScript } from 'cd-utils/dom';
 declare const userfeedback: any | undefined;
 
-// View documenation at:
 const feedbackConfiguration = {
   productId: '',
   locale: '',

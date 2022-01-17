@@ -28,10 +28,16 @@ import { AssetsUploadService } from '../assets/assets-upload.service';
 import { DesignSystemService } from '../design-system/design-system.service';
 import { ClipboardService } from '../clipboard/clipboard.service';
 import { isImageMime, isJsonMime } from 'cd-utils/files';
+import * as mbUtils from '../../utils/internal-apis/moonbase.utils';
 import { FileMime, IToast } from 'cd-interfaces';
 
 const UPLOAD_TOAST_ID = 'upload-toast';
 const URL_ERROR = 'Unable to load remote asset, try downloading';
+const MOONBASE_TOAST: IToast = {
+  id: mbUtils.MOONBASE_TAG,
+  showLoader: true,
+  message: 'Fetching from Moonbase ...',
+};
 
 @Injectable()
 export class DragUploadService implements OnDestroy {
@@ -120,6 +126,13 @@ export class DragUploadService implements OnDestroy {
     this._dsService.import(files[0]);
   }
 
+  async handleMoonbase(url: string) {
+    this.showToast(MOONBASE_TOAST);
+    const img = await mbUtils.fileFromMoonbaseURL(url);
+    this.removeToast(mbUtils.MOONBASE_TAG);
+    await this.uploadAsset(img);
+  }
+
   private onDrop = (e: DragEvent) => {
     e.preventDefault();
     this.showDropZone = false;
@@ -140,7 +153,12 @@ export class DragUploadService implements OnDestroy {
     }
   }
 
-  handleURL(_url: string) {
+  getFromMoonbase(url: string) {
+    this.handleMoonbase(url);
+  }
+
+  handleURL(url: string) {
+    if (mbUtils.isMoonbaseURL(url)) return this.getFromMoonbase(url);
     this.showToast({ iconName: 'warning', message: URL_ERROR });
   }
 

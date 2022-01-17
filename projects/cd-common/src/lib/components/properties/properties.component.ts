@@ -60,7 +60,7 @@ export class PropertiesComponent {
   @Input() colorMenuData: cd.ISelectItem[] = [];
   @Input() variablesMenuData: cd.ISelectItem[] = [];
   @Input() attr: cd.IKeyValue[] = [];
-  @Input() projectAssets: cd.AssetMap = {};
+  @Input() projectAssets: cd.IProjectAssets = {};
   @Input() hasActions = false;
   @Input() hasA11y = false;
   @Input() isRecording = false;

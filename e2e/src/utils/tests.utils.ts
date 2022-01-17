@@ -99,7 +99,7 @@ export const setupErrorReporting = (page: Page) => {
     }
 
     if (cm.type() === 'error' && !cm.text().includes(FIREBASE_ERROR)) {
-      fail(`Failing test due to error in console: ${cm.text()}`);
+      fail('Failing test due to error in console');
     }
   });
 };

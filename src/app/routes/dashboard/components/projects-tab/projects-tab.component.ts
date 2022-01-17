@@ -27,7 +27,7 @@ import { ShareDialogComponent } from 'src/app/components/share-dialog/share-dial
 import { constructProjectPath, constructPreviewPath } from 'src/app/utils/route.utils';
 import { CreateProjectPickerComponent } from '../create-project-picker/create-project-picker.component';
 import { ScreenshotService } from 'src/app/services/screenshot-lookup/screenshot-lookup.service';
-import { removeGlobal } from 'src/app/services/debug/debug.utils';
+import { DebugService } from 'src/app/services/debug/debug.service';
 import { DuplicateService } from 'src/app/services/duplicate/duplicate.service';
 import { ProjectDelete, ProjectUpdate } from '../../store/actions/project.action';
 import { ProjectSearchService } from '../../services/search/search.service';
@@ -75,7 +75,7 @@ export class ProjectsTabComponent
   public projects: cd.IProject[] = [];
   public userSearchResults: cd.IProject[] = [];
   public otherSearchResults: cd.IProject[] = [];
-  public loading = environment.e2e || !environment.databaseEnabled ? false : true;
+  public loading = environment.e2e ? false : true;
   public userLoading = false;
   public starredProjects: Set<string> = new Set();
   public QueryState = ProjectQueryState;
@@ -344,8 +344,8 @@ export class ProjectsTabComponent
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this._subscriptions.unsubscribe();
-    removeGlobal(GLOBAL_REMOVE_ALL_PROJECTS);
-    removeGlobal(GLOBAL_REMOVE_ALL_UNTITLED_PROJECTS);
+    DebugService.removeGlobal(GLOBAL_REMOVE_ALL_PROJECTS);
+    DebugService.removeGlobal(GLOBAL_REMOVE_ALL_UNTITLED_PROJECTS);
   }
 
   private shareProject = (project: cd.IProject) => {

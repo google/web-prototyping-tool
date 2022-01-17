@@ -56,7 +56,7 @@ export class IconInputComponent extends InputCollectionDirective implements OnDe
     return this.value || this.defaultIcon;
   }
 
-  @Input() iconClass = ICON_STYLE_CLASSES[IconStyle.MATERIAL_ICONS_FILLED];
+  @Input() iconClass = ICON_STYLE_CLASSES[IconStyle.GOOGLE_MATERIAL_ICONS];
 
   constructor(
     private _overlayService: OverlayService,

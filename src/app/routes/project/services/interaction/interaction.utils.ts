@@ -15,6 +15,7 @@
  */
 
 import { clamp } from 'cd-utils/numeric';
+import { ICanvas, ICanvasPosition } from '../../interfaces/canvas.interface';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ISelectionState } from '../../store/reducers/selection.reducer';
@@ -26,7 +27,7 @@ export type RootFrame = Pick<cd.RootElement, 'id' | 'frame' | 'elementType'>;
 
 const OUTLET_FRAME_GRID_SIZE = 2;
 
-export const selectionRectFromCanvas = (rect: cd.IRect, pos: cd.ICanvasPosition): cd.IRect => {
+export const selectionRectFromCanvas = (rect: cd.IRect, pos: ICanvasPosition): cd.IRect => {
   const { x: cx, y: cy, z } = pos;
   const x = (rect.x - cx) / z;
   const y = (rect.y - cy) / z;
@@ -165,7 +166,7 @@ export const bringOutletToFront = (
 };
 
 export const filterBoardsVisibleInViewport = (
-  canvas: cd.ICanvas,
+  canvas: ICanvas,
   boards: ReadonlyArray<RootFrame>
 ): ReadonlyArray<string> => {
   const { z, y: cy, x: cx } = canvas.position;

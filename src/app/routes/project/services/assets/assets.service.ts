@@ -16,38 +16,50 @@
 
 import * as cd from 'cd-interfaces';
 import { Injectable, OnDestroy } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { IProjectState } from '../../store/reducers';
+import { getAssetsIds } from '../../store/selectors/project-data.selector';
 import { RendererService } from '../../../../services/renderer/renderer.service';
+import { ProjectDataUpdate } from '../../store/actions/project-data.action';
 import { AssetsDeleted, AssetReplace, AssetsNameChanged } from '../../store/actions/assets.action';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AssetsService implements OnDestroy {
-  public assetsStream$ = new BehaviorSubject<cd.AssetMap>({});
+  public assetsStream$ = new BehaviorSubject<cd.IProjectAssets>({});
   private _orderedAssetsStream = new BehaviorSubject<cd.IOrderedProjectAssets>([]);
   private _subscriptions = new Subscription();
   private _orderedAssetsIds: string[] = [];
   private _orderedAssetsIds$: Observable<string[]>;
 
-  get assets$(): Observable<cd.AssetMap> {
+  public get assets$(): Observable<cd.IProjectAssets> {
     return this.assetsStream$.asObservable();
   }
 
-  get orderedAssets$(): Observable<cd.IOrderedProjectAssets> {
+  public get orderedAssets$(): Observable<cd.IOrderedProjectAssets> {
     return this._orderedAssetsStream.asObservable();
   }
 
+  public getAssetForId(id: string): cd.IProjectAsset {
+    const stream = this.assetsStream$.getValue();
+    return stream[id];
+  }
+
+  public getAsset$ = (id: string): Observable<cd.IProjectAsset> => {
+    return this.assetsStream$.pipe(
+      map((assets) => assets[id]),
+      distinctUntilChanged()
+    );
+  };
+
   constructor(
     private readonly _projectStore: Store<IProjectState>,
-    private readonly _rendererService: RendererService,
-    private _projectContentService: ProjectContentService
+    private readonly _rendererService: RendererService
   ) {
-    this._orderedAssetsIds$ = this._projectContentService.assetIds$;
+    this._orderedAssetsIds$ = this._projectStore.pipe(select(getAssetsIds));
     this._subscriptions.add(this._orderedAssetsIds$.subscribe(this.onProjectAssetsIdsSubscription));
   }
 
@@ -55,74 +67,8 @@ export class AssetsService implements OnDestroy {
     this._subscriptions.unsubscribe();
   }
 
-  hasAsset(asset: cd.IProjectAsset): boolean {
-    const assetsMap = this.assetsStream$.value;
-    return asset.id in assetsMap;
-  }
-
-  getAssetForId(id: string): cd.IProjectAsset {
-    const stream = this.assetsStream$.getValue();
-    return stream[id];
-  }
-
-  getAsset$ = (id: string): Observable<cd.IProjectAsset> => {
-    return this.assetsStream$.pipe(
-      map((assets) => assets[id]),
-      distinctUntilChanged()
-    );
-  };
-
-  onDisconnectProject = () => {
+  public onDisconnectProject = () => {
     this.assetsStream$.next({});
-  };
-
-  addAssetDocuments = (assets: cd.IProjectAsset[]) => {
-    for (const newAsset of assets) {
-      const { id } = newAsset;
-      const currentAssets = this.assetsStream$.getValue();
-
-      // Project load (only insert when urls are available. If urls are not
-      // available, they will become available in the future (as processed
-      // by cloud functions), and this method will accordingly be triggered again
-      // with urls)
-      if (!currentAssets.hasOwnProperty(id) && newAsset.urls) {
-        this.addOrUpdate(id, newAsset);
-      }
-    }
-  };
-
-  addMultipleUploadingAssets = (assets: cd.IProjectAsset[]) => {
-    for (const asset of assets) {
-      this.addUploadingAsset(asset);
-    }
-  };
-
-  addUploadingAsset = (asset: cd.IProjectAsset) => {
-    const { id } = asset;
-    this.addOrUpdate(id, asset);
-  };
-
-  onUrlChangedFromRemote = (id: string, urls: cd.ProjectAssetUrls) => {
-    const asset = this.assetsStream$.getValue()[id];
-    if (!asset) return;
-    this.addOrUpdate(id, { ...asset, urls: { ...asset.urls, ...urls } });
-  };
-
-  onNameChanged = (id: string, name: string) => {
-    const asset = this.assetsStream$.getValue()[id];
-    if (name === asset.name) return;
-    this.addOrUpdate(id, { ...asset, name });
-    this._projectStore.dispatch(new AssetsNameChanged(id, name));
-  };
-
-  deleteAsset = (id: string) => {
-    this.delete(id);
-    this._projectStore.dispatch(new AssetsDeleted(id));
-  };
-
-  replaceAsset = (oldId: string, replacementId: string, replacementValue: string) => {
-    this.delete(oldId);
-    this._projectStore.dispatch(new AssetReplace(oldId, replacementId, replacementValue));
   };
 
   private onProjectAssetsIdsSubscription = (assetsIds: string[]) => {
@@ -138,7 +84,7 @@ export class AssetsService implements OnDestroy {
     _orderedAssetsStream.next(ordered);
   };
 
-  private emit = (assets: cd.AssetMap) => {
+  private emit = (assets: cd.IProjectAssets) => {
     const { assetsStream$ } = this;
     assetsStream$.next(assets);
     this.emitOrdered();
@@ -159,5 +105,62 @@ export class AssetsService implements OnDestroy {
     delete newAssets[id];
     _rendererService.deleteProjectAsset([id]);
     this.emit(newAssets);
+  };
+
+  public addAssetDocuments = (assets: cd.IProjectAsset[]) => {
+    for (const newAsset of assets) {
+      const { id } = newAsset;
+      const currentAssets = this.assetsStream$.getValue();
+
+      // Project load (only insert when urls are available. If urls are not
+      // available, they will become available in the future (as processed
+      // by cloud functions), and this method will accordingly be triggered again
+      // with urls)
+      if (!currentAssets.hasOwnProperty(id) && newAsset.urls) {
+        this.addOrUpdate(id, newAsset);
+      }
+    }
+  };
+
+  public addMultipleUploadingAssets = (assets: cd.IProjectAsset[]) => {
+    for (const asset of assets) {
+      this.addUploadingAsset(asset);
+    }
+  };
+
+  public addUploadingAsset = (asset: cd.IProjectAsset) => {
+    const { id } = asset;
+    const newOrderedIds = [id, ...this._orderedAssetsIds];
+    this._projectStore.dispatch(new ProjectDataUpdate({ assetIds: newOrderedIds }, false));
+    this.addOrUpdate(id, asset);
+  };
+
+  public onUrlChangedFromRemote = (id: string, urls: cd.ProjectAssetUrls) => {
+    const asset = this.assetsStream$.getValue()[id];
+    if (!asset) return;
+    this.addOrUpdate(id, { ...asset, urls: { ...asset.urls, ...urls } });
+  };
+
+  public onNameChanged = (id: string, name: string) => {
+    const asset = this.assetsStream$.getValue()[id];
+    if (name === asset.name) return;
+    this.addOrUpdate(id, { ...asset, name });
+    this._projectStore.dispatch(new AssetsNameChanged(id, name));
+  };
+
+  public deleteAsset = (id: string) => {
+    this.delete(id);
+    const oldOrderedIds = this._orderedAssetsIds || [];
+    const newOrderedIds = oldOrderedIds.filter((oldId) => oldId !== id);
+    this._projectStore.dispatch(new ProjectDataUpdate({ assetIds: newOrderedIds }));
+    this._projectStore.dispatch(new AssetsDeleted(id));
+  };
+
+  replaceAsset = (oldId: string, replacementId: string, replacementValue: string) => {
+    this.delete(oldId);
+    const oldOrderedIds = this._orderedAssetsIds || [];
+    const newOrderedIds = oldOrderedIds.filter((id) => id !== oldId);
+    this._projectStore.dispatch(new ProjectDataUpdate({ assetIds: newOrderedIds }));
+    this._projectStore.dispatch(new AssetReplace(oldId, replacementId, replacementValue));
   };
 }

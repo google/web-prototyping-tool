@@ -17,7 +17,7 @@
 import { IProject, IProjectContentDocument } from './project';
 import { IDesignSystemDocument } from './design';
 import { ElementPropertiesMap } from './property-models';
-import { AssetMap } from './assets';
+import { IProjectAssets } from './assets';
 import { EntityType } from './entity-types';
 import { ICodeComponentDocument } from './code-component';
 import { ProjectDataset } from './dataset';
@@ -27,7 +27,7 @@ export interface IOfflineProjectState {
   elementProperties: ElementPropertiesMap;
   designSystem: IDesignSystemDocument;
   codeComponents?: ICodeComponentDocument[];
-  assets?: AssetMap;
+  assets?: IProjectAssets;
   datasets?: ProjectDataset[];
 }
 

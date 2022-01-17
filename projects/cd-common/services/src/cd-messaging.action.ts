@@ -44,7 +44,6 @@ export const MESSAGE_PROJECT_ASSET_DELETE = 'Project Asset Delete';
 export const MESSAGE_PREVIEW_SHOW = 'Preview Show';
 export const MESSAGE_PREVIEW_CLEAR = 'Preview Clear';
 export const MESSAGE_RESET = 'Reset Renderer';
-export const MESSAGE_APPLY_ELEMENT_CHANGES = 'Apply Element Changes';
 export const MESSAGE_TOGGLE_HOTSPOTS = 'Hotspots';
 
 export const MESSAGE_SET_APP_THEME = 'Set Application Theme';
@@ -143,31 +142,30 @@ export class PostMessageSetApplicationTheme extends BaseMessage implements IPost
 
 export class PostMessagePropertiesAdd extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_PROPERTIES_ADD;
-  constructor(public propertyModels: cd.PropertyModel[]) {
+  constructor(
+    public propertyModels: cd.PropertyModel[],
+    public propagateChangesToDependents = true
+  ) {
     super();
   }
 }
 
 export class PostMessagePropertiesUpdate extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_PROPERTIES_UPDATE;
-  constructor(public updates: cd.ElementPropertiesMap, public recompile = false) {
+  constructor(
+    public updates: cd.ElementPropertiesMap,
+    public recompile = false,
+    public propagateChangesToDependents = true
+  ) {
     super();
   }
 }
 
 export class PostMessagePropertiesUpdatePartial extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_PROPERTIES_UPDATE_PARTIAL;
-  constructor(public updates: cd.IPropertiesUpdatePayload[]) {
-    super();
-  }
-}
-
-export class PostMessageApplyElementChanges extends BaseMessage implements IPostMessage {
-  readonly name = MESSAGE_APPLY_ELEMENT_CHANGES;
   constructor(
-    public createdElements: cd.PropertyModel[] = [],
-    public updatedElements: cd.PropertyModel[] = [],
-    public deletedElementIds: string[] = []
+    public updates: cd.IPropertiesUpdatePayload[],
+    public propagateChangesToDependents = true
   ) {
     super();
   }
@@ -175,7 +173,7 @@ export class PostMessageApplyElementChanges extends BaseMessage implements IPost
 
 export class PostMessagePropertiesDelete extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_PROPERTIES_DELETE;
-  constructor(public ids: string[]) {
+  constructor(public ids: string[], public propagateChangesToDependents = true) {
     super();
   }
 }
@@ -230,7 +228,7 @@ export class PostMessageProjectAssetDelete extends BaseMessage implements IPostM
 
 export class PostMessagePreviewShow extends BaseMessage implements IPostMessage {
   readonly name = MESSAGE_PREVIEW_SHOW;
-  constructor(public preview: cd.IElementChangePayload[]) {
+  constructor(public preview: cd.IPropertiesUpdatePayload[]) {
     super();
   }
 }
@@ -500,7 +498,5 @@ export type CdPostMessage =
   | PostMessageSetApplicationTheme
   | PostMessageSetPreviewMode
   | PostMessageToast
-  | PostMessageURLNavigation
-  | PostMessageApplyElementChanges
   | PostMessageToggleHotspots
   | PostMessageURLNavigation;

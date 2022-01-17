@@ -53,7 +53,7 @@ export class AdvancedPropsComponent {
   public validPseudo = true;
 
   @Input() designSystem!: cd.IDesignSystem;
-  @Input() projectAssets!: cd.AssetMap;
+  @Input() projectAssets!: cd.IProjectAssets;
   @Input() hideAdvancedAttrs = false;
   @Input() attr: cd.IKeyValue[] = [];
   @Input()

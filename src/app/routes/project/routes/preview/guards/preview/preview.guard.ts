@@ -18,16 +18,14 @@ import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { PROJECT_ID_ROUTE_PARAM } from 'src/app/configs/routes.config';
 import { ProjectGuard } from '../../../../guards';
 
 @Injectable()
 export class PreviewGuard implements CanActivate {
   constructor(private projectGuard: ProjectGuard) {}
 
-  canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
-    const projectId = route.params[PROJECT_ID_ROUTE_PARAM];
-    const checks$ = forkJoin([this.projectGuard.projectOpened(projectId)]).pipe(
+  canActivate(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<boolean> {
+    const checks$ = forkJoin([this.projectGuard.checkStore()]).pipe(
       map(this.combineAllChecks),
       take(1)
     );

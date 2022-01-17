@@ -15,18 +15,26 @@
  */
 
 import { Page } from 'puppeteer';
-import { getBoardIds, getDataForElementName, getProjectContent } from '../../utils/project.utils';
+import { POLLING } from '../../consts/puppeteer.consts';
+import { getDataForElementName } from '../../utils/project.utils';
 import * as selectors from '../../consts/query-selectors/';
 import * as cd from 'cd-interfaces';
 
-// TODO: boardIndex is not a reliable way of finding a board id, since we no longer store
-// and array of boardIds
 export const getBoardId = async (page: Page, boardIndex: number): Promise<string> => {
-  const projectContent = await getProjectContent(page);
-  const boardIds = getBoardIds(projectContent);
-  if (!boardIds.length) return '';
-  const boardId = boardIds[boardIndex];
-  return boardId || '';
+  const boardIdHandle = await page.waitForFunction(
+    (ctxBoardIndex: number): string | undefined => {
+      const app = (window as any).app;
+      if (!app || !app.appState) return;
+      const projectState = app.appState.project;
+      if (!projectState) return;
+      const boardId = projectState.projectData.project.boardIds[ctxBoardIndex];
+      return boardId;
+    },
+    POLLING,
+    boardIndex
+  );
+  const boardIdValue = (await boardIdHandle.jsonValue()) as string;
+  return boardIdValue;
 };
 
 export const getElementId = async (
@@ -34,21 +42,32 @@ export const getElementId = async (
   boardIndexOrId: number | string,
   indices: number[]
 ): Promise<string> => {
-  const projectContent = await getProjectContent(page);
-  if (!projectContent) return '';
-  const boardIds = getBoardIds(projectContent);
-  const elementProperties = projectContent.elementContent.records;
-
-  const boardId = typeof boardIndexOrId === 'string' ? boardIndexOrId : boardIds[boardIndexOrId];
-  if (!boardId) return '';
-  let parent = elementProperties[boardId];
-  let elementId = '';
-  for (const index of indices) {
-    if (!parent) return '';
-    elementId = parent.childIds[index];
-    parent = elementProperties[elementId];
-  }
-  return elementId;
+  const elementIdHandle = await page.waitForFunction(
+    (ctxBoardIndexOrId: number | string, ctxIndices: number[]): string | undefined => {
+      const app = (window as any).app;
+      if (!app || !app.appState) return;
+      const projectState = app.appState.project;
+      if (!projectState) return;
+      const boardId =
+        typeof ctxBoardIndexOrId === 'string'
+          ? ctxBoardIndexOrId
+          : projectState.projectData.project.boardIds[ctxBoardIndexOrId];
+      if (!boardId) return;
+      let parent = projectState.elementProperties.elementProperties[boardId];
+      let elementId = '';
+      for (const index of ctxIndices) {
+        if (!parent) return;
+        elementId = parent.childIds[index];
+        parent = projectState.elementProperties.elementProperties[elementId];
+      }
+      return elementId;
+    },
+    POLLING,
+    boardIndexOrId,
+    indices
+  );
+  const elementIdValue = (await elementIdHandle.jsonValue()) as string;
+  return elementIdValue;
 };
 
 export const glassBoardSelector = async (page: Page, boardIndex: number): Promise<string> => {

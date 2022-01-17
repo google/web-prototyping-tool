@@ -22,7 +22,7 @@ import { addRootStylesToDocument } from '../utils/styles.utils';
 import { messagingService } from '../utils/messaging.utils';
 import { PostMessageCodeComponentPreviewReady } from 'cd-common/services';
 import { isString } from 'cd-utils/string';
-import { RendererAPI } from '../utils/state.api';
+import { WebPrototypingToolRendererAPI } from '../utils/state.api';
 
 const CENTER_CODE_COMPONENT_CLASS = 'center-code-component';
 const PREVIEW_MODE_ACTIVE_CLASS = 'cd-preview-mode-active';
@@ -30,13 +30,13 @@ const PREVIEW_MODE_ACTIVE_CLASS = 'cd-preview-mode-active';
  * This class manages the state of a code component preview outlet
  */
 export class CodeComponentOutletManager {
-  private _api: RendererAPI;
+  private _api: WebPrototypingToolRendererAPI;
   private customElement?: HTMLElement | null;
   private initialized = false;
 
   constructor(public id: string, public outletDocument: HTMLDocument, public previewMode = false) {
     this.init();
-    this._api = new RendererAPI(outletDocument.defaultView, true);
+    this._api = new WebPrototypingToolRendererAPI(outletDocument.defaultView, true);
   }
 
   destroy() {
@@ -130,7 +130,7 @@ export class CodeComponentOutletManager {
     const value = instanceInputs?.[name] ?? defaultValue;
     const { mergedProperties, loadedData } = rendererState;
 
-    // TODO: Should do a design system lookup or convert to var()
+    // TODO:  Should do a design system lookup or convert to var()
     if (inputType === cd.PropertyInput.Color) return utils.valueFromIValue(value);
     if (utils.isDataBoundValue(value)) {
       return utils.lookupDataBoundValue(value, mergedProperties, loadedData);

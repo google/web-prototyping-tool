@@ -29,13 +29,6 @@ export const FirebaseField = {
   OwnerEmail: 'owner.email',
   ProjectId: 'projectId',
   ThreadId: 'threadId',
-  Payload: 'payload',
-  Sets: 'sets',
-  Updates: 'updates',
-  Deletes: 'deletes',
-  SessionId: 'sessionId',
-  fromSessionId: 'fromSessionId',
-  toSessionId: 'toSessionId',
 } as const;
 
 export const FirebaseCollection = {
@@ -50,11 +43,6 @@ export const FirebaseCollection = {
   ScreenshotQueue: 'screenshot_queue',
   StatusMessage: 'status_message',
   UserSettings: 'user_settings',
-  ChangeRequests: 'change_requests',
-  UserPresence: 'user_presence',
-  RtcConnections: 'rtc_connections',
-  fromUserIceCandidates: 'fromUserIceCandidates',
-  toUserIceCandidates: 'toUserIceCandidates',
 } as const;
 
 export type FirebaseCollectionType = typeof FirebaseCollection[keyof typeof FirebaseCollection];

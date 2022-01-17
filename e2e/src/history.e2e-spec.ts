@@ -183,7 +183,7 @@ describe('History (undo-redo)', () => {
     );
   });
 
-  it('b/137911132 - should undo/redo board copy-paste correctly', async () => {
+  it('should undo/redo board copy-paste correctly', async () => {
     await selectAndViewBoard(page, 0);
     await dragElementFromComponentToBoard(page, 0);
 
@@ -291,7 +291,7 @@ describe('History (undo-redo)', () => {
     await clickCanvas(page, true);
     await contextMenu.undo(page);
 
-    // XXX (): Weird we need this, but waitForGlassElem fails
+    // XXX : Weird we need this, but waitForGlassElem fails
     // if we don't trigger a selection change
     await clearSelection(page);
 
@@ -628,7 +628,7 @@ describe('History (undo-redo)', () => {
     // This tests immutability of flattening & unflattening design system values for colors
     // including:
     // - 1. We've redone the deletion of the theme color, so in the props panel it should unbind.
-    // TODO This top-level e2e-spec should have less reliance on selectors directly
+    // TODO  This top-level e2e-spec should have less reliance on selectors directly
     //               (i.e. we should have a util function for this for abstraction.)
     await page.waitForSelector(selectors.PROPS_BACKGROUND_COLOR_INPUT_CHIP(cssNth(0)), {
       hidden: true,

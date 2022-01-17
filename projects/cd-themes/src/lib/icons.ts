@@ -17,6 +17,7 @@
 import type { ReadonlyRecord } from 'cd-interfaces';
 
 export enum IconStyle {
+  GOOGLE_MATERIAL_ICONS,
   MATERIAL_ICONS_FILLED,
   MATERIAL_ICONS_OUTLINED,
   MATERIAL_ICONS_ROUNDED,
@@ -24,6 +25,7 @@ export enum IconStyle {
 }
 
 export const ICON_FONT_FAMILY: ReadonlyRecord<IconStyle, string> = {
+  [IconStyle.GOOGLE_MATERIAL_ICONS]: 'Google Material Icons',
   [IconStyle.MATERIAL_ICONS_FILLED]: 'Material Icons',
   [IconStyle.MATERIAL_ICONS_OUTLINED]: 'Material Icons Outlined',
   [IconStyle.MATERIAL_ICONS_ROUNDED]: 'Material Icons Round',
@@ -31,6 +33,7 @@ export const ICON_FONT_FAMILY: ReadonlyRecord<IconStyle, string> = {
 };
 
 export const ICON_STYLE_CLASSES: ReadonlyRecord<IconStyle, string> = {
+  [IconStyle.GOOGLE_MATERIAL_ICONS]: 'google-material-icons',
   [IconStyle.MATERIAL_ICONS_FILLED]: 'material-icons',
   [IconStyle.MATERIAL_ICONS_OUTLINED]: 'material-icons-outlined',
   [IconStyle.MATERIAL_ICONS_ROUNDED]: 'material-icons-round',
@@ -38,6 +41,7 @@ export const ICON_STYLE_CLASSES: ReadonlyRecord<IconStyle, string> = {
 };
 
 export const ORDERED_ICON_STYLES: Array<IconStyle> = [
+  IconStyle.GOOGLE_MATERIAL_ICONS,
   IconStyle.MATERIAL_ICONS_FILLED,
   IconStyle.MATERIAL_ICONS_OUTLINED,
   IconStyle.MATERIAL_ICONS_ROUNDED,
@@ -45,6 +49,8 @@ export const ORDERED_ICON_STYLES: Array<IconStyle> = [
 ];
 
 export const ICON_FONT_FAMILY_CLASS_MAP = {
+  [ICON_FONT_FAMILY[IconStyle.GOOGLE_MATERIAL_ICONS]]:
+    ICON_STYLE_CLASSES[IconStyle.GOOGLE_MATERIAL_ICONS],
   [ICON_FONT_FAMILY[IconStyle.MATERIAL_ICONS_FILLED]]:
     ICON_STYLE_CLASSES[IconStyle.MATERIAL_ICONS_FILLED],
   [ICON_FONT_FAMILY[IconStyle.MATERIAL_ICONS_OUTLINED]]:
@@ -56,6 +62,7 @@ export const ICON_FONT_FAMILY_CLASS_MAP = {
 };
 
 export const ICON_FONT_FAMILY_STYLE_MAP = {
+  [ICON_FONT_FAMILY[IconStyle.GOOGLE_MATERIAL_ICONS]]: IconStyle.GOOGLE_MATERIAL_ICONS,
   [ICON_FONT_FAMILY[IconStyle.MATERIAL_ICONS_FILLED]]: IconStyle.MATERIAL_ICONS_FILLED,
   [ICON_FONT_FAMILY[IconStyle.MATERIAL_ICONS_OUTLINED]]: IconStyle.MATERIAL_ICONS_OUTLINED,
   [ICON_FONT_FAMILY[IconStyle.MATERIAL_ICONS_ROUNDED]]: IconStyle.MATERIAL_ICONS_ROUNDED,

@@ -21,6 +21,7 @@ const SPLIT_VALUE = '-';
 @Component({
   selector: 'app-date-props',
   templateUrl: './date-props.component.html',
+  styleUrls: ['./date-props.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatePropsComponent {

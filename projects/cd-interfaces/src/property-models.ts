@@ -18,7 +18,6 @@ import { IBoardProperties, IComponentInstance } from './component-instances';
 import { IStringMap, ReadonlyRecord, RecursivePartial } from './index';
 import { ISymbolInstanceProperties, ISymbolProperties } from './symbols';
 import { ICodeComponentDocument } from './code-component';
-import { IElementChangePayload } from './project-changes';
 // TODO: Rename to reflect component naming
 // TODO: Replace with IComponentInstance<T as IBaseElementInputs>
 
@@ -65,12 +64,13 @@ export interface ICreateBoardPayload {
 
 export interface IGroupElementsPayload {
   groupElementId: string;
-  changes: IElementChangePayload[];
+  updates: IPropertiesUpdatePayload[];
 }
 
 export interface IUngroupElementsPayload {
   unGroupedIds: string[];
-  changes: IElementChangePayload[];
+  deletions: PropertyModel[];
+  updates: IPropertiesUpdatePayload[];
 }
 
 export interface IGridLayoutPayload {

@@ -32,7 +32,7 @@ export const exceptionsCollection = firebaseApp
   .firestore()
   .collection(FirebaseCollection.Exceptions);
 
-const PROD_URL_PORTION = 'prod-app';
+const PROD_URL_PORTION = 'app-app';
 
 export const isProd = () => APP_URL.indexOf(PROD_URL_PORTION) !== -1;
 
@@ -41,5 +41,3 @@ export const getUser = async (userId: string): Promise<IUser> => {
   if (!user || !user.email) throw new Error('Cannot find user information');
   return { id: userId, email: user.email, name: user.displayName, photoUrl: user.photoURL };
 };
-
-export const createTimestamp = () => firebaseAdmin.firestore.Timestamp.now();

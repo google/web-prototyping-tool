@@ -45,12 +45,12 @@ export const TEST_PROJECT_ID = 'test-project';
 
 export const TEST_USER_NAME = 'bob';
 export const TEST_USER_ID = 'u123';
-export const TEST_USER_EMAIL = `${TEST_USER_NAME}@google.com`;
+export const TEST_USER_EMAIL = `${TEST_USER_NAME}`;
 export const TEST_USER_IDENTITY: cd.IUserIdentity = { id: TEST_USER_ID, email: TEST_USER_EMAIL };
 
 export const TEST_USER_NAME2 = 'jane';
 export const TEST_USER_ID2 = 'u456';
-export const TEST_USER_EMAIL2 = `${TEST_USER_NAME2}@google.com`;
+export const TEST_USER_EMAIL2 = `${TEST_USER_NAME2}`;
 export const TEST_USER_IDENTITY2: cd.IUserIdentity = { id: TEST_USER_ID2, email: TEST_USER_EMAIL2 };
 
 export const TEST_PROJECT: cd.IProject = {
@@ -58,6 +58,9 @@ export const TEST_PROJECT: cd.IProject = {
   type: cd.DefaultProjectType,
   homeBoardId: 'board1',
   numComments: 3,
+  boardIds: ['board1', 'board2'],
+  assetIds: [],
+  symbolIds: [],
   name: 'My Project',
   owner: { id: TEST_USER_ID, email: TEST_USER_EMAIL },
   creator: { id: TEST_USER_ID, email: TEST_USER_EMAIL },

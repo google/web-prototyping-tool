@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ICanvasState } from 'cd-interfaces';
+import { ICanvasState } from '../interfaces/canvas.interface';
 
 export const BOARD_PADDING_MULTIPLIER = 1.2;
 export const BOUNDS_PADDING = 150;

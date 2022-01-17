@@ -69,7 +69,7 @@ export class A11yCustomAttrsComponent {
   }
 
   onAriaAttrDelete(attr: IA11yAttr) {
-    // TODO: cleanup
+    // TODO:  cleanup
 
     // Find the index of the next/prev attr to focus on when this attr is removed.
     // If all are deleted, focus on add button

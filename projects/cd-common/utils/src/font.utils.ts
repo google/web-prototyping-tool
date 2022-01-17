@@ -24,7 +24,7 @@ const PREVIEW_NAMESPACE = ':PREV';
 const fontCache = new Map<string, string>();
 /**
  * Load fonts from fonts.google.com and cache results
- * TODO implement service worker for offline cache
+ * TODO  implement service worker for offline cache
  * @param family
  * @param variants
  * @param text

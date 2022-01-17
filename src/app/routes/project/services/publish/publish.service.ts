@@ -27,6 +27,7 @@ import { Subscription, Observable, of, forkJoin } from 'rxjs';
 import { Dictionary } from '@ngrx/entity';
 import { selectPublishEntries } from '../../store/selectors/publish.selector';
 import { ElementPropertiesUpdate, CodeComponentUpdate } from '../../store/actions';
+import { getProject } from '../../store/selectors';
 import { AnalyticsService } from 'src/app/services/analytics/analytics.service';
 import { createPublishEntry, updatePublishEntry, createVersionMetadata } from './publish.utils';
 import { DatabaseService } from 'src/app/database/database.service';
@@ -35,7 +36,6 @@ import { switchMap, catchError, map } from 'rxjs/operators';
 import { convertUserToUserIdentity } from 'src/app/utils/user.utils';
 import { AnalyticsEvent } from 'cd-common/analytics';
 import { DatabaseChangesService } from 'src/app/database/changes/database-change.service';
-import { ProjectContentService } from 'src/app/database/changes/project-content.service';
 import { PublishDetailsModalComponent } from '../../components/publish-details/publish-details-modal.component';
 
 @Injectable({ providedIn: 'root' })
@@ -54,13 +54,12 @@ export class PublishService extends AbstractOverlayControllerDirective implement
     private _analyticsService: AnalyticsService,
     private _databaseService: DatabaseService,
     private _databaseChangesService: DatabaseChangesService,
-    private _duplicateService: DuplicateService,
-    private _projectContentService: ProjectContentService
+    private _duplicateService: DuplicateService
   ) {
     super(overlayService);
 
     const user$ = this._projectStore.pipe(select(getUser));
-    const project$ = this._projectContentService.project$;
+    const project$ = this._projectStore.pipe(select(getProject));
     const publishEntries$ = this._projectStore.pipe(select(selectPublishEntries));
 
     this._subscriptions.add(user$.subscribe(this._onUserSubscription));

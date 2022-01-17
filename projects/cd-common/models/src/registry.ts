@@ -116,7 +116,7 @@ const processComponentProps = (component: cd.IComponent): cd.IPropertyGroup[] =>
 
     // Size
     if (missingProperty(allProps, cd.PropertyType.StyleSize) && !component.preventResize) {
-      // TODO Add support for resize types
+      // TODO,  Add support for resize types
       // Do not add for Vertical/Horizontal/Uniform resize types
       // For example, the icon is resized uniformly
       if (!component.resizeType || component.resizeType === cd.ResizeType.Any) {

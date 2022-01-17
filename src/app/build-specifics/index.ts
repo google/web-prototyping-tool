@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+import { AngularFireModule } from '@angular/fire';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
-import { mockModules, mockProviders, devModules, devProviders } from './config';
+import { AbstractStorageService } from '../services/storage/abstract-storage.service';
+import { FireStorageService } from '../services/storage/fire-storage.service';
 
-const { databaseEnabled } = environment;
-
-export const extModules = databaseEnabled ? devModules : mockModules;
-export const exProviders = databaseEnabled ? devProviders : mockProviders;
+export const extModules = [
+  AngularFireModule.initializeApp(environment.firebase),
+  StoreDevtoolsModule.instrument({ maxAge: 25 }),
+];
+export const exProviders = [{ provide: AbstractStorageService, useClass: FireStorageService }];

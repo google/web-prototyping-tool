@@ -20,11 +20,6 @@ import * as models from 'cd-common/models';
 import * as utils from 'cd-common/utils';
 import * as cd from 'cd-interfaces';
 import { createId } from 'cd-utils/guid';
-import {
-  convertPropsUpdateToUpdateChanges,
-  createElementChangePayload,
-  mergeChangeIntoProperties,
-} from 'cd-common/utils';
 
 export const GROUP_ELEMENT_NAME = 'Group';
 
@@ -68,7 +63,7 @@ export const groupElements = (
   layout?: cd.LayoutMode
 ): cd.IGroupElementsPayload => {
   // get location of where to creat group
-  const childStyleChanges: cd.IElementChangePayload[] = [];
+  const childStyleUpdates: cd.IPropertiesUpdatePayload[] = [];
   const positionMap = models.buildPositionMapForElements(elements, elementProps);
   const sortedElements = models.sortElementsByPosition(elements, positionMap);
   const sortedIds = sortedElements.map((el) => el.id);
@@ -86,9 +81,7 @@ export const groupElements = (
     const hasFixed = aUtils.someElementsHaveFixedPosition(elements);
     aUtils.applyAbsolutePositionToGroup(newParent, bounds, hasFixed);
     const childStyles = aUtils.adjustAbsolutePositionForChildren(bounds, elements, renderRects);
-    const childUpdateChanges = convertPropsUpdateToUpdateChanges(childStyles);
-    const childChange = createElementChangePayload(undefined, childUpdateChanges);
-    childStyleChanges.push(childChange);
+    childStyleUpdates.push(...childStyles);
   }
   /////////////////////////////////////////////////////////////////////
   const { id: groupElementId } = newParent;
@@ -96,75 +89,70 @@ export const groupElements = (
   const added = [newParent];
   const groupId = [groupElementId];
   // need to apply insert updates to elementProperties
-  const insertChange = models.insertElements(groupId, insertLocation, elementProps, added);
+  const insertUpdates = models.insertElements(groupId, insertLocation, elementProps, added);
   // so that move updates below are computed correctly
   // this also includes mergingin in update to add newParent
-  elementProps = mergeChangeIntoProperties(elementProps, insertChange);
+  elementProps = models.mergeUpdatesIntoProperties(elementProps, insertUpdates);
   // move existing propertyModels into new parent
   const moveLocation = utils.buildInsertLocation(groupElementId, cd.InsertRelation.Append);
-  const moveChange = models.insertElements(sortedIds, moveLocation, elementProps);
-  const changes = [insertChange, moveChange, ...childStyleChanges];
-  return { groupElementId, changes };
+  const moveUpdates = models.insertElements(sortedIds, moveLocation, elementProps);
+  const updates = [...insertUpdates, ...moveUpdates, ...childStyleUpdates];
+  return { groupElementId, updates };
 };
 
 /**
  * Ensure that the parent of each deleted element has the correct childIds assigned
  * This addresses an issue where multiselect + ungroup and removes duplicate updates
- *
- * TODO: This shouldn't be necessary once we move to fractional indices
  */
 const stanitizeUpdates = (
-  changes: cd.IElementChangePayload[],
-  deletes: string[]
-): cd.IElementChangePayload[] => {
+  updates: cd.IPropertiesUpdatePayload[],
+  deletions: cd.PropertyModel[]
+): cd.IPropertiesUpdatePayload[] => {
   // Only an issue for multi-select
-  if (deletes.length === 1) return changes;
+  if (deletions.length === 1) return updates;
 
-  const allSets = changes.flatMap((c) => c.sets || []);
-  const allUpdates = changes.flatMap((c) => c.updates || []);
-  const allDeletes = changes.flatMap((c) => c.deletes || []);
+  const deletedIds = deletions.map((item) => item.id);
 
-  const sanitizedUpdates = allUpdates
-    .reduce<cd.IUpdateChange<cd.PropertyModel>[]>((acc, updateChange) => {
-      const updateIsDeleted = deletes.includes(updateChange.id);
-      const parentId = updateChange.update.parentId;
-      const updateHasParentIdThatDoesntExist = parentId && deletes.includes(parentId);
+  const sanitized = updates
+    .reduce<cd.IPropertiesUpdatePayload[]>((acc, update) => {
+      const updateIsDeleted = deletedIds.includes(update.elementId);
+      const parentId = update.properties.parentId;
+      const updateHasParentIdThatDoesntExist = parentId && deletedIds.includes(parentId);
       if (!updateIsDeleted && !updateHasParentIdThatDoesntExist) {
-        const dupeIdx = acc.findIndex((item) => item.id === updateChange.id);
+        const dupeIdx = acc.findIndex((item) => item.elementId === update.elementId);
         if (dupeIdx !== -1) {
           // Ensure duplicate childIds are merged
           const dupe = acc[dupeIdx];
-          const dupeChildIds = dupe.update.childIds || [];
-          const updateChildIds = updateChange.update.childIds || [];
+          const dupeChildIds = dupe.properties.childIds || [];
+          const updateChildIds = update.properties.childIds || [];
           const childIds = new Set([...dupeChildIds, ...updateChildIds]);
           const mergedIds = [...childIds];
-          acc[dupeIdx].update.childIds = mergedIds;
+          acc[dupeIdx].properties.childIds = mergedIds;
         } else {
-          acc.push(updateChange);
+          acc.push(update);
         }
       }
       return acc;
     }, [])
-    .map((updateChange, _idx, arr) => {
+    .map((update, _idx, arr) => {
       // Verifies that each childId exists on the parent element
       // Could be combined with the reduce above
-      const { parentId } = updateChange.update;
+      const { parentId } = update.properties;
       if (parentId) {
-        const parentIdx = arr.findIndex((item) => item.id === parentId);
+        const parentIdx = arr.findIndex((item) => item.elementId === parentId);
         if (parentIdx !== -1) {
           const parent = arr[parentIdx];
-          const childIds = (parent && parent.update.childIds) || [];
-          const hasChildId = childIds.includes(updateChange.id);
+          const childIds = (parent && parent.properties.childIds) || [];
+          const hasChildId = childIds.includes(update.elementId);
           if (!hasChildId) {
-            arr[parentIdx].update.childIds = [...childIds, updateChange.id];
+            arr[parentIdx].properties.childIds = [...childIds, update.elementId];
           }
         }
       }
-      return updateChange;
+      return update;
     });
 
-  const sanitizedChange = createElementChangePayload(allSets, sanitizedUpdates, allDeletes);
-  return [sanitizedChange];
+  return sanitized;
 };
 
 export const unGroupElements = (
@@ -172,8 +160,8 @@ export const unGroupElements = (
   elementProps: cd.ElementPropertiesMap,
   renderRects: cd.RenderRectMap
 ): cd.IUngroupElementsPayload => {
-  const changes: cd.IElementChangePayload[] = [];
-  const deletes: string[] = [];
+  const updates: cd.IPropertiesUpdatePayload[] = [];
+  const deletions: cd.PropertyModel[] = [];
   const unGroupedIds: string[] = [];
 
   // for each id, we need to take its children and insert into parent, then delete it
@@ -181,16 +169,14 @@ export const unGroupElements = (
     const { id, childIds } = el;
     if (childIds.length === 0) break; // don't ungroup element with no children
     const moveLocation = utils.buildInsertLocation(id, cd.InsertRelation.Before);
-    const moveChange = models.insertElements(childIds, moveLocation, elementProps);
-    const childStyleChange = aUtils.ungroupAbsolutePositionChildren(el, elementProps, renderRects);
-    changes.push(moveChange, childStyleChange);
+    const moveUpdates = models.insertElements(childIds, moveLocation, elementProps);
+    const childStyleUpdates = aUtils.ungroupAbsolutePositionChildren(el, elementProps, renderRects);
+    updates.push(...moveUpdates, ...childStyleUpdates);
     unGroupedIds.push(...childIds);
-    deletes.push(el.id);
+    deletions.push(el);
   }
 
-  const sanitizedChanges = stanitizeUpdates(changes, deletes);
-  const deletionChange = createElementChangePayload(undefined, undefined, deletes);
-  const allChanges = [...sanitizedChanges, deletionChange];
+  const sanitizedUpdates = stanitizeUpdates(updates, deletions);
 
-  return { changes: allChanges, unGroupedIds };
+  return { deletions, updates: sanitizedUpdates, unGroupedIds };
 };

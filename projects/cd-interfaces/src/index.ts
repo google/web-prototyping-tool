@@ -55,7 +55,6 @@ export type Dimensions = Pick<IRect, 'width' | 'height'>;
 export interface ILockingRect extends IRect {
   locked?: boolean;
 }
-
 export type IStringMap<T> = Record<string, T>;
 
 export interface IKeyValue extends IValue {

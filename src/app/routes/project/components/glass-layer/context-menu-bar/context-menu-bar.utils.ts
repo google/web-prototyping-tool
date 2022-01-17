@@ -15,9 +15,11 @@
  */
 
 import { IContextAction, OVERLAY_OFFSET, ComponentAction } from './context-menu-bar.interface';
+import { ICanvas } from '../../../interfaces/canvas.interface';
 import { clamp, half } from 'cd-utils/numeric';
 import { getComponent, isRoot, isSymbolInstance, isImage, isGeneric } from 'cd-common/models';
 import { generateBounds } from '../../../utils/canvas.utils';
+import { Rect } from 'cd-utils/geometry';
 import * as cd from 'cd-interfaces';
 import * as config from './context-menu-bar.config';
 
@@ -57,7 +59,7 @@ export const calculateSelectionBounds = (
   selectedIds: string[],
   renderRects: cd.RenderRectMap,
   outletFrames: ReadonlyArray<cd.IRenderResult>
-): cd.Rect | undefined => {
+): Rect | undefined => {
   const selectedElementRects = rectsForSelectedIds(selectedIds, renderRects, outletFrames);
   if (selectedElementRects.length === 0) return;
   const [firstSelectedElementRect] = selectedElementRects;
@@ -88,10 +90,10 @@ export interface IAdjustedOverlay {
 }
 
 export const adjustedCanvasForOverlay = (
-  canvas: cd.ICanvas,
+  canvas: ICanvas,
   barHeight: number,
   barWidth: number,
-  selectionBounds: cd.Rect
+  selectionBounds: Rect
 ): IAdjustedOverlay => {
   const [selectionOffsetX, selectionOffsetY] = selectionBounds;
   const { position, offset, viewPortHeight, viewPortWidth } = canvas;
@@ -112,7 +114,7 @@ export const adjustedCanvasForOverlay = (
 
 export const menuRectIsVisible = (
   adjustedOverlay: IAdjustedOverlay,
-  selectionBounds: cd.Rect,
+  selectionBounds: Rect,
   barWidth: number,
   barHeight: number,
   z: number

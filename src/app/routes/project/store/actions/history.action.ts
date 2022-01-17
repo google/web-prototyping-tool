@@ -18,9 +18,14 @@ import { Action } from '@ngrx/store';
 
 export const HISTORY = '[History]';
 
+export const HISTORY_INIT_SENTINEL = `${HISTORY} Init Sentinel`;
 export const HISTORY_UNDO = `${HISTORY} Undo`;
 export const HISTORY_REDO = `${HISTORY} Redo`;
 export const HISTORY_RESET = `${HISTORY} Reset`;
+
+export class HistoryInitSentinel implements Action {
+  readonly type = HISTORY_INIT_SENTINEL;
+}
 
 export class HistoryUndo implements Action {
   readonly type = HISTORY_UNDO;
