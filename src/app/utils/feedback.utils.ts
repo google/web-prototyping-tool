@@ -19,11 +19,11 @@ declare const userfeedback: any | undefined;
 
 // View documenation at:
 const feedbackConfiguration = {
-  productId: '5138898',
-  locale: 'en-US',
+  productId: '',
+  locale: '',
 };
 let hasloaded = false;
-const FEEDBACK_API = 'https://support.google.com/inapp/api.js';
+const FEEDBACK_API = '';
 export const startFeedback = () => {
   if (hasloaded) return sendFeedback();
   loadScript(FEEDBACK_API).then(() => {
