@@ -63,7 +63,7 @@ Firebase Cloud Functions are configured and deployed by Firebase CLI. In a
 nutshell, the local set-up/development flow is:
 
 1. Install Firebase CLI
-1. (One-time set-up only, already done by Min-Zhong) Initialize a local Firebase project in the git repo
+1. Initialize a local Firebase project in the git repo
 1. Write those cloud functions
 1. Use Firebase CLI to Deploy the functions
 
@@ -89,10 +89,6 @@ Interfacing the two realms is the Firebase CLI, which is installed in the
 root realm. It is used to initialize and bootstrap the Cloud Functions realm.
 
 # 1. and 2. Firebase CLI & local project setup
-
-Min-Zhong has done the setup, so there is no need to do these steps again.
-However, reading through these steps helps clarify the realms concept, so please
-definitely give these steps a glimpse.
 
 Steps are adapted from the [official documentation](https://firebase.google.com/docs/functions/get-started).
 
