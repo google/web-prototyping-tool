@@ -16,5 +16,5 @@
 
 import serviceAccountKey from '../../../key.prod.json';
 
-export const DATABASE_URL = 'https://com-codesign-prod.firebaseio.com';
+export const DATABASE_URL = '';
 export const SERVICE_ACCOUNT_KEY = serviceAccountKey;

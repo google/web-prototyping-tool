@@ -22,8 +22,8 @@ import { formatStringWithArguments } from 'cd-utils/string';
 
 const BASE64 = 'base64';
 const IMAGE_EXTENSION = 'png';
-const STORAGE_BUCKET = 'angular-codesign.google.com.a.appspot.com';
-const DATABASE_URL = 'https://com-angular-codesign.firebaseio.com';
+const STORAGE_BUCKET = '';
+const DATABASE_URL = '';
 const LOCAL_KEY_PATH = process.cwd() + '/key.json';
 const LOCAL_KEY_REQUIRE_PATH = '../../../key.json';
 const IMAGE_CAPTURE_TESTS_FOLDER = 'image-capture-tests/';

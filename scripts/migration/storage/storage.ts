@@ -16,11 +16,11 @@
 
 import * as admin from 'firebase-admin';
 const serviceAccountKey = require('../../key.json');
-export const BUCKET_URL = 'angular-codesign.google.com.a.appspot.com';
+export const BUCKET_URL = '';
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccountKey),
-  databaseURL: 'https://com-angular-codesign.firebaseio.com',
+  databaseURL: '',
 });
 
 export const bucket = admin.storage().bucket(BUCKET_URL);

@@ -18,14 +18,14 @@ import { get, Store } from 'https://cdn.jsdelivr.net/npm/idb-keyval@3/dist/idb-k
 import { areObjectsEqual } from './utils.js';
 
 firebase.initializeApp({
-  apiKey: 'AIzaSyB4-y8GcGLPG3LQP7Tq3qBOM0W8BLpq8y8',
-  authDomain: 'com-angular-codesign.firebaseapp.com',
-  databaseURL: 'https://com-angular-codesign.firebaseio.com',
-  projectId: 'google.com:angular-codesign',
-  storageBucket: 'angular-codesign.google.com.a.appspot.com',
-  messagingSenderId: '599913144764',
-  appId: '1:599913144764:web:5a6b12ebc257d6db2c8bb9',
-  measurementId: 'G-3J91H9K3GW',
+  apiKey: '',
+  authDomain: '',
+  databaseURL: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: '',
+  appId: '',
+  measurementId: '',
 });
 
 const LOG_ELEM = 'log-content';
